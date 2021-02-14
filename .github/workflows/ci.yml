@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup V
+        run: |
+          git clone https://github.com/vlang/v v && cd v
+          make
+      - name: Fmt
+        run:  ./v fmt -verify .
+      - name: Build
+        run: ./v test .
