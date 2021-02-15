@@ -14,16 +14,8 @@ pub fn new_pos(pos Pos) Pos {
 		line: pos.line
 		col: pos.col
 		offset: pos.offset
-		len: if pos.len == 0 {
-			1
-		} else {
-			pos.len
-		}
-		last_line: if pos.last_line == 0 {
-			pos.line
-		} else {
-			pos.last_line
-		}
+		len: if pos.len == 0 { 1 } else { pos.len }
+		last_line: if pos.last_line == 0 { pos.line } else { pos.last_line }
 	}
 }
 
