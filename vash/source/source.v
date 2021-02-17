@@ -2,17 +2,17 @@ module source
 
 import os
 
-struct Source {
+pub struct Source {
 pub:
 	path string
 	code ustring
 }
 
-fn (s &Source) at(i int) Letter {
+pub fn (s &Source) at(i int) Letter {
 	return Letter(s.code.at(i))
 }
 
-fn read_file(path string) ?Source {
+pub fn read_file(path string) ?Source {
 	code_str := os.read_file(path) ?
 	return Source{
 		path: path
@@ -20,7 +20,7 @@ fn read_file(path string) ?Source {
 	}
 }
 
-fn must_read_file(path string) Source {
+pub fn must_read_file(path string) Source {
 	s := read_file(path) or { panic(err) }
 	return s
 }
