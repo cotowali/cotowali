@@ -1,4 +1,4 @@
-module os
+module osutil
 
 import os
 

@@ -1,14 +1,14 @@
 // 🐈 <-- to multibyte character test
 module source
 
-import utils.os
+import osutil
 
 fn test_read_file() {
 	got := must_read_file(@FILE)
 
 	expected := Source{
 		path: @FILE
-		code: os.must_read_file(@FILE).ustring()
+		code: osutil.must_read_file(@FILE).ustring()
 	}
 
 	assert got == expected
