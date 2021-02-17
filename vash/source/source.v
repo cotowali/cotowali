@@ -8,8 +8,8 @@ pub:
 	code ustring
 }
 
-fn (s &Source) at(i int) string {
-	return s.code.at(i)
+fn (s &Source) at(i int) Letter {
+	return Letter(s.code.at(i))
 }
 
 fn read_file(path string) ?Source {
