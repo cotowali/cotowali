@@ -1,6 +1,6 @@
-module token
+module pos
 
-struct Pos {
+pub struct Pos {
 pub:
 	line      int // 1-based
 	col       int // 1-based
@@ -9,7 +9,7 @@ pub:
 	last_line int
 }
 
-pub fn new_pos(pos Pos) Pos {
+pub fn new(pos Pos) Pos {
 	return Pos{
 		line: pos.line
 		col: pos.col

@@ -1,5 +1,7 @@
 module token
 
+import vash.pos { Pos }
+
 enum Kind {
 	unknown
 }
