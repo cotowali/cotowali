@@ -1,0 +1,3 @@
+default: run
+tasks:
+  run: v run cmd/vash
