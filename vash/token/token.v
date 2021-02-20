@@ -2,11 +2,12 @@ module token
 
 import vash.pos { Pos }
 
-enum Kind {
+pub enum TokenKind {
 	unknown
+	eof
 }
 
-struct Token {
+pub struct Token {
 pub:
 	kind Kind
 	text string
