@@ -19,3 +19,14 @@ fn test_at() {
 	assert s.at(0) == '/'
 	assert s.at(3) == '🐈'
 }
+
+fn test_slice() {
+	s := must_read_file(@FILE)
+	assert s.slice(1, 6) == [
+		Letter('/'),
+		Letter(' '),
+		Letter('🐈'),
+		Letter(' '),
+		Letter('<'),
+	]
+}
