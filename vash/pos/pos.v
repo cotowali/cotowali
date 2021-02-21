@@ -2,21 +2,11 @@ module pos
 
 pub struct Pos {
 pub:
-	line      int // 1-based
-	col       int // 1-based
 	offset    int
-	len       int
-	last_line int
-}
-
-pub fn new(pos Pos) Pos {
-	return Pos{
-		line: pos.line
-		col: pos.col
-		offset: pos.offset
-		len: if pos.len == 0 { 1 } else { pos.len }
-		last_line: if pos.last_line == 0 { pos.line } else { pos.last_line }
-	}
+	len       int = 1
+	line      int = 1
+	col       int = 1
+	last_line int = 1
 }
 
 pub fn (p1 Pos) merge(p2 Pos) Pos {
