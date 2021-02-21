@@ -8,7 +8,7 @@ fn test_read_file() {
 
 	expected := Source{
 		path: @FILE
-		code: code(osutil.must_read_file(@FILE))
+		code: osutil.must_read_file(@FILE).ustring()
 	}
 
 	assert got == expected
@@ -22,5 +22,5 @@ fn test_at() {
 
 fn test_slice() {
 	s := must_read_file(@FILE)
-	assert s.slice(1, 6) == code('/ 🐈 <')
+	assert s.slice(1, 6) == '/ 🐈 <'
 }
