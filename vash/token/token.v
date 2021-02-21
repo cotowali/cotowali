@@ -9,7 +9,7 @@ pub enum TokenKind {
 
 pub struct Token {
 pub:
-	kind Kind
+	kind TokenKind
 	text string
 	pos  Pos
 }
