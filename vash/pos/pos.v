@@ -4,7 +4,7 @@ import utils.math { max }
 
 pub struct Pos {
 pub:
-	offset    int
+	i         int
 	len       int = 1
 	line      int = 1
 	last_line int = 1
@@ -24,12 +24,12 @@ pub fn new(pos Pos) Pos {
 }
 
 pub fn (p1 Pos) merge(p2 Pos) Pos {
-	if p1.offset > p2.offset {
+	if p1.i > p2.i {
 		return p2.merge(p1)
 	}
 	return Pos{
 		...p1
-		len: p2.offset - p1.offset + p2.len
+		len: p2.i - p1.i + p2.len
 		last_line: p2.last_line
 		last_col: p2.last_col
 	}
