@@ -4,11 +4,12 @@ import utils.math { max }
 
 pub struct Pos {
 pub:
-	i         int
+	i    int
+	line int = 1
+	col  int = 1
+pub mut:
 	len       int = 1
-	line      int = 1
 	last_line int = 1
-	col       int = 1
 	last_col  int = 1
 }
 
@@ -17,9 +18,9 @@ pub fn new(pos Pos) Pos {
 	last_line := max(pos.line, pos.last_line)
 	last_col := if pos.line == last_line { pos.col + pos.len } else { pos.last_col }
 	return Pos{
-		...pos,
-		last_line: last_line,
-		last_col: last_col,
+		...pos
+		last_line: last_line
+		last_col: last_col
 	}
 }
 
