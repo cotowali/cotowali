@@ -15,7 +15,7 @@ jobs:
       - name: Setup V
         run: |
           git clone https://github.com/vlang/v /tmp/v && cd /tmp/v
-          make && ./v symlink
+          make && sudo ./v symlink
       - run: v fmt -verify .
   build:
     runs-on: ubuntu-latest
@@ -24,5 +24,5 @@ jobs:
       - name: Setup V
         run: |
           git clone https://github.com/vlang/v /tmp/v && cd /tmp/v
-          make && ./v symlink
+          make && sudo ./v symlink
       - run: v test .
