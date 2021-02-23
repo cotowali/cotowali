@@ -12,17 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Setup V
-        run: |
-          git clone https://github.com/vlang/v /tmp/v && cd /tmp/v
-          make && sudo ./v symlink
-      - run: v fmt -verify .
+        with: { repository: vlang/v }
+      - uses: actions/checkout@v2
+        with: { path: vash }
+      - run: v fmt -verify vash
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Setup V
-        run: |
-          git clone https://github.com/vlang/v /tmp/v && cd /tmp/v
-          make && sudo ./v symlink
-      - run: v test .
+        with: { repository: vlang/v }
+      - uses: actions/checkout@v2
+        with: { path: vash }
+      - run: v test vash
