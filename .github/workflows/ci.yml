@@ -8,6 +8,15 @@ on:
   workflow_dispatch:
 
 jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup V
+        run: |
+          git clone https://github.com/vlang/v v && cd v
+          make && ./v symlink && cd ..
+      - run: v fmt -verify .
   build:
     runs-on: ubuntu-latest
     steps:
@@ -15,8 +24,5 @@ jobs:
       - name: Setup V
         run: |
           git clone https://github.com/vlang/v v && cd v
-          make
-      - name: Fmt
-        run:  ./v fmt -verify .
-      - name: Build
-        run: ./v test .
+          make && ./v symlink && cd ..
+      - run: v test .
