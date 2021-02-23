@@ -64,6 +64,17 @@ fn (mut lex Lexer) advance(n int) {
 	lex.pos.last_col += n
 }
 
+[inline]
+fn (lex &Lexer) is_whitespace() bool {
+	return lex.letter().is_whitespace()
+}
+
+fn (mut lex Lexer) skip_whitespaces() {
+	for !lex.is_eof() && lex.is_whitespace() {
+		lex.advance(1)
+	}
+}
+
 fn (mut lex Lexer) start() {
 	// if pos is head, do nothing
 	if lex.idx() == 0 {
@@ -86,12 +97,15 @@ pub fn (mut lex Lexer) next() ?Token {
 	if lex.closed {
 		return none
 	}
+
+	lex.skip_whitespaces()
 	lex.start()
 	if lex.is_eof() {
 		lex.close()
 		return Token{.eof, '', lex.pos}
 	}
-	for !lex.is_eof() {
+
+	for !(lex.is_eof() || lex.is_whitespace()) {
 		lex.advance(1)
 	}
 	return lex.new_token(.unknown)
