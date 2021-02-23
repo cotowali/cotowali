@@ -16,7 +16,7 @@ jobs:
       - run: make
       - uses: actions/checkout@v2
         with: { path: vash }
-      - run: v fmt -verify vash
+      - run: ./v fmt -verify vash
   build:
     runs-on: ubuntu-latest
     steps:
@@ -25,4 +25,4 @@ jobs:
       - run: make
       - uses: actions/checkout@v2
         with: { path: vash }
-      - run: v test vash
+      - run: ./v test vash
