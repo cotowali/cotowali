@@ -13,6 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with: { repository: vlang/v }
+      - run: make
       - uses: actions/checkout@v2
         with: { path: vash }
       - run: v fmt -verify vash
@@ -21,6 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with: { repository: vlang/v }
+      - run: make
       - uses: actions/checkout@v2
         with: { path: vash }
       - run: v test vash
