@@ -1,7 +1,7 @@
 module lexer
 
 import vash.source { Letter, Source }
-import vash.token { Token }
+import vash.token { Token, TokenKind }
 import vash.pos { Pos }
 
 pub struct Lexer {

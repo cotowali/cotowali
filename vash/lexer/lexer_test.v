@@ -1,6 +1,5 @@
 module lexer
 
-import vash.source
 import vash.token { Token }
 import vash.pos { Pos }
 
