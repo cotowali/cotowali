@@ -18,7 +18,7 @@ fn test_new() {
 	assert new(Pos{}).len == 1
 
 	// if multiline, don,t owerride last_col
-	assert new(i: 0, len: 3, line: 1, last_line: 2, col: 1, last_col:1).last_col == 1
+	assert new(i: 0, len: 3, line: 1, last_line: 2, col: 1, last_col: 1).last_col == 1
 }
 
 fn test_pos_extend() {

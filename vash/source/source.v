@@ -1,7 +1,6 @@
 module source
 
 import os
-import utils { check_bounds_if_required }
 
 pub struct Source {
 pub:

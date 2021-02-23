@@ -1,6 +1,6 @@
 module lexer
 
-import vash.source { Source, Letter }
+import vash.source { Letter, Source }
 import vash.token { Token }
 import vash.pos { Pos }
 
@@ -8,7 +8,7 @@ pub struct Lexer {
 pub mut:
 	source Source
 mut:
-	pos Pos
+	pos    Pos
 	closed bool // for iter
 }
 
@@ -42,15 +42,15 @@ fn (lex &Lexer) pos_for_new_token() Pos {
 	last_col := lex.pos.last_col - 1
 	last_line := lex.pos.last_line + (if last_col == 0 { -1 } else { 0 })
 	return Pos{
-		...lex.pos,
-		len: lex.pos.len - 1,
-		last_line: last_line,
-		last_col: last_col,
+		...lex.pos
+		len: lex.pos.len - 1
+		last_line: last_line
+		last_col: last_col
 	}
 }
 
 [inline]
-fn (lex &Lexer) new_token(kind token.TokenKind) Token {
+fn (lex &Lexer) new_token(kind TokenKind) Token {
 	return Token{
 		kind: kind
 		text: lex.text()
