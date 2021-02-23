@@ -14,8 +14,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Setup V
         run: |
-          git clone https://github.com/vlang/v v && cd v
-          make && ./v symlink && cd ..
+          git clone https://github.com/vlang/v /tmp/v && cd /tmp/v
+          make && ./v symlink
       - run: v fmt -verify .
   build:
     runs-on: ubuntu-latest
@@ -23,6 +23,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Setup V
         run: |
-          git clone https://github.com/vlang/v v && cd v
-          make && ./v symlink && cd ..
+          git clone https://github.com/vlang/v /tmp/v && cd /tmp/v
+          make && ./v symlink
       - run: v test .
