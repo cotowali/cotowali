@@ -4,6 +4,7 @@ import os
 import cli { Command }
 import v.vmod
 import vash.compiler { new_file_compiler }
+import devtools
 
 fn new_app() Command {
 	mod := vmod.decode(@VMOD_FILE) or { panic(err) }
@@ -15,6 +16,7 @@ fn new_app() Command {
 		sort_commands: false
 		required_args: 1
 		execute: execute_compile
+		commands: [devtools.command]
 	}
 	app.setup()
 	return app
