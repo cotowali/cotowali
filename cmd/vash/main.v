@@ -14,15 +14,17 @@ fn new_app() Command {
 		sort_flags: false
 		sort_commands: false
 		required_args: 1
-		execute: fn (cmd Command) ? {
-			for f in cmd.args {
-				c := new_file_compiler(f) ?
-				c.compile_to_stdout() ?
-			}
-		}
+		execute: execute_compile
 	}
 	app.setup()
 	return app
+}
+
+fn execute_compile(cmd Command) ? {
+	for f in cmd.args {
+		c := new_file_compiler(f) ?
+		c.compile_to_stdout() ?
+	}
 }
 
 fn main() {
