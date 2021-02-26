@@ -6,7 +6,14 @@ import v.vmod
 import vash.compiler { new_file_compiler }
 import devtools
 
-fn new_app() Command {
+fn execute_compile(cmd Command) ? {
+	for f in cmd.args {
+		c := new_file_compiler(f) ?
+		c.compile_to_stdout() ?
+	}
+}
+
+fn main() {
 	mod := vmod.decode(@VMOD_FILE) or { panic(err) }
 	mut app := Command{
 		name: mod.name
@@ -19,18 +26,5 @@ fn new_app() Command {
 		commands: [devtools.command]
 	}
 	app.setup()
-	return app
-}
-
-fn execute_compile(cmd Command) ? {
-	for f in cmd.args {
-		c := new_file_compiler(f) ?
-		c.compile_to_stdout() ?
-	}
-}
-
-fn main() {
-	//	new_app().parse(os.args)
-	mut app := new_app()
 	app.parse(os.args)
 }
