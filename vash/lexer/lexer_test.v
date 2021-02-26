@@ -17,7 +17,7 @@ struct TokenToTest {
 }
 
 fn test(code string, expected_tokens []TokenToTest) {
-	lexer := new(path: '', code: code.ustring())
+	lexer := new(path: '', code: code)
 	mut i := 0
 	for t1 in lexer {
 		expected := expected_tokens[i]
@@ -67,8 +67,8 @@ fn t_text(text string) TokenToTest {
 fn test_lexer() {
 	test(' _🐈_ a ', [
 		/* Pos{i, line, col, len, last_line, last_col} */
-		t(.unknown, '_🐈_', Pos{1, 1, 2, 3, 1, 4}),
-		t(.unknown, 'a', Pos{5, 1, 6, 1, 1, 6}),
-		t(.eof, '', Pos{7, 1, 8, 1, 1, 8}),
+		t(.unknown, '_🐈_', Pos{1, 1, 2, 6, 1, 4}),
+		t(.unknown, 'a', Pos{8, 1, 6, 1, 1, 6}),
+		t(.eof, '', Pos{10, 1, 8, 1, 1, 8}),
 	])
 }

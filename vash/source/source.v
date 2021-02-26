@@ -1,15 +1,18 @@
 module source
 
 import os
+import encoding.utf8
 
 pub struct Source {
 pub:
 	path string
-	code ustring
+	code string
 }
 
+// at returns one Letter at code[i]
 pub fn (s &Source) at(i int) Letter {
-	return Letter(s.code.at(i))
+	end := i + utf8.char_len(s.code[i])
+	return Letter(s.code[i..end])
 }
 
 pub fn (s &Source) slice(begin int, end int) string {
@@ -20,7 +23,7 @@ pub fn read_file(path string) ?Source {
 	code_text := os.read_file(path) ?
 	return Source{
 		path: path
-		code: code_text.ustring()
+		code: code_text
 	}
 }
 

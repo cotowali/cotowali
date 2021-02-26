@@ -60,7 +60,7 @@ fn (lex &Lexer) new_token(kind TokenKind) Token {
 
 [inline]
 fn (mut lex Lexer) advance(n int) {
-	lex.pos.len += n
+	lex.pos.len += lex.letter().len
 	lex.pos.last_col += n
 }
 
