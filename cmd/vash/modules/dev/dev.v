@@ -4,7 +4,7 @@ import cli { Command }
 
 pub const (
 	command = Command {
-		name: 'devtools'
+		name: 'dev'
 		description: 'development tools'
 		execute: fn (cmd Command) ? {
 			cmd.execute_help()
