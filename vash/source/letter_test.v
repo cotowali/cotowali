@@ -12,3 +12,7 @@ fn test_is_whitespace() {
 		assert !Letter(c).is_whitespace()
 	}
 }
+
+fn test_rune() {
+	assert Letter('あ').rune() == `あ`
+}
