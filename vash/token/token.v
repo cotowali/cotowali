@@ -4,6 +4,8 @@ import vash.pos { Pos }
 
 pub enum TokenKind {
 	unknown
+	l_par
+	r_par
 	eof
 }
 

@@ -38,4 +38,6 @@ fn test_lexer() {
 		t(.unknown, 'a', Pos{8, 1, 6, 1, 1, 6}),
 		t(.eof, '', Pos{10, 1, 8, 1, 1, 8}),
 	])
+
+	ktest('()', [.l_par, .r_par, .eof])
 }
