@@ -26,8 +26,3 @@ pub fn read_file(path string) ?Source {
 		code: code_text
 	}
 }
-
-pub fn must_read_file(path string) Source {
-	s := read_file(path) or { panic(err) }
-	return s
-}

@@ -4,7 +4,7 @@ module source
 import os
 
 fn test_read_file() {
-	got := must_read_file(@FILE)
+	got := read_file(@FILE) or { panic(err) }
 	code := os.read_file(@FILE) or { panic(err) }
 	expected := Source{
 		path: @FILE
@@ -15,13 +15,13 @@ fn test_read_file() {
 }
 
 fn test_at() {
-	s := must_read_file(@FILE)
+	s := read_file(@FILE) or { panic(err) }
 	assert s.at(0) == '/'
 	assert s.at(3) == '🐈'
 	assert s.at(8) == '<'
 }
 
 fn test_slice() {
-	s := must_read_file(@FILE)
+	s := read_file(@FILE) or { panic(err) }
 	assert s.slice(1, 9) == '/ 🐈 <'
 }
