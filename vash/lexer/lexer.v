@@ -110,10 +110,8 @@ pub fn (mut lex Lexer) next() ?Token {
 		return Token{.eof, '', lex.pos}
 	}
 
-	match lex.letter().rune() {
-		`(` { return lex.read_letter_token(.l_par) }
-		`)` { return lex.read_letter_token(.r_par) }
-		else {}
+	if kind := letter_to_kind(lex.letter()) {
+		return lex.read_letter_token(kind)
 	}
 
 	for !(lex.is_eof() || lex.is_whitespace()) {
