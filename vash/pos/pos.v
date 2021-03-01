@@ -1,6 +1,6 @@
 module pos
 
-import utils { max }
+import vash.util { max }
 
 pub struct Pos {
 pub:

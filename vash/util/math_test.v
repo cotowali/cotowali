@@ -1,4 +1,4 @@
-module utils
+module util
 
 fn test_max() {
 	assert max(0, 1) == 1

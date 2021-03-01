@@ -1,4 +1,4 @@
-module utils
+module util
 
 [inline]
 pub fn check_bounds_if_required(len int, begin int, end int) {
