@@ -13,8 +13,22 @@ fn test(code string, tokens []Token) {
 	}
 }
 
+fn ktest(code string, kinds []TokenKind) {
+	lexer := new(path: '', code: code)
+	mut i := 0
+	for t1 in lexer {
+		k2 := kinds[i]
+		assert t1.kind == k2
+		i++
+	}
+}
+
 fn t(kind TokenKind, text string, pos Pos) Token {
 	return Token{kind, text, pos}
+}
+
+fn k(kind TokenKind) TokenKind {
+	return kind
 }
 
 fn test_lexer() {
