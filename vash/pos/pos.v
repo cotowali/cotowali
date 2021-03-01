@@ -1,6 +1,6 @@
 module pos
 
-import utils.math { max }
+import utils { max }
 
 pub struct Pos {
 pub:

@@ -1,4 +1,4 @@
-module math
+module utils
 
 pub fn max<T>(a T, b T) T {
 	if a > b {
