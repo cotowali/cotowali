@@ -58,11 +58,6 @@ fn (lex &Lexer) new_token(kind TokenKind) Token {
 	}
 }
 
-fn (mut lex Lexer) read_letter_token(kind TokenKind) Token {
-	lex.advance(1)
-	return lex.new_token(kind)
-}
-
 [inline]
 fn (mut lex Lexer) advance(n int) {
 	lex.pos.len += lex.letter().len
@@ -111,7 +106,8 @@ pub fn (mut lex Lexer) next() ?Token {
 	}
 
 	if kind := letter_to_kind(lex.letter()) {
-		return lex.read_letter_token(kind)
+		lex.advance(1)
+		return lex.new_token(kind)
 	}
 
 	for !(lex.is_eof() || lex.is_whitespace()) {
