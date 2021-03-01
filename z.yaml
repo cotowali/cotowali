@@ -2,3 +2,4 @@ default: run
 tasks:
   run: v run cmd/vash
   build: v cmd/vash
+  test: v test .
