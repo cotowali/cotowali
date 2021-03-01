@@ -3,7 +3,7 @@ module dev
 import cli { Command }
 
 const (
-	tokens = Command {
+	tokens = Command{
 		name: 'tokens'
 		description: 'print tokens'
 		execute: fn (cmd Command) ? {
@@ -14,7 +14,7 @@ const (
 )
 
 pub const (
-	command = Command {
+	command = Command{
 		name: 'dev'
 		description: 'development tools'
 		execute: fn (cmd Command) ? {
