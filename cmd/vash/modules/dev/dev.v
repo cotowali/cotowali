@@ -1,4 +1,4 @@
-module devtools
+module dev
 
 import cli { Command }
 
