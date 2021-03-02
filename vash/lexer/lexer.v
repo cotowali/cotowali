@@ -36,6 +36,9 @@ pub fn (mut lex Lexer) next() ?Token {
 	}
 
 	for !(lex.is_eof() || lex.is_whitespace()) {
+		if _ := letter_to_kind(lex.letter()) {
+			break
+		}
 		lex.advance(1)
 	}
 	return lex.new_token(.unknown)

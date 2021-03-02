@@ -39,5 +39,5 @@ fn test_lexer() {
 		t(.eof, '', Pos{10, 1, 8, 1, 1, 8}),
 	])
 
-	ktest('()', [.l_par, .r_par, .eof])
+	ktest('f()', [.unknown, .l_par, .r_par, .eof])
 }
