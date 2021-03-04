@@ -77,19 +77,6 @@ fn (mut lex Lexer) skip_whitespaces() {
 	lex.consume_for(fn (c Letter) bool { c.is_whitespace() })
 }
 
-fn (mut lex Lexer) start() {
-	// if pos is head, do nothing
-	if lex.idx() == 0 {
-		return
-	}
-
-	lex.pos = pos.new(
-		i: lex.idx()
-		col: lex.pos.last_col
-		line: lex.pos.last_line
-	)
-}
-
 [inline]
 fn (lex &Lexer) text() string {
 	return lex.source.slice(lex.pos.i, lex.idx())

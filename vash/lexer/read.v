@@ -4,15 +4,26 @@ import vash.source { Letter, Source }
 import vash.token { Token, TokenKind }
 import vash.pos { Pos }
 
-
-
 pub fn (mut lex Lexer) next() ?Token {
 	return if !lex.closed { lex.read() } else { none }
 }
 
+fn (mut lex Lexer) start_read() {
+	// if pos is head, do nothing
+	if lex.idx() == 0 {
+		return
+	}
+
+	lex.pos = pos.new(
+		i: lex.idx()
+		col: lex.pos.last_col
+		line: lex.pos.last_line
+	)
+}
+
 pub fn (mut lex Lexer) read() Token {
 	lex.skip_whitespaces()
-	lex.start()
+	lex.start_read()
 	if lex.is_eof() {
 		lex.close()
 		return Token{.eof, '', lex.pos}
