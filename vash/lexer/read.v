@@ -37,10 +37,7 @@ pub fn (mut lex Lexer) read() Token {
 			}
 			return lex.new_token(.eol)
 		}
-		`\n` {
-			lex.consume()
-			return lex.new_token(.eol)
-		}
+		`\n` { return lex.new_token_with_consume(.eol) }
 		else {}
 	}
 

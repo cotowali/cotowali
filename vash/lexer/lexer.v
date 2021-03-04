@@ -61,6 +61,11 @@ fn (lex &Lexer) new_token(kind TokenKind) Token {
 	}
 }
 
+fn (mut lex Lexer) new_token_with_consume(kind TokenKind) Token {
+	lex.consume()
+	return lex.new_token(kind)
+}
+
 // --
 
 [inline]
