@@ -24,6 +24,16 @@ pub fn new(pos Pos) Pos {
 	}
 }
 
+[inline]
+pub fn new_none() Pos {
+	return Pos{-1, -1, -1, -1, -1, -1}
+}
+
+[inline]
+pub fn (p Pos) is_none() bool {
+	return p.i < 0
+}
+
 pub fn (p1 Pos) merge(p2 Pos) Pos {
 	if p1.i > p2.i {
 		return p2.merge(p1)
@@ -35,3 +45,4 @@ pub fn (p1 Pos) merge(p2 Pos) Pos {
 		last_col: p2.last_col
 	}
 }
+

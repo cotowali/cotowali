@@ -28,3 +28,8 @@ fn test_pos_extend() {
 	assert p1.merge(p2) == result
 	assert p2.merge(p1) == result
 }
+
+fn test_none() {
+	assert !(new({}).is_none())
+	assert new_none().is_none()
+}
