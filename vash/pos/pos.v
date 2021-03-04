@@ -45,4 +45,3 @@ pub fn (p1 Pos) merge(p2 Pos) Pos {
 		last_col: p2.last_col
 	}
 }
-

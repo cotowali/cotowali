@@ -1,8 +1,8 @@
 module lexer
 
-import vash.source { Letter, Source }
-import vash.token { Token, TokenKind }
-import vash.pos { Pos }
+import vash.source
+import vash.token { Token }
+import vash.pos
 
 pub fn (mut lex Lexer) next() ?Token {
 	return if !lex.closed { lex.read() } else { none }
