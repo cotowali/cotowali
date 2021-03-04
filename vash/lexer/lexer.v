@@ -77,6 +77,14 @@ fn (lex &Lexer) letter() Letter {
 }
 
 [inline]
+fn (lex &Lexer) next_letter() Letter {
+	idx := lex.idx() + utf8_char_len(lex.letter()[0])
+	return if idx < lex.source.code.len { lex.source.at(idx) } else { Letter('') }
+}
+
+
+
+[inline]
 fn (lex &Lexer) text() string {
 	return lex.source.slice(lex.pos.i, lex.idx())
 }
