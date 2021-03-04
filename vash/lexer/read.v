@@ -8,12 +8,8 @@ pub fn (mut lex Lexer) next() ?Token {
 	return if !lex.closed { lex.read() } else { none }
 }
 
-fn (mut lex Lexer) start_read() {
-	// if pos is head, do nothing
-	if lex.idx() == 0 {
-		return
-	}
-
+fn (mut lex Lexer) prepare_to_read() {
+	lex.skip_whitespaces()
 	lex.pos = pos.new(
 		i: lex.idx()
 		col: lex.pos.last_col
@@ -22,8 +18,7 @@ fn (mut lex Lexer) start_read() {
 }
 
 pub fn (mut lex Lexer) read() Token {
-	lex.skip_whitespaces()
-	lex.start_read()
+	lex.prepare_to_read()
 	if lex.is_eof() {
 		lex.close()
 		return Token{.eof, '', lex.pos}
