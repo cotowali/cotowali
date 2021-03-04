@@ -24,17 +24,12 @@ pub fn (mut lex Lexer) read() Token {
 		return Token{.eof, '', lex.pos}
 	}
 
-	match lex.letter()[0] {
-		`(` { return lex.new_token_with_consume(.l_par) }
-		`)` { return lex.new_token_with_consume(.r_par) }
-		`\r`, `\n` { return lex.read_newline() }
-		else {}
+	return match lex.letter()[0] {
+		`(` { lex.new_token_with_consume(.l_par) }
+		`)` { lex.new_token_with_consume(.r_par) }
+		`\r`, `\n` { lex.read_newline() }
+		else { lex.read_unknown() }
 	}
-
-	for !(lex.is_eof() || lex.letter().is_whitespace() || lex.letter() == '\n') {
-		lex.consume()
-	}
-	return lex.new_token(.unknown)
 }
 
 fn (mut lex Lexer) read_newline() Token {
@@ -42,4 +37,11 @@ fn (mut lex Lexer) read_newline() Token {
 		lex.consume()
 	}
 	return lex.new_token_with_consume(.eol)
+}
+
+fn (mut lex Lexer) read_unknown() Token {
+	for !(lex.is_eof() || lex.letter().is_whitespace() || lex.letter() == '\n') {
+		lex.consume()
+	}
+	return lex.new_token(.unknown)
 }
