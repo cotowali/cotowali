@@ -35,7 +35,7 @@ pub fn (mut lex Lexer) next() ?Token {
 		return lex.new_token(kind)
 	}
 
-	for !(lex.is_eof() || lex.is_whitespace()) {
+	for !(lex.is_eof() || lex.letter().is_whitespace()) {
 		if _ := letter_to_kind(lex.letter()) {
 			break
 		}
@@ -50,13 +50,8 @@ fn (mut lex Lexer) is_eof() bool {
 	return !(lex.idx() < lex.source.code.len)
 }
 
-[inline]
-fn (lex &Lexer) is_whitespace() bool {
-	return lex.letter().is_whitespace()
-}
-
 fn (mut lex Lexer) skip_whitespaces() {
-	for !lex.is_eof() && lex.is_whitespace() {
+	for !lex.is_eof() && lex.letter().is_whitespace() {
 		lex.advance(1)
 	}
 }
