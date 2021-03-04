@@ -18,43 +18,75 @@ pub fn new(source Source) Lexer {
 	}
 }
 
-pub fn (mut lex Lexer) next() ?Token {
-	if lex.closed {
-		return none
-	}
+[inline]
+fn (lex &Lexer) idx() int {
+	return lex.pos.i + lex.pos.len - 1
+}
 
-	lex.skip_whitespaces()
-	lex.start()
+[inline]
+fn (lex &Lexer) letter() Letter {
 	if lex.is_eof() {
-		lex.close()
-		return Token{.eof, '', lex.pos}
+		return Letter('')
 	}
+	return lex.source.at(lex.idx())
+}
 
-	if kind := letter_to_kind(lex.letter()) {
+[inline]
+fn (mut lex Lexer) close() {
+	lex.closed = true
+}
+
+fn (lex &Lexer) pos_for_new_token() Pos {
+	last_col := lex.pos.last_col - 1
+	last_line := lex.pos.last_line + (if last_col == 0 { -1 } else { 0 })
+	return Pos{
+		...lex.pos
+		len: lex.pos.len - 1
+		last_line: last_line
+		last_col: last_col
+	}
+}
+
+[inline]
+fn (lex &Lexer) new_token(kind TokenKind) Token {
+	return Token{
+		kind: kind
+		text: lex.text()
+		pos: lex.pos_for_new_token()
+	}
+}
+
+[inline]
+pub fn (lex &Lexer) is_eof() bool {
+		return !(lex.idx() < lex.source.code.len)
+}
+
+[inline]
+fn (mut lex Lexer) advance(n int) {
+	lex.pos.len += lex.letter().len
+	lex.pos.last_col += n
+}
+
+fn (mut lex Lexer) skip_whitespaces() {
+	for !lex.is_eof() && lex.letter().is_whitespace() {
 		lex.advance(1)
-		return lex.new_token(kind)
+	}
+}
+
+fn (mut lex Lexer) start() {
+	// if pos is head, do nothing
+	if lex.idx() == 0 {
+		return
 	}
 
-	match lex.letter().str() {
-		'\r' {
-			lex.advance(1)
-			if lex.letter() == '\n' {
-				lex.advance(1)
-			}
-			return lex.new_token(.eol)
-		}
-		'\n' {
-			lex.advance(1)
-			return lex.new_token(.eol)
-		}
-		else {}
-	}
+	lex.pos = pos.new(
+		i: lex.idx()
+		col: lex.pos.last_col
+		line: lex.pos.last_line
+	)
+}
 
-	for !(lex.is_eof() || lex.letter().is_whitespace() || lex.letter() == '\n') {
-		if _ := letter_to_kind(lex.letter()) {
-			break
-		}
-		lex.advance(1)
-	}
-	return lex.new_token(.unknown)
+[inline]
+fn (lex &Lexer) text() string {
+	return lex.source.slice(lex.pos.i, lex.idx())
 }
