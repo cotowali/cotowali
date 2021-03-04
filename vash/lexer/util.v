@@ -43,9 +43,20 @@ fn (lex &Lexer) new_token(kind TokenKind) Token {
 }
 
 [inline]
+pub fn (lex &Lexer) is_eof() bool {
+		return !(lex.idx() < lex.source.code.len)
+}
+
+[inline]
 fn (mut lex Lexer) advance(n int) {
 	lex.pos.len += lex.letter().len
 	lex.pos.last_col += n
+}
+
+fn (mut lex Lexer) skip_whitespaces() {
+	for !lex.is_eof() && lex.letter().is_whitespace() {
+		lex.advance(1)
+	}
 }
 
 fn (mut lex Lexer) start() {

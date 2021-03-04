@@ -58,15 +58,3 @@ pub fn (mut lex Lexer) next() ?Token {
 	}
 	return lex.new_token(.unknown)
 }
-
-
-[inline]
-fn (lex &Lexer) is_eof() bool {
-	return !(lex.idx() < lex.source.code.len)
-}
-
-fn (mut lex Lexer) skip_whitespaces() {
-	for !lex.is_eof() && lex.letter().is_whitespace() {
-		lex.advance(1)
-	}
-}
