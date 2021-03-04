@@ -15,3 +15,11 @@ pub:
 	text string
 	pos  Pos
 }
+
+pub fn (lhs Token) == (rhs Token) bool {
+	return if lhs.pos.is_none() || rhs.pos.is_none() {
+		lhs.kind == rhs.kind && lhs.text == rhs.text
+	} else {
+		lhs.kind == rhs.kind && lhs.text == rhs.text && lhs.pos == rhs.pos
+	}
+}
