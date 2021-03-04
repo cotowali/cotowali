@@ -19,20 +19,20 @@ pub fn (mut lex Lexer) read() Token {
 	}
 
 	if kind := letter_to_kind(lex.letter()) {
-		lex.advance(1)
+		lex.consume()
 		return lex.new_token(kind)
 	}
 
 	match lex.letter().str() {
 		'\r' {
-			lex.advance(1)
+			lex.consume()
 			if lex.letter() == '\n' {
-				lex.advance(1)
+				lex.consume()
 			}
 			return lex.new_token(.eol)
 		}
 		'\n' {
-			lex.advance(1)
+			lex.consume()
 			return lex.new_token(.eol)
 		}
 		else {}
@@ -42,7 +42,7 @@ pub fn (mut lex Lexer) read() Token {
 		if _ := letter_to_kind(lex.letter()) {
 			break
 		}
-		lex.advance(1)
+		lex.consume()
 	}
 	return lex.new_token(.unknown)
 }

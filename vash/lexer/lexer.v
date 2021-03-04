@@ -62,15 +62,19 @@ pub fn (lex &Lexer) is_eof() bool {
 }
 
 [inline]
-fn (mut lex Lexer) advance(n int) {
+fn (mut lex Lexer) consume() {
 	lex.pos.len += lex.letter().len
-	lex.pos.last_col += n
+	lex.pos.last_col++
+}
+
+fn (mut lex Lexer) consume_for(cond fn (Letter) bool) {
+	for !lex.eof() && cond(lex.letter()) {
+		lex.consume()
+	}
 }
 
 fn (mut lex Lexer) skip_whitespaces() {
-	for !lex.is_eof() && lex.letter().is_whitespace() {
-		lex.advance(1)
-	}
+	lex.consume_for(fn (c Letter) bool { c.is_whitespace() })
 }
 
 fn (mut lex Lexer) start() {
