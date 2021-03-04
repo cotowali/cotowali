@@ -24,17 +24,22 @@ fn (lex &Lexer) idx() int {
 }
 
 [inline]
-fn (lex &Lexer) letter() Letter {
-	if lex.is_eof() {
-		return Letter('')
-	}
-	return lex.source.at(lex.idx())
-}
-
-[inline]
 fn (mut lex Lexer) close() {
 	lex.closed = true
 }
+
+[inline]
+pub fn (lex &Lexer) is_eof() bool {
+	return !(lex.idx() < lex.source.code.len)
+}
+
+fn (mut lex Lexer) skip_whitespaces() {
+	lex.consume_for(fn (c Letter) bool {
+		return c.is_whitespace()
+	})
+}
+
+// --
 
 fn (lex &Lexer) pos_for_new_token() Pos {
 	last_col := lex.pos.last_col - 1
@@ -56,10 +61,22 @@ fn (lex &Lexer) new_token(kind TokenKind) Token {
 	}
 }
 
+// --
+
 [inline]
-pub fn (lex &Lexer) is_eof() bool {
-		return !(lex.idx() < lex.source.code.len)
+fn (lex &Lexer) letter() Letter {
+	if lex.is_eof() {
+		return source.Letter('')
+	}
+	return lex.source.at(lex.idx())
 }
+
+[inline]
+fn (lex &Lexer) text() string {
+	return lex.source.slice(lex.pos.i, lex.idx())
+}
+
+// --
 
 [inline]
 fn (mut lex Lexer) consume() {
@@ -71,13 +88,4 @@ fn (mut lex Lexer) consume_for(cond fn (Letter) bool) {
 	for !lex.is_eof() && cond(lex.letter()) {
 		lex.consume()
 	}
-}
-
-fn (mut lex Lexer) skip_whitespaces() {
-	lex.consume_for(fn (c Letter) bool { return c.is_whitespace() })
-}
-
-[inline]
-fn (lex &Lexer) text() string {
-	return lex.source.slice(lex.pos.i, lex.idx())
 }
