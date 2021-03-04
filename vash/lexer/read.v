@@ -1,6 +1,5 @@
 module lexer
 
-import vash.source
 import vash.token { Token }
 import vash.pos
 
@@ -33,7 +32,7 @@ pub fn (mut lex Lexer) read() Token {
 }
 
 fn (mut lex Lexer) read_newline() Token {
-	if lex.letter()[0] == `\r` && lex.next_letter() == '\n'{
+	if lex.letter()[0] == `\r` && lex.next_letter() == '\n' {
 		lex.consume()
 	}
 	return lex.new_token_with_consume(.eol)
