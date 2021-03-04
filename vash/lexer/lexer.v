@@ -68,13 +68,13 @@ fn (mut lex Lexer) consume() {
 }
 
 fn (mut lex Lexer) consume_for(cond fn (Letter) bool) {
-	for !lex.eof() && cond(lex.letter()) {
+	for !lex.is_eof() && cond(lex.letter()) {
 		lex.consume()
 	}
 }
 
 fn (mut lex Lexer) skip_whitespaces() {
-	lex.consume_for(fn (c Letter) bool { c.is_whitespace() })
+	lex.consume_for(fn (c Letter) bool { return c.is_whitespace() })
 }
 
 [inline]
