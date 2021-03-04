@@ -47,7 +47,7 @@ fn test_lexer() {
 		Token{.eof, '', Pos{10, 1, 8, 1, 1, 8}},
 	])
 
-	ktest('f()', [.unknown, .l_par, .r_par, .eof])
+	ktest('f ()', [.unknown, .l_par, .r_par, .eof])
 
 	test('\n\r\n\r', [
 		t(.eol, '\n'),

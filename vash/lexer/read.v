@@ -24,12 +24,9 @@ pub fn (mut lex Lexer) read() Token {
 		return Token{.eof, '', lex.pos}
 	}
 
-	if kind := letter_to_kind(lex.letter()) {
-		lex.consume()
-		return lex.new_token(kind)
-	}
-
 	match lex.letter()[0] {
+		`(` { return lex.new_token_with_consume(.l_par) }
+		`)` { return lex.new_token_with_consume(.r_par) }
 		`\r` {
 			lex.consume()
 			if lex.letter() == '\n' {
@@ -42,9 +39,6 @@ pub fn (mut lex Lexer) read() Token {
 	}
 
 	for !(lex.is_eof() || lex.letter().is_whitespace() || lex.letter() == '\n') {
-		if _ := letter_to_kind(lex.letter()) {
-			break
-		}
 		lex.consume()
 	}
 	return lex.new_token(.unknown)
