@@ -29,15 +29,15 @@ pub fn (mut lex Lexer) read() Token {
 		return lex.new_token(kind)
 	}
 
-	match lex.letter().str() {
-		'\r' {
+	match lex.letter()[0] {
+		`\r` {
 			lex.consume()
 			if lex.letter() == '\n' {
 				lex.consume()
 			}
 			return lex.new_token(.eol)
 		}
-		'\n' {
+		`\n` {
 			lex.consume()
 			return lex.new_token(.eol)
 		}
