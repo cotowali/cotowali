@@ -35,7 +35,22 @@ pub fn (mut lex Lexer) next() ?Token {
 		return lex.new_token(kind)
 	}
 
-	for !(lex.is_eof() || lex.letter().is_whitespace()) {
+	match lex.letter().str() {
+		'\r' {
+			lex.advance(1)
+			if lex.letter() == '\n' {
+				lex.advance(1)
+			}
+			return lex.new_token(.eol)
+		}
+		'\n' {
+			lex.advance(1)
+			return lex.new_token(.eol)
+		}
+		else {}
+	}
+
+	for !(lex.is_eof() || lex.letter().is_whitespace() || lex.letter() == '\n') {
 		if _ := letter_to_kind(lex.letter()) {
 			break
 		}
@@ -46,7 +61,7 @@ pub fn (mut lex Lexer) next() ?Token {
 
 
 [inline]
-fn (mut lex Lexer) is_eof() bool {
+fn (lex &Lexer) is_eof() bool {
 	return !(lex.idx() < lex.source.code.len)
 }
 

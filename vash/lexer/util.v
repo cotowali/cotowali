@@ -11,6 +11,9 @@ fn (lex &Lexer) idx() int {
 
 [inline]
 fn (lex &Lexer) letter() Letter {
+	if lex.is_eof() {
+		return Letter('')
+	}
 	return lex.source.at(lex.idx())
 }
 

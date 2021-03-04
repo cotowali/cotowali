@@ -6,6 +6,7 @@ pub enum TokenKind {
 	unknown
 	l_par
 	r_par
+	eol
 	eof
 }
 
