@@ -11,11 +11,13 @@ pub fn (c Letter) rune() rune {
 pub enum LetterClass {
 	whitespace
 	alphabet
+	digit
 }
 
 pub fn (c Letter) @is(class LetterClass) bool {
 	return match class {
 		.whitespace { (c.len == 1 && c[0].is_space() && c[0] !in [`\n`, `\r`]) || c == '　' }
 		.alphabet { @in(c[0], `a`, `z`) || @in(c[0], `A`, `Z`) }
+		.digit { @in(c[0], `0`, `9`) }
 	}
 }

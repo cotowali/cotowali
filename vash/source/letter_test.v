@@ -21,6 +21,12 @@ fn test_is_alphabet() {
 	assert Letter('z').@is(.alphabet)
 }
 
+fn test_is_digit() {
+	assert !Letter('０').@is(.digit)
+	assert Letter('0').@is(.digit)
+	assert Letter('9').@is(.digit)
+}
+
 fn test_rune() {
 	assert Letter('あ').rune() == `あ`
 }
