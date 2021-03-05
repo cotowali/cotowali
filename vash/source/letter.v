@@ -13,6 +13,7 @@ pub enum LetterClass {
 	alphabet
 	digit
 	hex_digit
+	oct_digit
 }
 
 pub fn (c Letter) @is(class LetterClass) bool {
@@ -21,5 +22,6 @@ pub fn (c Letter) @is(class LetterClass) bool {
 		.alphabet { @in(c[0], `a`, `z`) || @in(c[0], `A`, `Z`) }
 		.digit { @in(c[0], `0`, `9`) }
 		.hex_digit{ c.@is(.digit) || @in(c[0], `a`, `f`) || @in(c[0], `A`, `F`) }
+		.oct_digit { @in(c[0], `0`, `7`) }
 	}
 }
