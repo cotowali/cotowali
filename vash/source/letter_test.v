@@ -13,6 +13,14 @@ fn test_is_whitespace() {
 	}
 }
 
+fn test_is_alphabet() {
+	assert !Letter('Ａ').@is(.alphabet)
+	assert Letter('A').@is(.alphabet)
+	assert Letter('Z').@is(.alphabet)
+	assert Letter('a').@is(.alphabet)
+	assert Letter('z').@is(.alphabet)
+}
+
 fn test_rune() {
 	assert Letter('あ').rune() == `あ`
 }
