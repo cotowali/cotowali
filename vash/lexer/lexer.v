@@ -77,6 +77,11 @@ fn (lex &Lexer) letter() Letter {
 }
 
 [inline]
+fn (lex &Lexer) letter_is(class source.LetterClass) bool {
+	return lex.letter().@is(class)
+}
+
+[inline]
 fn (lex &Lexer) next_letter() Letter {
 	idx := lex.idx() + utf8_char_len(lex.letter()[0])
 	return if idx < lex.source.code.len { lex.source.at(idx) } else { Letter('') }
