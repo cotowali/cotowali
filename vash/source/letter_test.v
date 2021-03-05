@@ -25,6 +25,7 @@ fn test_is_digit() {
 	assert !Letter('０').@is(.digit)
 	assert Letter('0').@is(.digit)
 	assert Letter('9').@is(.digit)
+	assert !Letter('a').@is(.digit)
 
 	assert !Letter('０').@is(.digit)
 	assert Letter('0').@is(.hex_digit)
