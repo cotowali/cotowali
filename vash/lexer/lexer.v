@@ -35,7 +35,7 @@ pub fn (lex &Lexer) is_eof() bool {
 
 fn (mut lex Lexer) skip_whitespaces() {
 	lex.consume_for(fn (c Letter) bool {
-		return c.is_whitespace()
+		return c.@is(.whitespace)
 	})
 }
 
@@ -71,7 +71,7 @@ fn (mut lex Lexer) new_token_with_consume(kind TokenKind) Token {
 [inline]
 fn (lex &Lexer) letter() Letter {
 	if lex.is_eof() {
-		return source.Letter('')
+		return Letter('')
 	}
 	return lex.source.at(lex.idx())
 }
@@ -79,7 +79,7 @@ fn (lex &Lexer) letter() Letter {
 [inline]
 fn (lex &Lexer) next_letter() Letter {
 	idx := lex.idx() + utf8_char_len(lex.letter()[0])
-	return if idx < lex.source.code.len { lex.source.at(idx) } else { source.Letter('') }
+	return if idx < lex.source.code.len { lex.source.at(idx) } else { Letter('') }
 }
 
 [inline]
