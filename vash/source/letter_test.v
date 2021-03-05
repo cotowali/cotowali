@@ -5,11 +5,11 @@ fn test_is_whitespace() {
 	false_inputs := ['a', '', '\n', '\r']
 
 	for c in true_inputs {
-		assert Letter(c).is_whitespace()
+		assert Letter(c).@is(.whitespace)
 	}
 
 	for c in false_inputs {
-		assert !Letter(c).is_whitespace()
+		assert !Letter(c).@is(.whitespace)
 	}
 }
 
