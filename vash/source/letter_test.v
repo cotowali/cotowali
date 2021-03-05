@@ -25,6 +25,13 @@ fn test_is_digit() {
 	assert !Letter('０').@is(.digit)
 	assert Letter('0').@is(.digit)
 	assert Letter('9').@is(.digit)
+
+	assert !Letter('０').@is(.digit)
+	assert Letter('0').@is(.hex_digit)
+	assert Letter('a').@is(.hex_digit)
+	assert Letter('F').@is(.hex_digit)
+	assert !Letter('g').@is(.hex_digit)
+	assert !Letter('G').@is(.hex_digit)
 }
 
 fn test_rune() {

@@ -12,6 +12,7 @@ pub enum LetterClass {
 	whitespace
 	alphabet
 	digit
+	hex_digit
 }
 
 pub fn (c Letter) @is(class LetterClass) bool {
@@ -19,5 +20,6 @@ pub fn (c Letter) @is(class LetterClass) bool {
 		.whitespace { (c.len == 1 && c[0].is_space() && c[0] !in [`\n`, `\r`]) || c == '　' }
 		.alphabet { @in(c[0], `a`, `z`) || @in(c[0], `A`, `Z`) }
 		.digit { @in(c[0], `0`, `9`) }
+		.hex_digit{ c.@is(.digit) || @in(c[0], `a`, `f`) || @in(c[0], `A`, `F`) }
 	}
 }
