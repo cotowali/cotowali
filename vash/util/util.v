@@ -5,5 +5,5 @@ pub fn @in<T>(v T, low T, high T) bool {
 }
 
 pub fn in2<T>(v T, low1 T, high1 T, low2 T, high2 T) bool {
-	return (low <= v && v <= high) || (low <= v && v <= high)
+	return (low1 <= v && v <= high1) || (low2 <= v && v <= high2)
 }
