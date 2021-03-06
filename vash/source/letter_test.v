@@ -40,6 +40,12 @@ fn test_is_digit() {
 	assert !Letter('8').@is(.oct_digit)
 	assert !Letter('9').@is(.oct_digit)
 	assert !Letter('a').@is(.oct_digit)
+
+	assert !Letter('０').@is(.binary_digit)
+	assert Letter('0').@is(.binary_digit)
+	assert Letter('1').@is(.binary_digit)
+	assert !Letter('2').@is(.binary_digit)
+	assert !Letter('a').@is(.binary_digit)
 }
 
 fn test_rune() {
