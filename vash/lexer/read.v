@@ -24,11 +24,12 @@ pub fn (mut lex Lexer) read() Token {
 		return Token{.eof, '', lex.pos}
 	}
 
-	if is_ident_first_char(lex.char()) {
+	c := lex.char()
+	if is_ident_first_char(c) {
 		return lex.read_ident()
 	}
 
-	return match lex.char()[0] {
+	return match c[0] {
 		`(` { lex.new_token_with_consume(.l_par) }
 		`)` { lex.new_token_with_consume(.r_par) }
 		`\r`, `\n` { lex.read_newline() }
