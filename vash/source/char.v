@@ -2,13 +2,13 @@ module source
 
 import vash.util { @in, in2 }
 
-pub type Letter = string // utf-8 char
+pub type Char = string // utf-8 char
 
-pub fn (c Letter) rune() rune {
+pub fn (c Char) rune() rune {
 	return rune(c.utf32_code())
 }
 
-pub enum LetterClass {
+pub enum CharClass {
 	whitespace
 	alphabet
 	digit
@@ -17,7 +17,7 @@ pub enum LetterClass {
 	binary_digit
 }
 
-pub fn (c Letter) @is(class LetterClass) bool {
+pub fn (c Char) @is(class CharClass) bool {
 	return match class {
 		.whitespace { (c.len == 1 && c[0].is_space() && c[0] !in [`\n`, `\r`]) || c == '　' }
 		.alphabet { in2(c[0], `a`, `z`, `A`, `Z`) }

@@ -9,10 +9,10 @@ pub:
 	code string
 }
 
-// at returns one Letter at code[i]
-pub fn (s &Source) at(i int) Letter {
+// at returns one Char at code[i]
+pub fn (s &Source) at(i int) Char {
 	end := i + utf8.char_len(s.code[i])
-	return Letter(s.code[i..end])
+	return Char(s.code[i..end])
 }
 
 pub fn (s &Source) slice(begin int, end int) string {

@@ -1,6 +1,6 @@
 module lexer
 
-import vash.source { Letter, Source }
+import vash.source { Char, Source }
 import vash.token { Token, TokenKind }
 import vash.pos { Pos }
 
@@ -34,7 +34,7 @@ pub fn (lex &Lexer) is_eof() bool {
 }
 
 fn (mut lex Lexer) skip_whitespaces() {
-	lex.consume_for(fn (c Letter) bool {
+	lex.consume_for(fn (c Char) bool {
 		return c.@is(.whitespace)
 	})
 }
@@ -69,22 +69,22 @@ fn (mut lex Lexer) new_token_with_consume(kind TokenKind) Token {
 // --
 
 [inline]
-fn (lex &Lexer) letter() Letter {
+fn (lex &Lexer) char() Char {
 	if lex.is_eof() {
-		return Letter('')
+		return Char('')
 	}
 	return lex.source.at(lex.idx())
 }
 
 [inline]
-fn (lex &Lexer) letter_is(class source.LetterClass) bool {
-	return lex.letter().@is(class)
+fn (lex &Lexer) char_is(class source.CharClass) bool {
+	return lex.char().@is(class)
 }
 
 [inline]
-fn (lex &Lexer) next_letter() Letter {
-	idx := lex.idx() + utf8_char_len(lex.letter()[0])
-	return if idx < lex.source.code.len { lex.source.at(idx) } else { Letter('') }
+fn (lex &Lexer) next_char() Char {
+	idx := lex.idx() + utf8_char_len(lex.char()[0])
+	return if idx < lex.source.code.len { lex.source.at(idx) } else { Char('') }
 }
 
 [inline]
@@ -96,12 +96,12 @@ fn (lex &Lexer) text() string {
 
 [inline]
 fn (mut lex Lexer) consume() {
-	lex.pos.len += lex.letter().len
+	lex.pos.len += lex.char().len
 	lex.pos.last_col++
 }
 
-fn (mut lex Lexer) consume_for(cond fn (Letter) bool) {
-	for !lex.is_eof() && cond(lex.letter()) {
+fn (mut lex Lexer) consume_for(cond fn (Char) bool) {
+	for !lex.is_eof() && cond(lex.char()) {
 		lex.consume()
 	}
 }
