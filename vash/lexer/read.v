@@ -2,6 +2,7 @@ module lexer
 
 import vash.token { Token }
 import vash.pos
+import vash.source { Char }
 
 pub fn (mut lex Lexer) next() ?Token {
 	return if !lex.closed { lex.read() } else { none }
@@ -21,6 +22,10 @@ pub fn (mut lex Lexer) read() Token {
 	if lex.is_eof() {
 		lex.close()
 		return Token{.eof, '', lex.pos}
+	}
+
+	if is_ident_first_char(lex.char()) {
+		return lex.read_ident()
 	}
 
 	return match lex.char()[0] {
@@ -43,4 +48,17 @@ fn (mut lex Lexer) read_unknown() Token {
 		lex.consume()
 	}
 	return lex.new_token(.unknown)
+}
+
+fn is_ident_first_char(c Char) bool {
+	return c.@is(.alphabet) || c[0] == `_`
+}
+
+fn is_ident_char(c Char) bool {
+	return is_ident_first_char(c) || c.@is(.digit)
+}
+
+fn (mut lex Lexer) read_ident() Token {
+	lex.consume_for(is_ident_char)
+	return lex.new_token(.ident)
 }

@@ -40,14 +40,14 @@ fn k(kind TokenKind) TokenKind {
 }
 
 fn test_lexer() {
-	test(' _🐈_ a ', [
+	test(' 🐈__ a ', [
 		// Pos{i, line, col, len, last_line, last_col}
-		Token{.unknown, '_🐈_', Pos{1, 1, 2, 6, 1, 4}},
-		Token{.unknown, 'a', Pos{8, 1, 6, 1, 1, 6}},
+		Token{.unknown, '🐈__', Pos{1, 1, 2, 6, 1, 4}},
+		Token{.ident, 'a', Pos{8, 1, 6, 1, 1, 6}},
 		Token{.eof, '', Pos{10, 1, 8, 1, 1, 8}},
 	])
 
-	ktest('f ()', [.unknown, .l_par, .r_par, .eof])
+	ktest('f()', [.ident, .l_par, .r_par, .eof])
 
 	test('\n\r\n\r', [
 		t(.eol, '\n'),
