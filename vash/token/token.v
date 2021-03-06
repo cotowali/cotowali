@@ -8,6 +8,8 @@ pub enum TokenKind {
 	int_lit
 	l_par
 	r_par
+	plus
+	minus
 	eol
 	eof
 }
