@@ -29,6 +29,11 @@ fn (mut lex Lexer) close() {
 }
 
 [inline]
+fn (lex &Lexer) closed() bool {
+	return lex.closed
+}
+
+[inline]
 pub fn (lex &Lexer) is_eof() bool {
 	return !(lex.idx() < lex.source.code.len)
 }
