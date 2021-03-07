@@ -64,3 +64,10 @@ fn test_lexer() {
 		t(.eof, ''),
 	])
 }
+
+fn test_ident() {
+	texts := ['a', 'a.a', './a.a', '/usr/local/bin/', '~/.bin/cmd.py']
+	for text in texts {
+		ktest(text, [.ident, .eof])
+	}
+}
