@@ -35,10 +35,6 @@ fn t(kind TokenKind, text string) Token {
 	return Token{kind, text, pos.new_none()}
 }
 
-fn k(kind TokenKind) TokenKind {
-	return kind
-}
-
 fn test_lexer() {
 	test(' 🐈__ a ', [
 		// Pos{i, line, col, len, last_line, last_col}

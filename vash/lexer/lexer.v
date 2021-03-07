@@ -41,6 +41,10 @@ fn (mut lex Lexer) skip_whitespaces() {
 
 // --
 
+fn k (kind TokenKind) TokenKind {
+	return kind
+}
+
 fn (lex &Lexer) pos_for_new_token() Pos {
 	last_col := lex.pos.last_col - 1
 	last_line := lex.pos.last_line + (if last_col == 0 { -1 } else { 0 })

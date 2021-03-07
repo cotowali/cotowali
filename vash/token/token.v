@@ -5,6 +5,7 @@ import vash.pos { Pos }
 pub enum TokenKind {
 	unknown
 	ident
+	key_let
 	int_lit
 	l_par
 	r_par

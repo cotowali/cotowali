@@ -26,7 +26,7 @@ pub fn (mut lex Lexer) read() Token {
 
 	c := lex.char()
 	if is_ident_first_char(c) {
-		return lex.read_ident()
+		return lex.read_ident_or_keyword()
 	} else if is_digit(c) {
 		return lex.read_number()
 	}
@@ -67,9 +67,19 @@ fn is_digit(c Char) bool {
 	return c.@is(.digit)
 }
 
-fn (mut lex Lexer) read_ident() Token {
+fn (mut lex Lexer) read_ident_or_keyword() Token {
 	lex.consume_for(is_ident_char)
-	return lex.new_token(.ident)
+	text := lex.text()
+	pos := lex.pos_for_new_token()
+	kind := match text {
+		'let' { k(.key_let) }
+		else { k(.ident) }
+	}
+	return Token{
+		pos: pos
+		text: text
+		kind: kind
+	}
 }
 
 fn (mut lex Lexer) read_number() Token {
