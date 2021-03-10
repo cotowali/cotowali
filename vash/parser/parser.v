@@ -3,6 +3,7 @@ module parser
 import vash.source { Source }
 import vash.lexer { Lexer }
 import vash.token { Token }
+import vash.util { abs }
 import vash.ast
 
 pub struct Parser {
@@ -13,6 +14,9 @@ mut:
 }
 
 pub fn (p &Parser) token(i int) Token {
+	if abs(i) >= p.buf.len {
+		panic('cannot take token($i) (p.buf.len = $p.buf.len)')
+	}
 	return p.buf[(p.idx_in_buf + i) % p.buf.len]
 }
 
