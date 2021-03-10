@@ -4,4 +4,3 @@ tasks:
   build: v cmd/vash
   test: v test .
   fmt: v fmt -w .
-  fmt.commit: v fmt -w . && v test . && git add . && git commit -m 'v fmt'
