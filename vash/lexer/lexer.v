@@ -46,7 +46,7 @@ fn (mut lex Lexer) skip_whitespaces() {
 
 // --
 
-fn k (kind TokenKind) TokenKind {
+fn k(kind TokenKind) TokenKind {
 	return kind
 }
 
@@ -86,7 +86,7 @@ fn (lex &Lexer) char() Char {
 }
 
 [inline]
-fn (lex &Lexer) char_is(class source.CharClass) bool {
+fn (lex &Lexer) char_is(class CharClass) bool {
 	return lex.char().@is(class)
 }
 

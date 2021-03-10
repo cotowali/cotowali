@@ -60,7 +60,7 @@ fn is_ident_first_char(c Char) bool {
 }
 
 fn is_ident_char(c Char) bool {
-	return is_ident_first_char(c) || is_digit(c) || c[0] in [`-`]
+	return is_ident_first_char(c) || is_digit(c) || c[0] == `-`
 }
 
 fn is_digit(c Char) bool {
