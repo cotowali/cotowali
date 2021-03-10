@@ -7,6 +7,7 @@ pub enum TokenKind {
 	ident
 	key_let
 	key_if
+	key_for
 	int_lit
 	bool_lit
 	l_paren
@@ -54,6 +55,7 @@ fn (k TokenKind) is_keyword() bool {
 	return k in [
 		.key_let,
 		.key_if,
+		.key_for,
 	]
 }
 
