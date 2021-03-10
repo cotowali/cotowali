@@ -7,6 +7,7 @@ pub enum TokenKind {
 	ident
 	key_let
 	int_lit
+	bool_lit
 	l_paren
 	r_paren
 	l_brace
@@ -41,6 +42,7 @@ fn (k TokenKind) is_op() bool {
 pub fn (k TokenKind) @is(class TokenKindClass) bool {
 	return match class {
 		.op { k.is_op() }
+		.lit { k in [.int_lit] }
 	}
 }
 
