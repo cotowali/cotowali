@@ -7,8 +7,8 @@ import vash.ast
 
 pub struct Parser {
 mut:
-	lexer Lexer
-	buf []Token
+	lexer     Lexer
+	buf       []token.Token
 	token_idx int
 }
 
@@ -32,9 +32,9 @@ pub fn (mut p Parser) read() Token {
 pub fn new(lexer Lexer) Parser {
 	mut p := Parser{
 		lexer: lexer
-		buf: []Token{len: 3}  // LL(3)
+		buf: []Token{len: 3} // LL(3)
 	}
-	for _ in 0..p.buf.len {
+	for _ in 0 .. p.buf.len {
 		p.read()
 	}
 	p.token_idx = 0
