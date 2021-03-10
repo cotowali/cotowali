@@ -11,3 +11,8 @@ fn test_min() {
 	assert min(1.0, 0.0) == 0.0
 	assert min('a', 'b') == 'a'
 }
+
+fn test_abs() {
+	assert abs(-1) == 1
+	assert abs(1.1) == 1.1
+}
