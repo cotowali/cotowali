@@ -12,14 +12,14 @@ mut:
 	idx_in_buf int
 }
 
-pub fn (p &Parser) peek(i int) Token {
+pub fn (p &Parser) token(i int) Token {
 	return p.buf[(p.idx_in_buf + i) % p.buf.len]
 }
 
 pub fn (mut p Parser) read() Token {
 	p.buf[p.idx_in_buf] = p.lexer.next() or { p.buf[p.idx_in_buf] }
 	p.idx_in_buf++
-	return p.peek(0)
+	return p.token(0)
 }
 
 [inline]
