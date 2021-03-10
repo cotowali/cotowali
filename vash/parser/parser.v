@@ -24,9 +24,14 @@ pub fn (mut p Parser) read() Token {
 
 [inline]
 pub fn new(lexer Lexer) Parser {
-	return Parser{
+	mut p := Parser{
 		lexer: lexer
+		buf: []Token{len: 3}  // LL(3)
 	}
+	for i in 0..p.buf.len {
+		p.buf[i] = p.lexer.next() or { p.buf[i - 1] } // at least p.lexer.next() returns 1 item, .eof. so (i - 1) >= 0
+	}
+	return p
 }
 
 pub fn (p &Parser) source() Source {
