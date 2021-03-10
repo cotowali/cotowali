@@ -27,9 +27,20 @@ pub enum TokenKindClass {
 }
 
 [inline]
+fn (k TokenKind) is_op() bool {
+	return k in [
+		.op_plus,
+		.op_minus,
+		.op_div,
+		.op_mul,
+		.op_mod,
+	]
+}
+
+[inline]
 pub fn (k TokenKind) @is(class TokenKindClass) bool {
 	return match class {
-		.op { k in [.op_plus, .op_minus, .op_div, .op_mul, .op_mod] }
+		.op { k.is_op() }
 	}
 }
 
