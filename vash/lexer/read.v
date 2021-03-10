@@ -78,6 +78,7 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 	pos := lex.pos_for_new_token()
 	kind := match text {
 		'let' { k(.key_let) }
+		'if' { k(.key_if) }
 		else { k(.ident) }
 	}
 	return Token{
