@@ -22,3 +22,8 @@ fn test_eq() {
 		text: 'x'
 	}
 }
+
+fn test_is() {
+	assert TokenKind.op_plus.@is(.op)
+	assert !TokenKind.ident.@is(.op)
+}

@@ -15,6 +15,18 @@ pub enum TokenKind {
 	eof
 }
 
+
+pub enum TokenKindClass {
+	op
+}
+
+[inline]
+fn (k TokenKind) @is(class TokenKindClass) bool {
+	return match class {
+		.op { k in [.op_plus, .op_minus] }
+	}
+}
+
 pub struct Token {
 pub:
 	kind TokenKind
