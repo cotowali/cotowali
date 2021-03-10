@@ -4,7 +4,7 @@ import vash.pos { Pos }
 
 pub struct File {
 pub:
-	path string
+	path  string
 	stmts []Stmt
 }
 
@@ -45,6 +45,6 @@ pub:
 
 pub struct IntLiteral {
 pub:
-	pos   Pos
-	value int
+	pos Pos
+	tok Token
 }
