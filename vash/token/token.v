@@ -26,6 +26,7 @@ pub enum TokenKind {
 
 pub enum TokenKindClass {
 	op
+	literal
 }
 
 [inline]
@@ -40,10 +41,18 @@ fn (k TokenKind) is_op() bool {
 }
 
 [inline]
+fn (k TokenKind) is_literal() bool {
+	return k in [
+		.int_lit,
+		.bool_lit,
+	]
+}
+
+[inline]
 pub fn (k TokenKind) @is(class TokenKindClass) bool {
 	return match class {
 		.op { k.is_op() }
-		.lit { k in [.int_lit] }
+		.literal { k.is_literal() }
 	}
 }
 

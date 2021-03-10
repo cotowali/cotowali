@@ -26,4 +26,6 @@ fn test_eq() {
 fn test_is() {
 	assert TokenKind.op_plus.@is(.op)
 	assert !TokenKind.ident.@is(.op)
+	assert TokenKind.bool_lit.@is(.literal)
+	assert !TokenKind.ident.@is(.literal)
 }
