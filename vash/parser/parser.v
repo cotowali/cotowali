@@ -10,19 +10,19 @@ pub struct Parser {
 mut:
 	lexer Lexer
 	buf []Token
-	idx_in_buf int
+	token_idx int
 }
 
 pub fn (p &Parser) token(i int) Token {
 	if abs(i) >= p.buf.len {
 		panic('cannot take token($i) (p.buf.len = $p.buf.len)')
 	}
-	return p.buf[(p.idx_in_buf + i) % p.buf.len]
+	return p.buf[(p.token_idx + i) % p.buf.len]
 }
 
 pub fn (mut p Parser) read() Token {
-	p.buf[p.idx_in_buf] = p.lexer.next() or { p.buf[p.idx_in_buf] }
-	p.idx_in_buf++
+	p.buf[p.token_idx] = p.lexer.next() or { p.buf[p.token_idx] }
+	p.token_idx++
 	return p.token(0)
 }
 
