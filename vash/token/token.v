@@ -17,7 +17,6 @@ pub enum TokenKind {
 	eof
 }
 
-
 pub enum TokenKindClass {
 	op
 }
