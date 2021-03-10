@@ -15,6 +15,7 @@ pub enum TokenKind {
 	r_bracket
 	op_plus
 	op_minus
+	op_div
 	eol
 	eof
 }
@@ -26,7 +27,7 @@ pub enum TokenKindClass {
 [inline]
 pub fn (k TokenKind) @is(class TokenKindClass) bool {
 	return match class {
-		.op { k in [.op_plus, .op_minus] }
+		.op { k in [.op_plus, .op_minus, .op_div] }
 	}
 }
 
