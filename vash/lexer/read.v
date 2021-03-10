@@ -34,6 +34,8 @@ pub fn (mut lex Lexer) read() Token {
 	return match c[0] {
 		`(` { lex.new_token_with_consume(.l_paren) }
 		`)` { lex.new_token_with_consume(.r_paren) }
+		`{` { lex.new_token_with_consume(.l_brace) }
+		`}` { lex.new_token_with_consume(.r_brace) }
 		`+` { lex.new_token_with_consume(.op_plus) }
 		`-` { lex.new_token_with_consume(.op_minus) }
 		`\r`, `\n` { lex.read_newline() }
