@@ -9,6 +9,8 @@ pub enum TokenKind {
 	int_lit
 	l_paren
 	r_paren
+	l_brace
+	r_brace
 	op_plus
 	op_minus
 	eol
