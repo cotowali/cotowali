@@ -80,6 +80,7 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 		'let' { k(.key_let) }
 		'if' { k(.key_if) }
 		'for' { k(.key_for) }
+		'in' { k(.key_in) }
 		'true', 'false' { k(.bool_lit) }
 		else { k(.ident) }
 	}
