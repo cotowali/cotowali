@@ -21,7 +21,7 @@ pub enum TokenKindClass {
 }
 
 [inline]
-fn (k TokenKind) @is(class TokenKindClass) bool {
+pub fn (k TokenKind) @is(class TokenKindClass) bool {
 	return match class {
 		.op { k in [.op_plus, .op_minus] }
 	}
