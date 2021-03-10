@@ -53,7 +53,7 @@ fn test_lexer() {
 		t(.eof, ''),
 	])
 
-	test('{(0 + 1 - 2)}', [
+	test('{(0 + 1 - 2 * 3)}', [
 		t(.l_brace, '{'),
 		t(.l_paren, '('),
 		t(.int_lit, '0'),
@@ -61,6 +61,8 @@ fn test_lexer() {
 		t(.int_lit, '1'),
 		t(.op_minus, '-'),
 		t(.int_lit, '2'),
+		t(.op_mul, '*'),
+		t(.int_lit, '3'),
 		t(.r_paren, ')'),
 		t(.r_brace, '}'),
 		t(.eof, ''),

@@ -40,6 +40,7 @@ pub fn (mut lex Lexer) read() Token {
 		`]` { lex.new_token_with_consume(.r_bracket) }
 		`+` { lex.new_token_with_consume(.op_plus) }
 		`-` { lex.new_token_with_consume(.op_minus) }
+		`*` { lex.new_token_with_consume(.op_mul) }
 		`\r`, `\n` { lex.read_newline() }
 		else { lex.read_unknown() }
 	}
