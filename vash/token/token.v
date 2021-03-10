@@ -6,6 +6,7 @@ pub enum TokenKind {
 	unknown
 	ident
 	key_let
+	key_if
 	int_lit
 	bool_lit
 	l_paren
