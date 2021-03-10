@@ -28,4 +28,6 @@ fn test_is() {
 	assert !TokenKind.ident.@is(.op)
 	assert TokenKind.bool_lit.@is(.literal)
 	assert !TokenKind.ident.@is(.literal)
+	assert TokenKind.key_if.@is(.keyword)
+	assert !TokenKind.ident.@is(.keyword)
 }

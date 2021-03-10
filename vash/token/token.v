@@ -27,6 +27,7 @@ pub enum TokenKind {
 pub enum TokenKindClass {
 	op
 	literal
+	keyword
 }
 
 [inline]
@@ -49,10 +50,19 @@ fn (k TokenKind) is_literal() bool {
 }
 
 [inline]
+fn (k TokenKind) is_keyword() bool {
+	return k in [
+		.key_let,
+		.key_if,
+	]
+}
+
+[inline]
 pub fn (k TokenKind) @is(class TokenKindClass) bool {
 	return match class {
 		.op { k.is_op() }
 		.literal { k.is_literal() }
+		.keyword { k.is_keyword() }
 	}
 }
 
