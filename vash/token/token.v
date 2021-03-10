@@ -7,8 +7,8 @@ pub enum TokenKind {
 	ident
 	key_let
 	int_lit
-	l_par
-	r_par
+	l_paren
+	r_paren
 	op_plus
 	op_minus
 	eol

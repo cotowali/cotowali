@@ -43,7 +43,7 @@ fn test_lexer() {
 		Token{.eof, '', Pos{10, 1, 8, 1, 1, 8}},
 	])
 
-	ktest('f()', [.ident, .l_par, .r_par, .eof])
+	ktest('f()', [.ident, .l_paren, .r_paren, .eof])
 
 	test('\n\r\n\r', [
 		t(.eol, '\n'),
@@ -54,13 +54,13 @@ fn test_lexer() {
 	])
 
 	test('(0 + 1 - 2)', [
-		t(.l_par, '('),
+		t(.l_paren, '('),
 		t(.int_lit, '0'),
 		t(.op_plus, '+'),
 		t(.int_lit, '1'),
 		t(.op_minus, '-'),
 		t(.int_lit, '2'),
-		t(.r_par, ')'),
+		t(.r_paren, ')'),
 		t(.eof, ''),
 	])
 }
