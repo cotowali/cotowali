@@ -22,10 +22,9 @@ pub fn (p &Parser) token(i int) Token {
 	return p.buf[(p.token_idx + i) % p.buf.len]
 }
 
-pub fn (mut p Parser) read() Token {
+pub fn (mut p Parser) consume() {
 	p.buf[p.token_idx % p.buf.len] = p.lexer.read()
 	p.token_idx++
-	return p.token(0)
 }
 
 [inline]
@@ -35,7 +34,7 @@ pub fn new(lexer Lexer) Parser {
 		buf: []Token{len: 3} // LL(3)
 	}
 	for _ in 0 .. p.buf.len {
-		p.read()
+		p.consume()
 	}
 	p.token_idx = 0
 	return p
