@@ -1,6 +1,7 @@
 module ast
 
 import vash.pos { Pos }
+import vash.token { Token }
 
 pub struct File {
 pub:
@@ -34,7 +35,7 @@ pub:
 	pos Pos
 }
 
-type Expr = CallExpr | IntLiteral
+pub type Expr = CallExpr | IntLiteral | ErrorNode
 
 pub struct CallExpr {
 pub:
@@ -47,4 +48,10 @@ pub struct IntLiteral {
 pub:
 	pos Pos
 	tok Token
+}
+
+pub struct ErrorNode {
+pub:
+	pos Pos
+	message string
 }
