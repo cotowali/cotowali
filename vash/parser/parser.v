@@ -2,7 +2,7 @@ module parser
 
 import vash.source { Source }
 import vash.lexer { Lexer }
-import vash.token { Token }
+import vash.token { Token, TokenKind }
 import vash.ast
 
 pub struct Parser {
@@ -45,7 +45,69 @@ pub fn (p &Parser) source() Source {
 }
 
 pub fn (mut p Parser) parse() ?ast.File {
+	stmts := p.stmts()
 	return ast.File{
 		path: p.source().path
+		stmts: stmts
 	}
+}
+
+pub fn parse_file(path string) ?ast.File {
+	s := source.read_file(path) ?
+	mut p := new(lexer.new(s))
+	return p.parse()
+}
+
+fn (mut p Parser) stmts() []ast.Stmt {
+	return [p.parse_stmt()]
+}
+
+fn (mut p Parser) parse_stmt() ast.Stmt {
+	return p.parse_pipeline()
+}
+
+fn (mut p Parser) parse_pipeline() ast.Pipeline {
+	return ast.Pipeline{
+		commands: p.parse_commands()
+	}
+}
+
+fn (mut p Parser) parse_commands() []ast.Command {
+	return [p.parse_command()]
+}
+
+fn (mut p Parser) parse_command() ast.Command {
+	return ast.Command{
+		expr: p.parse_expr()
+	}
+}
+
+fn (mut p Parser) parse_expr() ast.Expr {
+	return p.parse_call_expr()
+}
+
+fn (mut p Parser) parse_call_expr() ast.CallExpr {
+	return ast.CallExpr {
+		name: 'echo'
+		args: [p.parse_value()]
+	}
+}
+
+fn (mut p Parser) parse_value() ast.Expr {
+	tok := p.token(0)
+	return match tok.kind {
+		.int_lit {
+			p.consume()
+			ast.Expr(ast.IntLiteral{tok: tok})
+		}
+		else { ast.Expr(p.error('unexpected token $tok')) }
+	}
+}
+
+fn (mut p Parser) error(msg string) ast.ErrorNode {
+	node := ast.ErrorNode {
+		message: msg
+	}
+	p.consume()
+	return node
 }
