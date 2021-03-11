@@ -20,8 +20,7 @@ const (
 			return
 		}
 	}
-
-	ast = Command {
+	ast    = Command{
 		name: 'ast'
 		description: 'print ast'
 		execute: fn (cmd Command) ? {
@@ -51,7 +50,6 @@ fn print_files_tokens(paths []string) {
 	}
 	sb.writeln(']')
 	println(sb)
-
 }
 
 fn print_files_ast(paths []string) {
@@ -63,7 +61,7 @@ fn print_files_ast(paths []string) {
 			continue
 		}
 		for line in f.str().split_into_lines() {
-			sb.writeln('    ${line}')
+			sb.writeln('    $line')
 		}
 	}
 	sb.writeln(']')

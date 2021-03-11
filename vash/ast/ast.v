@@ -35,7 +35,7 @@ pub:
 	pos Pos
 }
 
-pub type Expr = CallExpr | IntLiteral | ErrorNode
+pub type Expr = CallExpr | ErrorNode | IntLiteral
 
 pub struct CallExpr {
 pub:
@@ -52,6 +52,6 @@ pub:
 
 pub struct ErrorNode {
 pub:
-	pos Pos
+	pos     Pos
 	message string
 }

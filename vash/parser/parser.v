@@ -2,7 +2,7 @@ module parser
 
 import vash.source { Source }
 import vash.lexer { Lexer }
-import vash.token { Token, TokenKind }
+import vash.token { Token }
 import vash.ast
 
 pub struct Parser {
@@ -87,7 +87,7 @@ fn (mut p Parser) parse_expr() ast.Expr {
 }
 
 fn (mut p Parser) parse_call_expr() ast.CallExpr {
-	return ast.CallExpr {
+	return ast.CallExpr{
 		name: 'echo'
 		args: [p.parse_value()]
 	}
@@ -98,14 +98,18 @@ fn (mut p Parser) parse_value() ast.Expr {
 	return match tok.kind {
 		.int_lit {
 			p.consume()
-			ast.Expr(ast.IntLiteral{tok: tok})
+			ast.Expr(ast.IntLiteral{
+				tok: tok
+			})
 		}
-		else { ast.Expr(p.error('unexpected token $tok')) }
+		else {
+			ast.Expr(p.error('unexpected token $tok'))
+		}
 	}
 }
 
 fn (mut p Parser) error(msg string) ast.ErrorNode {
-	node := ast.ErrorNode {
+	node := ast.ErrorNode{
 		message: msg
 	}
 	p.consume()
