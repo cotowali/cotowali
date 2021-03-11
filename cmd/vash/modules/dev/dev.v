@@ -11,6 +11,14 @@ const (
 			return
 		}
 	}
+	ast = Command {
+		name: 'ast'
+		description: 'print ast'
+		execute: fn (cmd Command) ? {
+			cmd.execute_help()
+			return
+		}
+	}
 )
 
 pub const (
@@ -21,6 +29,6 @@ pub const (
 			cmd.execute_help()
 			return
 		}
-		commands: [tokens]
+		commands: [tokens, ast]
 	}
 )
