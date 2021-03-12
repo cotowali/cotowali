@@ -9,7 +9,7 @@ import vash.lexer
 import vash.parser
 import vash.gen
 
-struct Compiler {
+pub struct Compiler {
 mut:
 	source Source
 }
