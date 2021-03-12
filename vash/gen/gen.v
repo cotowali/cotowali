@@ -1,7 +1,7 @@
 module gen
 
 import io
-import vash.ast { Stmt, FnDecl, Pipeline }
+import vash.ast { Pipeline, Stmt }
 
 pub struct Gen {
 pub:
@@ -32,20 +32,20 @@ fn (mut g Gen) file(f ast.File) {
 	g.stmts(f.stmts)
 }
 
-fn (mut g Gen) stmts(stmts []ast.Stmt){
+fn (mut g Gen) stmts(stmts []Stmt) {
 	for stmt in stmts {
 		g.stmt(stmt)
 	}
 }
 
-fn (mut g Gen) stmt(stmt ast.Stmt) {
+fn (mut g Gen) stmt(stmt Stmt) {
 	match stmt {
-		FnDecl { panic('not implemented') }
-		Pipeline { g.pipeline(stmt) }
+		ast.FnDecl { panic('not implemented') }
+		ast.Pipeline { g.pipeline(stmt) }
 	}
 }
 
-fn (mut g Gen) pipeline(stmt ast.Pipeline) {
+fn (mut g Gen) pipeline(stmt Pipeline) {
 	for i, command in stmt.commands {
 		if i > 0 {
 			g.write(' | ')

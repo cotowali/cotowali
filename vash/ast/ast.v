@@ -25,8 +25,8 @@ pub:
 
 pub struct Command {
 pub:
-	pos       Pos
-	expr      Expr
+	pos  Pos
+	expr Expr
 }
 
 pub type Expr = CallExpr | ErrorNode | IntLiteral
@@ -40,7 +40,7 @@ pub:
 
 pub struct IntLiteral {
 pub:
-	pos Pos
+	pos   Pos
 	token Token
 }
 
