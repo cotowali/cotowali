@@ -23,6 +23,10 @@ pub fn (mut g Gen) writeln(s string) {
 	g.write(s + '\n')
 }
 
-pub fn (mut g Gen) gen(f &ast.File) {
+pub fn (mut g Gen) gen(f ast.File) {
+	g.file(f)
+}
+
+fn (mut g Gen) file(f ast.File) {
 	g.writeln('# file: $f.path')
 }
