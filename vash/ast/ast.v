@@ -9,7 +9,7 @@ pub:
 	stmts []Stmt
 }
 
-type Stmt = FnDecl | Pipeline
+pub type Stmt = FnDecl | Pipeline
 
 pub struct FnDecl {
 pub:
