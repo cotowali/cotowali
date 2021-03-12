@@ -1,7 +1,6 @@
 module source
 
 import os
-import encoding.utf8
 
 pub struct Source {
 pub:
@@ -11,7 +10,7 @@ pub:
 
 // at returns one Char at code[i]
 pub fn (s &Source) at(i int) Char {
-	end := i + utf8.char_len(s.code[i])
+	end := i + utf8_char_len(s.code[i])
 	return Char(s.code[i..end])
 }
 

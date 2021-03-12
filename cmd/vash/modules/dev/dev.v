@@ -5,7 +5,6 @@ import strings
 import vash.parser
 import vash.lexer
 import vash.source
-import vash.ast
 
 const (
 	tokens = Command{
