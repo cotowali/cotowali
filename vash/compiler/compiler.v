@@ -65,3 +65,9 @@ pub fn (c &Compiler) compile_to_temp_file() ?string {
 	return temp_path
 }
 
+pub fn (c &Compiler) run() ?int {
+	temp_file := c.compile_to_temp_file() ?
+	defer { os.rm(temp_file) or { panic(err) } }
+	code := os.system('sh "$temp_file"')
+	return code
+}
