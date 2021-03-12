@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v2
         with: { path: vash }
       - run: ./v fmt -verify vash
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
