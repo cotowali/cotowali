@@ -27,12 +27,6 @@ pub struct Command {
 pub:
 	pos       Pos
 	expr      Expr
-	redirects []Redirect
-}
-
-pub struct Redirect {
-pub:
-	pos Pos
 }
 
 pub type Expr = CallExpr | ErrorNode | IntLiteral
