@@ -26,3 +26,4 @@ jobs:
       - uses: actions/checkout@v2
         with: { path: vash }
       - run: ./v test vash
+      - run: ./v run vash/cmd/vash vash/examples/hello.vash
