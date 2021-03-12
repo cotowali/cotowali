@@ -6,7 +6,9 @@ import vash.token { Token }
 pub struct File {
 pub:
 	path  string
+pub mut:
 	stmts []Stmt
+	errors []ErrorNode
 }
 
 pub type Stmt = FnDecl | Pipeline

@@ -10,6 +10,7 @@ mut:
 	lexer     Lexer
 	buf       []token.Token
 	token_idx int
+	file			ast.File
 }
 
 pub fn (p &Parser) token(i int) Token {
@@ -44,12 +45,12 @@ pub fn (p &Parser) source() Source {
 	return p.lexer.source
 }
 
-pub fn (mut p Parser) parse() ?ast.File {
-	stmts := p.stmts()
-	return ast.File{
+pub fn (mut p Parser) parse() ast.File {
+	p.file = ast.File{
 		path: p.source().path
-		stmts: stmts
 	}
+	p.file.stmts = p.stmts()
+	return p.file
 }
 
 pub fn parse_file(path string) ?ast.File {
@@ -113,5 +114,6 @@ fn (mut p Parser) error(msg string) ast.ErrorNode {
 		message: msg
 	}
 	p.consume()
+	p.file.errors << node
 	return node
 }

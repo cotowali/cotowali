@@ -29,7 +29,7 @@ pub fn new_file_compiler(path string) ?Compiler {
 
 pub fn (c &Compiler) compile_to_file(path string) ? {
 	f := os.create(path) ?
-	c.compile_to(f) ?
+	c.compile_to(f)
 }
 
 struct Buf {
@@ -42,25 +42,25 @@ fn (mut buf Buf) write(data []byte) ?int {
 	return data.len
 }
 
-pub fn (c &Compiler) compile_to_stdout() ? {
+pub fn (c &Compiler) compile_to_stdout() {
 	buf := Buf{
 		out: strings.new_builder(100)
 	}
-	c.compile_to(&buf) ?
+	c.compile_to(&buf)
 	println(buf.out)
 }
 
-pub fn (c &Compiler) compile_to(w io.Writer) ? {
+pub fn (c &Compiler) compile_to(w io.Writer) {
 	mut p := parser.new(lexer.new(c.source))
-	parsed_file := p.parse() ?
+	parsed_file := p.parse()
 	mut g := gen.new(w)
 	g.gen(parsed_file)
 }
 
-pub fn (c &Compiler) compile_to_temp_file() ?string {
+pub fn (c &Compiler) compile_to_temp_file() string {
 	temp_path := os.join_path(os.temp_dir(), '${os.file_name(c.source.path)}_${ulid()}.sh')
 	mut f := os.create(temp_path) or { panic(err) }
-	c.compile_to(f) ?
+	c.compile_to(f)
 	defer {
 		f.close()
 	}
@@ -68,7 +68,7 @@ pub fn (c &Compiler) compile_to_temp_file() ?string {
 }
 
 pub fn (c &Compiler) run() ?int {
-	temp_file := c.compile_to_temp_file() ?
+	temp_file := c.compile_to_temp_file()
 	defer {
 		os.rm(temp_file) or { panic(err) }
 	}

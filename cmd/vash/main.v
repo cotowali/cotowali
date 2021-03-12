@@ -26,7 +26,7 @@ fn execute_compile(cmd Command) ? {
 			return none
 		}
 		c := new_file_compiler(cmd.args[0]) ?
-		c.compile_to_stdout() ?
+		c.compile_to_stdout()
 	}
 }
 
