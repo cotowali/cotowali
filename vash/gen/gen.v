@@ -15,14 +15,14 @@ pub fn new(out io.Writer) Gen {
 	}
 }
 
-pub fn (mut g Gen) write(s string) ? {
-	g.out.write(s.bytes()) ?
+pub fn (mut g Gen) write(s string) {
+	g.out.write(s.bytes()) or { panic(err) }
 }
 
-pub fn (mut g Gen) writeln(s string) ? {
-	g.write(s + '\n') ?
+pub fn (mut g Gen) writeln(s string) {
+	g.write(s + '\n')
 }
 
-pub fn (mut g Gen) gen(f &ast.File) ? {
-	g.writeln('# file: $f.path') ?
+pub fn (mut g Gen) gen(f &ast.File) {
+	g.writeln('# file: $f.path')
 }
