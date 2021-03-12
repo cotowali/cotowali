@@ -41,7 +41,7 @@ pub:
 pub struct IntLiteral {
 pub:
 	pos Pos
-	tok Token
+	token Token
 }
 
 pub struct ErrorNode {
