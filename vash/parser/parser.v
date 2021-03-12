@@ -99,7 +99,7 @@ fn (mut p Parser) parse_value() ast.Expr {
 		.int_lit {
 			p.consume()
 			ast.Expr(ast.IntLiteral{
-				tok: tok
+				token: tok
 			})
 		}
 		else {
