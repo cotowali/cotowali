@@ -53,5 +53,5 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	mut p := parser.new(lexer.new(c.source))
 	parsed_file := p.parse() ?
 	mut g := gen.new(w)
-	g.gen(parsed_file) ?
+	g.gen(parsed_file)
 }
