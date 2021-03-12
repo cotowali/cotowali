@@ -1,6 +1,6 @@
-default: run
+default: cmd_run
 tasks:
-  run: v run cmd/vash
+  cmd_run: v run cmd/vash
   build: v cmd/vash
   test: v test .
   fmt: v fmt -w .
