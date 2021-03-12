@@ -4,3 +4,5 @@ tasks:
   build: v cmd/vash
   test: v test .
   fmt: v fmt -w .
+  ast: z run dev ast
+  tokens: z run dev tokens
