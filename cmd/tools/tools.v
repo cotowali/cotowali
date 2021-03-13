@@ -1,4 +1,4 @@
-module dev
+module tools
 
 import cli { Command }
 import strings
@@ -69,8 +69,8 @@ fn print_files_ast(paths []string) {
 
 pub const (
 	command = Command{
-		name: 'dev'
-		description: 'development tools'
+		name: 'tools'
+		description: 'tools'
 		execute: fn (cmd Command) ? {
 			cmd.execute_help()
 			return

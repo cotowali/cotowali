@@ -4,7 +4,7 @@ import os
 import cli { Command }
 import v.vmod
 import vash.compiler { new_file_compiler }
-import cmd.dev
+import cmd.tools
 
 fn execute_compile(cmd Command) ? {
 	if cmd.args.len == 0 {
@@ -39,7 +39,7 @@ fn main() {
 		sort_flags: false
 		sort_commands: false
 		execute: execute_compile
-		commands: [dev.command]
+		commands: [tools.command]
 	}
 	app.setup()
 	app.parse(os.args)
