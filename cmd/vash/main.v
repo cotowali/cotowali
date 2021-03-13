@@ -4,7 +4,7 @@ import os
 import cli { Command }
 import v.vmod
 import vash.compiler { new_file_compiler }
-import dev
+import cmd.dev
 
 fn execute_compile(cmd Command) ? {
 	if cmd.args.len == 0 {
