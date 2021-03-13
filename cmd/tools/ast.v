@@ -3,8 +3,6 @@ module tools
 import cli { Command }
 import strings
 import vash.parser
-import vash.lexer
-import vash.source
 
 const (
 	ast_command = Command{
