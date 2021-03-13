@@ -5,9 +5,9 @@ import vash.token { Token }
 
 pub struct File {
 pub:
-	path  string
+	path string
 pub mut:
-	stmts []Stmt
+	stmts  []Stmt
 	errors []ErrorNode
 }
 

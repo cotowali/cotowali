@@ -7,7 +7,7 @@ import vash.lexer
 import vash.source
 
 const (
-	ast_command    = Command{
+	ast_command = Command{
 		name: 'ast'
 		description: 'print ast'
 		execute: fn (cmd Command) ? {

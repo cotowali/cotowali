@@ -10,7 +10,7 @@ mut:
 	lexer     Lexer
 	buf       []token.Token
 	token_idx int
-	file			ast.File
+	file      ast.File
 }
 
 pub fn (p &Parser) token(i int) Token {
