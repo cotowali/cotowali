@@ -12,18 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with: { repository: vlang/v }
-      - run: make
+        with: { repository: vlang/v, path: v }
+      - run: cd v && make && sudo ./v symlink
       - uses: actions/checkout@v2
-        with: { path: vash }
-      - run: ./v fmt -verify vash
+      - run: v fmt -verify vash
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with: { repository: vlang/v }
-      - run: make
+        with: { repository: vlang/v, path: v }
+      - run: cd v && make && sudo ./v symlink
       - uses: actions/checkout@v2
-        with: { path: vash }
-      - run: ./v test vash
-      - run: ./v run vash/cmd/vash vash/examples/hello.vash
+      - run: v test
+      - run: v run cmd/vash examples/hello.vash
