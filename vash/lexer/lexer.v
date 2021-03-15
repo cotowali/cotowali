@@ -38,12 +38,6 @@ pub fn (lex &Lexer) is_eof() bool {
 	return !(lex.idx() < lex.source.code.len)
 }
 
-fn (mut lex Lexer) skip_whitespaces() {
-	lex.consume_for(fn (c Char) bool {
-		return c.@is(.whitespace)
-	})
-}
-
 // --
 
 fn k(kind TokenKind) TokenKind {

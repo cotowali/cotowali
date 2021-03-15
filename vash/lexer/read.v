@@ -75,6 +75,14 @@ fn is_digit(c Char) bool {
 	return c.@is(.digit)
 }
 
+fn is_whitespace(c Char) bool {
+	return c.@is(.whitespace)
+}
+
+fn (mut lex Lexer) skip_whitespaces() {
+	lex.consume_for(is_whitespace)
+}
+
 fn (mut lex Lexer) read_ident_or_keyword() Token {
 	lex.consume_for(is_ident_char)
 	text := lex.text()
