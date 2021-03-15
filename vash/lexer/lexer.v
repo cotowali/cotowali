@@ -130,3 +130,9 @@ fn (mut lex Lexer) consume_for(cond CharCond) {
 		lex.consume()
 	}
 }
+
+fn (mut lex Lexer) consume_not_for(cond CharCond) {
+	for !lex.is_eof() && !cond(lex.char()) {
+		lex.consume()
+	}
+}
