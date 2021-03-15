@@ -1,5 +1,10 @@
 module source
 
+
+fn test_rune() {
+	assert Char('あ').rune() == `あ`
+}
+
 fn test_is_whitespace() {
 	true_inputs := [' ', '　']
 	false_inputs := ['a', '', '\n', '\r']
@@ -46,8 +51,4 @@ fn test_is_digit() {
 	assert Char('1').@is(.binary_digit)
 	assert !Char('2').@is(.binary_digit)
 	assert !Char('a').@is(.binary_digit)
-}
-
-fn test_rune() {
-	assert Char('あ').rune() == `あ`
 }
