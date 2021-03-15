@@ -12,7 +12,7 @@ pub fn (mut lex Lexer) next() ?Token {
 
 fn (mut lex Lexer) prepare_to_read() {
 	lex.skip_whitespaces()
-	lex.reset_pos()
+	lex.start_new_pos()
 }
 
 pub fn (mut lex Lexer) read() Token {
