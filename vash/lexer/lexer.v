@@ -118,6 +118,11 @@ fn (mut lex Lexer) consume_with_assert(cond CharCond) {
 	lex.consume()
 }
 
+fn (mut lex Lexer) skip_with_assert(cond CharCond) {
+	@assert(cond(lex.char()), '', file: @FILE, name: @FN line: @LINE)
+	lex.skip()
+}
+
 type CharCond = fn (Char) bool
 
 fn (mut lex Lexer) consume_for(cond CharCond) {
