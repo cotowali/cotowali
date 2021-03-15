@@ -112,6 +112,15 @@ fn (mut lex Lexer) consume() {
 	lex.pos.last_col++
 }
 
+fn (mut lex Lexer) consume_with_assert(cond CharCond) {
+	$if !prod {
+		if !cond(lex.char()) {
+			dump(lex)
+			panic('lexer bug: check failed')
+		}
+	}
+	lex.consume()
+}
 
 type CharCond = fn (Char) bool
 
