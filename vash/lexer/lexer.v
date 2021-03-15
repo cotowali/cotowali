@@ -12,8 +12,8 @@ mut:
 	closed bool // for iter
 }
 
-pub fn new(source Source) Lexer {
-	return Lexer{
+pub fn new(source Source) &Lexer {
+	return &Lexer{
 		source: source
 	}
 }
