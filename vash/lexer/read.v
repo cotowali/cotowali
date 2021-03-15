@@ -57,7 +57,7 @@ fn (mut lex Lexer) read_newline() Token {
 }
 
 fn (mut lex Lexer) read_unknown() Token {
-	for !(lex.is_eof() || lex.char_is(.whitespace) || lex.char() == '\n') {
+	for !(lex.is_eof() || lex.char().@is(.whitespace) || lex.char() == '\n') {
 		lex.consume()
 	}
 	return lex.new_token(.unknown)
