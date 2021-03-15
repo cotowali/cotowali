@@ -101,6 +101,12 @@ fn (lex &Lexer) text() string {
 // --
 
 [inline]
+fn (mut lex Lexer) skip() {
+	lex.consume()
+	lex.start_new_pos()
+}
+
+[inline]
 fn (mut lex Lexer) consume() {
 	lex.pos.len += lex.char().len
 	lex.pos.last_col++
