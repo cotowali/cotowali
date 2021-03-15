@@ -5,6 +5,11 @@ fn test_rune() {
 	assert Char('あ').rune() == `あ`
 }
 
+fn test_is_not() {
+	assert Char('a').is_not(.whitespace)
+	assert !Char(' ').is_not(.whitespace)
+}
+
 fn test_is_whitespace() {
 	true_inputs := [' ', '　']
 	false_inputs := ['a', '', '\n', '\r']

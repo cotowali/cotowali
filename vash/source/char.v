@@ -17,6 +17,10 @@ pub enum CharClass {
 	binary_digit
 }
 
+pub fn (c Char) is_not(class CharClass) bool {
+	return !c.@is(class)
+}
+
 pub fn (c Char) @is(class CharClass) bool {
 	return match class {
 		.whitespace { (c.len == 1 && c[0].is_space() && c[0] !in [`\n`, `\r`]) || c == '　' }
