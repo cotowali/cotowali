@@ -38,7 +38,7 @@ pub fn (lex &Lexer) is_eof() bool {
 	return !(lex.idx() < lex.source.code.len)
 }
 
-fn (mut lexer Lexer) start_new_pos() {
+fn (mut lex Lexer) start_new_pos() {
 	lex.pos = pos.new(
 		i: lex.idx()
 		col: lex.pos.last_col
