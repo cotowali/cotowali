@@ -39,6 +39,7 @@ pub fn (mut lex Lexer) read() Token {
 		`+` { lex.new_token_with_consume(.op_plus) }
 		`-` { lex.new_token_with_consume(.op_minus) }
 		`*` { lex.new_token_with_consume(.op_mul) }
+		`@` { lex.read_at_ident() }
 		`\r`, `\n` { lex.read_newline() }
 		else { lex.read_unknown() }
 	}
@@ -100,4 +101,10 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 fn (mut lex Lexer) read_number() Token {
 	lex.consume_for(is_digit)
 	return lex.new_token(.int_lit)
+}
+
+fn (mut lex Lexer) read_at_ident() Token {
+	lex.skip_with_assert(fn (c Char) bool { return c == '@' })
+	lex.consume_not_for(is_whitespace)
+	return lex.new_token(.ident)
 }

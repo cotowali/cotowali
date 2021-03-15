@@ -70,7 +70,7 @@ fn test_lexer() {
 }
 
 fn test_ident() {
-	texts := ['a', 'a.a', './a.a', '/usr/local/bin/', '~/.bin/cmd.py']
+	texts := ['a', '@a.a', '@./a.a', '@/usr/local/bin/', '@~/.bin/cmd.py']
 	for text in texts {
 		ktest(text, [.ident, .eof])
 	}
