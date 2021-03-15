@@ -5,7 +5,10 @@ import vash.pos
 import vash.source { Char }
 
 pub fn (mut lex Lexer) next() ?Token {
-	return if !lex.closed { lex.read() } else { none }
+	if lex.closed {
+		return none
+	}
+	return lex.read()
 }
 
 fn (mut lex Lexer) prepare_to_read() {
