@@ -10,6 +10,11 @@ fn test_is_not() {
 	assert !Char(' ').is_not(.whitespace)
 }
 
+fn test_is_any() {
+	assert Char('a').is_any(.whitespace, .digit, .hex_digit)
+	assert !Char('あ').is_any(.whitespace, .digit, .hex_digit)
+}
+
 fn test_is_whitespace() {
 	true_inputs := [' ', '　']
 	false_inputs := ['a', '', '\n', '\r']

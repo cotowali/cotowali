@@ -21,6 +21,15 @@ pub fn (c Char) is_not(class CharClass) bool {
 	return !c.@is(class)
 }
 
+pub fn (c Char) is_any(classes ...CharClass) bool {
+	for class in classes {
+		if c.@is(class) {
+			return true
+		}
+	}
+	return false
+}
+
 pub fn (c Char) @is(class CharClass) bool {
 	return match class {
 		.whitespace { (c.len == 1 && c[0].is_space() && c[0] !in [`\n`, `\r`]) || c == '　' }
