@@ -1,6 +1,5 @@
 module source
 
-
 fn test_rune() {
 	assert Char('あ').rune() == `あ`
 }

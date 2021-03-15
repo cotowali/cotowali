@@ -12,7 +12,7 @@ pub struct AssertInfo {
 	file string
 	name string
 	line string
-	col string
+	col  string
 }
 
 pub fn @assert(cond bool, msg string, info AssertInfo) {
@@ -26,7 +26,7 @@ pub fn @assert(cond bool, msg string, info AssertInfo) {
 			if name.len > 0 {
 				text += ' name: $name'
 			}
-			if line.len > 0 && col.len > 0{
+			if line.len > 0 && col.len > 0 {
 				text += ' $line:$col'
 			} else if line.len > 0 {
 				text += ' line: $line'

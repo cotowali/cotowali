@@ -1,6 +1,6 @@
 module lexer
 
-import vash.source { Char, CharClass, Source }
+import vash.source { Char, Source }
 import vash.token { Token, TokenKind }
 import vash.pos { Pos }
 import vash.util { @assert }
@@ -114,12 +114,20 @@ fn (mut lex Lexer) consume() {
 }
 
 fn (mut lex Lexer) consume_with_assert(cond CharCond) {
-	@assert(cond(lex.char()), '', file: @FILE, name: @FN line: @LINE)
+	@assert(cond(lex.char()), '',
+		file: @FILE
+		name: @FN
+		line: @LINE
+	)
 	lex.consume()
 }
 
 fn (mut lex Lexer) skip_with_assert(cond CharCond) {
-	@assert(cond(lex.char()), '', file: @FILE, name: @FN line: @LINE)
+	@assert(cond(lex.char()), '',
+		file: @FILE
+		name: @FN
+		line: @LINE
+	)
 	lex.skip()
 }
 

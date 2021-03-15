@@ -61,7 +61,7 @@ fn (mut lex Lexer) read_unknown() Token {
 }
 
 fn is_ident_first_char(c Char) bool {
-	return c.@is(.alphabet) || c[0] in [`_`]
+	return c.@is(.alphabet) || c[0] == `_`
 }
 
 fn is_ident_char(c Char) bool {
@@ -105,7 +105,9 @@ fn (mut lex Lexer) read_number() Token {
 }
 
 fn (mut lex Lexer) read_at_ident() Token {
-	lex.skip_with_assert(fn (c Char) bool { return c == '@' })
+	lex.skip_with_assert(fn (c Char) bool {
+		return c == '@'
+	})
 	lex.consume_not_for(is_whitespace)
 	return lex.new_token(.ident)
 }
