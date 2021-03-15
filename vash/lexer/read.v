@@ -60,7 +60,7 @@ fn (mut lex Lexer) read_unknown() Token {
 }
 
 fn is_ident_first_char(c Char) bool {
-	return c.@is(.alphabet) || c[0] in [`_`, `.`, `/`, `~`]
+	return c.@is(.alphabet) || c[0] in [`_`]
 }
 
 fn is_ident_char(c Char) bool {
