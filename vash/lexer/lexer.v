@@ -109,7 +109,10 @@ fn (mut lex Lexer) consume() {
 	lex.pos.last_col++
 }
 
-fn (mut lex Lexer) consume_for(cond fn (Char) bool) {
+
+type CharCond = fn (Char) bool
+
+fn (mut lex Lexer) consume_for(cond CharCond) {
 	for !lex.is_eof() && cond(lex.char()) {
 		lex.consume()
 	}
