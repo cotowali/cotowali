@@ -1,7 +1,6 @@
 module lexer
 
 import vash.token { Token }
-import vash.pos
 import vash.source { Char }
 
 pub fn (mut lex Lexer) next() ?Token {
@@ -13,11 +12,7 @@ pub fn (mut lex Lexer) next() ?Token {
 
 fn (mut lex Lexer) prepare_to_read() {
 	lex.skip_whitespaces()
-	lex.pos = pos.new(
-		i: lex.idx()
-		col: lex.pos.last_col
-		line: lex.pos.last_line
-	)
+	lex.reset_pos()
 }
 
 pub fn (mut lex Lexer) read() Token {

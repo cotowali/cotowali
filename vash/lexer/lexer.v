@@ -38,6 +38,14 @@ pub fn (lex &Lexer) is_eof() bool {
 	return !(lex.idx() < lex.source.code.len)
 }
 
+pub fn (mut lexer Lexer) reset_pos() {
+	lex.pos = pos.new(
+		i: lex.idx()
+		col: lex.pos.last_col
+		line: lex.pos.last_line
+	)
+}
+
 // --
 
 fn k(kind TokenKind) TokenKind {
