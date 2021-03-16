@@ -37,7 +37,7 @@ pub fn (mut p Parser) consume() Token {
 
 fn (mut p Parser) consume_with_check(kind TokenKind) ? {
 	if p.kind(0) != kind {
-		return IError(p.error('expcet `${kind}`, but found `${p.token(0).text}`'))
+		return IError(p.error('expcet `$kind`, but found `${p.token(0).text}`'))
 	}
 	p.consume()
 }

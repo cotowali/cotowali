@@ -43,7 +43,7 @@ pub:
 
 pub struct ErrorNode {
 pub:
-	pos     Pos
+	pos Pos
 	msg string
 }
 

@@ -67,8 +67,12 @@ fn (mut g Gen) expr(expr ast.Expr) {
 			g.call_fn(expr)
 			g.write(')')
 		}
-		ast.IntLiteral { g.write(expr.token.text) }
-		ast.ErrorNode { panic('error node') }
+		ast.IntLiteral {
+			g.write(expr.token.text)
+		}
+		ast.ErrorNode {
+			panic('error node')
+		}
 	}
 }
 
