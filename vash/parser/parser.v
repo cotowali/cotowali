@@ -33,6 +33,13 @@ pub fn (mut p Parser) consume() {
 	p.token_idx++
 }
 
+fn (mut p Parser) consume_with_check(kind TokenKind) ? {
+	if p.kind(0) != kind {
+		return error('expcet `${kind}`, but found `${p.token(0).text}`')
+	}
+	p.consume()
+}
+
 [inline]
 pub fn new(lexer Lexer) Parser {
 	mut p := Parser{
