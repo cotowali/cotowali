@@ -3,7 +3,7 @@ module main
 import os
 import cli { Command }
 import v.vmod
-import vash.compiler { new_file_compiler, new_compiler }
+import vash.compiler { new_compiler, new_file_compiler }
 import cmd.tools
 
 fn execute_compile(cmd Command) ? {
