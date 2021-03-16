@@ -89,9 +89,9 @@ fn (mut p Parser) parse_pipeline() ast.Pipeline {
 }
 
 fn (mut p Parser) parse_expr() ?ast.Expr {
-	return match p.token(0).kind {
-		.ident { p.parse_call_fn() ? }
-		else { p.parse_value() }
+	match p.token(0).kind {
+		.ident { return p.parse_call_fn() }
+		else { return p.parse_value() }
 	}
 }
 
@@ -121,8 +121,8 @@ fn (mut p Parser) parse_value() ast.Expr {
 	}
 }
 
-fn (mut p Parser) error(msg string) ast.ErrorNode {
-	node := ast.ErrorNode{
+fn (mut p Parser) error(msg string) &ast.ErrorNode {
+	node := &ast.ErrorNode{
 		msg: msg
 	}
 	p.consume()
