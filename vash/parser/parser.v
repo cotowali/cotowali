@@ -2,7 +2,7 @@ module parser
 
 import vash.source { Source }
 import vash.lexer { Lexer }
-import vash.token { Token }
+import vash.token { Token, TokenKind }
 import vash.ast
 
 pub struct Parser {
@@ -21,6 +21,11 @@ pub fn (p &Parser) token(i int) Token {
 		panic('cannot take negative token($i)')
 	}
 	return p.buf[(p.token_idx + i) % p.buf.len]
+}
+
+[inline]
+pub fn (p &Parser) kind(i int) TokenKind {
+	return p.token(0).kind
 }
 
 pub fn (mut p Parser) consume() {
