@@ -46,28 +46,33 @@ fn (mut g Gen) stmt(stmt Stmt) {
 }
 
 fn (mut g Gen) pipeline(stmt Pipeline) {
-	for i, command in stmt.commands {
+	for i, expr in stmt.exprs {
 		if i > 0 {
 			g.write(' | ')
 		}
-		g.command(command)
+		if expr is ast.CallFn {
+			g.call_fn(expr)
+		} else {
+			g.write('echo ')
+			g.expr(expr)
+		}
 	}
 	g.writeln('')
 }
 
-fn (mut g Gen) command(cmd ast.Command) {
-	g.expr(cmd.expr)
-}
-
 fn (mut g Gen) expr(expr ast.Expr) {
 	match expr {
-		ast.CallExpr { g.call_expr(expr) }
+		ast.CallFn {
+			g.write('\$(')
+			g.call_fn(expr)
+			g.write(')')
+		}
 		ast.IntLiteral { g.write(expr.token.text) }
 		ast.ErrorNode { panic('error node') }
 	}
 }
 
-fn (mut g Gen) call_expr(expr ast.CallExpr) {
+fn (mut g Gen) call_fn(expr ast.CallFn) {
 	g.write(expr.name)
 	for arg in expr.args {
 		g.write(' ')

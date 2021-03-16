@@ -69,26 +69,16 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 
 fn (mut p Parser) parse_pipeline() ast.Pipeline {
 	return ast.Pipeline{
-		commands: p.parse_commands()
-	}
-}
-
-fn (mut p Parser) parse_commands() []ast.Command {
-	return [p.parse_command()]
-}
-
-fn (mut p Parser) parse_command() ast.Command {
-	return ast.Command{
-		expr: p.parse_expr()
+		exprs: [p.parse_expr()]
 	}
 }
 
 fn (mut p Parser) parse_expr() ast.Expr {
-	return p.parse_call_expr()
+	return p.parse_call_fn()
 }
 
-fn (mut p Parser) parse_call_expr() ast.CallExpr {
-	return ast.CallExpr{
+fn (mut p Parser) parse_call_fn() ast.CallFn {
+	return ast.CallFn{
 		name: 'echo'
 		args: [p.parse_value()]
 	}

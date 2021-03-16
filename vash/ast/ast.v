@@ -19,21 +19,16 @@ pub:
 	name string
 }
 
+// expr | expr | expr
 pub struct Pipeline {
 pub:
-	pos      Pos
-	commands []Command
+	pos   Pos
+	exprs []Expr
 }
 
-pub struct Command {
-pub:
-	pos  Pos
-	expr Expr
-}
+pub type Expr = CallFn | ErrorNode | IntLiteral
 
-pub type Expr = CallExpr | ErrorNode | IntLiteral
-
-pub struct CallExpr {
+pub struct CallFn {
 pub:
 	pos  Pos
 	name string
