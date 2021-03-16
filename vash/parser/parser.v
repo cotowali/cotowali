@@ -86,14 +86,26 @@ fn (mut p Parser) parse_pipeline() ast.Pipeline {
 }
 
 fn (mut p Parser) parse_expr() ast.Expr {
-	return p.parse_call_fn()
+	return match p.token(0).kind {
+		.ident { p.parse_call_fn() }
+		else { p.parse_value() }
+	}
 }
 
-fn (mut p Parser) parse_call_fn() ast.CallFn {
-	return ast.CallFn{
-		name: 'echo'
+fn (mut p Parser) parse_call_fn() ast.Expr {
+	name := p.token(0).text
+	p.consume()
+	p.consume_with_check(.l_paren) or {
+		return p.error(err.msg)
+	}
+	f := ast.CallFn{
+		name: name
 		args: [p.parse_value()]
 	}
+	p.consume_with_check(.r_paren) or {
+		return p.error(err.msg)
+	}
+	return f
 }
 
 fn (mut p Parser) parse_value() ast.Expr {
