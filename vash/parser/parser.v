@@ -28,9 +28,11 @@ pub fn (p &Parser) kind(i int) TokenKind {
 	return p.token(0).kind
 }
 
-pub fn (mut p Parser) consume() {
+pub fn (mut p Parser) consume() Token {
+	t := p.token(0)
 	p.buf[p.token_idx % p.buf.len] = p.lexer.read()
 	p.token_idx++
+	return t
 }
 
 fn (mut p Parser) consume_with_check(kind TokenKind) ? {
@@ -94,8 +96,7 @@ fn (mut p Parser) parse_expr() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_call_fn() ?ast.Expr {
-	name := p.token(0).text
-	p.consume()
+	name := p.consume().text
 	p.consume_with_check(.l_paren) ?
 	f := ast.CallFn{
 		name: name
