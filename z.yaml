@@ -5,5 +5,5 @@ tasks:
   test: v test .
   test.hello: z run examples/hello.vash
   fmt: v fmt -w .
-  ast: z run dev ast
-  tokens: z run dev tokens
+  ast: z tools ast
+  tokens: z tools tokens
