@@ -44,5 +44,9 @@ pub:
 pub struct ErrorNode {
 pub:
 	pos     Pos
-	message string
+	msg string
+}
+
+pub fn (_ &ErrorNode) code() int {
+	return 1
 }

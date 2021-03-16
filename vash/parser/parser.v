@@ -35,7 +35,7 @@ pub fn (mut p Parser) consume() {
 
 fn (mut p Parser) consume_with_check(kind TokenKind) ? {
 	if p.kind(0) != kind {
-		return error('expcet `${kind}`, but found `${p.token(0).text}`')
+		return IError(p.error('expcet `${kind}`, but found `${p.token(0).text}`'))
 	}
 	p.consume()
 }
@@ -80,31 +80,28 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 }
 
 fn (mut p Parser) parse_pipeline() ast.Pipeline {
+	expr := p.parse_expr() or { ast.Expr(error_node(err)) }
 	return ast.Pipeline{
-		exprs: [p.parse_expr()]
+		exprs: [expr]
 	}
 }
 
-fn (mut p Parser) parse_expr() ast.Expr {
+fn (mut p Parser) parse_expr() ?ast.Expr {
 	return match p.token(0).kind {
-		.ident { p.parse_call_fn() }
+		.ident { p.parse_call_fn() ? }
 		else { p.parse_value() }
 	}
 }
 
-fn (mut p Parser) parse_call_fn() ast.Expr {
+fn (mut p Parser) parse_call_fn() ?ast.Expr {
 	name := p.token(0).text
 	p.consume()
-	p.consume_with_check(.l_paren) or {
-		return p.error(err.msg)
-	}
+	p.consume_with_check(.l_paren) ?
 	f := ast.CallFn{
 		name: name
 		args: [p.parse_value()]
 	}
-	p.consume_with_check(.r_paren) or {
-		return p.error(err.msg)
-	}
+	p.consume_with_check(.r_paren) ?
 	return f
 }
 
@@ -125,9 +122,16 @@ fn (mut p Parser) parse_value() ast.Expr {
 
 fn (mut p Parser) error(msg string) ast.ErrorNode {
 	node := ast.ErrorNode{
-		message: msg
+		msg: msg
 	}
 	p.consume()
 	p.file.errors << node
 	return node
+}
+
+fn error_node(err IError) &ast.ErrorNode {
+	if err is ast.ErrorNode {
+		return err
+	}
+	panic(err)
 }
