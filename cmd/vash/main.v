@@ -3,7 +3,7 @@ module main
 import os
 import cli { Command }
 import v.vmod
-import vash.compiler { new_file_compiler }
+import vash.compiler { new_file_compiler, new_compiler }
 import cmd.tools
 
 fn execute_compile(cmd Command) ? {
@@ -14,12 +14,20 @@ fn execute_compile(cmd Command) ? {
 
 	is_run := cmd.args[0] == 'run'
 	if is_run {
-		if cmd.args.len != 2 {
-			cmd.execute_help()
-			return none
+		match cmd.args.len {
+			1 {
+				c := new_compiler(path: 'stdin', code: os.get_raw_lines_joined())
+				c.run() ?
+			}
+			2 {
+				c := new_file_compiler(cmd.args[1]) ?
+				c.run() ?
+			}
+			else {
+				cmd.execute_help()
+				return none
+			}
 		}
-		c := new_file_compiler(cmd.args[1]) ?
-		c.run() ?
 	} else {
 		if cmd.args.len != 1 {
 			cmd.execute_help()
