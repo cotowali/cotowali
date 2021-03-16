@@ -74,15 +74,19 @@ pub fn parse_file(path string) ?ast.File {
 }
 
 fn (mut p Parser) stmts() []ast.Stmt {
-	return [p.parse_stmt()]
+	stmt := p.parse_stmt() or {
+		return []
+	}
+	return [stmt]
 }
 
-fn (mut p Parser) parse_stmt() ast.Stmt {
-	return p.parse_pipeline()
+fn (mut p Parser) parse_stmt() ?ast.Stmt {
+	stmt := p.parse_pipeline() ?
+	return ast.Stmt(stmt)
 }
 
-fn (mut p Parser) parse_pipeline() ast.Pipeline {
-	expr := p.parse_expr() or { ast.Expr(error_node(err)) }
+fn (mut p Parser) parse_pipeline() ?ast.Pipeline {
+	expr := p.parse_expr() ?
 	return ast.Pipeline{
 		exprs: [expr]
 	}
@@ -100,23 +104,23 @@ fn (mut p Parser) parse_call_fn() ?ast.Expr {
 	p.consume_with_check(.l_paren) ?
 	f := ast.CallFn{
 		name: name
-		args: [p.parse_value()]
+		args: [p.parse_expr()]
 	}
 	p.consume_with_check(.r_paren) ?
 	return f
 }
 
-fn (mut p Parser) parse_value() ast.Expr {
+fn (mut p Parser) parse_value() ?ast.Expr {
 	tok := p.token(0)
-	return match tok.kind {
+	match tok.kind {
 		.int_lit {
 			p.consume()
-			ast.Expr(ast.IntLiteral{
+			return ast.IntLiteral{
 				token: tok
-			})
+			}
 		}
 		else {
-			ast.Expr(p.error('unexpected token $tok'))
+			return IError(p.error('unexpected token $tok'))
 		}
 	}
 }

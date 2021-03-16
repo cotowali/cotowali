@@ -70,9 +70,6 @@ fn (mut g Gen) expr(expr ast.Expr) {
 		ast.IntLiteral {
 			g.write(expr.token.text)
 		}
-		ast.ErrorNode {
-			panic('error node')
-		}
 	}
 }
 

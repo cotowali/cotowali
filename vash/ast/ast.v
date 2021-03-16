@@ -26,7 +26,7 @@ pub:
 	exprs []Expr
 }
 
-pub type Expr = CallFn | ErrorNode | IntLiteral
+pub type Expr = CallFn | IntLiteral
 
 pub struct CallFn {
 pub:
