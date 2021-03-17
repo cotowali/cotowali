@@ -9,6 +9,7 @@ pub enum TokenKind {
 	key_if
 	key_for
 	key_in
+	dot
 	int_lit
 	bool_lit
 	l_paren
