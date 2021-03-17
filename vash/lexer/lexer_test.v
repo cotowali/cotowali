@@ -44,7 +44,7 @@ fn test_lexer() {
 	])
 
 	ktest('f()', [.ident, .l_paren, .r_paren, .eof])
-	ktest('a.b', [.ident, .dot, .ident, .eof])
+	ktest('&a.b', [.amp, .ident, .dot, .ident, .eof])
 
 	test('\n\r\n\r', [
 		t(.eol, '\n'),
