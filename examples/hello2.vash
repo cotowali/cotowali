@@ -1,1 +1,1 @@
-echo(echo(0))
+fn f() { echo(echo(0)) }
