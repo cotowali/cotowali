@@ -5,6 +5,7 @@ import vash.pos { Pos }
 pub enum TokenKind {
 	unknown
 	ident
+	key_fn
 	key_let
 	key_if
 	key_for
@@ -64,6 +65,7 @@ fn (k TokenKind) is_literal() bool {
 [inline]
 fn (k TokenKind) is_keyword() bool {
 	return k in [
+		.key_fn,
 		.key_let,
 		.key_if,
 		.key_for,
