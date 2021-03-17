@@ -41,42 +41,58 @@ fn (mut g Gen) stmts(stmts []Stmt) {
 fn (mut g Gen) stmt(stmt Stmt) {
 	match stmt {
 		ast.FnDecl { panic('not implemented') }
-		ast.Pipeline { g.pipeline(stmt) }
+		ast.Expr { g.expr(stmt, as_command: true) }
 	}
 }
 
-fn (mut g Gen) pipeline(stmt Pipeline) {
-	for i, expr in stmt.exprs {
-		if i > 0 {
-			g.write(' | ')
-		}
-		if expr is ast.CallFn {
-			g.call_fn(expr)
-		} else {
-			g.write('echo ')
-			g.expr(expr)
-		}
-	}
-	g.writeln('')
+struct ExprOpt {
+	as_command bool
 }
 
-fn (mut g Gen) expr(expr ast.Expr) {
+fn (mut g Gen) expr(expr ast.Expr, opt ExprOpt) {
 	match expr {
-		ast.CallFn {
-			g.write('\$(')
-			g.call_fn(expr)
-			g.write(')')
-		}
+		ast.CallFn { g.call_fn(expr, opt) }
+		ast.Pipeline { g.pipeline(expr, opt) }
 		ast.IntLiteral {
+			if opt.as_command {
+				g.write('echo ')
+			}
 			g.write(expr.token.text)
 		}
 	}
 }
 
-fn (mut g Gen) call_fn(expr ast.CallFn) {
+fn (mut g Gen) pipeline(stmt Pipeline, opt ExprOpt) {
+	if !opt.as_command {
+		g.write('\$(')
+	}
+
+	for i, expr in stmt.exprs {
+		if i > 0 {
+			g.write(' | ')
+		}
+		g.expr(expr, as_command: true)
+	}
+	g.writeln('')
+
+	if !opt.as_command {
+		g.write(')')
+	}
+}
+
+
+fn (mut g Gen) call_fn(expr ast.CallFn, opt ExprOpt) {
+	if !opt.as_command {
+		g.write('\$(')
+	}
+
 	g.write(expr.name)
 	for arg in expr.args {
 		g.write(' ')
-		g.expr(arg)
+		g.expr(arg, {})
+	}
+
+	if !opt.as_command {
+		g.write(')')
 	}
 }

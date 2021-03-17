@@ -11,7 +11,7 @@ pub mut:
 	errors []ErrorNode
 }
 
-pub type Stmt = FnDecl | Pipeline
+pub type Stmt = FnDecl | Expr
 
 pub struct FnDecl {
 pub:
@@ -26,7 +26,7 @@ pub:
 	exprs []Expr
 }
 
-pub type Expr = CallFn | IntLiteral
+pub type Expr = Pipeline | CallFn | IntLiteral
 
 pub struct CallFn {
 pub:

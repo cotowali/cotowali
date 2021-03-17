@@ -81,15 +81,8 @@ fn (mut p Parser) stmts() []ast.Stmt {
 }
 
 fn (mut p Parser) parse_stmt() ?ast.Stmt {
-	stmt := p.parse_pipeline() ?
-	return ast.Stmt(stmt)
-}
-
-fn (mut p Parser) parse_pipeline() ?ast.Pipeline {
 	expr := p.parse_expr() ?
-	return ast.Pipeline{
-		exprs: [expr]
-	}
+	return ast.Stmt(expr)
 }
 
 fn (mut p Parser) parse_expr() ?ast.Expr {
