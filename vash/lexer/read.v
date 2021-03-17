@@ -29,6 +29,17 @@ pub fn (mut lex Lexer) read() Token {
 		return lex.read_number()
 	}
 
+	match c[0] {
+		`&` {
+			return if lex.next_char()[0] == `&` {
+				lex.consume()
+				lex.new_token_with_consume(.op_and)
+			} else {
+				lex.new_token_with_consume(.amp)
+			}
+		}
+		else {}
+	}
 	return match c[0] {
 		`(` { lex.new_token_with_consume(.l_paren) }
 		`)` { lex.new_token_with_consume(.r_paren) }
@@ -41,7 +52,6 @@ pub fn (mut lex Lexer) read() Token {
 		`*` { lex.new_token_with_consume(.op_mul) }
 		`/` { lex.new_token_with_consume(.op_div) }
 		`.` { lex.new_token_with_consume(.dot) }
-		`&` { lex.new_token_with_consume(.amp) }
 		`@` { lex.read_at_ident() }
 		`\r`, `\n` { lex.read_newline() }
 		else { lex.read_unknown() }
