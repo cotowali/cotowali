@@ -38,6 +38,10 @@ pub fn (mut lex Lexer) read() Token {
 			return lex.new_token_with_consume(.amp)
 		}
 		`|` {
+			if lex.next_char()[0] == `|` {
+				lex.consume()
+				return lex.new_token_with_consume(.pipe)
+			}
 			return lex.new_token_with_consume(.pipe)
 		}
 		else {}
