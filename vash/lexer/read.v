@@ -40,7 +40,7 @@ pub fn (mut lex Lexer) read() Token {
 		`|` {
 			if lex.next_char()[0] == `|` {
 				lex.consume()
-				return lex.new_token_with_consume(.pipe)
+				return lex.new_token_with_consume(.op_or)
 			}
 			return lex.new_token_with_consume(.pipe)
 		}
