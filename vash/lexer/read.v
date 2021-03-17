@@ -107,6 +107,7 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 		'if' { k(.key_if) }
 		'for' { k(.key_for) }
 		'in' { k(.key_in) }
+		'fn' { k(.key_fn) }
 		'true', 'false' { k(.bool_lit) }
 		else { k(.ident) }
 	}
