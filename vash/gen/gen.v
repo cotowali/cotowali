@@ -61,8 +61,11 @@ fn (mut g Gen) stmts(stmts []Stmt) {
 
 fn (mut g Gen) stmt(stmt Stmt) {
 	match stmt {
-		ast.FnDecl { panic('not implemented') }
-		ast.Expr { g.expr(stmt, as_command: true) }
+		ast.FnDecl { g.fn_decl(stmt) }
+		ast.Expr {
+			g.expr(stmt, as_command: true)
+			g.writeln('')
+		}
 	}
 }
 
@@ -116,4 +119,12 @@ fn (mut g Gen) call_fn(expr ast.CallFn, opt ExprOpt) {
 	if !opt.as_command {
 		g.write(')')
 	}
+}
+
+fn (mut g Gen) fn_decl(node ast.FnDecl) {
+	g.writeln('${node.name}() {')
+	g.indent++
+	g.stmts(node.stmts)
+	g.indent--
+	g.writeln('}')
 }
