@@ -11,6 +11,7 @@ pub enum TokenKind {
 	key_in
 	dot
 	pipe
+	question
 	int_lit
 	bool_lit
 	string_lit
