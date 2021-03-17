@@ -26,6 +26,7 @@ pub enum TokenKind {
 	op_mod
 	op_and
 	op_or
+	op_pipe
 	eol
 	eof
 }
