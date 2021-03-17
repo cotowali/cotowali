@@ -24,6 +24,7 @@ pub enum TokenKind {
 	op_div
 	op_mul
 	op_mod
+	op_and
 	eol
 	eof
 }
