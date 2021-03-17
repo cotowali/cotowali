@@ -102,9 +102,10 @@ fn (mut p Parser) parse_expr() ?ast.Expr {
 fn (mut p Parser) parse_call_fn() ?ast.Expr {
 	name := p.consume().text
 	p.consume_with_check(.l_paren) ?
+	exprs := [p.parse_expr() ?]
 	f := ast.CallFn{
 		name: name
-		args: [p.parse_expr()]
+		args: exprs
 	}
 	p.consume_with_check(.r_paren) ?
 	return f
