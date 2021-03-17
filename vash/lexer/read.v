@@ -31,12 +31,11 @@ pub fn (mut lex Lexer) read() Token {
 
 	match c[0] {
 		`&` {
-			return if lex.next_char()[0] == `&` {
+			if lex.next_char()[0] == `&` {
 				lex.consume()
-				lex.new_token_with_consume(.op_and)
-			} else {
-				lex.new_token_with_consume(.amp)
+				return lex.new_token_with_consume(.op_and)
 			}
+			return lex.new_token_with_consume(.amp)
 		}
 		else {}
 	}
