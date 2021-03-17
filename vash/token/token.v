@@ -12,6 +12,7 @@ pub enum TokenKind {
 	dot
 	int_lit
 	bool_lit
+	string_lit
 	l_paren
 	r_paren
 	l_brace
@@ -49,6 +50,7 @@ fn (k TokenKind) is_literal() bool {
 	return k in [
 		.int_lit,
 		.bool_lit,
+		.string_lit,
 	]
 }
 
