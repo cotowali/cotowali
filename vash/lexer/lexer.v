@@ -91,7 +91,7 @@ fn (lex &Lexer) char() Char {
 [inline]
 fn (lex &Lexer) next_char() Char {
 	idx := lex.idx() + utf8_char_len(lex.char()[0])
-	return if idx < lex.source.code.len { lex.source.at(idx) } else { Char('') }
+	return if idx < lex.source.code.len { lex.source.at(idx) } else { Char('\uFFFF') }
 }
 
 [inline]
