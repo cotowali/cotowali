@@ -44,6 +44,8 @@ fn (k TokenKind) is_op() bool {
 		.op_div,
 		.op_mul,
 		.op_mod,
+		.op_and,
+		.op_or,
 	]
 }
 
