@@ -10,6 +10,7 @@ pub enum TokenKind {
 	key_for
 	key_in
 	dot
+	pipe
 	int_lit
 	bool_lit
 	string_lit
@@ -26,7 +27,6 @@ pub enum TokenKind {
 	op_mod
 	op_and
 	op_or
-	op_pipe
 	eol
 	eof
 }
