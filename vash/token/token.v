@@ -10,6 +10,7 @@ pub enum TokenKind {
 	key_for
 	key_in
 	dot
+	amp
 	pipe
 	question
 	int_lit
