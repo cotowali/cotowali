@@ -4,6 +4,7 @@ import vash.source { Source }
 import vash.lexer { Lexer }
 import vash.token { Token, TokenKind }
 import vash.ast
+import vash.util { @assert }
 
 pub struct Parser {
 mut:
@@ -41,6 +42,16 @@ fn (mut p Parser) consume_with_check(kind TokenKind) ? {
 	}
 	p.consume()
 }
+
+fn (mut p Parser) consume_with_assert(kind TokenKind) {
+	@assert(p.kind(0) == kind, 'p.kind(0) = ${p.kind(0)}; kind = $kind',
+			file: @FILE
+			name: @FN
+			line: @LINE
+	)
+	p.consume()
+}
+
 
 [inline]
 pub fn new(lexer Lexer) Parser {
@@ -81,8 +92,37 @@ fn (mut p Parser) stmts() []ast.Stmt {
 }
 
 fn (mut p Parser) parse_stmt() ?ast.Stmt {
-	expr := p.parse_expr() ?
-	return ast.Stmt(expr)
+	return match p.kind(0) {
+		.key_fn { ast.Stmt(p.parse_fn_decl()) }
+		else {
+			expr := p.parse_expr() ?
+			ast.Stmt(expr)
+		}
+	}
+}
+
+fn (mut p Parser) parse_fn_decl() ast.FnDecl {
+	p.consume_with_assert(.key_fn)
+	name := p.consume().text
+	mut node := ast.FnDecl {
+		name: name
+		stmts: []
+	}
+	p.consume_with_check(.l_paren) or { return node }
+	// todo arg list
+	p.consume_with_check(.r_paren) or { return node }
+
+	p.consume_with_check(.l_brace) or { return node }
+
+	for {
+		if stmt := p.parse_stmt() {
+			node.stmts << stmt
+		}
+		if p.kind(0) == .r_brace {
+			return node
+		}
+	}
+	panic('unreachable code')
 }
 
 fn (mut p Parser) parse_expr() ?ast.Expr {

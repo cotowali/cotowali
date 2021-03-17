@@ -17,6 +17,8 @@ pub struct FnDecl {
 pub:
 	pos  Pos
 	name string
+pub mut:
+	stmts []Stmt
 }
 
 // expr | expr | expr
