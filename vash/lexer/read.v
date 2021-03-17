@@ -37,6 +37,9 @@ pub fn (mut lex Lexer) read() Token {
 			}
 			return lex.new_token_with_consume(.amp)
 		}
+		`|` {
+			return lex.new_token_with_consume(.pipe)
+		}
 		else {}
 	}
 	return match c[0] {
