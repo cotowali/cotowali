@@ -123,7 +123,9 @@ pub fn (mut p Parser) parse() ast.File {
 	p.file = ast.File{
 		path: p.source().path
 	}
-	p.file.stmts = p.stmts()
+	for !p.@is(.eof) {
+		p.file.stmts << p.parse_stmt()
+	}
 	return p.file
 }
 
@@ -133,21 +135,25 @@ pub fn parse_file(path string) ?ast.File {
 	return p.parse()
 }
 
-fn (mut p Parser) stmts() []ast.Stmt {
-	stmt := p.parse_stmt() or { return [] }
-	return [stmt]
-}
-
-fn (mut p Parser) parse_stmt() ?ast.Stmt {
+fn (mut p Parser) parse_stmt() ast.Stmt {
 	return match p.kind(0) {
 		.key_fn {
 			ast.Stmt(p.parse_fn_decl())
 		}
 		else {
-			expr := p.parse_expr({}) ?
-			ast.Stmt(expr)
+			stmt := p.parse_expr_stmt() or {
+				p.skip_until_eol()
+				ast.Stmt(ast.EmptyStmt{})
+			}
+			stmt  // Hack to avoid V compiler bug
 		}
 	}
+}
+
+fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
+	expr := p.parse_expr({}) ?
+	p.consume_with_check(.eol, .eof)?
+	return expr
 }
 
 fn (mut p Parser) parse_fn_decl() ast.FnDecl {
