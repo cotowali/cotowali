@@ -57,6 +57,14 @@ fn (mut p Parser) consume_if(cond TokenCond) bool {
 	return false
 }
 
+fn (mut p Parser) consume_if_kind_is(kind TokenKind) bool {
+	if p.@is(kind) {
+		p.consume()
+		return true
+	}
+	return false
+}
+
 fn (mut p Parser) consume_with_check(kinds ...TokenKind) ? {
 	if p.kind(0) !in kinds {
 		found := p.token(0).text
