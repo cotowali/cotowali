@@ -72,6 +72,10 @@ fn (mut p Parser) skip_until_eol() {
 	}
 }
 
+fn (mut p Parser) skip_eol() {
+	p.consume_for(fn (t Token) bool { return t.kind == .eol })
+}
+
 fn (mut p Parser) consume_with_check(kinds ...TokenKind) ? {
 	if p.kind(0) !in kinds {
 		found := p.token(0).text
