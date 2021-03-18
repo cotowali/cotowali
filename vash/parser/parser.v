@@ -209,12 +209,15 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 fn (mut p Parser) parse_call_fn() ?ast.Expr {
 	name := p.consume().text
 	p.consume_with_check(.l_paren) ?
-	exprs := [p.parse_expr({}) ?]
-	f := ast.CallFn{
-		name: name
-		args: exprs
+	mut args := []ast.Expr{}
+	if !p.@is(.r_paren) {
+		args << p.parse_expr({}) ?
 	}
 	p.consume_with_check(.r_paren) ?
+	f := ast.CallFn{
+		name: name
+		args: args
+	}
 	return f
 }
 
