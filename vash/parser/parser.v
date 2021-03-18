@@ -168,12 +168,11 @@ fn (mut p Parser) parse_fn_decl() ast.FnDecl {
 	p.consume_with_check(.r_paren) or { return node }
 
 	p.consume_with_check(.l_brace) or { return node }
+	p.skip_eol()
 
 	for {
-		if stmt := p.parse_stmt() {
-			node.stmts << stmt
-		}
-		if p.kind(0) == .r_brace {
+		node.stmts << p.parse_stmt()
+		if p.consume_if_kind_is(.r_brace) {
 			return node
 		}
 	}
