@@ -138,16 +138,36 @@ fn (mut p Parser) parse_fn_decl() ast.FnDecl {
 
 enum ExprKind {
 	toplevel
+	add_or_sub
 	value
 }
-struct ExprContext {
-	kind ExprKind = .toplevel
+
+struct InfixExprOpt {
+	operand ExprKind
 }
 
-fn (mut p Parser) parse_expr(ctx ExprContext) ?ast.Expr {
-	match ctx.kind {
+fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.Expr {
+	left := p.parse_expr(opt.operand) ?
+	op := p.token(0)
+	if op.kind !in op_kinds {
+		return left
+	}
+	p.consume_with_assert(...op_kinds)
+	right := p.parse_infix_expr(op_kinds, opt) ?
+	return ast.InfixExpr{
+		op: op
+		left: left
+		right: right
+	}
+}
+
+fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
+	match kind {
 		.toplevel {
-			return p.parse_expr(kind: .value)
+			return p.parse_expr(.add_or_sub)
+		}
+		.add_or_sub {
+			return p.parse_infix_expr([.op_plus, .op_minus], operand: .value)
 		}
 		.value {
 			return p.parse_value()

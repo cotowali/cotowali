@@ -77,12 +77,30 @@ fn (mut g Gen) expr(expr ast.Expr, opt ExprOpt) {
 	match expr {
 		ast.CallFn { g.call_fn(expr, opt) }
 		ast.Pipeline { g.pipeline(expr, opt) }
+		ast.InfixExpr { g.infix_expr(expr, opt) }
 		ast.IntLiteral {
 			if opt.as_command {
 				g.write('echo ')
 			}
 			g.write(expr.token.text)
 		}
+	}
+}
+
+fn (mut g Gen) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
+	op := expr.op
+	match op.kind {
+		.op_plus, .op_minus, .op_div, .op_mul {
+			if opt.as_command {
+				g.write('echo ')
+			}
+			g.write('\$(( (')
+			g.expr(expr.left, {})
+			g.write(' $op.text ')
+			g.expr(expr.right, {})
+			g.write(') ))')
+		}
+		else { panic('unimplemented') }
 	}
 }
 
