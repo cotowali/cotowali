@@ -1,10 +1,10 @@
 default: hello
 tasks:
   hello: z run examples/hello.vash
-  run: v run cmd/vash
+  run: v run cmd/vash $@
   build: v cmd/vash
   test: v test .
   test.hello: z run examples/hello.vash
   fmt: v fmt -w .
-  ast: z tools ast
-  tokens: z tools tokens
+  ast: z run tools ast $@
+  tokens: z run tools tokens $@
