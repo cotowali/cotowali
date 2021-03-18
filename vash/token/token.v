@@ -96,3 +96,7 @@ pub fn (lhs Token) == (rhs Token) bool {
 		lhs.kind == rhs.kind && lhs.text == rhs.text && lhs.pos == rhs.pos
 	}
 }
+
+pub fn (t Token) str() string {
+	return "Token{ .$t.kind, '$t.text', $t.pos }"
+}
