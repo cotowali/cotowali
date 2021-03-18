@@ -95,7 +95,7 @@ fn (mut p Parser) parse_stmt() ?ast.Stmt {
 	return match p.kind(0) {
 		.key_fn { ast.Stmt(p.parse_fn_decl()) }
 		else {
-			expr := p.parse_expr() ?
+			expr := p.parse_expr({}) ?
 			ast.Stmt(expr)
 		}
 	}
@@ -125,17 +125,30 @@ fn (mut p Parser) parse_fn_decl() ast.FnDecl {
 	panic('unreachable code')
 }
 
-fn (mut p Parser) parse_expr() ?ast.Expr {
-	match p.token(0).kind {
-		.ident { return p.parse_call_fn() }
-		else { return p.parse_value() }
+
+enum ExprKind {
+	toplevel
+	value
+}
+struct ExprContext {
+	kind ExprKind = .toplevel
+}
+
+fn (mut p Parser) parse_expr(ctx ExprContext) ?ast.Expr {
+	match ctx.kind {
+		.toplevel {
+			return p.parse_expr(kind: .value)
+		}
+		.value {
+			return p.parse_value()
+		}
 	}
 }
 
 fn (mut p Parser) parse_call_fn() ?ast.Expr {
 	name := p.consume().text
 	p.consume_with_check(.l_paren) ?
-	exprs := [p.parse_expr() ?]
+	exprs := [p.parse_expr({}) ?]
 	f := ast.CallFn{
 		name: name
 		args: exprs
@@ -147,6 +160,7 @@ fn (mut p Parser) parse_call_fn() ?ast.Expr {
 fn (mut p Parser) parse_value() ?ast.Expr {
 	tok := p.token(0)
 	match tok.kind {
+		.ident { return p.parse_call_fn() }
 		.int_lit {
 			p.consume()
 			return ast.IntLiteral{
