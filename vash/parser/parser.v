@@ -36,15 +36,25 @@ pub fn (mut p Parser) consume() Token {
 	return t
 }
 
-fn (mut p Parser) consume_with_check(kind TokenKind) ? {
-	if p.kind(0) != kind {
-		return IError(p.error('expcet `$kind`, but found `${p.token(0).text}`'))
+fn (mut p Parser) consume_with_check(kinds ...TokenKind) ? {
+	if p.kind(0) !in kinds {
+		found := p.token(0).text
+		if kinds.len == 0 {
+			return IError(p.error('unexpected token `${found}`'))
+		}
+		mut expect := 'expect '
+		if kinds.len == 1 {
+			expect = '`${kinds[0]}`'
+		} else {
+			expect = '${kinds[..kinds.len - 1].map(it.str()).join(', ')}, or `${kinds.last()}`'
+		}
+		return IError(p.error(expect + ', but found $found'))
 	}
 	p.consume()
 }
 
-fn (mut p Parser) consume_with_assert(kind TokenKind) {
-	@assert(p.kind(0) == kind, 'p.kind(0) = ${p.kind(0)}; kind = $kind',
+fn (mut p Parser) consume_with_assert(kinds ...TokenKind) {
+	@assert(p.kind(0) in kinds, 'p.kind(0) = ${p.kind(0)}; kinds = $kinds',
 			file: @FILE
 			name: @FN
 			line: @LINE
