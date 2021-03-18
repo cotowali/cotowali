@@ -45,3 +45,10 @@ pub fn (p1 Pos) merge(p2 Pos) Pos {
 		last_col: p2.last_col
 	}
 }
+
+pub fn (p Pos) str() string {
+	if p.is_none() {
+		return 'none'
+	}
+	return 'Pos{ i: $p.i-${p.i+p.len}, line: $p.line-$p.last_line, col: $p.col-$p.last_col }'
+}
