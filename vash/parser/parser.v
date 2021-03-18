@@ -41,6 +41,13 @@ pub fn (mut p Parser) consume() Token {
 	return t
 }
 
+type TokenCond = fn(Token) bool
+
+fn (mut p Parser) consume_for(cond TokenCond) {
+	for cond(p.token(0)) {
+		p.consume()
+	}
+
 fn (mut p Parser) consume_with_check(kinds ...TokenKind) ? {
 	if p.kind(0) !in kinds {
 		found := p.token(0).text
