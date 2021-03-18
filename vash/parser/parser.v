@@ -29,6 +29,11 @@ pub fn (p &Parser) kind(i int) TokenKind {
 	return p.token(0).kind
 }
 
+[inline]
+fn (p &Parser) @is(kind TokenKind) bool {
+	return p.kind(0) == kind
+}
+
 pub fn (mut p Parser) consume() Token {
 	t := p.token(0)
 	p.buf[p.token_idx % p.buf.len] = p.lexer.read()
