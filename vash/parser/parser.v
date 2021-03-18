@@ -145,6 +145,14 @@ enum ExprKind {
 	value
 }
 
+fn (k ExprKind) outer() ExprKind {
+	return if k == .toplevel { k } else { ExprKind(int(k) - 1) }
+}
+
+fn (k ExprKind) inner() ExprKind {
+	return if k == .value { k } else { ExprKind(int(k) + 1) }
+}
+
 struct InfixExprOpt {
 	operand ExprKind
 }
@@ -167,10 +175,10 @@ fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.
 fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 	match kind {
 		.toplevel {
-			return p.parse_expr(.add_or_sub)
+			return p.parse_expr(kind.inner())
 		}
 		.add_or_sub {
-			return p.parse_infix_expr([.op_plus, .op_minus], operand: .value)
+			return p.parse_infix_expr([.op_plus, .op_minus], operand: kind.inner())
 		}
 		.value {
 			return p.parse_value()
