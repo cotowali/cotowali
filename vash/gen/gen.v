@@ -5,7 +5,7 @@ import vash.ast { Pipeline, Stmt }
 
 pub struct Gen {
 mut:
-	indent int
+	indent  int
 	newline bool = true
 pub:
 	out io.Writer
@@ -61,7 +61,9 @@ fn (mut g Gen) stmts(stmts []Stmt) {
 
 fn (mut g Gen) stmt(stmt Stmt) {
 	match stmt {
-		ast.FnDecl { g.fn_decl(stmt) }
+		ast.FnDecl {
+			g.fn_decl(stmt)
+		}
 		ast.Expr {
 			g.expr(stmt, as_command: true)
 			g.writeln('')
@@ -75,9 +77,15 @@ struct ExprOpt {
 
 fn (mut g Gen) expr(expr ast.Expr, opt ExprOpt) {
 	match expr {
-		ast.CallFn { g.call_fn(expr, opt) }
-		ast.Pipeline { g.pipeline(expr, opt) }
-		ast.InfixExpr { g.infix_expr(expr, opt) }
+		ast.CallFn {
+			g.call_fn(expr, opt)
+		}
+		ast.Pipeline {
+			g.pipeline(expr, opt)
+		}
+		ast.InfixExpr {
+			g.infix_expr(expr, opt)
+		}
 		ast.IntLiteral {
 			if opt.as_command {
 				g.write('echo ')
@@ -100,7 +108,9 @@ fn (mut g Gen) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 			g.expr(expr.right, {})
 			g.write(') ))')
 		}
-		else { panic('unimplemented') }
+		else {
+			panic('unimplemented')
+		}
 	}
 }
 
@@ -121,7 +131,6 @@ fn (mut g Gen) pipeline(stmt Pipeline, opt ExprOpt) {
 		g.write(')')
 	}
 }
-
 
 fn (mut g Gen) call_fn(expr ast.CallFn, opt ExprOpt) {
 	if !opt.as_command {

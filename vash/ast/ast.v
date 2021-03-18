@@ -1,7 +1,7 @@
 module ast
 
 import vash.pos { Pos }
-import vash.token { Token, TokenKind }
+import vash.token { Token }
 
 pub struct File {
 pub:
@@ -11,7 +11,7 @@ pub mut:
 	errors []ErrorNode
 }
 
-pub type Stmt = FnDecl | Expr
+pub type Stmt = Expr | FnDecl
 
 pub struct FnDecl {
 pub:
@@ -23,9 +23,9 @@ pub mut:
 
 pub struct InfixExpr {
 pub:
-	pos Pos
-	op Token
-	left Expr
+	pos   Pos
+	op    Token
+	left  Expr
 	right Expr
 }
 
@@ -36,7 +36,7 @@ pub:
 	exprs []Expr
 }
 
-pub type Expr = InfixExpr | Pipeline | CallFn | IntLiteral
+pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline
 
 pub struct CallFn {
 pub:

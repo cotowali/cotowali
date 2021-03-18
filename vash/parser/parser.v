@@ -40,13 +40,13 @@ fn (mut p Parser) consume_with_check(kinds ...TokenKind) ? {
 	if p.kind(0) !in kinds {
 		found := p.token(0).text
 		if kinds.len == 0 {
-			return IError(p.error('unexpected token `${found}`'))
+			return IError(p.error('unexpected token `$found`'))
 		}
 		mut expect := 'expect '
 		if kinds.len == 1 {
 			expect = '`${kinds[0]}`'
 		} else {
-			expect = '${kinds[..kinds.len - 1].map(it.str()).join(', ')}, or `${kinds.last()}`'
+			expect = '${kinds[..kinds.len - 1].map(it.str()).join(', ')}, or `$kinds.last()`'
 		}
 		return IError(p.error(expect + ', but found $found'))
 	}
@@ -55,13 +55,12 @@ fn (mut p Parser) consume_with_check(kinds ...TokenKind) ? {
 
 fn (mut p Parser) consume_with_assert(kinds ...TokenKind) {
 	@assert(p.kind(0) in kinds, 'p.kind(0) = ${p.kind(0)}; kinds = $kinds',
-			file: @FILE
-			name: @FN
-			line: @LINE
+		file: @FILE
+		name: @FN
+		line: @LINE
 	)
 	p.consume()
 }
-
 
 [inline]
 pub fn new(lexer Lexer) Parser {
@@ -95,15 +94,15 @@ pub fn parse_file(path string) ?ast.File {
 }
 
 fn (mut p Parser) stmts() []ast.Stmt {
-	stmt := p.parse_stmt() or {
-		return []
-	}
+	stmt := p.parse_stmt() or { return [] }
 	return [stmt]
 }
 
 fn (mut p Parser) parse_stmt() ?ast.Stmt {
 	return match p.kind(0) {
-		.key_fn { ast.Stmt(p.parse_fn_decl()) }
+		.key_fn {
+			ast.Stmt(p.parse_fn_decl())
+		}
 		else {
 			expr := p.parse_expr({}) ?
 			ast.Stmt(expr)
@@ -114,7 +113,7 @@ fn (mut p Parser) parse_stmt() ?ast.Stmt {
 fn (mut p Parser) parse_fn_decl() ast.FnDecl {
 	p.consume_with_assert(.key_fn)
 	name := p.consume().text
-	mut node := ast.FnDecl {
+	mut node := ast.FnDecl{
 		name: name
 		stmts: []
 	}
@@ -134,7 +133,6 @@ fn (mut p Parser) parse_fn_decl() ast.FnDecl {
 	}
 	panic('unreachable code')
 }
-
 
 enum ExprKind {
 	toplevel
@@ -190,7 +188,9 @@ fn (mut p Parser) parse_call_fn() ?ast.Expr {
 fn (mut p Parser) parse_value() ?ast.Expr {
 	tok := p.token(0)
 	match tok.kind {
-		.ident { return p.parse_call_fn() }
+		.ident {
+			return p.parse_call_fn()
+		}
 		.int_lit {
 			p.consume()
 			return ast.IntLiteral{
