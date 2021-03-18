@@ -140,7 +140,8 @@ fn (mut p Parser) parse_fn_decl() ast.FnDecl {
 }
 
 enum ExprKind {
-	toplevel
+	toplevel = 0
+	pipeline
 	add_or_sub
 	value
 }
@@ -177,12 +178,31 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 		.toplevel {
 			return p.parse_expr(kind.inner())
 		}
+		.pipeline {
+			return p.parse_pipeline()
+		}
 		.add_or_sub {
 			return p.parse_infix_expr([.op_plus, .op_minus], operand: kind.inner())
 		}
 		.value {
 			return p.parse_value()
 		}
+	}
+}
+
+fn (mut p Parser) parse_pipeline() ?ast.Expr {
+	inner := ExprKind.pipeline.inner()
+	expr := p.parse_expr(inner) ?
+	if !p.@is(.pipe) {
+		return expr
+	}
+	mut exprs := [expr]
+	for p.kind(0) == .pipe {
+		p.consume_with_assert(.pipe)
+		exprs << p.parse_expr(inner) ?
+	}
+	return ast.Pipeline {
+		exprs: exprs
 	}
 }
 
