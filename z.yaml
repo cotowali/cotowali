@@ -1,6 +1,7 @@
-default: cmd_run
+default: hello
 tasks:
-  cmd_run: v run cmd/vash
+  hello: z run examples/hello.vash
+  run: v run cmd/vash
   build: v cmd/vash
   test: v test .
   test.hello: z run examples/hello.vash
