@@ -11,7 +11,9 @@ pub mut:
 	errors []ErrorNode
 }
 
-pub type Stmt = Expr | FnDecl
+pub type Stmt = EmptyStmt | FnDecl | Expr
+
+pub struct EmptyStmt {}
 
 pub struct FnDecl {
 pub:

@@ -68,6 +68,9 @@ fn (mut g Gen) stmt(stmt Stmt) {
 			g.expr(stmt, as_command: true)
 			g.writeln('')
 		}
+		ast.EmptyStmt {
+			g.writeln('')
+		}
 	}
 }
 
