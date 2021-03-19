@@ -3,7 +3,8 @@ module main
 import os
 import cli { Command }
 import v.vmod
-import vash.compiler { new_compiler, new_file_compiler }
+import vash.compiler { new_compiler }
+import vash.source
 import cmd.tools
 
 fn execute_compile(cmd Command) ? {
@@ -20,7 +21,8 @@ fn execute_compile(cmd Command) ? {
 				c.run() ?
 			}
 			2 {
-				c := new_file_compiler(cmd.args[1]) ?
+				s := source.read_file(cmd.args[1]) ?
+				c := new_compiler(s)
 				c.run() ?
 			}
 			else {
@@ -33,8 +35,9 @@ fn execute_compile(cmd Command) ? {
 			cmd.execute_help()
 			return none
 		}
-		c := new_file_compiler(cmd.args[0]) ?
-		c.compile_to_stdout()
+		s := source.read_file(cmd.args[0]) ?
+		c := new_compiler(s)
+		println(c.compile())
 	}
 }
 
