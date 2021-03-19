@@ -8,6 +8,7 @@ pub struct Lexer {
 pub mut:
 	source Source
 mut:
+	prev_char Char
 	pos    Pos
 	closed bool // for iter
 }
@@ -94,6 +95,11 @@ fn (lex &Lexer) next_char() Char {
 }
 
 [inline]
+fn (lex &Lexer) prev_char() Char {
+	return if lex.idx() > 0 { lex.prev_char } else { Char('\uFFFF') }
+}
+
+[inline]
 fn (lex &Lexer) text() string {
 	return lex.source.slice(lex.pos.i, lex.idx())
 }
@@ -108,6 +114,7 @@ fn (mut lex Lexer) skip() {
 
 [inline]
 fn (mut lex Lexer) consume() {
+	lex.prev_char = lex.char()
 	lex.pos.len += lex.char().len
 	lex.pos.last_col++
 }
