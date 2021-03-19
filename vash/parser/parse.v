@@ -22,18 +22,20 @@ pub fn parse_file(path string) ?ast.File {
 }
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
-	return match p.kind(0) {
+	stmt := match p.kind(0) {
 		.key_fn {
 			ast.Stmt(p.parse_fn_decl())
 		}
 		else {
-			stmt := p.parse_expr_stmt() or {
+			expr := p.parse_expr_stmt() or {
 				p.skip_until_eol()
 				ast.Stmt(ast.EmptyStmt{})
 			}
-			stmt  // Hack to avoid V compiler bug
+			expr  // Hack to avoid V compiler bug
 		}
 	}
+	p.skip_eol()
+	return stmt
 }
 
 fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
