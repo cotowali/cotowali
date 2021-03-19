@@ -25,7 +25,10 @@ fn execute_run(cmd Command) ? {
 		exit(1)
 	}
 	c := new_compiler(s)
-	c.run() ?
+	c.run() or {
+		eprintln(err)
+		exit(1)
+	}
 }
 
 fn execute_compile(cmd Command) ? {
@@ -38,7 +41,11 @@ fn execute_compile(cmd Command) ? {
 	}
 	s := source.read_file(cmd.args[0]) ?
 	c := new_compiler(s)
-	println(c.compile() ?)
+	out := c.compile() or {
+		eprintln(err)
+		exit(1)
+	}
+	println(out)
 }
 
 fn main() {
