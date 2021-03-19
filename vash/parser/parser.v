@@ -4,7 +4,6 @@ import vash.source { Source }
 import vash.lexer { Lexer }
 import vash.token { Token, TokenKind }
 import vash.ast
-import vash.util { @assert }
 
 pub struct Parser {
 mut:
@@ -94,11 +93,9 @@ fn (mut p Parser) consume_with_check(kinds ...TokenKind) ? {
 }
 
 fn (mut p Parser) consume_with_assert(kinds ...TokenKind) {
-	@assert(p.kind(0) in kinds, 'p.kind(0) = ${p.kind(0)}; kinds = $kinds',
-		file: @FILE
-		name: @FN
-		line: @LINE
-	)
+	$if !prod {
+		assert p.kind(0) in kinds
+	}
 	p.consume()
 }
 

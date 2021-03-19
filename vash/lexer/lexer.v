@@ -3,7 +3,6 @@ module lexer
 import vash.source { Char, Source }
 import vash.token { Token, TokenKind }
 import vash.pos { Pos }
-import vash.util { @assert }
 
 pub struct Lexer {
 pub mut:
@@ -113,21 +112,23 @@ fn (mut lex Lexer) consume() {
 	lex.pos.last_col++
 }
 
+[inline]
+fn (lex Lexer) @assert(cond CharCond) {
+	$if !prod {
+		if !cond(lex.char()) {
+			dump(lex.char())
+			assert cond(lex.char())
+		}
+	}
+}
+
 fn (mut lex Lexer) consume_with_assert(cond CharCond) {
-	@assert(cond(lex.char()), '',
-		file: @FILE
-		name: @FN
-		line: @LINE
-	)
+	lex.@assert(cond)
 	lex.consume()
 }
 
 fn (mut lex Lexer) skip_with_assert(cond CharCond) {
-	@assert(cond(lex.char()), '',
-		file: @FILE
-		name: @FN
-		line: @LINE
-	)
+	lex.@assert(cond)
 	lex.skip()
 }
 
