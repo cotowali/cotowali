@@ -38,7 +38,7 @@ fn execute_compile(cmd Command) ? {
 	}
 	s := source.read_file(cmd.args[0]) ?
 	c := new_compiler(s)
-	println(c.compile())
+	println(c.compile() ?)
 }
 
 fn main() {
