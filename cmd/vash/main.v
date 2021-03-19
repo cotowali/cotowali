@@ -47,8 +47,6 @@ fn main() {
 		name: mod.name
 		description: mod.description
 		version: mod.version
-		sort_flags: false
-		sort_commands: false
 		execute: execute
 		commands: [tools.command]
 	}
