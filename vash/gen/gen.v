@@ -1,6 +1,5 @@
 module gen
 
-import io
 import vash.ast { Pipeline, Stmt }
 
 pub fn (mut g Gen) gen(f ast.File) {
