@@ -7,7 +7,7 @@ import vash.compiler { new_compiler }
 import vash.source
 import cmd.tools
 
-fn execute_compile(cmd Command) ? {
+fn execute(cmd Command) ? {
 	if cmd.args.len == 0 {
 		cmd.execute_help()
 		return none
@@ -49,7 +49,7 @@ fn main() {
 		version: mod.version
 		sort_flags: false
 		sort_commands: false
-		execute: execute_compile
+		execute: execute
 		commands: [tools.command]
 	}
 	app.setup()
