@@ -38,7 +38,12 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 
 fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
 	expr := p.parse_expr({}) ?
-	p.consume_with_check(.eol, .eof)?
+
+	// eol or close blace
+	if !(p.brace_depth > 0 && p.@is(.r_brace)) {
+		p.consume_with_check(.eol, .eof)?
+	}
+
 	return expr
 }
 

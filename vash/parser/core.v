@@ -7,6 +7,7 @@ import vash.ast
 
 pub struct Parser {
 mut:
+	brace_depth int
 	lexer     Lexer
 	buf       []token.Token
 	token_idx int
@@ -35,6 +36,11 @@ fn (p &Parser) @is(kind TokenKind) bool {
 
 pub fn (mut p Parser) consume() Token {
 	t := p.token(0)
+	match t.kind {
+		.l_brace { p.brace_depth++ }
+		.r_brace { p.brace_depth-- }
+		else {}
+	}
 	p.buf[p.token_idx % p.buf.len] = p.lexer.read()
 	p.token_idx++
 	return t
