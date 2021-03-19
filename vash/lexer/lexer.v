@@ -1,147 +1,132 @@
 module lexer
 
-import vash.source { Char, Source }
-import vash.token { Token, TokenKind }
-import vash.pos { Pos }
+import vash.token { Token }
+import vash.source { Char }
 
-pub struct Lexer {
-pub mut:
-	source Source
-mut:
-	pos    Pos
-	closed bool // for iter
-}
-
-pub fn new(source Source) &Lexer {
-	return &Lexer{
-		source: source
+pub fn (mut lex Lexer) next() ?Token {
+	if lex.closed {
+		return none
 	}
+	return lex.read()
 }
 
-[inline]
-fn (lex &Lexer) idx() int {
-	return lex.pos.i + lex.pos.len - 1
-}
-
-[inline]
-fn (mut lex Lexer) close() {
-	lex.closed = true
-}
-
-[inline]
-fn (lex &Lexer) closed() bool {
-	return lex.closed
-}
-
-[inline]
-pub fn (lex &Lexer) is_eof() bool {
-	return !(lex.idx() < lex.source.code.len)
-}
-
-fn (mut lex Lexer) start_new_pos() {
-	lex.pos = pos.new(
-		i: lex.idx()
-		col: lex.pos.last_col
-		line: lex.pos.last_line
-	)
-}
-
-// --
-
-fn k(kind TokenKind) TokenKind {
-	return kind
-}
-
-fn (lex &Lexer) pos_for_new_token() Pos {
-	last_col := lex.pos.last_col - 1
-	last_line := lex.pos.last_line + (if last_col == 0 { -1 } else { 0 })
-	return Pos{
-		...lex.pos
-		len: lex.pos.len - 1
-		last_line: last_line
-		last_col: last_col
-	}
-}
-
-[inline]
-fn (lex &Lexer) new_token(kind TokenKind) Token {
-	return Token{
-		kind: kind
-		text: lex.text()
-		pos: lex.pos_for_new_token()
-	}
-}
-
-fn (mut lex Lexer) new_token_with_consume(kind TokenKind) Token {
-	lex.consume()
-	return lex.new_token(kind)
-}
-
-// --
-
-[inline]
-fn (lex &Lexer) char() Char {
-	if lex.is_eof() {
-		return Char('')
-	}
-	return lex.source.at(lex.idx())
-}
-
-[inline]
-fn (lex &Lexer) next_char() Char {
-	idx := lex.idx() + utf8_char_len(lex.char()[0])
-	return if idx < lex.source.code.len { lex.source.at(idx) } else { Char('\uFFFF') }
-}
-
-[inline]
-fn (lex &Lexer) text() string {
-	return lex.source.slice(lex.pos.i, lex.idx())
-}
-
-// --
-
-[inline]
-fn (mut lex Lexer) skip() {
-	lex.consume()
+fn (mut lex Lexer) prepare_to_read() {
+	lex.skip_whitespaces()
 	lex.start_new_pos()
 }
 
-[inline]
-fn (mut lex Lexer) consume() {
-	lex.pos.len += lex.char().len
-	lex.pos.last_col++
-}
+pub fn (mut lex Lexer) read() Token {
+	lex.prepare_to_read()
+	if lex.is_eof() {
+		lex.close()
+		return Token{.eof, '', lex.pos}
+	}
 
-[inline]
-fn (lex Lexer) @assert(cond CharCond) {
-	$if !prod {
-		if !cond(lex.char()) {
-			dump(lex.char())
-			assert cond(lex.char())
+	c := lex.char()
+	if is_ident_first_char(c) {
+		return lex.read_ident_or_keyword()
+	} else if is_digit(c) {
+		return lex.read_number()
+	}
+
+	match c[0] {
+		`&` {
+			if lex.next_char()[0] == `&` {
+				lex.consume()
+				return lex.new_token_with_consume(.op_and)
+			}
+			return lex.new_token_with_consume(.amp)
 		}
+		`|` {
+			if lex.next_char()[0] == `|` {
+				lex.consume()
+				return lex.new_token_with_consume(.op_or)
+			}
+			return lex.new_token_with_consume(.pipe)
+		}
+		else {}
+	}
+	return match c[0] {
+		`(` { lex.new_token_with_consume(.l_paren) }
+		`)` { lex.new_token_with_consume(.r_paren) }
+		`{` { lex.new_token_with_consume(.l_brace) }
+		`}` { lex.new_token_with_consume(.r_brace) }
+		`[` { lex.new_token_with_consume(.l_bracket) }
+		`]` { lex.new_token_with_consume(.r_bracket) }
+		`+` { lex.new_token_with_consume(.op_plus) }
+		`-` { lex.new_token_with_consume(.op_minus) }
+		`*` { lex.new_token_with_consume(.op_mul) }
+		`/` { lex.new_token_with_consume(.op_div) }
+		`.` { lex.new_token_with_consume(.dot) }
+		`@` { lex.read_at_ident() }
+		`\r`, `\n` { lex.read_newline() }
+		else { lex.read_unknown() }
 	}
 }
 
-fn (mut lex Lexer) consume_with_assert(cond CharCond) {
-	lex.@assert(cond)
-	lex.consume()
-}
-
-fn (mut lex Lexer) skip_with_assert(cond CharCond) {
-	lex.@assert(cond)
-	lex.skip()
-}
-
-type CharCond = fn (Char) bool
-
-fn (mut lex Lexer) consume_for(cond CharCond) {
-	for !lex.is_eof() && cond(lex.char()) {
+fn (mut lex Lexer) read_newline() Token {
+	if lex.char()[0] == `\r` && lex.next_char() == '\n' {
 		lex.consume()
 	}
+	return lex.new_token_with_consume(.eol)
 }
 
-fn (mut lex Lexer) consume_not_for(cond CharCond) {
-	for !lex.is_eof() && !cond(lex.char()) {
+fn (mut lex Lexer) read_unknown() Token {
+	for !(lex.is_eof() || lex.char().@is(.whitespace) || lex.char() == '\n') {
 		lex.consume()
 	}
+	return lex.new_token(.unknown)
+}
+
+fn is_ident_first_char(c Char) bool {
+	return c.@is(.alphabet) || c[0] == `_`
+}
+
+fn is_ident_char(c Char) bool {
+	return is_ident_first_char(c) || is_digit(c) || c[0] == `-`
+}
+
+fn is_digit(c Char) bool {
+	return c.@is(.digit)
+}
+
+fn is_whitespace(c Char) bool {
+	return c.@is(.whitespace)
+}
+
+fn (mut lex Lexer) skip_whitespaces() {
+	lex.consume_for(is_whitespace)
+}
+
+fn (mut lex Lexer) read_ident_or_keyword() Token {
+	lex.consume_for(is_ident_char)
+	text := lex.text()
+	pos := lex.pos_for_new_token()
+	kind := match text {
+		'let' { k(.key_let) }
+		'if' { k(.key_if) }
+		'for' { k(.key_for) }
+		'in' { k(.key_in) }
+		'fn' { k(.key_fn) }
+		'true', 'false' { k(.bool_lit) }
+		else { k(.ident) }
+	}
+	return Token{
+		pos: pos
+		text: text
+		kind: kind
+	}
+}
+
+fn (mut lex Lexer) read_number() Token {
+	lex.consume_for(is_digit)
+	return lex.new_token(.int_lit)
+}
+
+fn (mut lex Lexer) read_at_ident() Token {
+	lex.skip_with_assert(fn (c Char) bool {
+		return c == '@'
+	})
+	lex.consume_not_for(is_whitespace)
+	return lex.new_token(.ident)
 }
