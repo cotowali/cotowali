@@ -3,6 +3,7 @@ module lexer
 import vash.source { Char, Source }
 import vash.token { Token, TokenKind }
 import vash.pos { Pos }
+import vash.util { min }
 
 pub struct Lexer {
 pub mut:
@@ -54,11 +55,13 @@ fn k(kind TokenKind) TokenKind {
 }
 
 fn (lex &Lexer) pos_for_new_token() Pos {
-	last_col := lex.pos.last_col - 1
-	last_line := lex.pos.last_line + (if last_col == 0 { -1 } else { 0 })
+	pos := lex.pos
+	last_col := pos.last_col - 1
+	last_line := pos.last_line + (if last_col == 0 || lex.prev_char()[0] in [`\n`, `\r`] { -1 } else { 0 })
 	return Pos{
-		...lex.pos
-		len: lex.pos.len - 1
+		...pos
+		len: pos.len - 1
+		line: min(pos.line, last_line)
 		last_line: last_line
 		last_col: last_col
 	}
@@ -117,6 +120,10 @@ fn (mut lex Lexer) consume() {
 	lex.prev_char = lex.char()
 	lex.pos.len += lex.char().len
 	lex.pos.last_col++
+	if lex.char()[0] == `\n` || (lex.char()[0] == `\r` && lex.next_char()[0] != `\n`) {
+		lex.pos.last_col = 1
+		lex.pos.last_line++
+	}
 }
 
 [inline]
