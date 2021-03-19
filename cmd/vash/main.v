@@ -4,41 +4,41 @@ import os
 import cli { Command }
 import v.vmod
 import vash.compiler { new_compiler }
-import vash.source
+import vash.source { Source }
 import cmd.tools
 
-fn execute(cmd Command) ? {
-	if cmd.args.len == 0 {
-		cmd.execute_help()
-		return none
-	}
-
-	is_run := cmd.args[0] == 'run'
-	if is_run {
-		match cmd.args.len {
-			1 {
-				c := new_compiler(path: 'stdin', code: os.get_raw_lines_joined())
-				c.run() ?
-			}
-			2 {
-				s := source.read_file(cmd.args[1]) ?
-				c := new_compiler(s)
-				c.run() ?
-			}
-			else {
-				cmd.execute_help()
-				return none
-			}
-		}
+fn new_source_to_run(args []string) ?Source {
+	if args.len == 0 {
+		return Source{ path: 'stdin', code: os.get_raw_lines_joined() }
 	} else {
-		if cmd.args.len != 1 {
-			cmd.execute_help()
-			return none
-		}
-		s := source.read_file(cmd.args[0]) ?
-		c := new_compiler(s)
-		println(c.compile())
+		return source.read_file(args[1])
 	}
+}
+
+fn execute_run(cmd Command) ? {
+	if cmd.args.len > 1 {
+		eprintln('too many source files')
+		exit(1)
+	}
+	s := new_source_to_run(cmd.args) or {
+		eprintln(err)
+		exit(1)
+	}
+	c := new_compiler(s)
+	c.run() ?
+}
+
+fn execute_compile(cmd Command) ? {
+	if cmd.args.len == 0 {
+		eprintln('no source files are passed')
+		exit(1)
+	} else if cmd.args.len > 1 {
+		eprintln('too many source files')
+		exit(1)
+	}
+	s := source.read_file(cmd.args[0]) ?
+	c := new_compiler(s)
+	println(c.compile())
 }
 
 fn main() {
@@ -47,8 +47,15 @@ fn main() {
 		name: mod.name
 		description: mod.description
 		version: mod.version
-		execute: execute
-		commands: [tools.command]
+		execute: execute_compile
+		commands: [
+			Command{
+				name: 'run'
+				description: 'run script'
+				execute: execute_run,
+			},
+			tools.command
+		]
 	}
 	app.setup()
 	app.parse(os.args)
