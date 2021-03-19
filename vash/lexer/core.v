@@ -83,7 +83,7 @@ fn (mut lex Lexer) new_token_with_consume(kind TokenKind) Token {
 [inline]
 fn (lex &Lexer) char() Char {
 	if lex.is_eof() {
-		return Char('')
+		return Char('\uFFFF')
 	}
 	return lex.source.at(lex.idx())
 }
