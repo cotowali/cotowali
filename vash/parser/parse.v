@@ -66,7 +66,17 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		params: []
 	}
 	p.consume_with_check(.l_paren) ?
-	// todo arg list
+	if p.@is(.ident) {
+		for {
+			ident := p.consume_with_check(.ident) ?
+			node.params << ast.Var{ name: ident.text }
+			if p.@is(.r_paren) {
+				break
+			} else {
+				p.consume_with_check(.comma) ?
+			}
+		}
+	}
 	p.consume_with_check(.r_paren) ?
 
 	p.consume_with_check(.l_brace) ?
