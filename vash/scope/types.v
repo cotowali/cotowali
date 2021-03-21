@@ -1,6 +1,6 @@
 module scope
 
-struct TypeSymbol {
+pub struct TypeSymbol {
 pub:
 	name string
 }
