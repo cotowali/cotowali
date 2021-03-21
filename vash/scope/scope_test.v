@@ -9,3 +9,9 @@ fn test_scope() ? {
 	assert child.parent() ? == s
 	assert s.children == [child]
 }
+
+fn test_var() {
+	v := new_var('v')
+	assert v.name == 'v'
+	assert v.typ == unknown_type
+}

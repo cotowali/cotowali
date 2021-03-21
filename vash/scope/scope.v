@@ -1,5 +1,19 @@
 module scope
 
+pub struct Var {
+pub:
+	name string
+pub mut:
+	typ TypeSymbol
+}
+
+pub fn new_var(name string) Var {
+	return Var {
+		name: name
+		typ: unknown_type
+	}
+}
+
 pub struct Scope {
 mut:
 	parent &Scope
