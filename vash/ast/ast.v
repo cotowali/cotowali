@@ -15,11 +15,18 @@ pub type Stmt = EmptyStmt | FnDecl | Expr
 
 pub struct EmptyStmt {}
 
+pub struct Var {
+pub:
+	pos Pos
+	name			string
+}
+
 pub struct FnDecl {
 pub:
 	pos  Pos
 	name string
 pub mut:
+	params []Var
 	stmts []Stmt
 }
 
