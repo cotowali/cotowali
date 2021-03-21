@@ -1,7 +1,7 @@
 module scope
 
 fn test_scope() ? {
-	mut s := new_scope()
+	mut s := new_global_scope()
 	if _ := s.parent() {
 		assert false
 	}

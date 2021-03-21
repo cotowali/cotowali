@@ -6,7 +6,7 @@ mut:
 	children []&Scope
 }
 
-pub fn new_scope() &Scope {
+pub fn new_global_scope() &Scope {
 	return &Scope {
 		parent: 0
 	}
