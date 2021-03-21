@@ -10,3 +10,7 @@ pub fn new_symbol(name string) TypeSymbol {
 		name: name
 	}
 }
+
+pub const (
+	unknown = new_symbol('unknown')
+)
