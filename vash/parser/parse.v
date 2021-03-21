@@ -24,7 +24,7 @@ pub fn parse_file(path string) ?ast.File {
 fn (mut p Parser) parse_stmt() ast.Stmt {
 	stmt := match p.kind(0) {
 		.key_fn {
-			ast.Stmt(p.parse_fn_decl())
+			p.parse_fn_decl_stmt()
 		}
 		else {
 			expr := p.parse_expr_stmt() or {
@@ -49,18 +49,27 @@ fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
 	return expr
 }
 
-fn (mut p Parser) parse_fn_decl() ast.FnDecl {
+fn (mut p Parser) parse_fn_decl_stmt() ast.Stmt {
+	if decl := p.parse_fn_decl() {
+		return decl
+	}
+	p.skip_until_eol()
+	return ast.EmptyStmt{}
+}
+
+fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	p.consume_with_assert(.key_fn)
 	name := p.consume().text
 	mut node := ast.FnDecl{
 		name: name
 		stmts: []
+		params: []
 	}
-	p.consume_with_check(.l_paren) or { return node }
+	p.consume_with_check(.l_paren) ?
 	// todo arg list
-	p.consume_with_check(.r_paren) or { return node }
+	p.consume_with_check(.r_paren) ?
 
-	p.consume_with_check(.l_brace) or { return node }
+	p.consume_with_check(.l_brace) ?
 	p.skip_eol()
 
 	for {
