@@ -81,7 +81,7 @@ fn (mut p Parser) skip_eol() {
 	p.consume_for(fn (t Token) bool { return t.kind == .eol })
 }
 
-fn (mut p Parser) consume_with_check(kinds ...TokenKind) ? {
+fn (mut p Parser) consume_with_check(kinds ...TokenKind) ?Token {
 	if p.kind(0) !in kinds {
 		found := p.token(0).text
 		if kinds.len == 0 {
@@ -95,14 +95,14 @@ fn (mut p Parser) consume_with_check(kinds ...TokenKind) ? {
 		}
 		return IError(p.error(expect + ', but found $found'))
 	}
-	p.consume()
+	return p.consume()
 }
 
-fn (mut p Parser) consume_with_assert(kinds ...TokenKind) {
+fn (mut p Parser) consume_with_assert(kinds ...TokenKind) Token {
 	$if !prod {
 		assert p.kind(0) in kinds
 	}
-	p.consume()
+	return p.consume()
 }
 
 [inline]
