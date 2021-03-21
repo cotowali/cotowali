@@ -1,9 +1,1 @@
-IError(vash.compiler.CompileError{
-    errors: [vash.ast.ErrorNode{
-        pos: Pos{ i: 0-1, line: 1-1, col: 1-1 }
-        msg: 'unexpected token Token{ .op_plus, '+', Pos{ i: 0-1, line: 1-1, col: 1-0 } }'
-        code: 0
-    }]
-    code: 1
-    msg: 'compile error: 1 errors'
-})
+vash.compiler.CompileError: compile error: 1 errors
