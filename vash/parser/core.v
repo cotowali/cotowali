@@ -48,10 +48,12 @@ pub fn (mut p Parser) consume() Token {
 
 type TokenCond = fn(Token) bool
 
-fn (mut p Parser) consume_for(cond TokenCond) {
+fn (mut p Parser) consume_for(cond TokenCond) []Token {
+	mut tokens := []Token{}
 	for cond(p.token(0)) {
-		p.consume()
+		tokens << p.consume()
 	}
+	return tokens
 }
 
 fn (mut p Parser) consume_if(cond TokenCond) ?Token {
