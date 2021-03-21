@@ -65,7 +65,7 @@ fn (mut p Parser) parse_fn_decl() ast.FnDecl {
 
 	for {
 		node.stmts << p.parse_stmt()
-		if p.consume_if_kind_is(.r_brace) {
+		if _ := p.consume_if_kind_is(.r_brace) {
 			return node
 		}
 	}

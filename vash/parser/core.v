@@ -54,20 +54,18 @@ fn (mut p Parser) consume_for(cond TokenCond) {
 	}
 }
 
-fn (mut p Parser) consume_if(cond TokenCond) bool {
+fn (mut p Parser) consume_if(cond TokenCond) ?Token {
 	if cond(p.token(0)) {
-		p.consume()
-		return true
+		return p.consume()
 	}
-	return false
+	return none
 }
 
-fn (mut p Parser) consume_if_kind_is(kind TokenKind) bool {
+fn (mut p Parser) consume_if_kind_is(kind TokenKind) ?Token {
 	if p.@is(kind) {
-		p.consume()
-		return true
+		return p.consume()
 	}
-	return false
+	return none
 }
 
 fn (mut p Parser) skip_until_eol() {
