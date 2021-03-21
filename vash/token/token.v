@@ -10,6 +10,7 @@ pub enum TokenKind {
 	key_if
 	key_for
 	key_in
+	comma
 	dot
 	amp
 	pipe
