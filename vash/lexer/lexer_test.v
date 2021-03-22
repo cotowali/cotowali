@@ -43,7 +43,8 @@ fn test_lexer() {
 		Token{.eof, '', Pos{10, 1, 8, 1, 1, 8}},
 	])
 
-	ktest('fn f(a, b) {}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren, .l_brace, .r_brace, .eof])
+	ktest('fn f(a, b) {}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren, .l_brace,
+		.r_brace, .eof])
 	ktest('&a.b | c', [.amp, .ident, .dot, .ident, .pipe, .ident, .eof])
 	ktest('a && b || c &', [.ident, .op_and, .ident, .op_or, .ident, .amp, .eof])
 

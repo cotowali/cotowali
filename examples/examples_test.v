@@ -1,6 +1,6 @@
 module examples
 
-import os { ls, dir, join_path }
+import os { dir, join_path, ls }
 import vash.compiler { new_compiler }
 import vash.source
 
@@ -10,7 +10,7 @@ fn test_examples_success() ? {
 	mut ok := true
 	for f in files {
 		println(f)
-		c := new_compiler(source.read_file(f)?)
+		c := new_compiler(source.read_file(f) ?)
 		out := c.compile() or {
 			dump(err)
 			ok = false

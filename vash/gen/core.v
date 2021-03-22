@@ -1,7 +1,6 @@
 module gen
 
 import io
-import vash.ast { Pipeline, Stmt }
 
 pub struct Gen {
 mut:

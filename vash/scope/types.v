@@ -10,7 +10,7 @@ pub:
 }
 
 pub fn new_type_symbol(name string) TypeSymbol {
-	return TypeSymbol {
+	return TypeSymbol{
 		id: auto_id()
 		name: name
 	}

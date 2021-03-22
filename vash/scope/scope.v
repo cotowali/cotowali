@@ -2,18 +2,18 @@ module scope
 
 import vash.util { auto_id }
 
-pub type ScopeObject = Var | TypeSymbol
+pub type ScopeObject = TypeSymbol | Var
 
 pub struct Var {
 pub:
 	name string
-	id  u64
+	id   u64
 pub mut:
 	typ TypeSymbol
 }
 
 pub fn new_var(name string) Var {
-	return Var {
+	return Var{
 		name: name
 		typ: unknown_type
 		id: auto_id()
@@ -24,20 +24,20 @@ pub struct Scope {
 pub:
 	id u64
 mut:
-	parent &Scope
+	parent   &Scope
 	children []&Scope
-	objects map[string]ScopeObject
+	objects  map[string]ScopeObject
 }
 
 pub fn new_global_scope() &Scope {
-	return &Scope {
+	return &Scope{
 		id: 1
 		parent: 0
 	}
 }
 
 pub fn new_scope(parent &Scope) &Scope {
-	return &Scope {
+	return &Scope{
 		id: auto_id()
 		parent: parent
 	}

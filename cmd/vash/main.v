@@ -3,14 +3,16 @@ module main
 import os
 import cli { Command }
 import v.vmod
-import vash
-import vash.compiler { new_compiler }
+import vash { compile }
 import vash.source { Source }
 import cmd.tools
 
 fn new_source_to_run(args []string) ?Source {
 	if args.len == 0 {
-		return Source{ path: 'stdin', code: os.get_raw_lines_joined() }
+		return Source{
+			path: 'stdin'
+			code: os.get_raw_lines_joined()
+		}
 	} else {
 		return source.read_file(args[1])
 	}
@@ -40,7 +42,7 @@ fn execute_compile(cmd Command) ? {
 		exit(1)
 	}
 	s := source.read_file(cmd.args[0]) ?
-	out := vash.compile(s) or {
+	out := compile(s) or {
 		eprintln(err)
 		exit(1)
 	}
@@ -58,9 +60,9 @@ fn main() {
 			Command{
 				name: 'run'
 				description: 'run script'
-				execute: execute_run,
+				execute: execute_run
 			},
-			tools.command
+			tools.command,
 		]
 	}
 	app.setup()

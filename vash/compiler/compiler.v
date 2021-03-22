@@ -16,8 +16,8 @@ mut:
 
 pub struct CompileError {
 	errors []errors.Error
-	code int
-	msg string
+	code   int
+	msg    string
 }
 
 fn check_compile_error(file ast.File) ? {

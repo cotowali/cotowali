@@ -9,10 +9,10 @@ import vash.errors
 pub struct Parser {
 mut:
 	brace_depth int
-	lexer     Lexer
-	buf       []token.Token
-	token_idx int
-	file      ast.File
+	lexer       Lexer
+	buf         []token.Token
+	token_idx   int
+	file        ast.File
 }
 
 pub fn (p &Parser) token(i int) Token {
@@ -47,7 +47,7 @@ pub fn (mut p Parser) consume() Token {
 	return t
 }
 
-type TokenCond = fn(Token) bool
+type TokenCond = fn (Token) bool
 
 fn (mut p Parser) consume_for(cond TokenCond) []Token {
 	mut tokens := []Token{}
@@ -72,14 +72,18 @@ fn (mut p Parser) consume_if_kind_is(kind TokenKind) ?Token {
 }
 
 fn (mut p Parser) skip_until_eol() {
-	p.consume_for(fn (t Token) bool { return t.kind !in [.eol, .eof] })
+	p.consume_for(fn (t Token) bool {
+		return t.kind !in [.eol, .eof]
+	})
 	if p.@is(.eol) {
 		p.consume_with_assert(.eol)
 	}
 }
 
 fn (mut p Parser) skip_eol() {
-	p.consume_for(fn (t Token) bool { return t.kind == .eol })
+	p.consume_for(fn (t Token) bool {
+		return t.kind == .eol
+	})
 }
 
 fn (mut p Parser) consume_with_check(kinds ...TokenKind) ?Token {

@@ -12,14 +12,14 @@ pub mut:
 	errors []errors.Error
 }
 
-pub type Stmt = EmptyStmt | FnDecl | Expr
+pub type Stmt = EmptyStmt | Expr | FnDecl
 
 pub struct EmptyStmt {}
 
 pub struct Var {
 pub:
-	pos Pos
-	name			string
+	pos  Pos
+	name string
 }
 
 pub struct FnDecl {
@@ -28,7 +28,7 @@ pub:
 	name string
 pub mut:
 	params []Var
-	stmts []Stmt
+	stmts  []Stmt
 }
 
 pub struct InfixExpr {
