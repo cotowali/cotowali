@@ -7,6 +7,7 @@ import vash.lexer
 import vash.parser
 import vash.gen
 import vash.ast
+import vash.errors
 
 pub struct Compiler {
 mut:
@@ -14,7 +15,7 @@ mut:
 }
 
 pub struct CompileError {
-	errors []ast.ErrorNode
+	errors []errors.Error
 	code int
 	msg string
 }

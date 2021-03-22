@@ -2,13 +2,14 @@ module ast
 
 import vash.pos { Pos }
 import vash.token { Token }
+import vash.errors
 
 pub struct File {
 pub:
 	path string
 pub mut:
 	stmts  []Stmt
-	errors []ErrorNode
+	errors []errors.Error
 }
 
 pub type Stmt = EmptyStmt | FnDecl | Expr
@@ -58,12 +59,4 @@ pub struct IntLiteral {
 pub:
 	pos   Pos
 	token Token
-}
-
-pub struct ErrorNode {
-pub:
-	pos Pos
-	// Implements IError
-	msg  string
-	code int
 }

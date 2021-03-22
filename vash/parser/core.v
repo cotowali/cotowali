@@ -4,6 +4,7 @@ import vash.source { Source }
 import vash.lexer { Lexer }
 import vash.token { Token, TokenKind }
 import vash.ast
+import vash.errors
 
 pub struct Parser {
 mut:
@@ -122,17 +123,17 @@ pub fn (p &Parser) source() Source {
 	return p.lexer.source
 }
 
-fn (mut p Parser) error(msg string) &ast.ErrorNode {
-	node := &ast.ErrorNode{
+fn (mut p Parser) error(msg string) &errors.Error {
+	err := &errors.Error{
 		msg: msg
 	}
 	p.consume()
-	p.file.errors << node
-	return node
+	p.file.errors << err
+	return err
 }
 
-fn error_node(err IError) &ast.ErrorNode {
-	if err is ast.ErrorNode {
+fn error_node(err IError) &errors.Error {
+	if err is errors.Error {
 		return err
 	}
 	panic(err)
