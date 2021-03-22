@@ -12,16 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
-        with: { repository: vlang/v, path: v }
+      - uses: nocturlab/setup-vlang-action@v1
+        with: { v-version: master }
       - run: cd v && make && sudo ./v symlink
       - run: v fmt -verify vash
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/checkout@v2
-        with: { repository: vlang/v, path: v }
+      - uses: nocturlab/setup-vlang-action@v1
+        with: { v-version: master }
       - run: cd v && make && sudo ./v symlink
       - run: v test
       - run: v run cmd/vash examples/hello.vash
