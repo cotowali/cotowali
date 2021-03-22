@@ -36,6 +36,13 @@ pub fn new_global_scope() &Scope {
 	}
 }
 
+pub fn new_scope(parent &Scope) &Scope {
+	return &Scope {
+		id: auto_id()
+		parent: parent
+	}
+}
+
 pub fn (s &Scope) parent() ?&Scope {
 	if isnil(s.parent) {
 		return none
@@ -48,7 +55,7 @@ pub fn (s &Scope) children() []&Scope {
 }
 
 pub fn (mut s Scope) create() &Scope {
-	child := &Scope{ parent: s, id: auto_id() }
+	child := new_scope(s)
 	s.children << child
 	return child
 }
