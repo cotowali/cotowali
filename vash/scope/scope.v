@@ -54,7 +54,7 @@ pub fn (s &Scope) children() []&Scope {
 	return s.children
 }
 
-pub fn (mut s Scope) create() &Scope {
+pub fn (mut s Scope) create_child() &Scope {
 	child := new_scope(s)
 	s.children << child
 	return child
