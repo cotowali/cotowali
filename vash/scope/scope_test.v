@@ -6,7 +6,7 @@ fn test_scope() ? {
 		assert false
 	}
 	mut child := s.create()
-	//assert child.parent() ? == s
+	assert (child.parent() ?).id == s.id
 	assert s.children == [child]
 
 	v1 := new_var('v1')

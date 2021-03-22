@@ -21,6 +21,8 @@ pub fn new_var(name string) Var {
 }
 
 pub struct Scope {
+pub:
+	id u64
 mut:
 	parent &Scope
 	children []&Scope
@@ -29,6 +31,7 @@ mut:
 
 pub fn new_global_scope() &Scope {
 	return &Scope {
+		id: 1
 		parent: 0
 	}
 }
@@ -45,7 +48,7 @@ pub fn (s &Scope) children() []&Scope {
 }
 
 pub fn (mut s Scope) create() &Scope {
-	child := &Scope{ parent: s }
+	child := &Scope{ parent: s, id: auto_id() }
 	s.children << child
 	return child
 }
