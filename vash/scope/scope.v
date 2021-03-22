@@ -1,5 +1,7 @@
 module scope
 
+pub type ScopeObject = Var | TypeSymbol
+
 pub struct Var {
 pub:
 	name string
@@ -18,6 +20,7 @@ pub struct Scope {
 mut:
 	parent &Scope
 	children []&Scope
+	objects map[string]ScopeObject
 }
 
 pub fn new_global_scope() &Scope {
