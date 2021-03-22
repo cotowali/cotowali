@@ -14,6 +14,7 @@ fn test_scope() ? {
 	if registered := s.register(v1) {
 		if registered is Var {
 			assert v1 == registered
+			assert v1.id != 0
 		} else {
 			assert false
 		}
