@@ -3,6 +3,7 @@ module main
 import os
 import cli { Command }
 import v.vmod
+import vash
 import vash.compiler { new_compiler }
 import vash.source { Source }
 import cmd.tools
@@ -24,8 +25,7 @@ fn execute_run(cmd Command) ? {
 		eprintln(err)
 		exit(1)
 	}
-	c := new_compiler(s)
-	c.run() or {
+	vash.run(s) or {
 		eprintln(err)
 		exit(1)
 	}
@@ -40,8 +40,7 @@ fn execute_compile(cmd Command) ? {
 		exit(1)
 	}
 	s := source.read_file(cmd.args[0]) ?
-	c := new_compiler(s)
-	out := c.compile() or {
+	out := vash.compile(s) or {
 		eprintln(err)
 		exit(1)
 	}

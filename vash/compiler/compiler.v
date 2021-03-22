@@ -1,8 +1,6 @@
 module compiler
 
-import os
 import io
-import rand { ulid }
 import strings
 import vash.source { Source }
 import vash.lexer
@@ -50,23 +48,4 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	check_compile_error(parsed_file) ?
 	mut g := gen.new(w)
 	g.gen(parsed_file)
-}
-
-fn (c &Compiler) compile_to_temp_file() ?string {
-	temp_path := os.join_path(os.temp_dir(), '${os.file_name(c.source.path)}_${ulid()}.sh')
-	mut f := os.create(temp_path) or { panic(err) }
-	c.compile_to(f) ?
-	defer {
-		f.close()
-	}
-	return temp_path
-}
-
-pub fn (c &Compiler) run() ?int {
-	temp_file := c.compile_to_temp_file() ?
-	defer {
-		os.rm(temp_file) or { panic(err) }
-	}
-	code := os.system('sh "$temp_file"')
-	return code
 }
