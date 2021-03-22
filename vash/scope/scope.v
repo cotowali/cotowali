@@ -46,10 +46,11 @@ pub fn (mut s Scope) create() &Scope {
 	return child
 }
 
-pub fn (mut s Scope) register(object ScopeObject) ? {
+pub fn (mut s Scope) register(object ScopeObject) ?ScopeObject {
 	key := object.name
 	if key in s.objects {
 		return error('$key is exists')
 	}
 	s.objects[key] = object
+	return object
 }

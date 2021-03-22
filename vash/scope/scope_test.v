@@ -9,9 +9,16 @@ fn test_scope() ? {
 	//assert child.parent() ? == s
 	assert s.children == [child]
 
-	var1 := new_var('v')
-	s.register(var1) ?
-	if _ := s.register(var1) {
+	v1 := new_var('v1')
+
+	if registered := s.register(v1) {
+		if registered is Var {
+			assert v1 == registered
+		} else {
+			assert false
+		}
+	}
+	if _ := s.register(v1) {
 		assert false
 	}
 }
