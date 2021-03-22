@@ -12,15 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup V
-        run: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && sudo ./v symlink
+        run: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
       - uses: actions/checkout@v2
-        with: { path: ./v }
       - run: v fmt -verify vash
   test:
     runs-on: ubuntu-latest
     steps:
       - name: Setup V
-        run: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && sudo ./v symlink
+        run: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
       - uses: actions/checkout@v2
       - run: v test
       - run: v run cmd/vash examples/hello.vash
