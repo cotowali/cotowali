@@ -64,3 +64,13 @@ pub fn (mut s Scope) register(object ScopeObject) ?ScopeObject {
 	s.objects[key] = object
 	return object
 }
+
+pub fn (s &Scope) lookup(name string) ?ScopeObject {
+	if name in s.objects {
+		return s.objects[name]
+	}
+	if p := s.parent() {
+		return p.lookup(name)
+	}
+	return none
+}

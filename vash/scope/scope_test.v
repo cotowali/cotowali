@@ -5,7 +5,7 @@ fn test_scope() ? {
 	if _ := s.parent() {
 		assert false
 	}
-	child := s.create()
+	mut child := s.create()
 	//assert child.parent() ? == s
 	assert s.children == [child]
 
@@ -20,6 +20,33 @@ fn test_scope() ? {
 		}
 	}
 	if _ := s.register(v1) {
+		assert false
+	}
+
+	if found := child.lookup(v1.name) {
+		if found is Var {
+			assert found == v1
+		}
+	} else {
+		assert false
+	}
+
+	child_v1 := new_var(v1.name)
+	child.register(child_v1) ?
+	if found := child.lookup(v1.name) {
+		if found is Var {
+			assert found != v1
+			assert found == child_v1
+		}
+	} else {
+		assert false
+	}
+	if found := s.lookup(v1.name) {
+		if found is Var {
+			assert found == v1
+			assert found != child_v1
+		}
+	} else {
 		assert false
 	}
 }
