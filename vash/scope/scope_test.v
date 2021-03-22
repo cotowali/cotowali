@@ -9,44 +9,67 @@ fn test_scope() ? {
 	assert (child.parent() ?).id == s.id
 	assert s.children == [child]
 
-	v1 := new_var('v1')
+	v1 := ScopeObject(new_var('v1'))
 
 	if registered := s.register(v1) {
-		if registered is Var {
-			assert v1 == registered
-			assert v1.id != 0
-		} else {
-			assert false
-		}
+		assert v1 == registered
+		assert v1.id != 0
+	} else {
+		assert false
 	}
 	if _ := s.register(v1) {
 		assert false
 	}
 
-	if found := child.lookup(v1.name) {
-		if found is Var {
-			assert found == v1
-		}
+	if found := s.lookup(v1.name) {
+		assert found == v1
+	} else {
+		assert false
+	}
+	if _ := child.lookup('nothing') {
+		assert false
+	}
+}
+
+fn test_nested() ? {
+	mut parent := new_global_scope()
+	mut child := parent.create_child()
+
+	name := 'v'
+	parent_v := ScopeObject(new_var(name))
+	child_v := ScopeObject(new_var(name))
+	assert parent_v.name == child_v.name
+	assert parent_v != child_v
+
+	parent.register(parent_v) ?
+	if found := parent.lookup(name) {
+		assert found == parent_v
+		assert found != child_v
+	} else {
+		assert false
+	}
+	if found := child.lookup(name) {
+		assert found == parent_v
+		assert found != child_v
 	} else {
 		assert false
 	}
 
-	child_v1 := new_var(v1.name)
-	child.register(child_v1) ?
-	if found := child.lookup(v1.name) {
-		if found is Var {
-			assert found != v1
-			assert found == child_v1
-		}
+	child.register(child_v) ?
+	if found := parent.lookup(name) {
+		assert found == parent_v
+		assert found != child_v
 	} else {
 		assert false
 	}
-	if found := s.lookup(v1.name) {
-		if found is Var {
-			assert found == v1
-			assert found != child_v1
-		}
+	if found := child.lookup(name) {
+		assert found != parent_v
+		assert found == child_v
 	} else {
+		assert false
+	}
+
+	if _ := child.lookup('nothing') {
 		assert false
 	}
 }
