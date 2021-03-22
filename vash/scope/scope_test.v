@@ -6,8 +6,14 @@ fn test_scope() ? {
 		assert false
 	}
 	child := s.create()
-	assert child.parent() ? == s
+	//assert child.parent() ? == s
 	assert s.children == [child]
+
+	var1 := new_var('v')
+	s.register(var1) ?
+	if _ := s.register(var1) {
+		assert false
+	}
 }
 
 fn test_var() {
