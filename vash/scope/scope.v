@@ -31,10 +31,12 @@ mut:
 }
 
 pub fn new_global_scope() &Scope {
-	return &Scope{
+	mut s := &Scope{
 		id: 1
 		parent: 0
 	}
+	s.register(unknown_type) or { panic(err) }
+	return s
 }
 
 pub fn new_scope(parent &Scope) &Scope {
