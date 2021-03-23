@@ -17,5 +17,8 @@ pub fn new_type_symbol(name string) TypeSymbol {
 }
 
 pub const (
-	unknown_type = TypeSymbol{id: 1, name: 'unknown'}
+	unknown_type = TypeSymbol{
+		id: 1
+		name: 'unknown'
+	}
 )
