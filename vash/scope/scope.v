@@ -1,6 +1,7 @@
 module scope
 
 import vash.util { auto_id }
+import vash.types { TypeSymbol, unknown_type }
 
 pub type ScopeObject = TypeSymbol | Var
 

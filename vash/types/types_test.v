@@ -1,4 +1,4 @@
-module scope
+module types
 
 fn test_type_symbol() {
 	ts := new_type_symbol('t')

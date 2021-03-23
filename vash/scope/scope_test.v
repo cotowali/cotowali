@@ -1,5 +1,7 @@
 module scope
 
+import vash.types { unknown_type }
+
 fn test_scope() ? {
 	mut s := new_global_scope()
 	if _ := s.parent() {
