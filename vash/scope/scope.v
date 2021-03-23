@@ -30,9 +30,11 @@ mut:
 	objects  map[string]ScopeObject
 }
 
+pub const global_id = 1
+
 pub fn new_global_scope() &Scope {
 	mut s := &Scope{
-		id: 1
+		id: global_id
 		parent: 0
 	}
 	s.register(unknown_type) or { panic(err) }
