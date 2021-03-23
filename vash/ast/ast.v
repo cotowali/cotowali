@@ -10,7 +10,7 @@ pub:
 	path string
 pub mut:
 	stmts  []Stmt
-	scope  &Scope = 0
+	scope  &scope.Scope
 	errors []errors.Error
 }
 
