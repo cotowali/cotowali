@@ -2,6 +2,15 @@ module scope
 
 import vash.types { unknown_type }
 
+fn test_global_scope_has_builtin_type() {
+	s := new_global_scope()
+	if t := s.lookup(unknown_type.name) {
+		assert t == ScopeObject(unknown_type)
+	} else {
+		assert false
+	}
+}
+
 fn test_scope() ? {
 	mut s := new_global_scope()
 	if _ := s.parent() {
