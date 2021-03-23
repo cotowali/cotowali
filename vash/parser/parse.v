@@ -4,10 +4,12 @@ import vash.source { Source }
 import vash.lexer { Lexer }
 import vash.token { Token, TokenKind }
 import vash.ast
+import vash.scope { new_global_scope }
 
 pub fn (mut p Parser) parse() ast.File {
 	p.file = ast.File{
 		path: p.source().path
+		scope: new_global_scope()
 	}
 	for !p.@is(.eof) {
 		p.file.stmts << p.parse_stmt()
