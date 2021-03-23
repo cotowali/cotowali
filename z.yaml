@@ -1,8 +1,8 @@
 default: hello
 tasks:
   hello: z run examples/hello.vash
-  run: v run cmd/vash $@
-  build: v cmd/vash
+  run: v run cmd/vash/main.v $@
+  build: v cmd/vash/main.v
   test: v test .
   test.hello: z run examples/hello.vash
   fmt: v fmt -w .
