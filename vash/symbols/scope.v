@@ -2,7 +2,7 @@ module symbols
 
 import vash.util { auto_id }
 
-pub type ScopeObject = TypeSymbol | Var
+pub type ScopeObject = Type | Var
 
 pub struct Scope {
 pub:
