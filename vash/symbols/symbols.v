@@ -24,12 +24,18 @@ pub struct Type {
 pub:
 	id u64
 	name string
+	info TypeInfo
 }
+
+pub struct NoTypeInfo{}
+
+pub type TypeInfo = NoTypeInfo
 
 pub fn new_type(name string) &Type {
 	return &Type{
 		id: auto_id()
 		name: name
+		info: NoTypeInfo{}
 	}
 }
 
