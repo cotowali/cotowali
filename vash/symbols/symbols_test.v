@@ -3,7 +3,7 @@ module symbols
 fn test_global_scope_has_builtin_type() {
 	s := new_global_scope()
 	if t := s.lookup(unknown_type.name) {
-		assert t == ScopeObject(unknown_type)
+		assert t == Symbol(unknown_type)
 	} else {
 		assert false
 	}
@@ -18,7 +18,7 @@ fn test_scope() ? {
 	assert (child.parent() ?).id == s.id
 	assert s.children == [child]
 
-	v1 := ScopeObject(new_var('v1'))
+	v1 := Symbol(new_var('v1'))
 
 	if registered := s.register(v1) {
 		assert v1 == registered
@@ -55,8 +55,8 @@ fn test_nested() ? {
 	mut child := parent.create_child()
 
 	name := 'v'
-	parent_v := ScopeObject(new_var(name))
-	child_v := ScopeObject(new_var(name))
+	parent_v := Symbol(new_var(name))
+	child_v := Symbol(new_var(name))
 	assert parent_v.name == child_v.name
 	assert parent_v != child_v
 

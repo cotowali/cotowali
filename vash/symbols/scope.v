@@ -2,15 +2,13 @@ module symbols
 
 import vash.util { auto_id }
 
-pub type ScopeObject = Type | Var
-
 pub struct Scope {
 pub:
 	id u64
 mut:
 	parent   &Scope
 	children []&Scope
-	objects  map[string]ScopeObject
+	symbols  map[string]Symbol
 }
 
 pub const global_id = 1
@@ -49,28 +47,28 @@ pub fn (mut s Scope) create_child() &Scope {
 }
 
 [inline]
-fn (mut s Scope) must_register(object ScopeObject) ScopeObject {
-	return s.register(object) or { panic(err) }
+fn (mut s Scope) must_register(sym Symbol) Symbol {
+	return s.register(sym) or { panic(err) }
 }
 
-pub fn (mut s Scope) register(object ScopeObject) ?ScopeObject {
+pub fn (mut s Scope) register(sym Symbol) ?Symbol {
 	$if !prod {
-		if object.id == 0 {
-			dump(object)
-			panic('object.id is not assigned')
+		if sym.id == 0 {
+			dump(sym)
+			panic('sym.id is not assigned')
 		}
 	}
-	key := object.name
-	if key in s.objects {
+	key := sym.name
+	if key in s.symbols {
 		return error('$key is exists')
 	}
-	s.objects[key] = object
-	return object
+	s.symbols[key] = sym
+	return sym
 }
 
-pub fn (s &Scope) lookup(name string) ?ScopeObject {
-	if name in s.objects {
-		return s.objects[name]
+pub fn (s &Scope) lookup(name string) ?Symbol {
+	if name in s.symbols {
+		return s.symbols[name]
 	}
 	if p := s.parent() {
 		return p.lookup(name)
@@ -78,9 +76,9 @@ pub fn (s &Scope) lookup(name string) ?ScopeObject {
 	return none
 }
 
-pub fn (s &Scope) ident_for(object ScopeObject) string {
+pub fn (s &Scope) ident_for(sym Symbol) string {
 	if s.id == symbols.global_id {
-		return object.name
+		return sym.name
 	}
-	return 's${s.id}_$object.name'
+	return 's${s.id}_$sym.name'
 }
