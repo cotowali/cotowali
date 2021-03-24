@@ -15,19 +15,19 @@ pub mut:
 pub fn new_var(name string) &Var {
 	return &Var{
 		name: name
-		typ: &unknown_type
+		typ: &symbols.unknown_type
 		id: auto_id()
 	}
 }
 
 pub struct Type {
 pub:
-	id u64
+	id   u64
 	name string
 	info TypeInfo
 }
 
-pub struct NoTypeInfo{}
+pub struct NoTypeInfo {}
 
 pub type TypeInfo = NoTypeInfo
 

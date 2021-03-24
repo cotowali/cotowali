@@ -4,7 +4,7 @@ import vash.source
 import vash.lexer
 import vash.token { TokenKind }
 import vash.ast
-import vash.symbols { new_global_scope }
+import vash.symbols
 
 pub fn (mut p Parser) parse() ast.File {
 	p.file = ast.File{
@@ -62,7 +62,9 @@ fn (mut p Parser) parse_fn_decl_stmt() ast.Stmt {
 
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	p.scope = p.scope.create_child()
-	defer { p.scope = p.scope.parent() or { panic(err) } }
+	defer {
+		p.scope = p.scope.parent() or { panic(err) }
+	}
 
 	p.consume_with_assert(.key_fn)
 	name := p.consume().text

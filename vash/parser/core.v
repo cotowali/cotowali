@@ -14,7 +14,7 @@ mut:
 	buf         []token.Token
 	token_idx   int
 	file        ast.File
-	scope       &Scope
+	scope       &symbols.Scope
 }
 
 pub fn (p &Parser) token(i int) Token {
