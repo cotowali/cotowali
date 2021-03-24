@@ -4,7 +4,6 @@ import vash.source
 import vash.lexer
 import vash.token { TokenKind }
 import vash.ast
-import vash.symbols
 
 pub fn (mut p Parser) parse() ast.File {
 	p.file = ast.File{
