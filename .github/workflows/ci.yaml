@@ -14,8 +14,7 @@ jobs:
       - name: Setup V
         run: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
       - uses: actions/checkout@v2
-      # skip parse.v to avoid v fmt bug
-      - run: find vash -path '*.v' | grep -v 'parse.v' | xargs v fmt -verify
+      - run: v fmt -verify vash
   test:
     runs-on: ubuntu-latest
     steps:
