@@ -24,17 +24,24 @@ pub struct Type {
 pub:
 	id   u64
 	name string
+	kind TypeKind
 	info TypeInfo
+}
+
+pub enum TypeKind {
+	placeholder
+	unknown
 }
 
 pub struct NoTypeInfo {}
 
 pub type TypeInfo = NoTypeInfo
 
-pub fn new_type(name string) &Type {
+pub fn new_type(name string, kind TypeKind) &Type {
 	return &Type{
 		id: auto_id()
 		name: name
+		kind: kind
 		info: NoTypeInfo{}
 	}
 }
@@ -43,5 +50,6 @@ pub const (
 	unknown_type = Type{
 		id: 1
 		name: 'unknown'
+		kind: .unknown
 	}
 )

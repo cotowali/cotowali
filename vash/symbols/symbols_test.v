@@ -7,6 +7,6 @@ fn test_var() {
 }
 
 fn test_type() {
-	ts := new_type('t')
+	ts := new_type('t', .placeholder)
 	assert ts.name == 't'
 }
