@@ -34,7 +34,7 @@ pub const global_id = 1
 
 pub fn new_global_scope() &Scope {
 	mut s := &Scope{
-		id: global_id
+		id: scope.global_id
 		parent: 0
 	}
 	s.register(unknown_type) or { panic(err) }
