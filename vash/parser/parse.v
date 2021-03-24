@@ -33,7 +33,8 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 				p.skip_until_eol()
 				ast.Stmt(ast.EmptyStmt{})
 			}
-			expr  // Hack to avoid V compiler bug
+			// Hack to avoid V compiler bug
+			expr
 		}
 	}
 	p.skip_eol()
