@@ -1,8 +1,8 @@
 module parser
 
-import vash.source { Source }
-import vash.lexer { Lexer }
-import vash.token { Token, TokenKind }
+import vash.source
+import vash.lexer
+import vash.token { TokenKind }
 import vash.ast
 import vash.scope { new_global_scope }
 
@@ -46,7 +46,7 @@ fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
 
 	// eol or close blace
 	if !(p.brace_depth > 0 && p.@is(.r_brace)) {
-		p.consume_with_check(.eol, .eof)?
+		p.consume_with_check(.eol, .eof) ?
 	}
 
 	return expr
@@ -72,7 +72,9 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	if p.@is(.ident) {
 		for {
 			ident := p.consume_with_check(.ident) ?
-			node.params << ast.Var{ name: ident.text }
+			node.params << ast.Var{
+				name: ident.text
+			}
 			if p.@is(.r_paren) {
 				break
 			} else {
@@ -156,7 +158,7 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 		p.consume_with_assert(.pipe)
 		exprs << p.parse_expr(inner) ?
 	}
-	return ast.Pipeline {
+	return ast.Pipeline{
 		exprs: exprs
 	}
 }
