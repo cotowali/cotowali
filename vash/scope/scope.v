@@ -96,5 +96,8 @@ pub fn (s &Scope) lookup(name string) ?ScopeObject {
 }
 
 pub fn (s &Scope) ident_for(object ScopeObject) string {
+	if s.id == scope.global_id {
+		return object.name
+	}
 	return 's${s.id}_$object.name'
 }

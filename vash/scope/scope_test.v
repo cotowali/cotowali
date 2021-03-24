@@ -47,6 +47,7 @@ fn test_ident_for() ? {
 	mut s := global.create_child()
 	v := new_var('v')
 	s.register(v) ?
+	assert global.ident_for(v) == v.name
 	assert s.ident_for(v).contains(s.id.str())
 	assert s.ident_for(v).contains(v.name)
 }
