@@ -61,13 +61,18 @@ fn (mut p Parser) parse_fn_decl_stmt() ast.Stmt {
 }
 
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
+	p.scope = p.scope.create_child()
+	defer { p.scope = p.scope.parent() or { panic(err) } }
+
 	p.consume_with_assert(.key_fn)
 	name := p.consume().text
 	mut node := ast.FnDecl{
 		name: name
+		scope: p.scope
 		stmts: []
 		params: []
 	}
+
 	p.consume_with_check(.l_paren) ?
 	if p.@is(.ident) {
 		for {

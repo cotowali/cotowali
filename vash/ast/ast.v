@@ -29,6 +29,7 @@ pub:
 	pos  Pos
 	name string
 pub mut:
+	scope  &scope.Scope
 	params []Var
 	stmts  []Stmt
 }
