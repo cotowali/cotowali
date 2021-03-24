@@ -9,13 +9,13 @@ pub:
 	name string
 	id   u64
 pub mut:
-	typ Type
+	typ &Type
 }
 
-pub fn new_var(name string) Var {
-	return Var{
+pub fn new_var(name string) &Var {
+	return &Var{
 		name: name
-		typ: unknown_type
+		typ: &unknown_type
 		id: auto_id()
 	}
 }
@@ -27,8 +27,8 @@ pub:
 	name string
 }
 
-pub fn new_type(name string) Type {
-	return Type{
+pub fn new_type(name string) &Type {
+	return &Type{
 		id: auto_id()
 		name: name
 	}
