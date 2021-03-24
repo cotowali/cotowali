@@ -61,10 +61,8 @@ fn (mut p Parser) parse_fn_decl_stmt() ast.Stmt {
 }
 
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
-	p.scope = p.scope.create_child()
-	defer {
-		p.scope = p.scope.parent() or { panic(err) }
-	}
+	p.open_scope()
+	defer { p.close_scope() }
 
 	p.consume_with_assert(.key_fn)
 	name := p.consume().text

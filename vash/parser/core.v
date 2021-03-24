@@ -130,6 +130,16 @@ pub fn (p &Parser) source() Source {
 	return p.lexer.source
 }
 
+[inline]
+fn (mut p Parser) open_scope() {
+	p.scope = p.scope.create_child()
+}
+
+[inline]
+fn (mut p Parser) close_scope() {
+	p.scope = p.scope.parent() or { panic(err) }
+}
+
 fn (mut p Parser) error(msg string) &errors.Error {
 	err := &errors.Error{
 		msg: msg
