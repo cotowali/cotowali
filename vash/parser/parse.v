@@ -4,6 +4,7 @@ import vash.source
 import vash.lexer
 import vash.token { TokenKind }
 import vash.ast
+import vash.symbols { new_var }
 
 pub fn (mut p Parser) parse() ast.File {
 	p.file = ast.File{
@@ -78,9 +79,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	if p.@is(.ident) {
 		for {
 			ident := p.consume_with_check(.ident) ?
-			node.params << ast.Var{
-				name: ident.text
-			}
+			node.params << new_var(ident.text)
 			if p.@is(.r_paren) {
 				break
 			} else {

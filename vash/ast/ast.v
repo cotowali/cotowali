@@ -2,7 +2,7 @@ module ast
 
 import vash.pos { Pos }
 import vash.token { Token }
-import vash.symbols { Scope }
+import vash.symbols { Scope, Var }
 import vash.errors
 
 pub struct File {
@@ -17,12 +17,6 @@ pub mut:
 pub type Stmt = EmptyStmt | Expr | FnDecl
 
 pub struct EmptyStmt {}
-
-pub struct Var {
-pub:
-	pos  Pos
-	name string
-}
 
 pub struct FnDecl {
 pub:
