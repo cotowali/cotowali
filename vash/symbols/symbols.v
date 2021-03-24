@@ -21,9 +21,8 @@ pub fn new_var(name string) &Var {
 }
 
 pub struct Type {
-pub mut:
-	id u64
 pub:
+	id u64
 	name string
 }
 
