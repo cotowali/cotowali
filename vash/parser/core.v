@@ -5,6 +5,7 @@ import vash.lexer { Lexer }
 import vash.token { Token, TokenKind }
 import vash.ast
 import vash.errors
+import vash.scope { Scope, new_global_scope }
 
 pub struct Parser {
 mut:
@@ -13,6 +14,7 @@ mut:
 	buf         []token.Token
 	token_idx   int
 	file        ast.File
+	scope       &Scope
 }
 
 pub fn (p &Parser) token(i int) Token {
@@ -115,6 +117,7 @@ pub fn new(lexer Lexer) Parser {
 	mut p := Parser{
 		lexer: lexer
 		buf: []Token{len: 3} // LL(3)
+		scope: new_global_scope()
 	}
 	for _ in 0 .. p.buf.len {
 		p.consume()
