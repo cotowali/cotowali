@@ -37,7 +37,7 @@ pub fn new_global_scope() &Scope {
 		id: scope.global_id
 		parent: 0
 	}
-	s.register(unknown_type) or { panic(err) }
+	s.must_register(unknown_type)
 	return s
 }
 
@@ -63,6 +63,11 @@ pub fn (mut s Scope) create_child() &Scope {
 	child := new_scope(s)
 	s.children << child
 	return child
+}
+
+[inline]
+fn (mut s Scope) must_register(object ScopeObject) ScopeObject {
+	return s.register(object) or { panic(err) }
 }
 
 pub fn (mut s Scope) register(object ScopeObject) ?ScopeObject {
