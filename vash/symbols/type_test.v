@@ -1,4 +1,4 @@
-module types
+module symbols
 
 fn test_type_symbol() {
 	ts := new_type_symbol('t')

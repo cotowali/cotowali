@@ -1,4 +1,4 @@
-module types
+module symbols
 
 import vash.util { auto_id }
 

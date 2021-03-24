@@ -1,6 +1,4 @@
-module scope
-
-import vash.types { unknown_type }
+module symbols
 
 fn test_global_scope_has_builtin_type() {
 	s := new_global_scope()

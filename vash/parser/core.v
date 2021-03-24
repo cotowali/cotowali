@@ -5,7 +5,7 @@ import vash.lexer { Lexer }
 import vash.token { Token, TokenKind }
 import vash.ast
 import vash.errors
-import vash.scope { Scope, new_global_scope }
+import vash.symbols { Scope, new_global_scope }
 
 pub struct Parser {
 mut:

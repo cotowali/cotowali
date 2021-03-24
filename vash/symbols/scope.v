@@ -1,7 +1,6 @@
-module scope
+module symbols
 
 import vash.util { auto_id }
-import vash.types { TypeSymbol, unknown_type }
 
 pub type ScopeObject = TypeSymbol | Var
 
@@ -34,7 +33,7 @@ pub const global_id = 1
 
 pub fn new_global_scope() &Scope {
 	mut s := &Scope{
-		id: scope.global_id
+		id: symbols.global_id
 		parent: 0
 	}
 	s.must_register(unknown_type)
@@ -96,7 +95,7 @@ pub fn (s &Scope) lookup(name string) ?ScopeObject {
 }
 
 pub fn (s &Scope) ident_for(object ScopeObject) string {
-	if s.id == scope.global_id {
+	if s.id == symbols.global_id {
 		return object.name
 	}
 	return 's${s.id}_$object.name'

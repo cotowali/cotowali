@@ -2,7 +2,7 @@ module ast
 
 import vash.pos { Pos }
 import vash.token { Token }
-import vash.scope { Scope }
+import vash.symbols { Scope }
 import vash.errors
 
 pub struct File {
@@ -10,7 +10,7 @@ pub:
 	path string
 pub mut:
 	stmts  []Stmt
-	scope  &scope.Scope
+	scope  &symbols.Scope
 	errors []errors.Error
 }
 
@@ -29,7 +29,7 @@ pub:
 	pos  Pos
 	name string
 pub mut:
-	scope  &scope.Scope
+	scope  &symbols.Scope
 	params []Var
 	stmts  []Stmt
 }
