@@ -8,3 +8,8 @@ tasks:
   fmt: v fmt -w .
   ast: z run tools ast $@
   tokens: z run tools tokens $@
+  ci:
+    tasks:
+      setup-v: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
+      format: v fmt -verify vash
+      test: z test

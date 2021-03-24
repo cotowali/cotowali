@@ -12,16 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: zakuro9715/setup-z@main
-      - name: Setup V
-        run: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
       - uses: actions/checkout@v2
-      - run: v fmt -verify vash
+      - run: z ci setup-v
+      - run: z ci format
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: zakuro9715/setup-z@main
-      - name: Setup V
-        run: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
       - uses: actions/checkout@v2
-      - run: v test
-      - run: v run cmd/vash examples/hello.vash
+      - run: z ci setup-v
+      - run: z ci test
