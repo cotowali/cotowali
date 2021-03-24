@@ -94,3 +94,7 @@ pub fn (s &Scope) lookup(name string) ?ScopeObject {
 	}
 	return none
 }
+
+pub fn (s &Scope) ident_for(object ScopeObject) string {
+	return 's${s.id}_$object.name'
+}

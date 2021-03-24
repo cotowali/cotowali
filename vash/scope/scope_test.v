@@ -42,6 +42,15 @@ fn test_scope() ? {
 	}
 }
 
+fn test_ident_for() ? {
+	mut global := new_global_scope()
+	mut s := global.create_child()
+	v := new_var('v')
+	s.register(v) ?
+	assert s.ident_for(v).contains(s.id.str())
+	assert s.ident_for(v).contains(v.name)
+}
+
 fn test_nested() ? {
 	mut parent := new_global_scope()
 	mut child := parent.create_child()
