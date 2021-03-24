@@ -24,7 +24,7 @@ pub:
 	name string
 pub mut:
 	scope  &symbols.Scope
-	params []Var
+	params []symbols.Var
 	stmts  []Stmt
 }
 
