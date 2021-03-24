@@ -98,3 +98,8 @@ fn test_var() {
 	assert v.name == 'v'
 	assert v.typ == unknown_type
 }
+
+fn test_type_symbol() {
+	ts := new_type_symbol('t')
+	assert ts.name == 't'
+}

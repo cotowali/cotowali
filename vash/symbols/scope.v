@@ -4,22 +4,6 @@ import vash.util { auto_id }
 
 pub type ScopeObject = TypeSymbol | Var
 
-pub struct Var {
-pub:
-	name string
-	id   u64
-pub mut:
-	typ TypeSymbol
-}
-
-pub fn new_var(name string) Var {
-	return Var{
-		name: name
-		typ: unknown_type
-		id: auto_id()
-	}
-}
-
 pub struct Scope {
 pub:
 	id u64
