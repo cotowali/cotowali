@@ -11,6 +11,7 @@ jobs:
   format:
     runs-on: ubuntu-latest
     steps:
+      - uses: zakuro9715/setup-z@main
       - name: Setup V
         run: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
       - uses: actions/checkout@v2
@@ -18,6 +19,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - uses: zakuro9715/setup-z@main
       - name: Setup V
         run: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
       - uses: actions/checkout@v2
