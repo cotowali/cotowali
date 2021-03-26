@@ -8,6 +8,7 @@ pub struct Var {
 pub:
 	name string
 	id   u64
+	scope &Scope = 0
 pub mut:
 	typ &Type
 }
@@ -24,6 +25,7 @@ pub struct Type {
 pub:
 	id   u64
 	name string
+	scope &Scope = 0
 	kind TypeKind
 	info TypeInfo
 }

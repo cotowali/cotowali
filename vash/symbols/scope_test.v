@@ -3,7 +3,7 @@ module symbols
 fn test_global_scope_has_builtin_type() {
 	s := new_global_scope()
 	if t := s.lookup(unknown_type.name) {
-		assert t == Symbol(unknown_type)
+		assert t.id == Symbol(unknown_type).id
 	} else {
 		assert false
 	}
@@ -16,13 +16,14 @@ fn test_scope() ? {
 	}
 	mut child := s.create_child('child')
 	assert (child.parent() ?).id == s.id
-	assert s.children == [child]
+	assert s.children.len == 1
+	assert s.children[0].id == child.id
 
 	v1 := Symbol(new_var('v1'))
 
 	if registered := s.register(v1) {
-		assert v1 == registered
-		assert v1.id != 0
+		assert v1.id == registered.id
+		assert registered.scope.id == s.id
 	} else {
 		assert false
 	}
@@ -31,7 +32,7 @@ fn test_scope() ? {
 	}
 
 	if found := s.lookup(v1.name) {
-		assert found == v1
+		assert found.id == v1.id
 	} else {
 		assert false
 	}
@@ -58,32 +59,32 @@ fn test_nested_scope() ? {
 	parent_v := Symbol(new_var(name))
 	child_v := Symbol(new_var(name))
 	assert parent_v.name == child_v.name
-	assert parent_v != child_v
+	assert parent_v.id != child_v.id
 
 	parent.register(parent_v) ?
 	if found := parent.lookup(name) {
-		assert found == parent_v
-		assert found != child_v
+		assert found.id == parent_v.id
+		assert found.id != child_v.id
 	} else {
 		assert false
 	}
 	if found := child.lookup(name) {
-		assert found == parent_v
-		assert found != child_v
+		assert found.id == parent_v.id
+		assert found.id != child_v.id
 	} else {
 		assert false
 	}
 
 	child.register(child_v) ?
 	if found := parent.lookup(name) {
-		assert found == parent_v
-		assert found != child_v
+		assert found.id == parent_v.id
+		assert found.id != child_v.id
 	} else {
 		assert false
 	}
 	if found := child.lookup(name) {
-		assert found != parent_v
-		assert found == child_v
+		assert found.id != parent_v.id
+		assert found.id == child_v.id
 	} else {
 		assert false
 	}

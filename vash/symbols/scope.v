@@ -52,7 +52,7 @@ fn (mut s Scope) must_register(sym Symbol) Symbol {
 	return s.register(sym) or { panic(err) }
 }
 
-pub fn (mut s Scope) register(sym Symbol) ?Symbol {
+fn (mut s Scope) check_before_register(sym Symbol) ? {
 	$if !prod {
 		if sym.id == 0 {
 			dump(sym)
@@ -63,8 +63,28 @@ pub fn (mut s Scope) register(sym Symbol) ?Symbol {
 	if key in s.symbols {
 		return error('$key is exists')
 	}
-	s.symbols[key] = sym
+}
+
+pub fn (mut s Scope) register_var(v Var) ?Var {
+	s.check_before_register(v) ?
+	sym := Var{...v, scope: s}
+	s.symbols[sym.name] = Symbol(sym)
 	return sym
+}
+
+pub fn (mut s Scope) register_type(v Type) ?Type {
+	s.check_before_register(v) ?
+	sym := Type{...v, scope: s}
+	s.symbols[sym.name] = Symbol(sym)
+	return sym
+}
+
+pub fn (mut s Scope) register(sym Symbol) ?Symbol {
+	// because compiler bug, `retrun match sym` couldn't be use
+	match sym {
+		Var { return Symbol(s.register_var(sym) ?) }
+		Type { return Symbol(s.register_type(sym) ?) }
+	}
 }
 
 pub fn (s &Scope) lookup(name string) ?Symbol {
