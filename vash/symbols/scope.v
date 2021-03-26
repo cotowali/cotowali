@@ -26,6 +26,7 @@ pub fn new_global_scope() &Scope {
 pub fn new_scope(name string, parent &Scope) &Scope {
 	return &Scope{
 		id: auto_id()
+		name: name
 		parent: parent
 	}
 }
