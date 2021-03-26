@@ -131,8 +131,8 @@ pub fn (p &Parser) source() Source {
 }
 
 [inline]
-fn (mut p Parser) open_scope() {
-	p.scope = p.scope.create_child()
+fn (mut p Parser) open_scope(name string) {
+	p.scope = p.scope.create_child(name)
 }
 
 [inline]

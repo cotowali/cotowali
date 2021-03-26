@@ -14,7 +14,7 @@ fn test_scope() ? {
 	if _ := s.parent() {
 		assert false
 	}
-	mut child := s.create_child()
+	mut child := s.create_child('child')
 	assert (child.parent() ?).id == s.id
 	assert s.children == [child]
 
@@ -42,7 +42,7 @@ fn test_scope() ? {
 
 fn test_ident_for() ? {
 	mut global := new_global_scope()
-	mut s := global.create_child()
+	mut s := global.create_child('child')
 	v := new_var('v')
 	s.register(v) ?
 	assert global.ident_for(v) == v.name
@@ -52,7 +52,7 @@ fn test_ident_for() ? {
 
 fn test_nested_scope() ? {
 	mut parent := new_global_scope()
-	mut child := parent.create_child()
+	mut child := parent.create_child('child')
 
 	name := 'v'
 	parent_v := Symbol(new_var(name))

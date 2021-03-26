@@ -61,13 +61,14 @@ fn (mut p Parser) parse_fn_decl_stmt() ast.Stmt {
 }
 
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
-	p.open_scope()
+	p.consume_with_assert(.key_fn)
+	name := p.consume().text
+
+	p.open_scope(name)
 	defer {
 		p.close_scope()
 	}
 
-	p.consume_with_assert(.key_fn)
-	name := p.consume().text
 	mut node := ast.FnDecl{
 		name: name
 		scope: p.scope

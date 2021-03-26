@@ -4,7 +4,8 @@ import vash.util { auto_id }
 
 pub struct Scope {
 pub:
-	id u64
+	id   u64
+	name string
 mut:
 	parent   &Scope
 	children []&Scope
@@ -22,7 +23,7 @@ pub fn new_global_scope() &Scope {
 	return s
 }
 
-pub fn new_scope(parent &Scope) &Scope {
+pub fn new_scope(name string, parent &Scope) &Scope {
 	return &Scope{
 		id: auto_id()
 		parent: parent
@@ -40,8 +41,8 @@ pub fn (s &Scope) children() []&Scope {
 	return s.children
 }
 
-pub fn (mut s Scope) create_child() &Scope {
-	child := new_scope(s)
+pub fn (mut s Scope) create_child(name string) &Scope {
+	child := new_scope(name, s)
 	s.children << child
 	return child
 }
