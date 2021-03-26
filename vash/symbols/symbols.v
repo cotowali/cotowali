@@ -4,11 +4,18 @@ import vash.util { auto_id }
 
 pub type Symbol = Type | Var
 
+pub fn (sym Symbol) scope() ?&Scope {
+	if isnil(sym.scope) {
+		return none
+	}
+	return sym.scope
+}
+
 pub struct Var {
+	scope &Scope = 0
 pub:
 	name string
 	id   u64
-	scope &Scope = 0
 pub mut:
 	typ &Type
 }
@@ -22,10 +29,10 @@ pub fn new_var(name string) &Var {
 }
 
 pub struct Type {
+	scope &Scope = 0
 pub:
 	id   u64
 	name string
-	scope &Scope = 0
 	kind TypeKind
 	info TypeInfo
 }
