@@ -12,3 +12,17 @@ fn test_type() {
 	assert ts.kind == .placeholder
 	assert new_placeholder_type().kind == .placeholder
 }
+
+fn test_full_name() ? {
+	mut global := new_global_scope()
+	mut s := global.create_child('s')
+	mut s_s := s.create_child('s')
+
+	v := new_var('v')
+	t := new_type('t', .placeholder)
+	assert v.full_name() == 'v'
+	assert t.full_name() == 't'
+	assert (global.register(v) ?).full_name() == 'v'
+	assert (s.register(v) ?).full_name() == 's_v'
+	assert (s_s.register(v) ?).full_name() == 's_s_v'
+}

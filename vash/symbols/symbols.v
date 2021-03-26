@@ -11,6 +11,18 @@ pub fn (sym Symbol) scope() ?&Scope {
 	return sym.scope
 }
 
+pub fn (sym Symbol) full_name() string {
+	name := if sym.name.len > 0 { sym.name } else { 'sym$sym.id' }
+	if s := sym.scope() {
+		if s.is_global() {
+			return name
+		}
+		return join_name(s.full_name(), name)
+	} else {
+		return name
+	}
+}
+
 pub struct Var {
 	scope &Scope = 0
 pub:
@@ -26,6 +38,10 @@ pub fn new_var(name string) &Var {
 		typ: new_placeholder_type()
 		id: auto_id()
 	}
+}
+
+pub fn (v Var) full_name() string {
+	return Symbol(v).full_name()
 }
 
 pub struct Type {
@@ -53,6 +69,10 @@ pub fn new_type(name string, kind TypeKind) &Type {
 		kind: kind
 		info: NoTypeInfo{}
 	}
+}
+
+pub fn (v Type) full_name() string {
+	return Symbol(v).full_name()
 }
 
 pub fn new_placeholder_type() &Type {
