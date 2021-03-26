@@ -1,12 +1,14 @@
 module symbols
 
-fn test_global_scope_has_builtin_type() {
-	s := new_global_scope()
+fn test_global_scope() {
+	mut s := new_global_scope()
+	assert s.is_global()
 	if t := s.lookup(unknown_type.name) {
 		assert t.id == Symbol(unknown_type).id
 	} else {
 		assert false
 	}
+	assert !s.create_child('s').is_global()
 }
 
 fn test_scope() ? {

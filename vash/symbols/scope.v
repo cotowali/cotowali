@@ -31,6 +31,10 @@ pub fn new_scope(name string, parent &Scope) &Scope {
 	}
 }
 
+pub fn (s &Scope) is_global() bool {
+	return s.id == symbols.global_id
+}
+
 pub fn (s &Scope) parent() ?&Scope {
 	if isnil(s.parent) {
 		return none
