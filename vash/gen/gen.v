@@ -113,7 +113,7 @@ fn (mut g Gen) fn_decl(node ast.FnDecl) {
 	g.writeln('${node.name}() {')
 	g.indent++
 	for i, param in node.params {
-		g.writeln('$param.name=\$${i + 1}')
+		g.writeln('${param.full_name()}=\$${i + 1}')
 	}
 	g.stmts(node.stmts)
 	g.indent--
