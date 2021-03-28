@@ -1,8 +1,8 @@
 default: hello
 tasks:
   hello: z run examples/hello.ri
-  run: v run cmd/cotowari/main.v $@
-  build: v cmd/cotowari/main.v
+  run: v run cmd/ri/main.v $@
+  build: v cmd/ri/main.v
   test: v test .
   test.hello: z run examples/hello.ri
   fmt: v fmt -w .
