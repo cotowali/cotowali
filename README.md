@@ -1,3 +1,3 @@
-# Vash
+# Cotowari
 
-A shell script language that transpile into POSIX sh
+A script language that transpile into POSIX sh
