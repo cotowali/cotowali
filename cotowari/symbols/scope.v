@@ -88,14 +88,20 @@ fn (mut s Scope) check_before_register(sym Symbol) ? {
 
 pub fn (mut s Scope) register_var(v Var) ?Var {
 	s.check_before_register(v) ?
-	sym := Var{...v, scope: s}
+	sym := Var{
+		...v
+		scope: s
+	}
 	s.symbols[sym.name] = Symbol(sym)
 	return sym
 }
 
 pub fn (mut s Scope) register_type(v Type) ?Type {
 	s.check_before_register(v) ?
-	sym := Type{...v, scope: s}
+	sym := Type{
+		...v
+		scope: s
+	}
 	s.symbols[sym.name] = Symbol(sym)
 	return sym
 }

@@ -25,7 +25,7 @@ fn test_scope() ? {
 
 	if registered := s.register(v1) {
 		assert v1.id == registered.id
-		assert (registered.scope()?).id == s.id
+		assert (registered.scope() ?).id == s.id
 	} else {
 		assert false
 	}

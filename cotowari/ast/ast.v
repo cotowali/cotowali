@@ -10,7 +10,7 @@ pub:
 	path string
 pub mut:
 	stmts  []Stmt
-	scope  &symbols.Scope
+	scope  &Scope
 	errors []errors.Error
 }
 
@@ -23,8 +23,8 @@ pub:
 	pos  Pos
 	name string
 pub mut:
-	scope  &symbols.Scope
-	params []symbols.Var
+	scope  &Scope
+	params []Var
 	stmts  []Stmt
 }
 

@@ -11,10 +11,10 @@ pub struct Parser {
 mut:
 	brace_depth int
 	lexer       Lexer
-	buf         []token.Token
+	buf         []Token
 	token_idx   int
 	file        ast.File
-	scope       &symbols.Scope
+	scope       &Scope
 }
 
 pub fn (p &Parser) token(i int) Token {

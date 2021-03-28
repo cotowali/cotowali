@@ -80,7 +80,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	if p.@is(.ident) {
 		for {
 			ident := p.consume_with_check(.ident) ?
-			node.params << (p.scope.register_var(new_var(ident.text))?)
+			node.params << (p.scope.register_var(new_var(ident.text)) ?)
 			if p.@is(.r_paren) {
 				break
 			} else {
