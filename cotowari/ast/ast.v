@@ -1,9 +1,9 @@
 module ast
 
-import vash.pos { Pos }
-import vash.token { Token }
-import vash.symbols { Scope, Var }
-import vash.errors
+import cotowari.pos { Pos }
+import cotowari.token { Token }
+import cotowari.symbols { Scope, Var }
+import cotowari.errors
 
 pub struct File {
 pub:

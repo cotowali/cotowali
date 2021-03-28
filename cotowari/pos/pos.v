@@ -1,6 +1,6 @@
 module pos
 
-import vash.util { max }
+import cotowari.util { max }
 
 pub struct Pos {
 pub:

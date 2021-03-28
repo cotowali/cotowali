@@ -1,8 +1,8 @@
 module examples
 
 import os { dir, join_path, ls }
-import vash.compiler { new_compiler }
-import vash.source
+import cotowari.compiler { new_compiler }
+import cotowari.source
 
 fn test_examples_success() ? {
 	dir := dir(@FILE)

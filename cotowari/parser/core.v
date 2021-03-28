@@ -1,11 +1,11 @@
 module parser
 
-import vash.source { Source }
-import vash.lexer { Lexer }
-import vash.token { Token, TokenKind }
-import vash.ast
-import vash.errors
-import vash.symbols { Scope, new_global_scope }
+import cotowari.source { Source }
+import cotowari.lexer { Lexer }
+import cotowari.token { Token, TokenKind }
+import cotowari.ast
+import cotowari.errors
+import cotowari.symbols { Scope, new_global_scope }
 
 pub struct Parser {
 mut:

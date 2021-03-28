@@ -2,12 +2,12 @@ module compiler
 
 import io
 import strings
-import vash.source { Source }
-import vash.lexer
-import vash.parser
-import vash.gen
-import vash.ast
-import vash.errors
+import cotowari.source { Source }
+import cotowari.lexer
+import cotowari.parser
+import cotowari.gen
+import cotowari.ast
+import cotowari.errors
 
 pub struct Compiler {
 mut:

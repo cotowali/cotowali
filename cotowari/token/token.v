@@ -1,6 +1,6 @@
 module token
 
-import vash.pos { Pos }
+import cotowari.pos { Pos }
 
 pub enum TokenKind {
 	unknown

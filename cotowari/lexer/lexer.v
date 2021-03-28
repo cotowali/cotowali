@@ -1,7 +1,7 @@
 module lexer
 
-import vash.token { Token }
-import vash.source { Char }
+import cotowari.token { Token }
+import cotowari.source { Char }
 
 pub fn (mut lex Lexer) next() ?Token {
 	if lex.closed {

@@ -1,7 +1,7 @@
 module errors
 
-import vash.pos { Pos }
-import vash.source { Source }
+import cotowari.pos { Pos }
+import cotowari.source { Source }
 
 pub struct Error {
 pub:

@@ -1,6 +1,6 @@
 module source
 
-import vash.util { @in, in2 }
+import cotowari.util { @in, in2 }
 
 pub type Char = string // utf-8 char
 

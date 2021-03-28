@@ -3,8 +3,8 @@ module main
 import os
 import cli { Command }
 import v.vmod
-import vash { compile }
-import vash.source { Source }
+import cotowari { compile }
+import cotowari.source { Source }
 import cmd.tools
 
 fn new_source_to_run(args []string) ?Source {
@@ -27,7 +27,7 @@ fn execute_run(cmd Command) ? {
 		eprintln(err)
 		exit(1)
 	}
-	vash.run(s) or {
+	cotowari.run(s) or {
 		eprintln(err)
 		exit(1)
 	}

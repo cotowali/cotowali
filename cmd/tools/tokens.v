@@ -2,8 +2,8 @@ module tools
 
 import cli { Command }
 import strings
-import vash.lexer
-import vash.source
+import cotowari.lexer
+import cotowari.source
 
 const (
 	tokens_command = Command{

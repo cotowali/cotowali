@@ -1,6 +1,6 @@
 module parser
 
-import vash.lexer
+import cotowari.lexer
 
 fn test_consume_token() {
 	mut p := new(lexer.new(path: '', code: '0 1 2 3 4'))

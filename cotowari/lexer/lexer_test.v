@@ -1,7 +1,7 @@
 module lexer
 
-import vash.token { Token, TokenKind }
-import vash.pos { Pos }
+import cotowari.token { Token, TokenKind }
+import cotowari.pos { Pos }
 
 fn test(code string, tokens []Token) {
 	lexer := new(path: '', code: code)

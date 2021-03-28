@@ -1,10 +1,10 @@
-module vash
+module cotowari
 
 import os
 import io
 import rand { ulid }
-import vash.source { Source }
-import vash.compiler { new_compiler }
+import cotowari.source { Source }
+import cotowari.compiler { new_compiler }
 
 pub fn compile(s Source) ?string {
 	c := new_compiler(s)

@@ -1,9 +1,9 @@
 module lexer
 
-import vash.source { Char, Source }
-import vash.token { Token, TokenKind }
-import vash.pos { Pos }
-import vash.util { min }
+import cotowari.source { Char, Source }
+import cotowari.token { Token, TokenKind }
+import cotowari.pos { Pos }
+import cotowari.util { min }
 
 pub struct Lexer {
 pub mut:

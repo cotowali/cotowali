@@ -1,6 +1,6 @@
 module gen
 
-import vash.ast { Pipeline, Stmt }
+import cotowari.ast { Pipeline, Stmt }
 
 pub fn (mut g Gen) gen(f ast.File) {
 	g.file(f)

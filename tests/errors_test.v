@@ -8,7 +8,7 @@ fn test_compile_errors() ? {
 	sources := (os.ls(dir) ?).filter(filter).map(os.join_path(dir, it))
 	for path in sources {
 		println('$path')
-		result := os.execute('v run cmd/vash/main.v $path')
+		result := os.execute('v run cmd/cotowari/main.v $path')
 		out_path := path.trim_suffix(os.file_ext(path)) + '.out'
 		expected := os.read_file(out_path) ?
 		println('FILE: $path')

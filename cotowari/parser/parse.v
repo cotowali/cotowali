@@ -1,10 +1,10 @@
 module parser
 
-import vash.source
-import vash.lexer
-import vash.token { TokenKind }
-import vash.ast
-import vash.symbols { new_var }
+import cotowari.source
+import cotowari.lexer
+import cotowari.token { TokenKind }
+import cotowari.ast
+import cotowari.symbols { new_var }
 
 pub fn (mut p Parser) parse() ast.File {
 	p.file = ast.File{

@@ -1,6 +1,6 @@
 module symbols
 
-import vash.util { auto_id }
+import cotowari.util { auto_id }
 
 pub struct Scope {
 pub:

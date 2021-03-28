@@ -1,6 +1,6 @@
 module token
 
-import vash.pos
+import cotowari.pos
 
 fn test_eq() {
 	t := Token{.unknown, 'text', pos.new(i: 10)}

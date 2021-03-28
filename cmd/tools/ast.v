@@ -2,7 +2,7 @@ module tools
 
 import cli { Command }
 import strings
-import vash.parser
+import cotowari.parser
 
 const (
 	ast_command = Command{

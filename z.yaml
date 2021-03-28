@@ -1,15 +1,15 @@
 default: hello
 tasks:
-  hello: z run examples/hello.vash
-  run: v run cmd/vash/main.v $@
-  build: v cmd/vash/main.v
+  hello: z run examples/hello.ri
+  run: v run cmd/cotowari/main.v $@
+  build: v cmd/cotowari/main.v
   test: v test .
-  test.hello: z run examples/hello.vash
+  test.hello: z run examples/hello.ri
   fmt: v fmt -w .
   ast: z run tools ast $@
   tokens: z run tools tokens $@
   ci:
     tasks:
       setup-v: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
-      format: v fmt -verify vash
+      format: v fmt -verify cotowari
       test: z test
