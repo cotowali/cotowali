@@ -35,7 +35,7 @@ pub mut:
 pub fn new_var(name string) &Var {
 	return &Var{
 		name: name
-		typ: new_type('placeholder', .placeholder)
+		typ: new_type('placeholder', .placeholder, PlaceholderTypeInfo{})
 		id: auto_id()
 	}
 }
@@ -59,15 +59,16 @@ pub enum TypeKind {
 }
 
 pub struct NoTypeInfo {}
+pub struct PlaceholderTypeInfo{}
 
-pub type TypeInfo = NoTypeInfo
+pub type TypeInfo = NoTypeInfo | PlaceholderTypeInfo
 
-pub fn new_type(name string, kind TypeKind) &Type {
+pub fn new_type(name string, kind TypeKind, info TypeInfo) &Type {
 	return &Type{
 		id: auto_id()
 		name: name
 		kind: kind
-		info: NoTypeInfo{}
+		info: info
 	}
 }
 
