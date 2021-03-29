@@ -31,25 +31,25 @@ pub fn (mut lex Lexer) read() Token {
 
 	match c[0] {
 		`&` {
-			if lex.next_char()[0] == `&` {
-				lex.consume()
-				return lex.new_token_with_consume(.op_and)
+			return if lex.next_char()[0] == `&` {
+				lex.new_token_with_consume_n(.op_and, 2)
+			} else {
+				lex.new_token_with_consume(.amp)
 			}
-			return lex.new_token_with_consume(.amp)
 		}
 		`|` {
-			if lex.next_char()[0] == `|` {
-				lex.consume()
-				return lex.new_token_with_consume(.op_or)
+			return if lex.next_char()[0] == `|` {
+				lex.new_token_with_consume_n(.op_or, 2)
+			} else {
+				lex.new_token_with_consume(.pipe)
 			}
-			return lex.new_token_with_consume(.pipe)
 		}
 		`=` {
-			if lex.next_char()[0] == `=` {
-				lex.consume()
-				return lex.new_token_with_consume(.op_eq)
+			return if lex.next_char()[0] == `=` {
+				lex.new_token_with_consume_n(.op_eq, 2)
+			} else {
+				lex.new_token_with_consume(.op_assign)
 			}
-			return lex.new_token_with_consume(.op_assign)
 		}
 		else {}
 	}
