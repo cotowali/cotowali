@@ -175,7 +175,7 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 fn (mut p Parser) parse_ident() ?ast.Expr {
 	name := p.consume().text
 	p.consume_if_kind_is(.l_paren) or {
-		return *symbols.new_var(name)
+		return *symbols.new_scope_var(name, p.scope)
 	}
 	mut args := []ast.Expr{}
 	if !p.@is(.r_paren) {
