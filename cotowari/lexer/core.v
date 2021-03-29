@@ -89,6 +89,16 @@ fn (mut lex Lexer) new_token_with_consume_n(n int, kind TokenKind) Token {
 	return lex.new_token(kind)
 }
 
+fn (mut lex Lexer) new_token_with_consume_for(cond CharCond, kind TokenKind) Token {
+	lex.consume_for(cond)
+	return lex.new_token(kind)
+}
+
+fn (mut lex Lexer) new_token_with_consume_not_for(cond CharCond, kind TokenKind) Token {
+	lex.consume_not_for(cond)
+	return lex.new_token(kind)
+}
+
 // --
 
 [inline]

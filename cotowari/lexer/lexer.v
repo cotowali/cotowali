@@ -127,14 +127,12 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 }
 
 fn (mut lex Lexer) read_number() Token {
-	lex.consume_for(is_digit)
-	return lex.new_token(.int_lit)
+	return lex.new_token_with_consume_for(is_digit, .int_lit)
 }
 
 fn (mut lex Lexer) read_at_ident() Token {
 	lex.skip_with_assert(fn (c Char) bool {
 		return c == '@'
 	})
-	lex.consume_not_for(is_whitespace)
-	return lex.new_token(.ident)
+	return lex.new_token_with_consume_not_for(is_whitespace, .ident)
 }
