@@ -1,5 +1,5 @@
 fn f(a) {
-  echo(echo(0))
+  echo(echo(a))
 }
 
 f(a) | cat()
