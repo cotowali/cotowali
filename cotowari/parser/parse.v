@@ -4,7 +4,7 @@ import cotowari.source
 import cotowari.lexer
 import cotowari.token { TokenKind }
 import cotowari.ast
-import cotowari.symbols { new_var }
+import cotowari.symbols
 
 pub fn (mut p Parser) parse() ast.File {
 	p.file = ast.File{
@@ -64,6 +64,9 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	p.consume_with_assert(.key_fn)
 	name := p.consume().text
 
+
+	p.scope.register(symbols.new_fn(name)) ?
+
 	p.open_scope(name)
 	defer {
 		p.close_scope()
@@ -80,7 +83,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	if p.@is(.ident) {
 		for {
 			ident := p.consume_with_check(.ident) ?
-			node.params << (p.scope.register_var(new_var(ident.text)) ?)
+			node.params << (p.scope.register_var(symbols.new_var(ident.text)) ?)
 			if p.@is(.r_paren) {
 				break
 			} else {
