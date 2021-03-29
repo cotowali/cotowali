@@ -4,7 +4,7 @@ import os
 import io
 import rand { ulid }
 import cotowari.source { Source }
-import cotowari.compiler { new_compiler }
+import cotowari.compiler { new_compiler, CompileError }
 
 pub fn compile(s Source) ?string {
 	c := new_compiler(s)
@@ -34,4 +34,11 @@ pub fn run(s Source) ?int {
 	}
 	code := os.system('sh "$temp_file"')
 	return code
+}
+
+pub fn format_error(err IError) string {
+	if err is CompileError {
+		return err.errors.str()
+	}
+	return err.msg
 }

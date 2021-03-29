@@ -3,7 +3,7 @@ module main
 import os
 import cli { Command }
 import v.vmod
-import cotowari { compile }
+import cotowari { compile, format_error }
 import cotowari.source { Source }
 import cmd.tools
 
@@ -43,7 +43,7 @@ fn execute_compile(cmd Command) ? {
 	}
 	s := source.read_file(cmd.args[0]) ?
 	out := compile(s) or {
-		eprintln(err)
+		eprintln(format_error(err))
 		exit(1)
 	}
 	println(out)
