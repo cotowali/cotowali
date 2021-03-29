@@ -1,3 +1,0 @@
-fn f(a) {
-  echo(echo(0))
-}

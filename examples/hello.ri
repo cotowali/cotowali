@@ -1,2 +1,6 @@
-echo(1 + 1) | cat()
+fn f(a) {
+  echo(echo(0))
+}
+
+f(a) | cat()
 echo(1 + 1) | cat()
