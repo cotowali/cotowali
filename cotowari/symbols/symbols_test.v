@@ -1,6 +1,6 @@
 module symbols
 
-fn test_var() {
+fn test_var() ? {
 	v := new_var('v')
 	assert v.name == 'v'
 	assert v.typ.kind() == .placeholder
@@ -8,6 +8,10 @@ fn test_var() {
 	if _ := v.scope() {
 		assert false
 	}
+
+	s := new_global_scope()
+	v2 := new_scope_var('name', s)
+	assert (v2.scope()?).id == s.id
 }
 
 fn test_new_fn() {

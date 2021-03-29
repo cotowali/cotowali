@@ -3,6 +3,7 @@ module symbols
 import cotowari.util { auto_id }
 
 pub struct Var {
+mut:
 	scope &Scope = 0
 pub:
 	name string
@@ -17,6 +18,12 @@ pub fn new_var(name string) &Var {
 		typ: new_type('placeholder', PlaceholderTypeInfo{})
 		id: auto_id()
 	}
+}
+
+pub fn new_scope_var(name string, scope &Scope) &Var {
+	mut v := new_var(name)
+	v.scope = scope
+	return v
 }
 
 pub fn new_fn(name string) &Var {
