@@ -6,6 +6,7 @@ tasks:
   test: v test .
   test.hello: z run examples/hello.ri
   fmt: v fmt -w .
+  fmt.c: z fmt && z test && git add . && git commit -m 'fmt'
   ast: z run tools ast $@
   tokens: z run tools tokens $@
   ci:
