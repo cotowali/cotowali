@@ -82,7 +82,7 @@ fn (mut lex Lexer) new_token_with_consume(kind TokenKind) Token {
 	return lex.new_token(kind)
 }
 
-fn (mut lex Lexer) new_token_with_consume_n(kind TokenKind, n int) Token {
+fn (mut lex Lexer) new_token_with_consume_n(n int, kind TokenKind) Token {
 	for _ in 0..n {
 		lex.consume()
 	}
