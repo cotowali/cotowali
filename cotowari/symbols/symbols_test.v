@@ -23,7 +23,7 @@ fn test_type() {
 fn test_is_fn() {
 	assert unknown_type.is_fn() == false
 	assert new_type('t', PlaceholderTypeInfo{}).is_fn() == false
-	assert new_type('t', PlaceholderTypeInfo{is_fn: true}).is_fn()
+	assert new_type('t', PlaceholderTypeInfo{ is_fn: true }).is_fn()
 }
 
 fn test_full_name() ? {

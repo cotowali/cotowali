@@ -20,11 +20,11 @@ pub fn (t Type) is_fn() bool {
 
 pub struct UnknownTypeInfo {}
 
-pub struct PlaceholderTypeInfo{
+pub struct PlaceholderTypeInfo {
 	is_fn bool
 }
 
-pub type TypeInfo = UnknownTypeInfo | PlaceholderTypeInfo
+pub type TypeInfo = PlaceholderTypeInfo | UnknownTypeInfo
 
 pub enum TypeKind {
 	placeholder
