@@ -4,6 +4,14 @@ fn test_var() {
 	v := new_var('v')
 	assert v.name == 'v'
 	assert v.typ.kind == .placeholder
+	assert v.typ.is_fn() == false
+}
+
+fn test_new_fn() {
+	f := new_fn('f')
+	assert f.name == 'f'
+	assert f.typ.kind == .placeholder
+	assert f.typ.is_fn()
 }
 
 fn test_type() {

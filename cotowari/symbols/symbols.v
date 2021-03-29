@@ -40,6 +40,14 @@ pub fn new_var(name string) &Var {
 	}
 }
 
+pub fn new_fn(name string) &Var {
+	return &Var{
+		name: name
+		typ: new_type('placeholder_fn', .placeholder, PlaceholderTypeInfo{ is_fn: true })
+		id: auto_id()
+	}
+}
+
 pub fn (v Var) full_name() string {
 	return Symbol(v).full_name()
 }
