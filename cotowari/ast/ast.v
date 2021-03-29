@@ -10,11 +10,11 @@ pub:
 	path string
 pub mut:
 	stmts  []Stmt
-	scope  &symbols.Scope
+	scope  &Scope
 	errors []errors.Error
 }
 
-pub type Stmt = EmptyStmt | Expr | FnDecl | AssignStmt
+pub type Stmt = AssignStmt | EmptyStmt | Expr | FnDecl
 
 pub struct EmptyStmt {}
 
@@ -23,15 +23,15 @@ pub:
 	pos  Pos
 	name string
 pub mut:
-	scope  &symbols.Scope
-	params []symbols.Var
+	scope  &Scope
+	params []Var
 	stmts  []Stmt
 }
 
 pub struct AssignStmt {
 pub:
-	pos Pos
-	left Var
+	pos   Pos
+	left  Var
 	right Expr
 }
 
@@ -50,14 +50,14 @@ pub:
 	exprs []Expr
 }
 
-pub type Expr = Var | CallFn | InfixExpr | IntLiteral | Pipeline
+pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline | Var
 
 pub struct CallFn {
 pub:
-	pos   Pos
+	pos Pos
 pub mut:
-	func  Var
-	args  []Expr
+	func Var
+	args []Expr
 }
 
 pub struct IntLiteral {

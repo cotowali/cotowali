@@ -67,7 +67,6 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	p.consume_with_assert(.key_fn)
 	name := p.consume().text
 
-
 	p.scope.register(symbols.new_fn(name)) ?
 
 	p.open_scope(name)
@@ -118,13 +117,13 @@ fn (mut p Parser) parse_let_stmt() ast.Stmt {
 
 fn (mut p Parser) parse_let_assign() ?ast.AssignStmt {
 	p.consume_with_assert(.key_let)
-	name := (p.consume_with_check(.ident)?).text
+	name := (p.consume_with_check(.ident) ?).text
 	p.consume_with_check(.op_assign) ?
 
 	v := p.scope.register_var(symbols.new_var(name)) ?
-	return ast.AssignStmt {
+	return ast.AssignStmt{
 		left: v
-		right: p.parse_expr({})?
+		right: p.parse_expr({}) ?
 	}
 }
 
@@ -197,9 +196,7 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 
 fn (mut p Parser) parse_ident() ?ast.Expr {
 	name := p.consume().text
-	p.consume_if_kind_is(.l_paren) or {
-		return *symbols.new_scope_var(name, p.scope)
-	}
+	p.consume_if_kind_is(.l_paren) or { return *symbols.new_scope_var(name, p.scope) }
 	mut args := []ast.Expr{}
 	if !p.@is(.r_paren) {
 		args << p.parse_expr({}) ?

@@ -1,7 +1,7 @@
 module gen
 
 import cotowari.ast { Pipeline, Stmt }
-import cotowari.symbols { Var }
+import cotowari.symbols
 
 pub fn (mut g Gen) gen(f ast.File) {
 	g.file(f)
@@ -57,11 +57,11 @@ fn (mut g Gen) expr(expr ast.Expr, opt ExprOpt) {
 			}
 			g.write(expr.token.text)
 		}
-		Var {
+		symbols.Var {
 			if opt.as_command {
 				g.write('echo ')
 			}
-			g.write('"\$${expr.full_name()}"')
+			g.write('"\$$expr.full_name()"')
 		}
 	}
 }
@@ -131,7 +131,7 @@ fn (mut g Gen) fn_decl(node ast.FnDecl) {
 }
 
 fn (mut g Gen) assign(node ast.AssignStmt) {
-	g.write('${node.left.full_name()}=')
+	g.write('$node.left.full_name()=')
 	g.expr(node.right, {})
 	g.writeln('')
 }

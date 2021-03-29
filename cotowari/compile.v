@@ -4,7 +4,7 @@ import os
 import io
 import rand { ulid }
 import cotowari.source { Source }
-import cotowari.compiler { new_compiler, CompileError }
+import cotowari.compiler { new_compiler }
 
 pub fn compile(s Source) ?string {
 	c := new_compiler(s)
@@ -37,7 +37,7 @@ pub fn run(s Source) ?int {
 }
 
 pub fn format_error(err IError) string {
-	if err is CompileError {
+	if err is compiler.CompileError {
 		return err.errors.str()
 	}
 	return err.msg

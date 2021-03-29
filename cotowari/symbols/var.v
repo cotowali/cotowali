@@ -33,6 +33,7 @@ pub fn new_fn(name string) &Var {
 		id: auto_id()
 	}
 }
+
 pub fn new_scope_fn(name string, scope &Scope) &Var {
 	mut f := new_fn(name)
 	f.scope = scope

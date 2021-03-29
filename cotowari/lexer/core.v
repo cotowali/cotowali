@@ -57,7 +57,7 @@ fn k(kind TokenKind) TokenKind {
 fn (lex &Lexer) pos_for_new_token() Pos {
 	pos := lex.pos
 	last_col := pos.last_col - 1
-	last_line :=
+	last_line := 
 		pos.last_line + (if last_col == 0 || lex.prev_char()[0] in [`\n`, `\r`] { -1 } else { 0 })
 	return Pos{
 		...pos
@@ -83,7 +83,7 @@ fn (mut lex Lexer) new_token_with_consume(kind TokenKind) Token {
 }
 
 fn (mut lex Lexer) new_token_with_consume_n(n int, kind TokenKind) Token {
-	for _ in 0..n {
+	for _ in 0 .. n {
 		lex.consume()
 	}
 	return lex.new_token(kind)
