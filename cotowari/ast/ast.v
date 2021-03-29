@@ -43,7 +43,7 @@ pub:
 	exprs []Expr
 }
 
-pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline
+pub type Expr = Var | CallFn | InfixExpr | IntLiteral | Pipeline
 
 pub struct CallFn {
 pub:

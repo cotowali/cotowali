@@ -1,6 +1,7 @@
 module gen
 
 import cotowari.ast { Pipeline, Stmt }
+import cotowari.symbols { Var }
 
 pub fn (mut g Gen) gen(f ast.File) {
 	g.file(f)
@@ -53,6 +54,12 @@ fn (mut g Gen) expr(expr ast.Expr, opt ExprOpt) {
 			}
 			g.write(expr.token.text)
 		}
+		Var {
+			if opt.as_command {
+				g.write('echo ')
+			}
+			g.write('"\$${expr.full_name()}"')
+		}
 	}
 }
 
@@ -98,7 +105,7 @@ fn (mut g Gen) call_fn(expr ast.CallFn, opt ExprOpt) {
 		g.write('\$(')
 	}
 
-	g.write(expr.name)
+	g.write(expr.func.full_name())
 	for arg in expr.args {
 		g.write(' ')
 		g.expr(arg, {})

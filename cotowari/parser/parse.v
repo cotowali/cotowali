@@ -172,9 +172,11 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 	}
 }
 
-fn (mut p Parser) parse_call_fn() ?ast.Expr {
+fn (mut p Parser) parse_ident() ?ast.Expr {
 	name := p.consume().text
-	p.consume_with_check(.l_paren) ?
+	p.consume_if_kind_is(.l_paren) or {
+		return *symbols.new_var(name)
+	}
 	mut args := []ast.Expr{}
 	if !p.@is(.r_paren) {
 		args << p.parse_expr({}) ?
@@ -191,7 +193,7 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 	tok := p.token(0)
 	match tok.kind {
 		.ident {
-			return p.parse_call_fn()
+			return p.parse_ident()
 		}
 		.int_lit {
 			p.consume()
