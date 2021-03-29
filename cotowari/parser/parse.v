@@ -181,7 +181,7 @@ fn (mut p Parser) parse_call_fn() ?ast.Expr {
 	}
 	p.consume_with_check(.r_paren) ?
 	f := ast.CallFn{
-		name: name
+		func: symbols.new_fn(name)
 		args: args
 	}
 	return f

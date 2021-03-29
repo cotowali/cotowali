@@ -10,7 +10,7 @@ pub:
 	path string
 pub mut:
 	stmts  []Stmt
-	scope  &Scope
+	scope  &symbols.Scope
 	errors []errors.Error
 }
 
@@ -23,8 +23,8 @@ pub:
 	pos  Pos
 	name string
 pub mut:
-	scope  &Scope
-	params []Var
+	scope  &symbols.Scope
+	params []symbols.Var
 	stmts  []Stmt
 }
 
@@ -47,9 +47,10 @@ pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline
 
 pub struct CallFn {
 pub:
-	pos  Pos
-	name string
-	args []Expr
+	pos   Pos
+pub mut:
+	func  Var
+	args  []Expr
 }
 
 pub struct IntLiteral {
