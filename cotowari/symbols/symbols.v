@@ -35,7 +35,7 @@ pub mut:
 pub fn new_var(name string) &Var {
 	return &Var{
 		name: name
-		typ: new_type('placeholder', .placeholder, PlaceholderTypeInfo{})
+		typ: new_type('placeholder', PlaceholderTypeInfo{})
 		id: auto_id()
 	}
 }
@@ -43,7 +43,7 @@ pub fn new_var(name string) &Var {
 pub fn new_fn(name string) &Var {
 	return &Var{
 		name: name
-		typ: new_type('placeholder_fn', .placeholder, PlaceholderTypeInfo{ is_fn: true })
+		typ: new_type('placeholder_fn', PlaceholderTypeInfo{ is_fn: true })
 		id: auto_id()
 	}
 }
@@ -57,7 +57,6 @@ pub struct Type {
 pub:
 	id   u64
 	name string
-	kind TypeKind
 	info TypeInfo
 }
 
@@ -69,24 +68,36 @@ pub fn (t Type) is_fn() bool {
 	}
 }
 
-pub enum TypeKind {
-	placeholder
-	unknown
-}
-
-pub struct NoTypeInfo {}
+pub struct UnknownTypeInfo {}
 
 pub struct PlaceholderTypeInfo{
 	is_fn bool
 }
 
-pub type TypeInfo = NoTypeInfo | PlaceholderTypeInfo
+pub type TypeInfo = UnknownTypeInfo | PlaceholderTypeInfo
 
-pub fn new_type(name string, kind TypeKind, info TypeInfo) &Type {
+pub enum TypeKind {
+	placeholder
+	unknown
+}
+
+// type kind
+[inline]
+fn tk(k TypeKind) TypeKind {
+	return k
+}
+
+pub fn (t Type) kind() TypeKind {
+	return match t.info {
+		UnknownTypeInfo { tk(.unknown) }
+		PlaceholderTypeInfo { tk(.placeholder) }
+	}
+}
+
+pub fn new_type(name string, info TypeInfo) &Type {
 	return &Type{
 		id: auto_id()
 		name: name
-		kind: kind
 		info: info
 	}
 }
@@ -99,6 +110,6 @@ pub const (
 	unknown_type = Type{
 		id: 1
 		name: 'unknown'
-		kind: .unknown
+		info: UnknownTypeInfo{}
 	}
 )
