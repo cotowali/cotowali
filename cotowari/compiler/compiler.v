@@ -15,6 +15,7 @@ mut:
 }
 
 pub struct CompileError {
+pub:
 	errors []errors.Error
 	code   int
 	msg    string
