@@ -35,7 +35,7 @@ pub mut:
 pub fn new_var(name string) &Var {
 	return &Var{
 		name: name
-		typ: new_placeholder_type()
+		typ: new_type('placeholder', .placeholder)
 		id: auto_id()
 	}
 }
@@ -73,10 +73,6 @@ pub fn new_type(name string, kind TypeKind) &Type {
 
 pub fn (v Type) full_name() string {
 	return Symbol(v).full_name()
-}
-
-pub fn new_placeholder_type() &Type {
-	return new_type('unresolved', .placeholder)
 }
 
 pub const (
