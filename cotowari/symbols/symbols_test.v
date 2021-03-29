@@ -12,6 +12,12 @@ fn test_type() {
 	assert ts.kind == .placeholder
 }
 
+fn test_is_fn() {
+	assert unknown_type.is_fn() == false
+	assert new_type('t', .placeholder, PlaceholderTypeInfo{}).is_fn() == false
+	assert new_type('t', .placeholder, PlaceholderTypeInfo{is_fn: true}).is_fn()
+}
+
 fn test_full_name() ? {
 	mut global := new_global_scope()
 	mut s := global.create_child('s')

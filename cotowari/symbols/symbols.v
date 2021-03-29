@@ -53,13 +53,24 @@ pub:
 	info TypeInfo
 }
 
+pub fn (t Type) is_fn() bool {
+	info := t.info
+	return match info {
+		PlaceholderTypeInfo { info.is_fn }
+		else { false }
+	}
+}
+
 pub enum TypeKind {
 	placeholder
 	unknown
 }
 
 pub struct NoTypeInfo {}
-pub struct PlaceholderTypeInfo{}
+
+pub struct PlaceholderTypeInfo{
+	is_fn bool
+}
 
 pub type TypeInfo = NoTypeInfo | PlaceholderTypeInfo
 
