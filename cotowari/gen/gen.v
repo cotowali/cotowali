@@ -27,6 +27,9 @@ fn (mut g Gen) stmt(stmt Stmt) {
 			g.expr(stmt, as_command: true)
 			g.writeln('')
 		}
+		ast.AssignStmt {
+			g.assign(stmt)
+		}
 		ast.EmptyStmt {
 			g.writeln('')
 		}
@@ -125,4 +128,10 @@ fn (mut g Gen) fn_decl(node ast.FnDecl) {
 	g.stmts(node.stmts)
 	g.indent--
 	g.writeln('}')
+}
+
+fn (mut g Gen) assign(node ast.AssignStmt) {
+	g.write('${node.left.full_name()}=')
+	g.expr(node.right, {})
+	g.writeln('')
 }

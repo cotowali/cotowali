@@ -28,6 +28,9 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 		.key_fn {
 			p.parse_fn_decl_stmt()
 		}
+		.key_let {
+			p.parse_let_stmt()
+		}
 		else {
 			expr := p.parse_expr_stmt() or {
 				p.skip_until_eol()
@@ -103,6 +106,26 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		}
 	}
 	panic('unreachable code')
+}
+
+fn (mut p Parser) parse_let_stmt() ast.Stmt {
+	if stmt := p.parse_let_assign() {
+		return stmt
+	}
+	p.skip_until_eol()
+	return ast.EmptyStmt{}
+}
+
+fn (mut p Parser) parse_let_assign() ?ast.AssignStmt {
+	p.consume_with_assert(.key_let)
+	name := (p.consume_with_check(.ident)?).text
+	p.consume_with_check(.op_assign) ?
+
+	v := p.scope.register_var(symbols.new_var(name)) ?
+	return ast.AssignStmt {
+		left: v
+		right: p.parse_expr({})?
+	}
 }
 
 enum ExprKind {

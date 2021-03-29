@@ -14,7 +14,7 @@ pub mut:
 	errors []errors.Error
 }
 
-pub type Stmt = EmptyStmt | Expr | FnDecl
+pub type Stmt = EmptyStmt | Expr | FnDecl | AssignStmt
 
 pub struct EmptyStmt {}
 
@@ -26,6 +26,13 @@ pub mut:
 	scope  &symbols.Scope
 	params []symbols.Var
 	stmts  []Stmt
+}
+
+pub struct AssignStmt {
+pub:
+	pos Pos
+	left Var
+	right Expr
 }
 
 pub struct InfixExpr {

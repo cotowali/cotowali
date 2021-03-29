@@ -2,5 +2,6 @@ fn f(a) {
   echo(echo(a))
 }
 
+let a = 0
 f(a) | cat()
 echo(1 + 1) | cat()
