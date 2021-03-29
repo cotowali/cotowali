@@ -7,10 +7,9 @@ fn test_var() {
 }
 
 fn test_type() {
-	ts := new_type('t', .placeholder)
+	ts := new_type('t', .placeholder, PlaceholderTypeInfo{})
 	assert ts.name == 't'
 	assert ts.kind == .placeholder
-	assert new_placeholder_type().kind == .placeholder
 }
 
 fn test_full_name() ? {
@@ -19,7 +18,7 @@ fn test_full_name() ? {
 	mut s_s := s.create_child('s')
 
 	v := new_var('v')
-	t := new_type('t', .placeholder)
+	t := new_type('t', .placeholder, PlaceholderTypeInfo{})
 	assert v.full_name() == 'v'
 	assert t.full_name() == 't'
 	assert (global.register(v) ?).full_name() == 'v'
