@@ -1,5 +1,7 @@
 fn f(a) {
+  let b = 0
   echo(echo(a))
+  echo(b)
 }
 
 let a = 0
