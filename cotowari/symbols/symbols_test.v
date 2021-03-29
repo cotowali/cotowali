@@ -14,7 +14,7 @@ fn test_var() ? {
 	assert (v2.scope()?).id == s.id
 }
 
-fn test_new_fn() {
+fn test_new_fn() ?{
 	f := new_fn('f')
 	assert f.name == 'f'
 	assert f.typ.kind() == .placeholder
@@ -22,6 +22,10 @@ fn test_new_fn() {
 	if _ := f.scope() {
 		assert false
 	}
+
+	s := new_global_scope()
+	v2 := new_scope_fn('name', s)
+	assert (v2.scope()?).id == s.id
 }
 
 fn test_type() {
