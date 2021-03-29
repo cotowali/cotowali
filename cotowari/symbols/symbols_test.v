@@ -5,6 +5,9 @@ fn test_var() {
 	assert v.name == 'v'
 	assert v.typ.kind() == .placeholder
 	assert v.typ.is_fn() == false
+	if _ := v.scope() {
+		assert false
+	}
 }
 
 fn test_new_fn() {
@@ -12,12 +15,18 @@ fn test_new_fn() {
 	assert f.name == 'f'
 	assert f.typ.kind() == .placeholder
 	assert f.typ.is_fn()
+	if _ := f.scope() {
+		assert false
+	}
 }
 
 fn test_type() {
 	ts := new_type('t', PlaceholderTypeInfo{})
 	assert ts.name == 't'
 	assert ts.kind() == .placeholder
+	if _ := ts.scope() {
+		assert false
+	}
 }
 
 fn test_is_fn() {

@@ -30,3 +30,7 @@ pub fn new_fn(name string) &Var {
 pub fn (v Var) full_name() string {
 	return Symbol(v).full_name()
 }
+
+pub fn (v Var) scope() ?&Scope {
+	return Symbol(v).scope()
+}

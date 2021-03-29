@@ -56,6 +56,10 @@ pub fn (v Type) full_name() string {
 	return Symbol(v).full_name()
 }
 
+pub fn (v Type) scope() ?&Scope {
+	return Symbol(v).scope()
+}
+
 pub const (
 	unknown_type = Type{
 		id: 1
