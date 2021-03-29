@@ -45,6 +45,7 @@ fn test_lexer() {
 
 	ktest('fn f(a, b) {}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren, .l_brace,
 		.r_brace, .eof])
+	ktest('let i = 0', [.key_let, .ident, .op_assign, .int_lit, .eof])
 	ktest('&a.b | c', [.amp, .ident, .dot, .ident, .pipe, .ident, .eof])
 	ktest('a && b || c &', [.ident, .op_and, .ident, .op_or, .ident, .amp, .eof])
 
