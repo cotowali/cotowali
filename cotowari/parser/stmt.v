@@ -141,7 +141,7 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 		} else{
 			has_else = true
 			branches << ast.IfBranch {
-				body: p.parse_block('elif') ?
+				body: p.parse_block('else') ?
 			}
 			break
 		}
