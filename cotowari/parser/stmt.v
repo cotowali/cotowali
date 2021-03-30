@@ -111,15 +111,43 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 	}
 }
 
+fn (mut p Parser) parse_if_branch(name string) ?ast.IfBranch {
+	cond := p.parse_expr({}) ?
+	block := p.parse_block(name) ?
+	return ast.IfBranch {
+		cond: cond
+		body: block
+	}
+}
+
 fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 	p.consume_with_assert(.key_if)
+
 	cond := p.parse_expr({}) ?
-	branches := [ast.IfBranch{
+	mut branches := [ast.IfBranch{
 		cond: cond
 		body: p.parse_block('if') ?
 	}]
+	mut has_else := false
+	for {
+		p.consume_if_kind_is(.key_else) or { break }
+
+		if _ := p.consume_if_kind_is(.key_if) {
+			elif_cond := p.parse_expr({}) ?
+			branches << ast.IfBranch {
+				cond: elif_cond
+				body: p.parse_block('elif') ?
+			}
+		} else{
+			has_else = true
+			branches << ast.IfBranch {
+				body: p.parse_block('elif') ?
+			}
+			break
+		}
+	}
 	return ast.IfStmt{
 		branches: branches
-		has_else: false
+		has_else: has_else
 	}
 }
