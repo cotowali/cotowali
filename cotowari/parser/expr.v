@@ -6,7 +6,6 @@ import cotowari.token { TokenKind }
 import cotowari.ast
 import cotowari.symbols
 
-
 fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
 	expr := p.parse_expr({}) ?
 

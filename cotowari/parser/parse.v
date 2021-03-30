@@ -2,7 +2,7 @@ module parser
 
 import cotowari.source
 import cotowari.lexer
-import cotowari.token { TokenKind }
+import cotowari.token
 import cotowari.ast
 import cotowari.symbols
 
