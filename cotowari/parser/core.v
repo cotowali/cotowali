@@ -29,7 +29,7 @@ pub fn (p &Parser) token(i int) Token {
 
 [inline]
 pub fn (p &Parser) kind(i int) TokenKind {
-	return p.token(0).kind
+	return p.token(i).kind
 }
 
 [inline]
@@ -116,7 +116,7 @@ fn (mut p Parser) consume_with_assert(kinds ...TokenKind) Token {
 pub fn new(lexer Lexer) Parser {
 	mut p := Parser{
 		lexer: lexer
-		buf: []Token{len: 3} // LL(3)
+		buf: []Token{len: 3}
 		scope: new_global_scope()
 	}
 	for _ in 0 .. p.buf.len {
