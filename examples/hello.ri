@@ -2,6 +2,9 @@ fn f(a) {
   let b = 0
   echo(echo(a))
   echo(b)
+  if echo() {
+    echo(1)
+  }
 }
 
 let a = 0

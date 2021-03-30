@@ -14,7 +14,7 @@ pub mut:
 	errors []errors.Error
 }
 
-pub type Stmt = AssignStmt | Block | EmptyStmt | Expr | FnDecl
+pub type Stmt = AssignStmt | Block | EmptyStmt | Expr | FnDecl | IfStmt
 
 pub struct EmptyStmt {}
 
@@ -41,12 +41,17 @@ pub:
 	right Expr
 }
 
-pub struct IfBranch {}
+pub struct IfBranch {
+pub:
+	cond Expr
+	body Block
+}
 
 pub struct IfStmt {
 pub:
 	pos      Pos
-	branches IfBranch
+	branches []IfBranch
+	has_else bool
 }
 
 pub struct InfixExpr {

@@ -20,6 +20,9 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_let {
 			return ast.Stmt(p.parse_let_stmt() ?)
 		}
+		.key_if {
+			return ast.Stmt(p.parse_if_stmt() ?)
+		}
 		else {
 			if p.kind(0) == .ident && p.kind(1) == .op_assign {
 				return ast.Stmt(p.parse_assign_stmt() ?)
@@ -27,6 +30,21 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 			return p.parse_expr_stmt()
 		}
 	}
+}
+
+fn (mut p Parser) parse_block(name string) ?ast.Block {
+	p.consume_with_check(.l_brace) ?
+	p.skip_eol() // ignore eol after brace.
+	mut node := ast.Block{ scope: p.open_scope(name) }
+	defer { p.close_scope() }
+	for {
+		if _ := p.consume_if_kind_is(.r_brace) {
+			return node
+		}
+		node.stmts << p.parse_stmt()
+	}
+	p.consume_with_check(.r_brace) ?
+	panic('unreachable code')
 }
 
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
@@ -42,9 +60,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	mut node := ast.FnDecl{
 		name: name
-		body: ast.Block{
-			scope: p.scope
-		}
+		body: ast.Block{ scope: p.scope }
 		params: []
 	}
 
@@ -92,5 +108,18 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 	return ast.AssignStmt{
 		left: symbols.new_scope_var(name, p.scope)
 		right: p.parse_expr({}) ?
+	}
+}
+
+fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
+	p.consume_with_assert(.key_if)
+	cond := p.parse_expr({}) ?
+	branches := [ast.IfBranch{
+		cond: cond
+		body: p.parse_block('if') ?
+	}]
+	return ast.IfStmt{
+		branches: branches
+		has_else: false
 	}
 }

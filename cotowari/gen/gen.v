@@ -35,11 +35,36 @@ fn (mut g Gen) stmt(stmt Stmt) {
 		ast.EmptyStmt {
 			g.writeln('')
 		}
+		ast.IfStmt {
+			g.if_stmt(stmt)
+		}
 	}
 }
 
 fn (mut g Gen) block(block ast.Block) {
 	g.stmts(block.stmts)
+}
+
+fn (mut g Gen) if_stmt(stmt ast.IfStmt) {
+	for i, branch in stmt.branches {
+		mut is_else := false
+		if i == 0 {
+			g.write('if ')
+		} else if i < stmt.branches.len - 1 || !stmt.has_else {
+			g.write('elif ')
+		} else {
+			g.write('else')
+			is_else = true
+		}
+		if !is_else {
+			g.expr(branch.cond, as_command: true, writeln: true)
+			g.writeln('then')
+		}
+		g.indent++
+		g.block(branch.body)
+		g.indent--
+	}
+	g.writeln('fi')
 }
 
 struct ExprOpt {
