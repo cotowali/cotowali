@@ -8,8 +8,14 @@ pub fn (mut g Gen) gen(f ast.File) {
 }
 
 fn (mut g Gen) file(f ast.File) {
+	g.builtin()
 	g.writeln('# file: $f.path')
 	g.stmts(f.stmts)
+}
+
+fn (mut g Gen) builtin() {
+	f := $embed_file('../../builtin/builtin.sh')
+	g.writeln(f.to_string())
 }
 
 fn (mut g Gen) stmts(stmts []Stmt) {
