@@ -3,11 +3,15 @@ fn f(a) {
   echo(echo(a))
   echo(b)
   if echo() {
-    echo(1)
+    let a = 0
+    echo(a)
   } else if echo() {
+    let a = 0
+    echo(a)
     echo(2)
   } else {
-    echo(3)
+    let a = 0
+    echo(a)
   }
 }
 
