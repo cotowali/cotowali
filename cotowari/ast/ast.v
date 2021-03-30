@@ -54,6 +54,15 @@ pub:
 	has_else bool
 }
 
+pub struct ForInStmt {
+pub:
+	// for var in expr
+	val  Var
+	expr ?Expr
+pub mut:
+	body Block
+}
+
 pub struct InfixExpr {
 pub:
 	pos   Pos
