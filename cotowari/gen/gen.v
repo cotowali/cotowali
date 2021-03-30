@@ -53,7 +53,7 @@ fn (mut g Gen) if_stmt(stmt ast.IfStmt) {
 		} else if i < stmt.branches.len - 1 || !stmt.has_else {
 			g.write('elif ')
 		} else {
-			g.write('else')
+			g.writeln('else')
 			is_else = true
 		}
 		if !is_else {
