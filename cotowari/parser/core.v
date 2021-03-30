@@ -9,6 +9,7 @@ import cotowari.symbols { Scope, new_global_scope }
 
 pub struct Parser {
 mut:
+	count       int // counter to avoid some duplication (tmp name, etc...)
 	brace_depth int
 	lexer       Lexer
 	buf         []Token

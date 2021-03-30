@@ -125,9 +125,10 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 	cond := p.parse_expr({}) ?
 	mut branches := [ast.IfBranch{
 		cond: cond
-		body: p.parse_block('if') ?
+		body: p.parse_block('if_$p.count') ?
 	}]
 	mut has_else := false
+	mut elif_count := 0
 	for {
 		p.consume_if_kind_is(.key_else) or { break }
 
@@ -135,16 +136,18 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 			elif_cond := p.parse_expr({}) ?
 			branches << ast.IfBranch {
 				cond: elif_cond
-				body: p.parse_block('elif') ?
+				body: p.parse_block('elif_${p.count}_$elif_count') ?
 			}
+			elif_count++
 		} else{
 			has_else = true
 			branches << ast.IfBranch {
-				body: p.parse_block('else') ?
+				body: p.parse_block('else_$p.count') ?
 			}
 			break
 		}
 	}
+	p.count++
 	return ast.IfStmt{
 		branches: branches
 		has_else: has_else
