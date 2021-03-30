@@ -113,6 +113,7 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 	kind := match text {
 		'let' { k(.key_let) }
 		'if' { k(.key_if) }
+		'else' { k(.key_else) }
 		'for' { k(.key_for) }
 		'in' { k(.key_in) }
 		'fn' { k(.key_fn) }

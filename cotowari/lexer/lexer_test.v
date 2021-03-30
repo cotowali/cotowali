@@ -49,6 +49,26 @@ fn test_lexer() {
 	ktest('&a.b | c', [.amp, .ident, .dot, .ident, .pipe, .ident, .eof])
 	ktest('a && b || c &', [.ident, .op_and, .ident, .op_or, .ident, .amp, .eof])
 
+	test('if i == 0 { } else if i == 1 {} else {}', [
+		t(.key_if, 'if'),
+		t(.ident, 'i'),
+		t(.op_eq, '=='),
+		t(.int_lit, '0'),
+		t(.l_brace, '{'),
+		t(.r_brace, '}'),
+		t(.key_else, 'else'),
+		t(.key_if, 'if'),
+		t(.ident, 'i'),
+		t(.op_eq, '=='),
+		t(.int_lit, '1'),
+		t(.l_brace, '{'),
+		t(.r_brace, '}'),
+		t(.key_else, 'else'),
+		t(.l_brace, '{'),
+		t(.r_brace, '}'),
+		t(.eof, ''),
+	])
+
 	test('\n\r\n\r', [
 		t(.eol, '\n'),
 		t(.eol, '\r\n'),
