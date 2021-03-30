@@ -110,6 +110,7 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 			}
 		}
 		else {
+			p.consume()
 			return IError(p.error('unexpected token $tok'))
 		}
 	}
