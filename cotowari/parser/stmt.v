@@ -42,8 +42,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	mut node := ast.FnDecl{
 		name: name
-		scope: p.scope
-		stmts: []
+		body: ast.Block{ scope: p.scope }
 		params: []
 	}
 
@@ -65,7 +64,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	p.skip_eol()
 
 	for {
-		node.stmts << p.parse_stmt()
+		node.body.stmts << p.parse_stmt()
 		if _ := p.consume_if_kind_is(.r_brace) {
 			return node
 		}

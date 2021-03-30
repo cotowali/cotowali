@@ -14,18 +14,24 @@ pub mut:
 	errors []errors.Error
 }
 
-pub type Stmt = AssignStmt | EmptyStmt | Expr | FnDecl
+pub type Stmt = Block | AssignStmt | EmptyStmt | Expr | FnDecl
 
 pub struct EmptyStmt {}
+
+pub struct Block {
+pub:
+	scope &Scope
+pub mut:
+	stmts []Stmt
+}
 
 pub struct FnDecl {
 pub:
 	pos  Pos
 	name string
 pub mut:
-	scope  &Scope
 	params []Var
-	stmts  []Stmt
+	body Block
 }
 
 pub struct AssignStmt {
@@ -33,6 +39,14 @@ pub:
 	pos   Pos
 	left  Var
 	right Expr
+}
+
+pub struct IfBranch {}
+
+pub struct IfStmt {
+pub:
+	pos Pos
+	branches IfBranch
 }
 
 pub struct InfixExpr {

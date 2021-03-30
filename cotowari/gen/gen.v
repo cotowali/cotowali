@@ -23,6 +23,9 @@ fn (mut g Gen) stmt(stmt Stmt) {
 		ast.FnDecl {
 			g.fn_decl(stmt)
 		}
+		ast.Block {
+			g.block(stmt)
+		}
 		ast.Expr {
 			g.expr(stmt, as_command: true)
 			g.writeln('')
@@ -34,6 +37,10 @@ fn (mut g Gen) stmt(stmt Stmt) {
 			g.writeln('')
 		}
 	}
+}
+
+fn (mut g Gen) block(block ast.Block) {
+	g.stmts(block.stmts)
 }
 
 struct ExprOpt {
@@ -125,7 +132,7 @@ fn (mut g Gen) fn_decl(node ast.FnDecl) {
 	for i, param in node.params {
 		g.writeln('$param.full_name()=\$${i + 1}')
 	}
-	g.stmts(node.stmts)
+	g.block(node.body)
 	g.indent--
 	g.writeln('}')
 }
