@@ -24,24 +24,20 @@ pub fn parse_file(path string) ?ast.File {
 }
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
-	stmt := match p.kind(0) {
-		.key_fn {
-			p.parse_fn_decl_stmt()
-		}
-		.key_let {
-			p.parse_let_stmt()
-		}
-		else {
-			expr := p.parse_expr_stmt() or {
-				p.skip_until_eol()
-				ast.Stmt(ast.EmptyStmt{})
-			}
-			// Hack to avoid V compiler bug
-			expr
-		}
+	stmt := p.try_parse_stmt() or {
+		p.skip_until_eol()
+		ast.EmptyStmt{}
 	}
 	p.skip_eol()
 	return stmt
+}
+
+fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
+	match p.kind(0) {
+		.key_fn { return ast.Stmt(p.parse_fn_decl()?) }
+		.key_let { return ast.Stmt(p.parse_let_stmt()?) }
+		else { return p.parse_expr_stmt() }
+	}
 }
 
 fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
@@ -53,14 +49,6 @@ fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
 	}
 
 	return expr
-}
-
-fn (mut p Parser) parse_fn_decl_stmt() ast.Stmt {
-	if decl := p.parse_fn_decl() {
-		return decl
-	}
-	p.skip_until_eol()
-	return ast.EmptyStmt{}
 }
 
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
@@ -107,15 +95,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	panic('unreachable code')
 }
 
-fn (mut p Parser) parse_let_stmt() ast.Stmt {
-	if stmt := p.parse_let_assign() {
-		return stmt
-	}
-	p.skip_until_eol()
-	return ast.EmptyStmt{}
-}
-
-fn (mut p Parser) parse_let_assign() ?ast.AssignStmt {
+fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 	p.consume_with_assert(.key_let)
 	name := (p.consume_with_check(.ident) ?).text
 	p.consume_with_check(.op_assign) ?
