@@ -91,7 +91,10 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 	name := (p.consume_with_check(.ident) ?).text
 	p.consume_with_check(.op_assign) ?
 
-	v := p.scope.register_var(symbols.new_var(name)) ?
+	v := p.scope.register_var(symbols.new_var(name)) or {
+		println(p.scope)
+		return IError(p.error('$name is duplicated'))
+	}
 	return ast.AssignStmt{
 		left: v
 		right: p.parse_expr({}) ?
