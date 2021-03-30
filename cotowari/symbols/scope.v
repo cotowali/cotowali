@@ -12,6 +12,10 @@ mut:
 	symbols  map[string]Symbol
 }
 
+pub fn (s &Scope) str() string {
+	return s.full_name()
+}
+
 fn join_name(names ...string) string {
 	return names.join('_')
 }
