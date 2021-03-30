@@ -47,16 +47,11 @@ fn (mut g Gen) block(block ast.Block) {
 
 fn (mut g Gen) if_stmt(stmt ast.IfStmt) {
 	for i, branch in stmt.branches {
-		mut is_else := false
-		if i == 0 {
-			g.write('if ')
-		} else if i < stmt.branches.len - 1 || !stmt.has_else {
-			g.write('elif ')
-		} else {
+		mut is_else := i == stmt.branches.len - 1 && stmt.has_else
+		if is_else {
 			g.writeln('else')
-			is_else = true
-		}
-		if !is_else {
+		} else {
+			g.write(if i == 0 { 'if ' } else { 'elif ' })
 			g.expr(branch.cond, as_command: true, writeln: true)
 			g.writeln('then')
 		}
