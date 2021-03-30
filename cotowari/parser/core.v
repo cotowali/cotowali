@@ -131,13 +131,15 @@ pub fn (p &Parser) source() Source {
 }
 
 [inline]
-fn (mut p Parser) open_scope(name string) {
+fn (mut p Parser) open_scope(name string) &Scope {
 	p.scope = p.scope.create_child(name)
+	return p.scope
 }
 
 [inline]
-fn (mut p Parser) close_scope() {
+fn (mut p Parser) close_scope() &Scope {
 	p.scope = p.scope.parent() or { panic(err) }
+	return p.scope
 }
 
 fn (mut p Parser) error(msg string) &errors.Error {
