@@ -27,8 +27,7 @@ fn (mut g Gen) stmt(stmt Stmt) {
 			g.block(stmt)
 		}
 		ast.Expr {
-			g.expr(stmt, as_command: true)
-			g.writeln('')
+			g.expr(stmt, as_command: true, writeln: true)
 		}
 		ast.AssignStmt {
 			g.assign(stmt)
@@ -45,6 +44,7 @@ fn (mut g Gen) block(block ast.Block) {
 
 struct ExprOpt {
 	as_command bool
+	writeln bool
 }
 
 fn (mut g Gen) expr(expr ast.Expr, opt ExprOpt) {
@@ -70,6 +70,9 @@ fn (mut g Gen) expr(expr ast.Expr, opt ExprOpt) {
 			}
 			g.write('"\$$expr.full_name()"')
 		}
+	}
+	if opt.writeln {
+		g.writeln('')
 	}
 }
 
