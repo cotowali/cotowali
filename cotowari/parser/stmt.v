@@ -1,8 +1,5 @@
 module parser
 
-import cotowari.source
-import cotowari.lexer
-import cotowari.token
 import cotowari.ast
 import cotowari.symbols
 

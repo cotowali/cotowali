@@ -2,9 +2,7 @@ module parser
 
 import cotowari.source
 import cotowari.lexer
-import cotowari.token
 import cotowari.ast
-import cotowari.symbols
 
 pub fn (mut p Parser) parse() ast.File {
 	p.file = ast.File{
