@@ -42,7 +42,9 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	mut node := ast.FnDecl{
 		name: name
-		body: ast.Block{ scope: p.scope }
+		body: ast.Block{
+			scope: p.scope
+		}
 		params: []
 	}
 

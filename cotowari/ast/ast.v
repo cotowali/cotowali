@@ -14,7 +14,7 @@ pub mut:
 	errors []errors.Error
 }
 
-pub type Stmt = Block | AssignStmt | EmptyStmt | Expr | FnDecl
+pub type Stmt = AssignStmt | Block | EmptyStmt | Expr | FnDecl
 
 pub struct EmptyStmt {}
 
@@ -31,7 +31,7 @@ pub:
 	name string
 pub mut:
 	params []Var
-	body Block
+	body   Block
 }
 
 pub struct AssignStmt {
@@ -45,7 +45,7 @@ pub struct IfBranch {}
 
 pub struct IfStmt {
 pub:
-	pos Pos
+	pos      Pos
 	branches IfBranch
 }
 
