@@ -4,6 +4,10 @@ fn f(a) {
   echo(b)
   if echo() {
     echo(1)
+  } else if echo() {
+    echo(2)
+  } else {
+    echo(3)
   }
 }
 
