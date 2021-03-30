@@ -34,11 +34,15 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 
 fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 	match p.kind(0) {
-		.key_fn { return ast.Stmt(p.parse_fn_decl()?) }
-		.key_let { return ast.Stmt(p.parse_let_stmt()?) }
+		.key_fn {
+			return ast.Stmt(p.parse_fn_decl() ?)
+		}
+		.key_let {
+			return ast.Stmt(p.parse_let_stmt() ?)
+		}
 		else {
 			if p.kind(0) == .ident && p.kind(1) == .op_assign {
-				return ast.Stmt(p.parse_assign_stmt()?)
+				return ast.Stmt(p.parse_assign_stmt() ?)
 			}
 			return p.parse_expr_stmt()
 		}
@@ -115,7 +119,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 	name := (p.consume_with_check(.ident) ?).text
 	p.consume_with_check(.op_assign) ?
-	return ast.AssignStmt {
+	return ast.AssignStmt{
 		left: symbols.new_scope_var(name, p.scope)
 		right: p.parse_expr({}) ?
 	}
