@@ -33,10 +33,16 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 }
 
 fn (mut p Parser) parse_block(name string) ?ast.Block {
+	p.open_scope(name)
+	defer { p.close_scope() }
+	block := p.parse_block_without_new_scope() ?
+	return block
+}
+
+fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 	p.consume_with_check(.l_brace) ?
 	p.skip_eol() // ignore eol after brace.
-	mut node := ast.Block{ scope: p.open_scope(name) }
-	defer { p.close_scope() }
+	mut node := ast.Block{ scope: p.scope }
 	for {
 		if _ := p.consume_if_kind_is(.r_brace) {
 			return node
@@ -60,7 +66,6 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	mut node := ast.FnDecl{
 		name: name
-		body: ast.Block{ scope: p.scope }
 		params: []
 	}
 
@@ -77,17 +82,8 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		}
 	}
 	p.consume_with_check(.r_paren) ?
-
-	p.consume_with_check(.l_brace) ?
-	p.skip_eol()
-
-	for {
-		node.body.stmts << p.parse_stmt()
-		if _ := p.consume_if_kind_is(.r_brace) {
-			return node
-		}
-	}
-	panic('unreachable code')
+	node.body = p.parse_block_without_new_scope() ?
+	return node
 }
 
 fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
