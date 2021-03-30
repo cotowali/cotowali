@@ -70,7 +70,7 @@ fn (mut g Gen) if_stmt(stmt ast.IfStmt) {
 
 struct ExprOpt {
 	as_command bool
-	writeln bool
+	writeln    bool
 }
 
 fn (mut g Gen) expr(expr ast.Expr, opt ExprOpt) {

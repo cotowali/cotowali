@@ -97,7 +97,7 @@ fn (mut p Parser) consume_with_check(kinds ...TokenKind) ?Token {
 		}
 		mut expect := 'expect '
 		if kinds.len == 1 {
-			expect = '`${kinds[0].str()}`'
+			expect = '`$kinds[0].str()`'
 		} else {
 			expect = '${kinds[..kinds.len - 1].map(it.str()).join(', ')}, or `$kinds.last()`'
 		}

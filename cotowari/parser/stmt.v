@@ -34,7 +34,9 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 
 fn (mut p Parser) parse_block(name string) ?ast.Block {
 	p.open_scope(name)
-	defer { p.close_scope() }
+	defer {
+		p.close_scope()
+	}
 	block := p.parse_block_without_new_scope() ?
 	return block
 }
@@ -42,7 +44,9 @@ fn (mut p Parser) parse_block(name string) ?ast.Block {
 fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 	p.consume_with_check(.l_brace) ?
 	p.skip_eol() // ignore eol after brace.
-	mut node := ast.Block{ scope: p.scope }
+	mut node := ast.Block{
+		scope: p.scope
+	}
 	for {
 		if _ := p.consume_if_kind_is(.r_brace) {
 			return node
@@ -113,7 +117,7 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 fn (mut p Parser) parse_if_branch(name string) ?ast.IfBranch {
 	cond := p.parse_expr({}) ?
 	block := p.parse_block(name) ?
-	return ast.IfBranch {
+	return ast.IfBranch{
 		cond: cond
 		body: block
 	}
@@ -134,14 +138,14 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 
 		if _ := p.consume_if_kind_is(.key_if) {
 			elif_cond := p.parse_expr({}) ?
-			branches << ast.IfBranch {
+			branches << ast.IfBranch{
 				cond: elif_cond
 				body: p.parse_block('elif_${p.count}_$elif_count') ?
 			}
 			elif_count++
-		} else{
+		} else {
 			has_else = true
-			branches << ast.IfBranch {
+			branches << ast.IfBranch{
 				body: p.parse_block('else_$p.count') ?
 			}
 			break
