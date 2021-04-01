@@ -92,7 +92,12 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 
 fn (mut p Parser) parse_ident() ?ast.Expr {
 	name := p.consume().text
-	p.consume_if_kind_is(.l_paren) or { return *symbols.new_scope_var(name, p.scope) }
+	p.consume_if_kind_is(.l_paren) or {
+		// TODO: Move to checker
+		return p.scope.lookup_var(name) or {
+			return IError(p.error('undefined variable $name'))
+		}
+	}
 	mut args := []ast.Expr{}
 	if !p.@is(.r_paren) {
 		args << p.parse_expr({}) ?
