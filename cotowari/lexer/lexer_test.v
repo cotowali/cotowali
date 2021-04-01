@@ -8,7 +8,7 @@ fn test(code string, tokens []Token) {
 	mut i := 0
 	for t1 in lexer {
 		if !(i < tokens.len) {
-			assert false
+			assert t1.kind == .eof
 			return
 		}
 		t2 := tokens[i]
@@ -22,7 +22,7 @@ fn ktest(code string, kinds []TokenKind) {
 	mut i := 0
 	for t1 in lexer {
 		if !(i < kinds.len) {
-			assert false
+			assert t1.kind == .eof
 			return
 		}
 		k2 := kinds[i]
