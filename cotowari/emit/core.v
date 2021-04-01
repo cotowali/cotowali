@@ -11,7 +11,7 @@ pub:
 }
 
 [inline]
-pub fn new(out io.Writer) Emitter {
+pub fn new_emitter(out io.Writer) Emitter {
 	return Emitter{
 		out: out
 	}
