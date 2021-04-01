@@ -103,3 +103,9 @@ fn test_ident() {
 		ktest(text, [.ident, .eof])
 	}
 }
+
+fn test_string() {
+	sq, dq := "'", '"'
+	test("$dq'abc'$dq", [t(.string_lit, "'abc'")])
+	test('$sq"abc"$sq', [t(.string_lit, '"abc"')])
+}

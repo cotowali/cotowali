@@ -72,6 +72,7 @@ pub fn (mut lex Lexer) read() Token {
 		`,` { lex.new_token_with_consume(.comma) }
 		`.` { lex.new_token_with_consume(.dot) }
 		`@` { lex.read_at_ident() }
+		`'`, `"` { lex.read_string_lit(c[0]) }
 		else { lex.read_unknown() }
 	}
 }
@@ -85,6 +86,21 @@ fn (mut lex Lexer) read_newline() Token {
 		lex.consume()
 	}
 	return lex.new_token_with_consume(.eol)
+}
+
+fn (mut lex Lexer) read_string_lit(quote byte) Token {
+	lex.assert_by_match_byte(quote)
+	lex.skip()
+	for lex.char()[0] != quote {
+		lex.consume()
+		if lex.is_eof() || lex.is_eol() {
+			panic('unterminated string literal') // TODO: error handling
+		}
+	}
+	lex.assert_by_match_byte(quote)
+	t := lex.new_token(.string_lit)
+	lex.skip()
+	return t
 }
 
 fn (mut lex Lexer) read_unknown() Token {
