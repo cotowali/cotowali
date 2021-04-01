@@ -89,6 +89,9 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	}
 	p.consume_with_check(.r_paren) ?
 	node.body = p.parse_block(name, params) ?
+	for param in params {
+		node.params << node.body.scope.lookup_var(param) or { panic(unreachable) }
+	}
 	return node
 }
 
