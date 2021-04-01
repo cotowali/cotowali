@@ -32,8 +32,11 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 	}
 }
 
-fn (mut p Parser) parse_block(name string) ?ast.Block {
+fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
 	p.open_scope(name)
+	for local in locals {
+		p.scope.register_var(symbols.new_var(local)) or { panic(err) }
+	}
 	defer {
 		p.close_scope()
 	}
@@ -63,21 +66,17 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	p.scope.register(symbols.new_fn(name)) ?
 
-	p.open_scope(name)
-	defer {
-		p.close_scope()
-	}
-
 	mut node := ast.FnDecl{
 		name: name
 		params: []
 	}
 
 	p.consume_with_check(.l_paren) ?
+	mut params := []string{}
 	if p.@is(.ident) {
 		for {
 			ident := p.consume_with_check(.ident) ?
-			node.params << (p.scope.register_var(symbols.new_var(ident.text)) ?)
+			params << ident.text
 			if p.@is(.r_paren) {
 				break
 			} else {
@@ -86,7 +85,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		}
 	}
 	p.consume_with_check(.r_paren) ?
-	node.body = p.parse_block_without_new_scope() ?
+	node.body = p.parse_block(name, params) ?
 	return node
 }
 
@@ -116,7 +115,7 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 
 fn (mut p Parser) parse_if_branch(name string) ?ast.IfBranch {
 	cond := p.parse_expr({}) ?
-	block := p.parse_block(name) ?
+	block := p.parse_block(name, []) ?
 	return ast.IfBranch{
 		cond: cond
 		body: block
@@ -129,7 +128,7 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 	cond := p.parse_expr({}) ?
 	mut branches := [ast.IfBranch{
 		cond: cond
-		body: p.parse_block('if_$p.count') ?
+		body: p.parse_block('if_$p.count', []) ?
 	}]
 	mut has_else := false
 	mut elif_count := 0
@@ -140,13 +139,13 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 			elif_cond := p.parse_expr({}) ?
 			branches << ast.IfBranch{
 				cond: elif_cond
-				body: p.parse_block('elif_${p.count}_$elif_count') ?
+				body: p.parse_block('elif_${p.count}_$elif_count', []) ?
 			}
 			elif_count++
 		} else {
 			has_else = true
 			branches << ast.IfBranch{
-				body: p.parse_block('else_$p.count') ?
+				body: p.parse_block('else_$p.count', []) ?
 			}
 			break
 		}
