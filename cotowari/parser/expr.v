@@ -18,6 +18,7 @@ fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
 enum ExprKind {
 	toplevel = 0
 	pipeline
+	comparsion
 	add_or_sub
 	value
 }
@@ -56,6 +57,9 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 		}
 		.pipeline {
 			return p.parse_pipeline()
+		}
+		.comparsion {
+			return p.parse_infix_expr([.op_eq], operand: kind.inner())
 		}
 		.add_or_sub {
 			return p.parse_infix_expr([.op_plus, .op_minus], operand: kind.inner())
