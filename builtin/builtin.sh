@@ -5,11 +5,11 @@ truthy() {
 }
 
 falsy() {
-  [ -z "$1"] \
-    || [ "$1" -eq "false" ] \
-    || [ "$1" -eq "False" ] \
-    || [ "$1" -eq "FALSE" ] \
-    || [ "$1" -eq "0" ]
+  [ -z "$1" ] \
+    || [ "$1" = "false" ] \
+    || [ "$1" = "False" ] \
+    || [ "$1" = "FALSE" ] \
+    || [ "$1" = "0" ]
 }
 
 # end cotowari builtin
