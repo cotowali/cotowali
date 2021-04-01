@@ -135,11 +135,15 @@ fn (mut emit Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 			if opt.as_command {
 				emit.write('echo ')
 			}
-			emit.write('\$(( (')
+			if !opt.inside_arithmetic {
+				emit.write('\$(( ( ')
+			}
 			emit.expr(expr.left, inside_arithmetic: true)
 			emit.write(' $op.text ')
 			emit.expr(expr.right, inside_arithmetic: true)
-			emit.write(') ))')
+			if !opt.inside_arithmetic {
+				emit.write(' ) ))')
+			}
 		}
 		else {
 			panic('unimplemented')
