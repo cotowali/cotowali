@@ -66,7 +66,7 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 			return p.parse_infix_expr([.op_plus, .op_minus], operand: kind.inner())
 		}
 		.factor {
-			return p.parse_infix_expr([.op_div, .op_mul], operand: kind.inner())
+			return p.parse_infix_expr([.op_div, .op_mul, .op_mod], operand: kind.inner())
 		}
 		.value {
 			return p.parse_value()
