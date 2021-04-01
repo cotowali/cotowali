@@ -3,82 +3,82 @@ module emit
 import cotowari.ast { Pipeline, Stmt }
 import cotowari.symbols
 
-pub fn (mut g Gen) gen(f ast.File) {
-	g.file(f)
+pub fn (mut emit Emitter) gen(f ast.File) {
+	emit.file(f)
 }
 
-fn (mut g Gen) file(f ast.File) {
-	g.builtin()
-	g.writeln('# file: $f.path')
-	g.stmts(f.stmts)
+fn (mut emit Emitter) file(f ast.File) {
+	emit.builtin()
+	emit.writeln('# file: $f.path')
+	emit.stmts(f.stmts)
 }
 
-fn (mut g Gen) builtin() {
+fn (mut emit Emitter) builtin() {
 	f := $embed_file('../../builtin/builtin.sh')
-	g.writeln(f.to_string())
+	emit.writeln(f.to_string())
 }
 
-fn (mut g Gen) stmts(stmts []Stmt) {
+fn (mut emit Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {
-		g.stmt(stmt)
+		emit.stmt(stmt)
 	}
 }
 
-fn (mut g Gen) stmt(stmt Stmt) {
+fn (mut emit Emitter) stmt(stmt Stmt) {
 	match stmt {
 		ast.FnDecl {
-			g.fn_decl(stmt)
+			emit.fn_decl(stmt)
 		}
 		ast.Block {
-			g.block(stmt)
+			emit.block(stmt)
 		}
 		ast.Expr {
-			g.expr(stmt, as_command: true, writeln: true)
+			emit.expr(stmt, as_command: true, writeln: true)
 		}
 		ast.AssignStmt {
-			g.assign(stmt)
+			emit.assign(stmt)
 		}
 		ast.EmptyStmt {
-			g.writeln('')
+			emit.writeln('')
 		}
 		ast.ForInStmt {
-			g.for_in_stmt(stmt)
+			emit.for_in_stmt(stmt)
 		}
 		ast.IfStmt {
-			g.if_stmt(stmt)
+			emit.if_stmt(stmt)
 		}
 	}
 }
 
-fn (mut g Gen) block(block ast.Block) {
-	g.stmts(block.stmts)
+fn (mut emit Emitter) block(block ast.Block) {
+	emit.stmts(block.stmts)
 }
 
-fn (mut g Gen) if_stmt(stmt ast.IfStmt) {
+fn (mut emit Emitter) if_stmt(stmt ast.IfStmt) {
 	for i, branch in stmt.branches {
 		mut is_else := i == stmt.branches.len - 1 && stmt.has_else
 		if is_else {
-			g.writeln('else')
+			emit.writeln('else')
 		} else {
-			g.write(if i == 0 { 'if ' } else { 'elif ' })
-			g.expr(branch.cond, as_command: true, writeln: true)
-			g.writeln('then')
+			emit.write(if i == 0 { 'if ' } else { 'elif ' })
+			emit.expr(branch.cond, as_command: true, writeln: true)
+			emit.writeln('then')
 		}
-		g.indent++
-		g.block(branch.body)
-		g.indent--
+		emit.indent++
+		emit.block(branch.body)
+		emit.indent--
 	}
-	g.writeln('fi')
+	emit.writeln('fi')
 }
 
-fn (mut g Gen) for_in_stmt(stmt ast.ForInStmt) {
-	g.write('for $stmt.val.full_name() in ')
-	g.expr(stmt.expr, writeln: true)
-	g.writeln('do')
-	g.indent++
-	g.block(stmt.body)
-	g.indent--
-	g.writeln('done')
+fn (mut emit Emitter) for_in_stmt(stmt ast.ForInStmt) {
+	emit.write('for $stmt.val.full_name() in ')
+	emit.expr(stmt.expr, writeln: true)
+	emit.writeln('do')
+	emit.indent++
+	emit.block(stmt.body)
+	emit.indent--
+	emit.writeln('done')
 }
 
 struct ExprOpt {
@@ -86,47 +86,47 @@ struct ExprOpt {
 	writeln    bool
 }
 
-fn (mut g Gen) expr(expr ast.Expr, opt ExprOpt) {
+fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 	match expr {
 		ast.CallFn {
-			g.call_fn(expr, opt)
+			emit.call_fn(expr, opt)
 		}
 		ast.Pipeline {
-			g.pipeline(expr, opt)
+			emit.pipeline(expr, opt)
 		}
 		ast.InfixExpr {
-			g.infix_expr(expr, opt)
+			emit.infix_expr(expr, opt)
 		}
 		ast.IntLiteral {
 			if opt.as_command {
-				g.write('echo ')
+				emit.write('echo ')
 			}
-			g.write(expr.token.text)
+			emit.write(expr.token.text)
 		}
 		symbols.Var {
 			if opt.as_command {
-				g.write('echo ')
+				emit.write('echo ')
 			}
-			g.write('"\$$expr.full_name()"')
+			emit.write('"\$$expr.full_name()"')
 		}
 	}
 	if opt.writeln {
-		g.writeln('')
+		emit.writeln('')
 	}
 }
 
-fn (mut g Gen) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
+fn (mut emit Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op := expr.op
 	match op.kind {
 		.op_plus, .op_minus, .op_div, .op_mul {
 			if opt.as_command {
-				g.write('echo ')
+				emit.write('echo ')
 			}
-			g.write('\$(( (')
-			g.expr(expr.left, {})
-			g.write(' $op.text ')
-			g.expr(expr.right, {})
-			g.write(') ))')
+			emit.write('\$(( (')
+			emit.expr(expr.left, {})
+			emit.write(' $op.text ')
+			emit.expr(expr.right, {})
+			emit.write(') ))')
 		}
 		else {
 			panic('unimplemented')
@@ -134,53 +134,53 @@ fn (mut g Gen) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	}
 }
 
-fn (mut g Gen) pipeline(stmt Pipeline, opt ExprOpt) {
+fn (mut emit Emitter) pipeline(stmt Pipeline, opt ExprOpt) {
 	if !opt.as_command {
-		g.write('\$(')
+		emit.write('\$(')
 	}
 
 	for i, expr in stmt.exprs {
 		if i > 0 {
-			g.write(' | ')
+			emit.write(' | ')
 		}
-		g.expr(expr, as_command: true)
+		emit.expr(expr, as_command: true)
 	}
-	g.writeln('')
+	emit.writeln('')
 
 	if !opt.as_command {
-		g.write(')')
+		emit.write(')')
 	}
 }
 
-fn (mut g Gen) call_fn(expr ast.CallFn, opt ExprOpt) {
+fn (mut emit Emitter) call_fn(expr ast.CallFn, opt ExprOpt) {
 	if !opt.as_command {
-		g.write('\$(')
+		emit.write('\$(')
 	}
 
-	g.write(expr.func.full_name())
+	emit.write(expr.func.full_name())
 	for arg in expr.args {
-		g.write(' ')
-		g.expr(arg, {})
+		emit.write(' ')
+		emit.expr(arg, {})
 	}
 
 	if !opt.as_command {
-		g.write(')')
+		emit.write(')')
 	}
 }
 
-fn (mut g Gen) fn_decl(node ast.FnDecl) {
-	g.writeln('${node.name}() {')
-	g.indent++
+fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
+	emit.writeln('${node.name}() {')
+	emit.indent++
 	for i, param in node.params {
-		g.writeln('$param.full_name()=\$${i + 1}')
+		emit.writeln('$param.full_name()=\$${i + 1}')
 	}
-	g.block(node.body)
-	g.indent--
-	g.writeln('}')
+	emit.block(node.body)
+	emit.indent--
+	emit.writeln('}')
 }
 
-fn (mut g Gen) assign(node ast.AssignStmt) {
-	g.write('$node.left.full_name()=')
-	g.expr(node.right, {})
-	g.writeln('')
+fn (mut emit Emitter) assign(node ast.AssignStmt) {
+	emit.write('$node.left.full_name()=')
+	emit.expr(node.right, {})
+	emit.writeln('')
 }
