@@ -59,7 +59,6 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 		}
 		node.stmts << p.parse_stmt()
 	}
-	p.consume_with_check(.r_brace) ?
 	panic('unreachable code')
 }
 
