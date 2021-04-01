@@ -2,9 +2,10 @@ fn f(a) {
   let b = 0
   echo(echo(a))
   echo(b)
-  if echo() {
+  echo(a)
+  if a == 1 {
     let a = 0
-    echo(a)
+    echo(39)
   } else if echo() {
     let a = 0
     echo(a)
