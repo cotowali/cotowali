@@ -1,4 +1,4 @@
-module gen
+module emit
 
 import cotowari.ast { Pipeline, Stmt }
 import cotowari.symbols

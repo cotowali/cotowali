@@ -1,4 +1,4 @@
-module gen
+module emit
 
 import io
 
