@@ -64,6 +64,7 @@ pub fn (mut lex Lexer) read() Token {
 		`-` { lex.new_token_with_consume(.op_minus) }
 		`*` { lex.new_token_with_consume(.op_mul) }
 		`/` { lex.new_token_with_consume(.op_div) }
+		`%` { lex.new_token_with_consume(.op_mod) }
 		`,` { lex.new_token_with_consume(.comma) }
 		`.` { lex.new_token_with_consume(.dot) }
 		`@` { lex.read_at_ident() }
