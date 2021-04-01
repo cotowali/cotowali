@@ -118,6 +118,28 @@ pub fn (mut s Scope) register(sym Symbol) ?Symbol {
 	}
 }
 
+pub fn (s &Scope) lookup_var(name string) ?Var {
+	if found := s.lookup(name) {
+		if found is Var {
+			return found
+		} else {
+			return error('`$name` is not a variable')
+		}
+	}
+	return none
+}
+
+pub fn (s &Scope) lookup_type(name string) ?Type {
+	if found := s.lookup(name) {
+		if found is Type {
+			return found
+		} else {
+			return error('`$name` is not a type')
+		}
+	}
+	return none
+}
+
 pub fn (s &Scope) lookup(name string) ?Symbol {
 	if name in s.symbols {
 		return s.symbols[name]

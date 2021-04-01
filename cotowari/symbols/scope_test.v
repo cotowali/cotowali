@@ -67,12 +67,14 @@ fn test_lookup() ? {
 	if found := parent.lookup(name_v) {
 		assert found.id == parent_v.id
 		assert found.id != child_v.id
+		assert found is Var
 	} else {
 		assert false
 	}
 	if found := child.lookup(name_v) {
 		assert found.id == parent_v.id
 		assert found.id != child_v.id
+		assert found is Var
 	} else {
 		assert false
 	}
@@ -81,17 +83,45 @@ fn test_lookup() ? {
 	if found := parent.lookup(name_v) {
 		assert found.id == parent_v.id
 		assert found.id != child_v.id
+		assert found is Var
 	} else {
 		assert false
 	}
 	if found := child.lookup(name_v) {
 		assert found.id != parent_v.id
 		assert found.id == child_v.id
+		assert found is Var
 	} else {
 		assert false
 	}
 
 	if _ := child.lookup('nothing') {
+		assert false
+	}
+	if _ := child.lookup_var('nothing') {
+		assert false
+	}
+	if _ := child.lookup_type('nothing') {
+		assert false
+	}
+
+	t := new_type('t', PlaceholderTypeInfo{})
+	parent.register(t) ?
+	if found := parent.lookup_var(name_v) {
+		assert found.name == name_v
+	} else {
+		assert false
+	}
+	if found := parent.lookup_type(t.name) {
+		assert found.name == t.name
+	} else {
+		assert false
+	}
+
+	if _ := parent.lookup_var(t.name) {
+		assert false
+	}
+	if _ := parent.lookup_type(name_v) {
 		assert false
 	}
 }
