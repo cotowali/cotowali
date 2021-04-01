@@ -83,8 +83,8 @@ fn (mut emit Emitter) for_in_stmt(stmt ast.ForInStmt) {
 }
 
 struct ExprOpt {
-	as_command  bool
-	writeln     bool
+	as_command        bool
+	writeln           bool
 	inside_arithmetic bool
 }
 

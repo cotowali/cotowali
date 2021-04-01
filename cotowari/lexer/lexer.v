@@ -72,7 +72,7 @@ pub fn (mut lex Lexer) read() Token {
 		`,` { lex.new_token_with_consume(.comma) }
 		`.` { lex.new_token_with_consume(.dot) }
 		`@` { lex.read_at_ident() }
-		`'`, `"` { lex.read_string_lit(c[0]) }
+		`\'`, `"` { lex.read_string_lit(c[0]) }
 		else { lex.read_unknown() }
 	}
 }

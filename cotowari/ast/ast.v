@@ -78,7 +78,7 @@ pub:
 	exprs []Expr
 }
 
-pub type Expr = CallFn | InfixExpr | IntLiteral | StringLiteral | Pipeline | Var
+pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline | StringLiteral | Var
 
 pub struct CallFn {
 pub:

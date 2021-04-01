@@ -10,11 +10,7 @@ pub fn (sym Symbol) scope() ?&Scope {
 }
 
 fn (sym Symbol) scope_str() string {
-	return if scope := sym.scope() {
-		scope.str()
-	} else {
-		'none'
-	}
+	return if scope := sym.scope() { scope.str() } else { 'none' }
 }
 
 pub fn (sym Symbol) full_name() string {
