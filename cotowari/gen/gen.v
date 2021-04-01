@@ -41,6 +41,9 @@ fn (mut g Gen) stmt(stmt Stmt) {
 		ast.EmptyStmt {
 			g.writeln('')
 		}
+		ast.ForInStmt {
+			g.for_in_stmt(stmt)
+		}
 		ast.IfStmt {
 			g.if_stmt(stmt)
 		}
@@ -66,6 +69,16 @@ fn (mut g Gen) if_stmt(stmt ast.IfStmt) {
 		g.indent--
 	}
 	g.writeln('fi')
+}
+
+fn (mut g Gen) for_in_stmt(stmt ast.ForInStmt) {
+	g.write('for $stmt.val.full_name() in ')
+	g.expr(stmt.expr, writeln: true)
+	g.writeln('do')
+	g.indent++
+	g.block(stmt.body)
+	g.indent--
+	g.writeln('done')
 }
 
 struct ExprOpt {
