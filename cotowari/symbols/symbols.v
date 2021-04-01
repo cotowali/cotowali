@@ -9,6 +9,14 @@ pub fn (sym Symbol) scope() ?&Scope {
 	return sym.scope
 }
 
+fn (sym Symbol) scope_str() string {
+	return if scope := sym.scope() {
+		scope.str()
+	} else {
+		'none'
+	}
+}
+
 pub fn (sym Symbol) full_name() string {
 	name := if sym.name.len > 0 { sym.name } else { 'sym$sym.id' }
 	if s := sym.scope() {
