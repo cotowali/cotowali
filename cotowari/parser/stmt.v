@@ -162,12 +162,12 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 
 fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 	p.consume_with_assert(.key_for)
- 	ident := p.consume_with_check(.ident) ?
+	ident := p.consume_with_check(.ident) ?
 	p.consume_with_check(.key_in) ?
 	expr := p.parse_expr({}) ?
 	body := p.parse_block('for_$p.count', [ident.text]) ?
 	p.count++
-	return ast.ForInStmt {
+	return ast.ForInStmt{
 		val: body.scope.lookup_var(ident.text) or { panic(err) }
 		expr: expr
 		body: body
