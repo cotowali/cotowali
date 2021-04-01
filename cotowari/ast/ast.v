@@ -14,7 +14,7 @@ pub mut:
 	errors []errors.Error
 }
 
-pub type Stmt = AssignStmt | Block | EmptyStmt | Expr | FnDecl | IfStmt
+pub type Stmt = AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt | IfStmt
 
 pub struct EmptyStmt {}
 
