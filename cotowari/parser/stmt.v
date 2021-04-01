@@ -23,6 +23,9 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_if {
 			return ast.Stmt(p.parse_if_stmt() ?)
 		}
+		.key_for {
+			return ast.Stmt(p.parse_for_in_stmt() ?)
+		}
 		else {
 			if p.kind(0) == .ident && p.kind(1) == .op_assign {
 				return ast.Stmt(p.parse_assign_stmt() ?)
@@ -154,5 +157,19 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 	return ast.IfStmt{
 		branches: branches
 		has_else: has_else
+	}
+}
+
+fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
+	p.consume_with_assert(.key_for)
+ 	ident := p.consume_with_check(.ident) ?
+	p.consume_with_check(.key_in) ?
+	expr := p.parse_expr({}) ?
+	body := p.parse_block('for_$p.count', [ident.text]) ?
+	p.count++
+	return ast.ForInStmt {
+		val: body.scope.lookup_var(ident.text) or { panic(err) }
+		expr: expr
+		body: body
 	}
 }
