@@ -51,7 +51,11 @@ pub fn (mut lex Lexer) read() Token {
 				lex.new_token_with_consume(.op_assign)
 			}
 		}
-		else {}
+		else {
+			if lex.is_eol() {
+				return lex.read_newline()
+			}
+		}
 	}
 	return match c[0] {
 		`(` { lex.new_token_with_consume(.l_paren) }
@@ -68,9 +72,12 @@ pub fn (mut lex Lexer) read() Token {
 		`,` { lex.new_token_with_consume(.comma) }
 		`.` { lex.new_token_with_consume(.dot) }
 		`@` { lex.read_at_ident() }
-		`\r`, `\n` { lex.read_newline() }
 		else { lex.read_unknown() }
 	}
+}
+
+fn (lex Lexer) is_eol() bool {
+	return lex.char()[0] in [`\n`, `\r`]
 }
 
 fn (mut lex Lexer) read_newline() Token {
