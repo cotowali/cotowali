@@ -13,6 +13,10 @@ fn f(a) {
     let a = 0
     echo(a)
   }
+
+  for i in seq(10) {
+    echo(i)
+  }
 }
 
 let a = 0
