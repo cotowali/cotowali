@@ -2,6 +2,7 @@ module parser
 
 import cotowari.ast
 import cotowari.symbols
+import cotowari.errors { unreachable }
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
 	stmt := p.try_parse_stmt() or {
@@ -59,7 +60,7 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 		}
 		node.stmts << p.parse_stmt()
 	}
-	panic('unreachable code')
+	panic(unreachable)
 }
 
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
@@ -167,7 +168,7 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 	body := p.parse_block('for_$p.count', [ident.text]) ?
 	p.count++
 	return ast.ForInStmt{
-		val: body.scope.lookup_var(ident.text) or { panic(err) }
+		val: body.scope.lookup_var(ident.text) or { panic(unreachable) }
 		expr: expr
 		body: body
 	}
