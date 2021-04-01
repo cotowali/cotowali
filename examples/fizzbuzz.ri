@@ -1,0 +1,17 @@
+fn fizzbuzz(n) {
+  for i in seq(n) {
+    if i % 3 == 0 {
+      if i % 5 == 0 {
+        echo('fizzbuzz')
+      } else {
+        echo('fizz')
+      }
+    } else if i % 5 == 0 {
+      echo('buzz')
+    } else {
+      echo(i)
+    }
+  }
+}
+
+fizzbuzz(20)
