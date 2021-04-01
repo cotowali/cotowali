@@ -40,6 +40,10 @@ pub fn new_scope_fn(name string, scope &Scope) &Var {
 	return f
 }
 
+pub fn (v Var) str() string {
+	return 'Var{ name: $v.name, scope: ${Symbol(v).scope_str()}, typ: $v.typ }'
+}
+
 pub fn (v Var) full_name() string {
 	return Symbol(v).full_name()
 }
