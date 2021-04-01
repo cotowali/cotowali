@@ -82,8 +82,9 @@ fn (mut emit Emitter) for_in_stmt(stmt ast.ForInStmt) {
 }
 
 struct ExprOpt {
-	as_command bool
-	writeln    bool
+	as_command  bool
+	writeln     bool
+	inside_arithmetic bool
 }
 
 fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
@@ -107,7 +108,12 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 			if opt.as_command {
 				emit.write('echo ')
 			}
-			emit.write('"\$$expr.full_name()"')
+			// '$(( n == 0 ))' or 'echo "$n"'
+			emit.write(if opt.inside_arithmetic {
+				'$expr.full_name()'
+			} else {
+				'"\$$expr.full_name()"'
+			})
 		}
 	}
 	if opt.writeln {
@@ -123,9 +129,9 @@ fn (mut emit Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 				emit.write('echo ')
 			}
 			emit.write('\$(( (')
-			emit.expr(expr.left, {})
+			emit.expr(expr.left, inside_arithmetic: true)
 			emit.write(' $op.text ')
-			emit.expr(expr.right, {})
+			emit.expr(expr.right, inside_arithmetic: true)
 			emit.write(') ))')
 		}
 		else {
