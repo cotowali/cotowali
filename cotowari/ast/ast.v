@@ -58,7 +58,7 @@ pub struct ForInStmt {
 pub:
 	// for var in expr
 	val  Var
-	expr ?Expr
+	expr Expr
 pub mut:
 	body Block
 }
