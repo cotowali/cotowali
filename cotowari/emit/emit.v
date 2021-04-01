@@ -61,7 +61,8 @@ fn (mut emit Emitter) if_stmt(stmt ast.IfStmt) {
 			emit.writeln('else')
 		} else {
 			emit.write(if i == 0 { 'if ' } else { 'elif ' })
-			emit.expr(branch.cond, as_command: true, writeln: true)
+			emit.write('truthy ')
+			emit.expr(branch.cond, as_command: false, writeln: true)
 			emit.writeln('then')
 		}
 		emit.indent++
