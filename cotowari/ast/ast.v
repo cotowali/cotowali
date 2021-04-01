@@ -78,7 +78,7 @@ pub:
 	exprs []Expr
 }
 
-pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline | Var
+pub type Expr = CallFn | InfixExpr | IntLiteral | StringLiteral | Pipeline | Var
 
 pub struct CallFn {
 pub:
@@ -89,6 +89,12 @@ pub mut:
 }
 
 pub struct IntLiteral {
+pub:
+	pos   Pos
+	token Token
+}
+
+pub struct StringLiteral {
 pub:
 	pos   Pos
 	token Token

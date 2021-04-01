@@ -117,6 +117,12 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 				token: tok
 			}
 		}
+		.string_lit {
+			p.consume()
+			return ast.StringLiteral{
+				token: tok
+			}
+		}
 		else {
 			p.consume()
 			return IError(p.error('unexpected token $tok'))

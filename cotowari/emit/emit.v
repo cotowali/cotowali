@@ -105,6 +105,12 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 			}
 			emit.write(expr.token.text)
 		}
+		ast.StringLiteral {
+			if opt.as_command {
+				emit.write('echo ')
+			}
+			emit.write("'$expr.token.text'")
+		}
 		symbols.Var {
 			if opt.as_command {
 				emit.write('echo ')
