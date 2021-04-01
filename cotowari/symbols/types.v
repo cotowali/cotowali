@@ -60,6 +60,14 @@ pub fn (v Type) scope() ?&Scope {
 	return Symbol(v).scope()
 }
 
+pub fn (v Type) str() string {
+	mut scope_str := 'none'
+	if scope := v.scope() {
+		scope_str = scope.str()
+	}
+	return 'Type{ name: \'$v.name\', kind: ${v.kind().str()}, scope: $scope_str }'
+}
+
 pub const (
 	unknown_type = Type{
 		id: 1
