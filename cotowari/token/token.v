@@ -11,6 +11,7 @@ pub enum TokenKind {
 	key_else
 	key_for
 	key_in
+	key_return
 	comma
 	dot
 	amp
@@ -48,6 +49,7 @@ pub fn (k TokenKind) str() string {
 		.key_if { 'if' }
 		.key_for { 'for' }
 		.key_in { 'in' }
+		.key_return { 'return' }
 		.comma { ',' }
 		.dot { '.' }
 		.amp { '&' }
@@ -115,6 +117,7 @@ fn (k TokenKind) is_keyword() bool {
 		.key_else,
 		.key_for,
 		.key_in,
+		.key_return,
 	]
 }
 
