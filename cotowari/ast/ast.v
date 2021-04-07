@@ -14,7 +14,7 @@ pub mut:
 	errors []errors.Error
 }
 
-pub type Stmt = AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt | IfStmt
+pub type Stmt = AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt | IfStmt | ReturnStmt
 
 pub struct EmptyStmt {}
 
@@ -61,6 +61,12 @@ pub:
 	expr Expr
 pub mut:
 	body Block
+}
+
+pub struct ReturnStmt {
+pub:
+	pos  Pos
+	expr Expr
 }
 
 pub struct InfixExpr {
