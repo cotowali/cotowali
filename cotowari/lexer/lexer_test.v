@@ -49,7 +49,7 @@ fn test_lexer() {
 	ktest('&a.b | c', [.amp, .ident, .dot, .ident, .pipe, .ident, .eof])
 	ktest('a && b || c &', [.ident, .op_and, .ident, .op_or, .ident, .amp, .eof])
 	ktest('return 0', [.key_return, .int_lit])
-	ktest('a < b', [.ident, .op_lt, .ident])
+	ktest('a < b || c > d', [.ident, .op_lt, .ident, .op_or, .ident, .op_gt, .ident])
 
 	test('if i == 0 { } else if i == 1 {} else {}', [
 		t(.key_if, 'if'),

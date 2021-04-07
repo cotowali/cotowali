@@ -54,6 +54,9 @@ pub fn (mut lex Lexer) read() Token {
 		`<` {
 			return lex.new_token_with_consume(.op_lt)
 		}
+		`>` {
+			return lex.new_token_with_consume(.op_gt)
+		}
 		else {
 			if lex.is_eol() {
 				return lex.read_newline()
