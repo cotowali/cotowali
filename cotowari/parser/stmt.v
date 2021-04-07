@@ -27,6 +27,9 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_for {
 			return ast.Stmt(p.parse_for_in_stmt() ?)
 		}
+		.key_return {
+			return ast.Stmt(p.parse_return_stmt() ?)
+		}
 		else {
 			if p.kind(0) == .ident && p.kind(1) == .op_assign {
 				return ast.Stmt(p.parse_assign_stmt() ?)
@@ -173,5 +176,12 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 		val: body.scope.lookup_var(ident.text) or { panic(unreachable) }
 		expr: expr
 		body: body
+	}
+}
+
+fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
+	p.consume_with_assert(.key_return)
+	return ast.ReturnStmt {
+		expr: p.parse_expr({}) ?
 	}
 }
