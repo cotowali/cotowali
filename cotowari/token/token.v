@@ -35,6 +35,7 @@ pub enum TokenKind {
 	op_or
 	op_assign
 	op_eq
+	op_gt
 	eol
 	eof
 }
@@ -73,6 +74,7 @@ pub fn (k TokenKind) str() string {
 		.op_or { '||' }
 		.op_assign { '=' }
 		.op_eq { '==' }
+		.op_gt { '>' }
 		.eol { 'eol' }
 		.eof { 'eof' }
 	}
@@ -96,6 +98,7 @@ fn (k TokenKind) is_op() bool {
 		.op_or,
 		.op_assign,
 		.op_eq,
+		.op_gt,
 	]
 }
 
