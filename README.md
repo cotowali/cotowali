@@ -11,3 +11,10 @@ A script language that transpile into POSIX sh
 ## Development
 
 See z.yaml
+
+### Directories
+
+- `/cmd/ri` CLI entrypoint
+- `/examples` Examples that can be compiled
+- `/tests` Integration tests
+- `/cotowari` Compiler code
