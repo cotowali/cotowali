@@ -98,7 +98,13 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	}
 	mut args := []ast.Expr{}
 	if !p.@is(.r_paren) {
-		args << p.parse_expr({}) ?
+		for {
+			args << p.parse_expr({}) ?
+			if p.@is(.r_paren) {
+				break
+			}
+			p.consume_with_check(.comma) ?
+		}
 	}
 	p.consume_with_check(.r_paren) ?
 	f := ast.CallFn{
