@@ -47,6 +47,9 @@ fn (mut emit Emitter) stmt(stmt Stmt) {
 		ast.IfStmt {
 			emit.if_stmt(stmt)
 		}
+		ast.ReturnStmt {
+			emit.expr(stmt.expr, as_command: true, writeln: true)
+		}
 	}
 }
 
