@@ -78,6 +78,7 @@ pub fn (mut lex Lexer) read() Token {
 		`,` { lex.new_token_with_consume(.comma) }
 		`.` { lex.new_token_with_consume(.dot) }
 		`@` { lex.read_at_ident() }
+		`\$` { lex.read_dollar_directive() }
 		`\'`, `"` { lex.read_string_lit(c[0]) }
 		else { lex.read_unknown() }
 	}
@@ -167,4 +168,24 @@ fn (mut lex Lexer) read_at_ident() Token {
 		return c == '@'
 	})
 	return lex.new_token_with_consume_not_for(is_whitespace, .ident)
+}
+
+fn (mut lex Lexer) read_dollar_directive() Token {
+	lex.skip_with_assert(fn (c Char) bool {
+		return c[0] == `\$`
+	})
+	if lex.char()[0] == `{` {
+		lex.skip()
+		for lex.char()[0] != `}` {
+			if lex.is_eof() {
+				panic('unterminated inline shell')
+			}
+			lex.consume()
+		}
+		tok := lex.new_token(.inline_shell)
+		lex.skip()
+		return tok
+	} else {
+		panic('invalid dollar directive')
+	}
 }

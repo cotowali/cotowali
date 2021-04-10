@@ -111,3 +111,7 @@ fn test_string() {
 	test("$dq'abc'$dq", [t(.string_lit, "'abc'")])
 	test('$sq"abc"$sq', [t(.string_lit, '"abc"')])
 }
+
+fn test_inline_shell() {
+	test(r'${echo 1}', [t(.inline_shell, 'echo 1')])
+}
