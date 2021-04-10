@@ -1,0 +1,11 @@
+fn fib(n) {
+  if n < 2 {
+    return n
+  }
+  let a = fib(n - 1)
+  let b = fib(n - 2)
+  return a + b
+}
+fib(5)
+fib(6)
+fib(7)
