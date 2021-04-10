@@ -15,7 +15,7 @@ pub mut:
 }
 
 pub type Stmt = AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt | IfStmt |
-	ReturnStmt
+	ReturnStmt | InlineShell
 
 pub struct EmptyStmt {}
 
@@ -53,6 +53,12 @@ pub:
 	pos      Pos
 	branches []IfBranch
 	has_else bool
+}
+
+pub struct InlineShell {
+pub:
+	pos  Pos
+	text string
 }
 
 pub struct ForInStmt {
