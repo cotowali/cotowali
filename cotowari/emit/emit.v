@@ -49,6 +49,7 @@ fn (mut emit Emitter) stmt(stmt Stmt) {
 		}
 		ast.ReturnStmt {
 			emit.expr(stmt.expr, as_command: true, writeln: true)
+			emit.writeln('return 0')
 		}
 	}
 }
