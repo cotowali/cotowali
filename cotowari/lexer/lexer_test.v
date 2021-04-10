@@ -1,7 +1,7 @@
 module lexer
 
 import cotowari.token { Token, TokenKind }
-import cotowari.pos { Pos }
+import cotowari.source { Pos, new_none_pos }
 
 fn test(code string, tokens []Token) {
 	lexer := new_lexer(path: '', code: code)
@@ -32,7 +32,7 @@ fn ktest(code string, kinds []TokenKind) {
 }
 
 fn t(kind TokenKind, text string) Token {
-	return Token{kind, text, pos.new_none()}
+	return Token{kind, text, new_none_pos()}
 }
 
 fn test_lexer() {

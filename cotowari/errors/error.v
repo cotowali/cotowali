@@ -1,7 +1,6 @@
 module errors
 
-import cotowari.pos { Pos }
-import cotowari.source { Source }
+import cotowari.source { Source, Pos }
 
 pub const (
 	unreachable = 'unreachable - This is a compiler bug.'

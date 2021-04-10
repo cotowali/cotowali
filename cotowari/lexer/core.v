@@ -1,8 +1,7 @@
 module lexer
 
-import cotowari.source { Char, Source }
+import cotowari.source { Char, Source, Pos, new_pos }
 import cotowari.token { Token, TokenKind }
-import cotowari.pos { Pos }
 import cotowari.util { min }
 
 pub struct Lexer {
@@ -41,7 +40,7 @@ pub fn (lex &Lexer) is_eof() bool {
 }
 
 fn (mut lex Lexer) start_new_pos() {
-	lex.pos = pos.new(
+	lex.pos = new_pos(
 		i: lex.idx()
 		col: lex.pos.last_col
 		line: lex.pos.last_line

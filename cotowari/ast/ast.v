@@ -1,6 +1,6 @@
 module ast
 
-import cotowari.pos { Pos }
+import cotowari.source { Pos }
 import cotowari.token { Token }
 import cotowari.symbols { Scope, Var }
 import cotowari.errors

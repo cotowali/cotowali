@@ -1,6 +1,6 @@
 module token
 
-import cotowari.pos { Pos }
+import cotowari.source { Pos }
 
 pub enum TokenKind {
 	unknown

@@ -1,4 +1,4 @@
-module pos
+module source
 
 import cotowari.util { max }
 
@@ -14,7 +14,7 @@ pub mut:
 }
 
 [inline]
-pub fn new(pos Pos) Pos {
+pub fn new_pos(pos Pos) Pos {
 	last_line := max(pos.line, pos.last_line)
 	last_col := if pos.line == last_line { pos.col + pos.len - 1 } else { pos.last_col }
 	return Pos{
@@ -25,7 +25,7 @@ pub fn new(pos Pos) Pos {
 }
 
 [inline]
-pub fn new_none() Pos {
+pub fn new_none_pos() Pos {
 	return Pos{-1, -1, -1, -1, -1, -1}
 }
 
