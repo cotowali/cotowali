@@ -1,9 +1,9 @@
 module parser
 
-import cotowari.lexer
+import cotowari.lexer { new_lexer }
 
 fn test_consume_token() {
-	mut p := new_parser(lexer.new(path: '', code: '0 1 2 3 4'))
+	mut p := new_parser(new_lexer(path: '', code: '0 1 2 3 4'))
 	assert p.token(0).text == '0'
 	assert p.token(1).text == '1'
 	assert p.token(2).text == '2'

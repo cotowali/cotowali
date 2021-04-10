@@ -4,7 +4,7 @@ import cotowari.token { Token, TokenKind }
 import cotowari.pos { Pos }
 
 fn test(code string, tokens []Token) {
-	lexer := new(path: '', code: code)
+	lexer := new_lexer(path: '', code: code)
 	mut i := 0
 	for t1 in lexer {
 		if !(i < tokens.len) {
@@ -18,7 +18,7 @@ fn test(code string, tokens []Token) {
 }
 
 fn ktest(code string, kinds []TokenKind) {
-	lexer := new(path: '', code: code)
+	lexer := new_lexer(path: '', code: code)
 	mut i := 0
 	for t1 in lexer {
 		if !(i < kinds.len) {

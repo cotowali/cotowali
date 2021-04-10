@@ -1,7 +1,7 @@
 module parser
 
 import cotowari.source
-import cotowari.lexer
+import cotowari.lexer { new_lexer }
 import cotowari.ast
 
 pub fn (mut p Parser) parse() ast.File {
@@ -17,6 +17,6 @@ pub fn (mut p Parser) parse() ast.File {
 
 pub fn parse_file(path string) ?ast.File {
 	s := source.read_file(path) ?
-	mut p := new_parser(lexer.new(s))
+	mut p := new_parser(new_lexer(s))
 	return p.parse()
 }

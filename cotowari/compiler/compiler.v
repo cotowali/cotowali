@@ -3,7 +3,7 @@ module compiler
 import io
 import strings
 import cotowari.source { Source }
-import cotowari.lexer
+import cotowari.lexer { new_lexer }
 import cotowari.parser { new_parser }
 import cotowari.emit { new_emitter }
 import cotowari.ast
@@ -45,7 +45,7 @@ pub fn (c &Compiler) compile() ?string {
 }
 
 pub fn (c &Compiler) compile_to(w io.Writer) ? {
-	mut p := new_parser(lexer.new(c.source))
+	mut p := new_parser(new_lexer(c.source))
 	parsed_file := p.parse()
 	check_compile_error(parsed_file) ?
 	mut g := new_emitter(w)
