@@ -32,7 +32,10 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		}
 		.inline_shell {
 			tok := p.consume()
-			return ast.InlineShell{ pos: tok.pos, text: tok.text }
+			return ast.InlineShell{
+				pos: tok.pos
+				text: tok.text
+			}
 		}
 		else {
 			if p.kind(0) == .ident && p.kind(1) == .op_assign {

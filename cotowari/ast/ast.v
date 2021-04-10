@@ -15,7 +15,7 @@ pub mut:
 }
 
 pub type Stmt = AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt | IfStmt |
-	ReturnStmt | InlineShell
+	InlineShell | ReturnStmt
 
 pub struct EmptyStmt {}
 
