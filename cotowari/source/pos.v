@@ -14,7 +14,7 @@ pub mut:
 }
 
 [inline]
-pub fn new_pos(pos Pos) Pos {
+pub fn pos(pos Pos) Pos {
 	last_line := max(pos.line, pos.last_line)
 	last_col := if pos.line == last_line { pos.col + pos.len - 1 } else { pos.last_col }
 	return Pos{
