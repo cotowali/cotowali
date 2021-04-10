@@ -1,13 +1,13 @@
 module token
 
-import cotowari.source { new_none_pos, new_pos }
+import cotowari.source { none_pos, new_pos }
 
 fn test_eq() {
 	t := Token{.unknown, 'text', new_pos(i: 10)}
 
 	assert t == Token{
 		...t
-		pos: new_none_pos()
+		pos: none_pos
 	}
 	assert t != Token{
 		...t

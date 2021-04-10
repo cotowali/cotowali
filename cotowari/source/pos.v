@@ -24,10 +24,9 @@ pub fn new_pos(pos Pos) Pos {
 	}
 }
 
-[inline]
-pub fn new_none_pos() Pos {
-	return Pos{-1, -1, -1, -1, -1, -1}
-}
+const (
+	none_pos = Pos{-1, -1, -1, -1, -1, -1}
+)
 
 [inline]
 pub fn (p Pos) is_none() bool {

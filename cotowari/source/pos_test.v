@@ -31,5 +31,5 @@ fn test_pos_extend() {
 
 fn test_pos_none() {
 	assert !(new_pos({}).is_none())
-	assert new_none_pos().is_none()
+	assert none_pos.is_none()
 }
