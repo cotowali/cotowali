@@ -12,6 +12,7 @@ pub enum TokenKind {
 	key_for
 	key_in
 	key_return
+	inline_shell
 	comma
 	dot
 	amp
@@ -52,6 +53,7 @@ pub fn (k TokenKind) str() string {
 		.key_for { 'for' }
 		.key_in { 'in' }
 		.key_return { 'return' }
+		.inline_shell { 'inline_shell' }
 		.comma { ',' }
 		.dot { '.' }
 		.amp { '&' }
