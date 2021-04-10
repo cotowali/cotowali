@@ -1,6 +1,6 @@
 module token
 
-import cotowari.source { new_pos, new_none_pos }
+import cotowari.source { new_none_pos, new_pos }
 
 fn test_eq() {
 	t := Token{.unknown, 'text', new_pos(i: 10)}

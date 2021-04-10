@@ -1,6 +1,6 @@
 module lexer
 
-import cotowari.source { Char, Source, Pos, new_pos }
+import cotowari.source { Char, Pos, Source, new_pos }
 import cotowari.token { Token, TokenKind }
 import cotowari.util { min }
 
