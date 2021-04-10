@@ -134,7 +134,7 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 fn (mut emit Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op := expr.op
 	match op.kind {
-		.op_plus, .op_minus, .op_div, .op_mul, .op_mod, .op_eq {
+		.op_plus, .op_minus, .op_div, .op_mul, .op_mod, .op_eq, .op_gt, .op_lt {
 			if opt.as_command {
 				emit.write('echo ')
 			}
