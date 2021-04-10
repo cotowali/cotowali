@@ -14,7 +14,7 @@ fn new_source_to_run(args []string) ?Source {
 			code: os.get_raw_lines_joined()
 		}
 	} else {
-		return source.read_file(args[1])
+		return source.read_file(args[0])
 	}
 }
 
