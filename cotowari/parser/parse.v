@@ -17,6 +17,6 @@ pub fn (mut p Parser) parse() ast.File {
 
 pub fn parse_file(path string) ?ast.File {
 	s := source.read_file(path) ?
-	mut p := new(lexer.new(s))
+	mut p := new_parser(lexer.new(s))
 	return p.parse()
 }

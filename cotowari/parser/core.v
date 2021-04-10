@@ -114,7 +114,7 @@ fn (mut p Parser) consume_with_assert(kinds ...TokenKind) Token {
 }
 
 [inline]
-pub fn new(lexer Lexer) Parser {
+pub fn new_parser(lexer Lexer) Parser {
 	mut p := Parser{
 		lexer: lexer
 		buf: []Token{len: 3}
