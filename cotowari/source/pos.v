@@ -24,7 +24,7 @@ pub fn pos(pos Pos) Pos {
 	}
 }
 
-const (
+pub const (
 	none_pos = Pos{-1, -1, -1, -1, -1, -1}
 )
 
