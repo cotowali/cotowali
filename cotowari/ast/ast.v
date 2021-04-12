@@ -93,11 +93,10 @@ pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline | StringLiteral | Var
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
-		CallFn { expr.pos() }
+		CallFn, Var { expr.pos }
 		InfixExpr { expr.left.pos().merge(expr.right.pos()) }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
 		IntLiteral, StringLiteral { expr.token.pos }
-		Var { expr.pos }
 	}
 }
 
@@ -108,17 +107,11 @@ pub:
 }
 
 pub struct CallFn {
+pub:
+	pos Pos
 pub mut:
 	func Var
 	args []Expr
-}
-
-fn (expr CallFn) pos() Pos {
-	return if expr.args.len == 0 {
-		expr.func.pos
-	} else {
-		expr.func.pos.merge(expr.args.last().pos())
-	}
 }
 
 pub struct IntLiteral {
