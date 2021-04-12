@@ -3,7 +3,7 @@
         path: ''
         code: ''
     }
-    pos: Pos{ i: 0-1, line: 1-1, col: 1-1 }
+    pos: Pos{ i: 1-2, line: 1-1, col: 1-1 }
     msg: 'unexpected token Token{ .+, '+', Pos{ i: 0-1, line: 1-1, col: 1-0 } }'
     code: 0
 }]

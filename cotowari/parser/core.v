@@ -144,10 +144,11 @@ fn (mut p Parser) close_scope() &Scope {
 }
 
 fn (mut p Parser) error(msg string) &errors.Error {
+	tok := p.consume()
 	err := &errors.Error{
 		msg: msg
+		pos: tok.pos
 	}
-	p.consume()
 	p.file.errors << err
 	return err
 }
