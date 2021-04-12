@@ -1,7 +1,6 @@
 module emit
 
 import cotowari.ast { Pipeline, Stmt }
-import cotowari.symbols
 
 pub fn (mut e Emitter) emit(f ast.File) {
 	e.file(f)
