@@ -142,6 +142,7 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 	text := lex.text()
 	pos := lex.pos_for_new_token()
 	kind := match text {
+		'assert' { k(.key_assert) }
 		'let' { k(.key_let) }
 		'if' { k(.key_if) }
 		'else' { k(.key_else) }
