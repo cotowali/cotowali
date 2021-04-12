@@ -110,8 +110,9 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 			p.consume_with_check(.comma) ?
 		}
 	}
-	p.consume_with_check(.r_paren) ?
+	r_paren := p.consume_with_check(.r_paren) ?
 	f := ast.CallFn{
+		pos: ident.pos.merge(r_paren.pos)
 		func: ast.Var{ident.pos, symbols.new_fn(name)}
 		args: args
 	}
