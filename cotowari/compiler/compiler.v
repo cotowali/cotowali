@@ -55,5 +55,5 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	check_compile_error(f) ?
 
 	mut e := new_emitter(w)
-	e.gen(f)
+	e.emit(f)
 }
