@@ -80,7 +80,7 @@ fn (mut emit Emitter) if_stmt(stmt ast.IfStmt) {
 }
 
 fn (mut emit Emitter) for_in_stmt(stmt ast.ForInStmt) {
-	emit.write('for $stmt.val.full_name() in ')
+	emit.write('for $stmt.val.sym.full_name() in ')
 	emit.expr(stmt.expr, writeln: true)
 	emit.writeln('do')
 	emit.indent++
@@ -118,15 +118,15 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 			}
 			emit.write("'$expr.token.text'")
 		}
-		symbols.Var {
+		ast.Var {
 			if opt.as_command {
 				emit.write('echo ')
 			}
 			// '$(( n == 0 ))' or 'echo "$n"'
 			emit.write(if opt.inside_arithmetic {
-				'$expr.full_name()'
+				'$expr.sym.full_name()'
 			} else {
-				'"\$$expr.full_name()"'
+				'"\$$expr.sym.full_name()"'
 			})
 		}
 	}
@@ -181,7 +181,7 @@ fn (mut emit Emitter) call_fn(expr ast.CallFn, opt ExprOpt) {
 		emit.write('\$(')
 	}
 
-	emit.write(expr.func.full_name())
+	emit.write(expr.func.sym.full_name())
 	for arg in expr.args {
 		emit.write(' ')
 		emit.expr(arg, {})
@@ -196,7 +196,7 @@ fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
 	emit.writeln('${node.name}() {')
 	emit.indent++
 	for i, param in node.params {
-		emit.writeln('$param.full_name()=\$${i + 1}')
+		emit.writeln('$param.sym.full_name()=\$${i + 1}')
 	}
 	emit.block(node.body)
 	emit.indent--
@@ -204,7 +204,7 @@ fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
 }
 
 fn (mut emit Emitter) assign(node ast.AssignStmt) {
-	emit.write('$node.left.full_name()=')
+	emit.write('$node.left.sym.full_name()=')
 	emit.expr(node.right, {})
 	emit.writeln('')
 }

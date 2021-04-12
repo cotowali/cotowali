@@ -3,6 +3,7 @@ module parser
 import cotowari.ast
 import cotowari.symbols
 import cotowari.errors { unreachable }
+import cotowari.source { Pos }
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
 	stmt := p.try_parse_stmt() or {
@@ -86,10 +87,12 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	p.consume_with_check(.l_paren) ?
 	mut params := []string{}
+	mut params_pos := []Pos{}
 	if p.@is(.ident) {
 		for {
 			ident := p.consume_with_check(.ident) ?
 			params << ident.text
+			params_pos << ident.pos
 			if p.@is(.r_paren) {
 				break
 			} else {
@@ -99,19 +102,26 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	}
 	p.consume_with_check(.r_paren) ?
 	node.body = p.parse_block(name, params) ?
-	for param in params {
-		node.params << node.body.scope.lookup_var(param) or { panic(unreachable) }
+	for i, param in params {
+		node.params << ast.Var {
+			pos: params_pos[i]
+			sym: node.body.scope.lookup_var(param) or { panic(unreachable) }
+		}
 	}
 	return node
 }
 
 fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 	p.consume_with_assert(.key_let)
-	name := (p.consume_with_check(.ident) ?).text
+	ident := p.consume_with_check(.ident) ?
+	name := ident.text
 	p.consume_with_check(.op_assign) ?
 
-	v := p.scope.register_var(symbols.new_var(name)) or {
-		return IError(p.error('$name is duplicated'))
+	v := ast.Var {
+		pos: ident.pos,
+		sym: p.scope.register_var(symbols.new_var(name)) or {
+			return IError(p.error('$name is duplicated'))
+		}
 	}
 	return ast.AssignStmt{
 		left: v
@@ -120,10 +130,14 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 }
 
 fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
-	name := (p.consume_with_check(.ident) ?).text
+	ident := p.consume_with_check(.ident) ?
+	name := ident.text
 	p.consume_with_check(.op_assign) ?
 	return ast.AssignStmt{
-		left: symbols.new_scope_var(name, p.scope)
+		left: ast.Var {
+			pos: ident.pos
+			sym: symbols.new_scope_var(name, p.scope)
+		}
 		right: p.parse_expr({}) ?
 	}
 }
@@ -180,7 +194,10 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 	body := p.parse_block('for_$p.count', [ident.text]) ?
 	p.count++
 	return ast.ForInStmt{
-		val: body.scope.lookup_var(ident.text) or { panic(unreachable) }
+		val: ast.Var {
+			pos: ident.pos,
+			sym: body.scope.lookup_var(ident.text) or { panic(unreachable) }
+		}
 		expr: expr
 		body: body
 	}

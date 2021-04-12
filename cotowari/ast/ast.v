@@ -2,7 +2,7 @@ module ast
 
 import cotowari.source { Pos }
 import cotowari.token { Token }
-import cotowari.symbols { Scope, Var }
+import cotowari.symbols { Scope }
 import cotowari.errors
 
 pub struct File {
@@ -93,7 +93,7 @@ pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline | StringLiteral | Var
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
-		CallFn { expr.pos }
+		CallFn { expr.pos() }
 		InfixExpr { expr.left.pos().merge(expr.right.pos()) }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
 		IntLiteral, StringLiteral { expr.token.pos }
@@ -101,12 +101,24 @@ pub fn (expr Expr) pos() Pos {
 	}
 }
 
-pub struct CallFn {
+pub struct Var {
 pub:
 	pos Pos
+	sym symbols.Var
+}
+
+pub struct CallFn {
 pub mut:
 	func Var
 	args []Expr
+}
+
+fn (expr CallFn) pos() Pos {
+	return if expr.args.len == 0 {
+		expr.func.pos
+	}	else {
+		expr.func.pos.merge(expr.args.last().pos())
+	}
 }
 
 pub struct IntLiteral {
