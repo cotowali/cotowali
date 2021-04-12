@@ -78,7 +78,6 @@ pub:
 
 pub struct InfixExpr {
 pub:
-	pos   Pos
 	op    Token
 	left  Expr
 	right Expr
@@ -87,11 +86,20 @@ pub:
 // expr | expr | expr
 pub struct Pipeline {
 pub:
-	pos   Pos
 	exprs []Expr
 }
 
 pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline | StringLiteral | Var
+
+pub fn (expr Expr) pos() Pos {
+	return match expr {
+		CallFn { expr.pos }
+		InfixExpr { expr.left.pos().merge(expr.right.pos()) }
+		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
+		IntLiteral, StringLiteral { expr.token.pos }
+		Var { source.none_pos }
+	}
+}
 
 pub struct CallFn {
 pub:
@@ -103,12 +111,10 @@ pub mut:
 
 pub struct IntLiteral {
 pub:
-	pos   Pos
 	token Token
 }
 
 pub struct StringLiteral {
 pub:
-	pos   Pos
 	token Token
 }
