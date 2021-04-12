@@ -3,6 +3,7 @@ tasks:
   hello: z run examples/hello.ri
   run: v run cmd/ri/main.v $@
   build: mkdir -p .bin && v cmd/ri/main.v -o .bin/ri
+  symlink: ln -fs $(pwd)/.bin/ri /usr/local/bin/ri
   test: v test .
   test.hello: z run examples/hello.ri
   fmt: v fmt -w .
