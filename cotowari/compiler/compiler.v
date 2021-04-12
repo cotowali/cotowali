@@ -5,6 +5,7 @@ import strings
 import cotowari.source { Source }
 import cotowari.lexer { new_lexer }
 import cotowari.parser { new_parser }
+import cotowari.checker { new_checker }
 import cotowari.emit { new_emitter }
 import cotowari.ast
 import cotowari.errors
@@ -46,8 +47,13 @@ pub fn (c &Compiler) compile() ?string {
 
 pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	mut p := new_parser(new_lexer(c.source))
-	parsed_file := p.parse()
-	check_compile_error(parsed_file) ?
+	mut f := p.parse()
+	check_compile_error(f) ?
+
+	checker := new_checker()
+	checker.check_file(mut f)
+	check_compile_error(f) ?
+
 	mut g := new_emitter(w)
-	g.gen(parsed_file)
+	g.gen(f)
 }
