@@ -3,8 +3,8 @@ module emit
 import cotowari.ast { Pipeline, Stmt }
 import cotowari.symbols
 
-pub fn (mut emit Emitter) gen(f ast.File) {
-	emit.file(f)
+pub fn (mut e Emitter) emit(f ast.File) {
+	e.file(f)
 }
 
 fn (mut emit Emitter) file(f ast.File) {

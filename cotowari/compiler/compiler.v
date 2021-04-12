@@ -54,6 +54,6 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	checker.check_file(mut f)
 	check_compile_error(f) ?
 
-	mut g := new_emitter(w)
-	g.gen(f)
+	mut e := new_emitter(w)
+	e.gen(f)
 }
