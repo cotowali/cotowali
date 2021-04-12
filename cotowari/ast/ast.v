@@ -97,7 +97,7 @@ pub fn (expr Expr) pos() Pos {
 		InfixExpr { expr.left.pos().merge(expr.right.pos()) }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
 		IntLiteral, StringLiteral { expr.token.pos }
-		Var { source.none_pos }
+		Var { expr.pos }
 	}
 }
 
