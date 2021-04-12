@@ -103,7 +103,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	p.consume_with_check(.r_paren) ?
 	node.body = p.parse_block(name, params) ?
 	for i, param in params {
-		node.params << ast.Var {
+		node.params << ast.Var{
 			pos: params_pos[i]
 			sym: node.body.scope.lookup_var(param) or { panic(unreachable) }
 		}
@@ -117,8 +117,8 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 	name := ident.text
 	p.consume_with_check(.op_assign) ?
 
-	v := ast.Var {
-		pos: ident.pos,
+	v := ast.Var{
+		pos: ident.pos
 		sym: p.scope.register_var(symbols.new_var(name)) or {
 			return IError(p.error('$name is duplicated'))
 		}
@@ -134,7 +134,7 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 	name := ident.text
 	p.consume_with_check(.op_assign) ?
 	return ast.AssignStmt{
-		left: ast.Var {
+		left: ast.Var{
 			pos: ident.pos
 			sym: symbols.new_scope_var(name, p.scope)
 		}
@@ -194,8 +194,8 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 	body := p.parse_block('for_$p.count', [ident.text]) ?
 	p.count++
 	return ast.ForInStmt{
-		val: ast.Var {
-			pos: ident.pos,
+		val: ast.Var{
+			pos: ident.pos
 			sym: body.scope.lookup_var(ident.text) or { panic(unreachable) }
 		}
 		expr: expr

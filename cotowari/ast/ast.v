@@ -116,7 +116,7 @@ pub mut:
 fn (expr CallFn) pos() Pos {
 	return if expr.args.len == 0 {
 		expr.func.pos
-	}	else {
+	} else {
 		expr.func.pos.merge(expr.args.last().pos())
 	}
 }

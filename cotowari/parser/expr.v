@@ -95,11 +95,9 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	name := ident.text
 	p.consume_if_kind_is(.l_paren) or {
 		// TODO: Move to checker
-		return ast.Var {
+		return ast.Var{
 			pos: ident.pos
-			sym: p.scope.lookup_var(name) or {
-				return IError(p.error('undefined variable $name'))
-			}
+			sym: p.scope.lookup_var(name) or { return IError(p.error('undefined variable $name')) }
 		}
 	}
 	mut args := []ast.Expr{}
@@ -114,7 +112,7 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	}
 	p.consume_with_check(.r_paren) ?
 	f := ast.CallFn{
-		func: ast.Var {ident.pos, symbols.new_fn(name)}
+		func: ast.Var{ident.pos, symbols.new_fn(name)}
 		args: args
 	}
 	return f
