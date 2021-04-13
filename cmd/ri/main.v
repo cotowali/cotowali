@@ -5,6 +5,7 @@ import cli { Command }
 import v.vmod
 import cotowari { compile, format_error }
 import cotowari.source { Source }
+import cotowari.errors
 import cmd.tools
 
 fn new_source_to_run(args []string) ?Source {
@@ -43,7 +44,7 @@ fn execute_compile(cmd Command) ? {
 	}
 	s := source.read_file(cmd.args[0]) ?
 	out := compile(s) or {
-		eprintln(format_error(err))
+		eprint(format_error(err, errors.SimplePrinter{}))
 		exit(1)
 	}
 	println(out)

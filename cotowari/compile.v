@@ -2,9 +2,11 @@ module cotowari
 
 import os
 import io
+import strings
 import rand { ulid }
 import cotowari.source { Source }
 import cotowari.compiler { new_compiler }
+import cotowari.errors
 
 pub fn compile(s Source) ?string {
 	c := new_compiler(s)
@@ -36,9 +38,13 @@ pub fn run(s Source) ?int {
 	return code
 }
 
-pub fn format_error(err IError) string {
+pub fn format_error(err IError, printer errors.Printer) string {
 	if err is compiler.CompileError {
-		return err.errors.str()
+		mut sb := strings.new_builder(10)
+		for e in err.errors {
+			printer.print(sb, e)
+		}
+		return sb.str()
 	}
 	return err.msg
 }
