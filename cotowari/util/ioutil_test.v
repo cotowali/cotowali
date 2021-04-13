@@ -20,6 +20,6 @@ fn test_write() ? {
 	buf := Buf{}
 	write(buf, [byte(0)]) ?
 	assert buf.data == [byte(0)]
-	write(buf, 'abc') ?
+	must_write(buf, 'abc')
 	assert buf.data == [byte(`a`), `b`, `c`]
 }

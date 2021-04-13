@@ -10,3 +10,7 @@ pub fn write(w io.Writer, data WritableData) ?int {
 		[]byte { data }
 	})
 }
+
+pub fn must_write(w io.Writer, data WritableData) int {
+	return write(w, data) or { panic(err) }
+}
