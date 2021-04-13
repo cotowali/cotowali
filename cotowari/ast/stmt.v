@@ -26,7 +26,6 @@ pub mut:
 
 pub struct AssignStmt {
 pub:
-	pos   Pos
 	left  Var
 	right Expr
 }
@@ -39,7 +38,6 @@ pub:
 
 pub struct IfStmt {
 pub:
-	pos      Pos
 	branches []IfBranch
 	has_else bool
 }
@@ -61,6 +59,5 @@ pub mut:
 
 pub struct ReturnStmt {
 pub:
-	pos  Pos
 	expr Expr
 }
