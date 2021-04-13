@@ -8,7 +8,7 @@ import cotowari.parser { new_parser }
 import cotowari.checker { new_checker }
 import cotowari.emit { new_emitter }
 import cotowari.ast
-import cotowari.errors
+import cotowari.errors { Err }
 
 pub struct Compiler {
 mut:
@@ -17,7 +17,7 @@ mut:
 
 pub struct CompileError {
 pub:
-	errors []errors.Error
+	errors []Err
 	code   int
 	msg    string
 }

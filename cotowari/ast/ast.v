@@ -1,7 +1,7 @@
 module ast
 
 import cotowari.symbols { Scope }
-import cotowari.errors
+import cotowari.errors { Err }
 
 pub struct File {
 pub:
@@ -9,5 +9,5 @@ pub:
 pub mut:
 	stmts  []Stmt
 	scope  &Scope
-	errors []errors.Error
+	errors []Err
 }

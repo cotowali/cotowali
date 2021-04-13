@@ -6,7 +6,7 @@ pub const (
 	unreachable = 'unreachable - This is a compiler bug.'
 )
 
-pub struct Error {
+pub struct Err {
 pub:
 	source Source
 	pos    Pos

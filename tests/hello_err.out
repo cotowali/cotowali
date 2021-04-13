@@ -1,4 +1,4 @@
-[cotowari.errors.Error{
+[cotowari.errors.Err{
     source: cotowari.source.Source{
         path: ''
         code: ''

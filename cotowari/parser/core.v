@@ -4,7 +4,7 @@ import cotowari.source { Source }
 import cotowari.lexer { Lexer }
 import cotowari.token { Token, TokenKind }
 import cotowari.ast
-import cotowari.errors
+import cotowari.errors { Err }
 import cotowari.symbols { Scope, new_global_scope }
 
 pub struct Parser {
@@ -143,9 +143,9 @@ fn (mut p Parser) close_scope() &Scope {
 	return p.scope
 }
 
-fn (mut p Parser) error(msg string) &errors.Error {
+fn (mut p Parser) error(msg string) &Err {
 	tok := p.consume()
-	err := &errors.Error{
+	err := &Err{
 		msg: msg
 		pos: tok.pos
 	}
@@ -153,8 +153,8 @@ fn (mut p Parser) error(msg string) &errors.Error {
 	return err
 }
 
-fn error_node(err IError) &errors.Error {
-	if err is errors.Error {
+fn error_node(err IError) &Err {
+	if err is errors.Err {
 		return err
 	}
 	panic(err)
