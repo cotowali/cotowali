@@ -17,8 +17,8 @@ pub mut:
 
 pub struct FnDecl {
 pub:
-	pos  Pos
-	name string
+	name_pos Pos
+	name     string
 pub mut:
 	params []Var
 	body   Block
