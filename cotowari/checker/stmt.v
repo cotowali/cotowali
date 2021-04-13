@@ -6,7 +6,7 @@ fn (c Checker) stmt(stmt ast.Stmt) {
 	match stmt {
 		ast.AssignStmt {}
 		ast.Block {}
-		ast.Expr {}
+		ast.Expr { c.expr(stmt) }
 		ast.EmptyStmt {}
 		ast.FnDecl {}
 		ast.ForInStmt {}
