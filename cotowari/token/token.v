@@ -43,49 +43,6 @@ pub enum TokenKind {
 	eof
 }
 
-pub fn (k TokenKind) str() string {
-	return match k {
-		.unknown { 'unknown' }
-		.ident { 'ident' }
-		.key_assert { 'assert' }
-		.key_fn { 'fn' }
-		.key_let { 'let' }
-		.key_else { 'else' }
-		.key_if { 'if' }
-		.key_for { 'for' }
-		.key_in { 'in' }
-		.key_return { 'return' }
-		.inline_shell { 'inline_shell' }
-		.comma { ',' }
-		.dot { '.' }
-		.amp { '&' }
-		.pipe { '|' }
-		.question { '?' }
-		.int_lit { 'int_lit' }
-		.bool_lit { 'bool_lit' }
-		.string_lit { 'string_lit' }
-		.l_paren { '(' }
-		.r_paren { ')' }
-		.l_brace { '{' }
-		.r_brace { '}' }
-		.l_bracket { '[' }
-		.r_bracket { ']' }
-		.op_plus { '+' }
-		.op_minus { '-' }
-		.op_div { '/' }
-		.op_mul { '*' }
-		.op_mod { '%' }
-		.op_and { '&&' }
-		.op_or { '||' }
-		.op_assign { '=' }
-		.op_eq { '==' }
-		.op_gt { '>' }
-		.op_lt { '<' }
-		.eol { 'eol' }
-		.eof { 'eof' }
-	}
-}
-
 pub enum TokenKindClass {
 	op
 	literal
