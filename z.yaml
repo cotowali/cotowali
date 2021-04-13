@@ -5,6 +5,7 @@ tasks:
   build: mkdir -p .bin && v cmd/ri/main.v -o .bin/ri
   symlink: ln -fs $(pwd)/.bin/ri /usr/local/bin/ri
   test: v test .
+  test.fix: v -d fix test .
   test.hello: z run examples/hello.ri
   fmt: v fmt -w .
   fmt.c: z fmt && z test && git add . && git commit -m 'fmt'
