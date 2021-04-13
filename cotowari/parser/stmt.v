@@ -204,8 +204,9 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 }
 
 fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
-	p.consume_with_assert(.key_return)
+	tok := p.consume_with_assert(.key_return)
 	return ast.ReturnStmt{
+		tok: tok
 		expr: p.parse_expr({}) ?
 	}
 }

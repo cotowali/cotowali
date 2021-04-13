@@ -2,6 +2,7 @@ module ast
 
 import cotowari.source { Pos }
 import cotowari.symbols { Scope }
+import cotowari.token { Token }
 
 pub type Stmt = AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt | IfStmt |
 	InlineShell | ReturnStmt
@@ -59,5 +60,6 @@ pub mut:
 
 pub struct ReturnStmt {
 pub:
-	expr Expr
+	token Token // key_return token
+	expr  Expr
 }
