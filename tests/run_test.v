@@ -15,11 +15,23 @@ fn test_run() ? {
 		if path.ends_with('_err.ri') {
 			result := os.execute('./cmd/ri/ri $path')
 			assert result.exit_code != 0
-			assert result.output == expected
+			$if fix ? {
+				if result.output != expected {
+					os.write_file(out_path, result.output) ?
+				}
+			} $else {
+				assert result.output == expected
+			}
 		} else {
 			result := os.execute('./cmd/ri/ri run $path')
 			assert result.exit_code == 0
-			assert result.output == expected
+			$if fix ? {
+				if result.output != expected {
+					os.write_file(out_path, result.output) ?
+				}
+			} $else {
+				assert result.output == expected
+			}
 		}
 	}
 }
