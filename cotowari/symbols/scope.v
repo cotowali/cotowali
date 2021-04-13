@@ -27,7 +27,7 @@ pub fn new_global_scope() &Scope {
 		id: symbols.global_id
 		parent: 0
 	}
-	s.must_register(unknown_type)
+	s.must_register_multi(unknown_type, int_type, string_type)
 	return s
 }
 
@@ -75,6 +75,10 @@ pub fn (mut s Scope) create_child(name string) &Scope {
 [inline]
 fn (mut s Scope) must_register(sym Symbol) Symbol {
 	return s.register(sym) or { panic(err) }
+}
+
+fn (mut s Scope) must_register_multi(syms ...Symbol) []Symbol {
+	return syms.map(s.must_register(it))
 }
 
 fn (mut s Scope) check_before_register(sym Symbol) ? {

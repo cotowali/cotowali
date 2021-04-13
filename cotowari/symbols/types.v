@@ -74,4 +74,14 @@ pub const (
 		name: 'unknown'
 		info: UnknownTypeInfo{}
 	}
+	int_type     = Type{
+		id: 2
+		name: 'int'
+		info: PrimitiveTypeInfo{}
+	}
+	string_type  = Type{
+		id: 3
+		name: 'string'
+		info: PrimitiveTypeInfo{}
+	}
 )
