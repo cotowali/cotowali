@@ -146,6 +146,7 @@ fn (mut p Parser) close_scope() &Scope {
 fn (mut p Parser) error(msg string) &Err {
 	tok := p.consume()
 	err := &Err{
+		source: p.source()
 		msg: msg
 		pos: tok.pos
 	}
