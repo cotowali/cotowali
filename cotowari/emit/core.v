@@ -1,6 +1,7 @@
 module emit
 
 import io
+import cotowari.util { must_write }
 
 pub struct Emitter {
 mut:
@@ -17,10 +18,6 @@ pub fn new_emitter(out io.Writer) Emitter {
 	}
 }
 
-pub fn (mut emit Emitter) raw_write(bytes []byte) {
-	emit.out.write(bytes) or { panic(err) }
-}
-
 pub fn (mut emit Emitter) write(s string) {
 	$if !prod {
 		if s == '' {
@@ -30,9 +27,8 @@ pub fn (mut emit Emitter) write(s string) {
 	if emit.newline {
 		emit.write_indent()
 	}
-	bytes := s.bytes()
-	emit.raw_write(bytes)
-	emit.newline = bytes.last() == `\n`
+	must_write(emit.out, s)
+	emit.newline = s[s.len - 1] == `\n`
 }
 
 pub fn (mut emit Emitter) writeln(s string) {
@@ -40,5 +36,5 @@ pub fn (mut emit Emitter) writeln(s string) {
 }
 
 pub fn (mut emit Emitter) write_indent() {
-	emit.raw_write('  '.repeat(emit.indent).bytes())
+	must_write(emit.out, '  '.repeat(emit.indent))
 }
