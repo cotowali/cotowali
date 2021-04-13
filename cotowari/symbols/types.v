@@ -20,15 +20,18 @@ pub fn (t Type) is_fn() bool {
 
 pub struct UnknownTypeInfo {}
 
+pub struct PrimitiveTypeInfo {}
+
 pub struct PlaceholderTypeInfo {
 	is_fn bool
 }
 
-pub type TypeInfo = PlaceholderTypeInfo | UnknownTypeInfo
+pub type TypeInfo = PlaceholderTypeInfo | PrimitiveTypeInfo | UnknownTypeInfo
 
 pub enum TypeKind {
 	placeholder
 	unknown
+	primitive
 }
 
 // type kind
@@ -41,6 +44,7 @@ pub fn (t Type) kind() TypeKind {
 	return match t.info {
 		UnknownTypeInfo { tk(.unknown) }
 		PlaceholderTypeInfo { tk(.placeholder) }
+		PrimitiveTypeInfo { tk(.primitive) }
 	}
 }
 
