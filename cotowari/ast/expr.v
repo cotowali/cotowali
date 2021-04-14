@@ -19,9 +19,9 @@ pub fn (e Expr) typ() &symbols.Type {
 	return match e {
 		IntLiteral { &symbols.int_type }
 		StringLiteral { &symbols.string_type }
-		Pipeline { e.exprs.last().typ() /* TODO */ }
-		InfixExpr { e.right.typ() /* TODO */ }
-		CallFn { Expr(e.func).typ() /* TODO */ }
+		Pipeline { e.exprs.last().typ() } // TODO
+		InfixExpr { e.right.typ() } // TODO
+		CallFn { Expr(e.func).typ() } // TODO
 		Var { e.sym.typ }
 	}
 }
