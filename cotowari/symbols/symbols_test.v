@@ -35,6 +35,10 @@ fn test_type() {
 	if _ := ts.scope() {
 		assert false
 	}
+
+	pt := new_placeholder_type('t')
+	assert pt.name == 't'
+	assert pt.kind() == .placeholder
 }
 
 fn test_is_fn() {

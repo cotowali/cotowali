@@ -56,6 +56,10 @@ pub fn new_type(name string, info TypeInfo) &Type {
 	}
 }
 
+pub fn new_placeholder_type(name string) &Type {
+	return new_type(name, PlaceholderTypeInfo{})
+}
+
 pub fn (v Type) full_name() string {
 	return Symbol(v).full_name()
 }
