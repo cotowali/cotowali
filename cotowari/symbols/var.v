@@ -30,6 +30,10 @@ pub fn new_scope_var(name string, scope &Scope) &Var {
 	return v
 }
 
+pub fn new_scope_placeholder_var(name string, scope &Scope) &Var {
+	return new_scope_var(name, scope)
+}
+
 pub fn new_fn(name string) &Var {
 	return &Var{
 		name: name

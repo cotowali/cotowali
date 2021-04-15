@@ -9,13 +9,19 @@ fn test_var() ? {
 		assert false
 	}
 
-	s := new_global_scope()
-	v2 := new_scope_var('name', s)
-	assert (v2.scope() ?).id == s.id
+	v2 := new_placeholder_var('name')
+	assert v2.name == 'name'
+	assert v2.typ.kind() == .placeholder
 
-	v3 := new_placeholder_var('name')
+	s := new_global_scope()
+	v3 := new_scope_var('name', s)
 	assert v3.name == 'name'
-	assert v3.typ.kind() == .placeholder
+	assert (v3.scope() ?).id == s.id
+
+	v4 := new_scope_placeholder_var('name', s)
+	assert v4.name == 'name'
+	assert (v4.scope() ?).id == s.id
+	assert v4.typ.kind() == .placeholder
 }
 
 fn test_new_fn() ? {
