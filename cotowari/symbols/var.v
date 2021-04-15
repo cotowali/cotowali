@@ -20,6 +20,10 @@ pub fn new_var(name string) &Var {
 	}
 }
 
+pub fn new_placeholder_var(name string) &Var {
+	return new_var(name)
+}
+
 pub fn new_scope_var(name string, scope &Scope) &Var {
 	mut v := new_var(name)
 	v.scope = scope

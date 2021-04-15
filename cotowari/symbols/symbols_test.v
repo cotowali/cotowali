@@ -12,6 +12,10 @@ fn test_var() ? {
 	s := new_global_scope()
 	v2 := new_scope_var('name', s)
 	assert (v2.scope() ?).id == s.id
+
+	v3 := new_placeholder_var('name')
+	assert v3.name == 'name'
+	assert v3.typ.kind() == .placeholder
 }
 
 fn test_new_fn() ? {
