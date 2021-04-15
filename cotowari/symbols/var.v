@@ -12,26 +12,26 @@ pub mut:
 	typ &Type
 }
 
-pub fn new_var(name string) &Var {
+pub fn new_var(name string, typ &Type) &Var {
 	return &Var{
 		name: name
-		typ: new_type('placeholder', PlaceholderTypeInfo{})
+		typ: typ
 		id: auto_id()
 	}
 }
 
 pub fn new_placeholder_var(name string) &Var {
-	return new_var(name)
+	return new_var(name, new_placeholder_type('placeholder'))
 }
 
-pub fn new_scope_var(name string, scope &Scope) &Var {
-	mut v := new_var(name)
+pub fn new_scope_var(name string, typ &Type, scope &Scope) &Var {
+	mut v := new_var(name, typ)
 	v.scope = scope
 	return v
 }
 
 pub fn new_scope_placeholder_var(name string, scope &Scope) &Var {
-	return new_scope_var(name, scope)
+	return new_scope_var(name, new_placeholder_type('placeholder'), scope)
 }
 
 pub fn new_fn(name string) &Var {

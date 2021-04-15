@@ -1,9 +1,10 @@
 module symbols
 
 fn test_var() ? {
-	v := new_var('v')
+	t := new_placeholder_type('t')
+	v := new_var('v', t)
 	assert v.name == 'v'
-	assert v.typ.kind() == .placeholder
+	assert v.typ.id == t.id
 	assert v.typ.is_fn() == false
 	if _ := v.scope() {
 		assert false
@@ -14,8 +15,10 @@ fn test_var() ? {
 	assert v2.typ.kind() == .placeholder
 
 	s := new_global_scope()
-	v3 := new_scope_var('name', s)
+	t3 := new_placeholder_type('t')
+	v3 := new_scope_var('name', t3, s)
 	assert v3.name == 'name'
+	assert v3.typ.id == t3.id
 	assert (v3.scope() ?).id == s.id
 
 	v4 := new_scope_placeholder_var('name', s)
@@ -62,7 +65,7 @@ fn test_full_name() ? {
 	mut s := global.create_child('s')
 	mut s_s := s.create_child('s')
 
-	v := new_var('v')
+	v := new_placeholder_var('v')
 	t := new_type('t', PlaceholderTypeInfo{})
 	assert v.full_name() == 'v'
 	assert t.full_name() == 't'

@@ -25,8 +25,8 @@ fn test_scope() ? {
 	assert s.children.len == 1
 	assert s.children[0].id == child.id
 
-	v1 := new_var('v1')
 	t1 := new_type('t1', PlaceholderTypeInfo{})
+	v1 := new_var('v1', t1)
 
 	if registered := s.register(v1) {
 		assert v1.id == registered.id
@@ -62,8 +62,8 @@ fn test_lookup() ? {
 	mut child := parent.create_child('child')
 
 	name_v := 'v'
-	parent_v := new_var(name_v)
-	child_v := new_var(name_v)
+	parent_v := new_placeholder_var(name_v)
+	child_v := new_placeholder_var(name_v)
 	assert parent_v.name == child_v.name
 	assert parent_v.id != child_v.id
 
