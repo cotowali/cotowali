@@ -105,17 +105,14 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.InfixExpr {
 			emit.infix_expr(expr, opt)
 		}
-		ast.IntLiteral {
+		ast.Literal {
 			if opt.as_command {
 				emit.write('echo ')
 			}
-			emit.write(expr.token.text)
-		}
-		ast.StringLiteral {
-			if opt.as_command {
-				emit.write('echo ')
+			match expr.kind {
+				.int { emit.write(expr.token.text) }
+				.string { emit.write("'$expr.token.text'") }
 			}
-			emit.write("'$expr.token.text'")
 		}
 		ast.Var {
 			if opt.as_command {

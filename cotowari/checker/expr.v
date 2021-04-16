@@ -6,9 +6,8 @@ fn (c Checker) expr(expr ast.Expr) {
 	match expr {
 		ast.CallFn {}
 		ast.InfixExpr {}
-		ast.IntLiteral {}
+		ast.Literal {}
 		ast.Pipeline {}
-		ast.StringLiteral {}
 		ast.Var {}
 	}
 }

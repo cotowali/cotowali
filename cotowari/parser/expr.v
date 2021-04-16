@@ -127,13 +127,15 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 		}
 		.int_lit {
 			p.consume()
-			return ast.IntLiteral{
+			return ast.Literal{
+				kind: .int
 				token: tok
 			}
 		}
 		.string_lit {
 			p.consume()
-			return ast.StringLiteral{
+			return ast.Literal{
+				kind: .string
 				token: tok
 			}
 		}
