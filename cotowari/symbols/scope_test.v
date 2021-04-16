@@ -62,8 +62,8 @@ fn test_lookup() ? {
 	mut child := parent.create_child('child')
 
 	name_v := 'v'
-	parent_v := new_placeholder_var(name_v)
-	child_v := new_placeholder_var(name_v)
+	parent_v := new_placeholder_var(name_v, 't')
+	child_v := new_placeholder_var(name_v, 't')
 	assert parent_v.name == child_v.name
 	assert parent_v.id != child_v.id
 

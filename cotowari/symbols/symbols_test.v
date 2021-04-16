@@ -10,7 +10,7 @@ fn test_var() ? {
 		assert false
 	}
 
-	v2 := new_placeholder_var('name')
+	v2 := new_placeholder_var('name', 't')
 	assert v2.name == 'name'
 	assert v2.typ.kind() == .placeholder
 
@@ -21,7 +21,7 @@ fn test_var() ? {
 	assert v3.typ.id == t3.id
 	assert (v3.scope() ?).id == s.id
 
-	v4 := new_scope_placeholder_var('name', s)
+	v4 := new_scope_placeholder_var('name', 't', s)
 	assert v4.name == 'name'
 	assert (v4.scope() ?).id == s.id
 	assert v4.typ.kind() == .placeholder
@@ -65,7 +65,7 @@ fn test_full_name() ? {
 	mut s := global.create_child('s')
 	mut s_s := s.create_child('s')
 
-	v := new_placeholder_var('v')
+	v := new_placeholder_var('v', 't')
 	t := new_type('t', PlaceholderTypeInfo{})
 	assert v.full_name() == 'v'
 	assert t.full_name() == 't'

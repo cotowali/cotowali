@@ -20,8 +20,8 @@ pub fn new_var(name string, typ &Type) &Var {
 	}
 }
 
-pub fn new_placeholder_var(name string) &Var {
-	return new_var(name, new_placeholder_type('placeholder'))
+pub fn new_placeholder_var(name string, typename string) &Var {
+	return new_var(name, new_placeholder_type(typename))
 }
 
 pub fn new_scope_var(name string, typ &Type, scope &Scope) &Var {
@@ -30,8 +30,8 @@ pub fn new_scope_var(name string, typ &Type, scope &Scope) &Var {
 	return v
 }
 
-pub fn new_scope_placeholder_var(name string, scope &Scope) &Var {
-	return new_scope_var(name, new_placeholder_type('placeholder'), scope)
+pub fn new_scope_placeholder_var(name string, typename string, scope &Scope) &Var {
+	return new_scope_var(name, new_placeholder_type(typename), scope)
 }
 
 pub fn new_fn(name string) &Var {

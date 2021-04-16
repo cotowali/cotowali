@@ -50,7 +50,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
 	p.open_scope(name)
 	for local in locals {
-		p.scope.register_var(symbols.new_placeholder_var(local)) or { panic(err) }
+		p.scope.register_var(symbols.new_placeholder_var(local, 'placeholder')) or { panic(err) }
 	}
 	defer {
 		p.close_scope()
@@ -119,7 +119,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 
 	v := ast.Var{
 		pos: ident.pos
-		sym: p.scope.register_var(symbols.new_placeholder_var(name)) or {
+		sym: p.scope.register_var(symbols.new_placeholder_var(name, 'placeholder')) or {
 			return IError(p.error('$name is duplicated'))
 		}
 	}
@@ -136,7 +136,7 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 	return ast.AssignStmt{
 		left: ast.Var{
 			pos: ident.pos
-			sym: symbols.new_scope_placeholder_var(name, p.scope)
+			sym: symbols.new_scope_placeholder_var(name, 'placeholder', p.scope)
 		}
 		right: p.parse_expr({}) ?
 	}
