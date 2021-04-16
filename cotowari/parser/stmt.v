@@ -1,9 +1,9 @@
 module parser
 
 import cotowari.ast
-import cotowari.symbols
+import cotowari.symbols { new_placeholder_var }
 import cotowari.errors { unreachable }
-import cotowari.source { Pos }
+import cotowari.source
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
 	stmt := p.try_parse_stmt() or {
@@ -50,7 +50,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
 	p.open_scope(name)
 	for local in locals {
-		p.scope.register_var(symbols.new_placeholder_var(local, 'placeholder')) or { panic(err) }
+		p.scope.register_var(new_placeholder_var(local, 'placeholder')) or { panic(err) }
 	}
 	defer {
 		p.close_scope()
@@ -76,23 +76,26 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	p.consume_with_assert(.key_fn)
-	name := p.consume().text
-
-	p.scope.register(symbols.new_fn(name)) ?
-
 	mut node := ast.FnDecl{
-		name: name
+		name: p.consume().text
 		params: []
 	}
 
+	p.scope.register(symbols.new_fn(node.name)) ?
+	p.open_scope(node.name)
+	defer {
+		p.close_scope()
+	}
+
 	p.consume_with_check(.l_paren) ?
-	mut params := []string{}
-	mut params_pos := []Pos{}
 	if p.@is(.ident) {
 		for {
-			ident := p.consume_with_check(.ident) ?
-			params << ident.text
-			params_pos << ident.pos
+			name := p.consume_with_check(.ident) ?
+			typ := p.consume_with_check(.ident) ?
+			node.params << ast.Var{
+				pos: name.pos
+				sym: p.scope.register_var(new_placeholder_var(name.text, typ.text)) ?
+			}
 			if p.@is(.r_paren) {
 				break
 			} else {
@@ -101,13 +104,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		}
 	}
 	p.consume_with_check(.r_paren) ?
-	node.body = p.parse_block(name, params) ?
-	for i, param in params {
-		node.params << ast.Var{
-			pos: params_pos[i]
-			sym: node.body.scope.lookup_var(param) or { panic(unreachable) }
-		}
-	}
+	node.body = p.parse_block_without_new_scope() ?
 	return node
 }
 
@@ -119,7 +116,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 
 	v := ast.Var{
 		pos: ident.pos
-		sym: p.scope.register_var(symbols.new_placeholder_var(name, 'placeholder')) or {
+		sym: p.scope.register_var(new_placeholder_var(name, 'placeholder')) or {
 			return IError(p.error('$name is duplicated'))
 		}
 	}

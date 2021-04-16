@@ -1,4 +1,4 @@
-fn fib(n) {
+fn fib(n int) {
   if n < 2 {
     return n
   }

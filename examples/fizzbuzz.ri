@@ -1,4 +1,4 @@
-fn fizzbuzz(n) {
+fn fizzbuzz(n int) {
   for i in seq(n) {
     if i % 3 == 0 {
       if i % 5 == 0 {
