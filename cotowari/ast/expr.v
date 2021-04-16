@@ -26,25 +26,6 @@ pub fn (e Expr) typ() &symbols.Type {
 	}
 }
 
-pub struct InfixExpr {
-pub:
-	op    Token
-	left  Expr
-	right Expr
-}
-
-// expr | expr | expr
-pub struct Pipeline {
-pub:
-	exprs []Expr
-}
-
-pub struct Var {
-pub:
-	pos Pos
-	sym symbols.Var
-}
-
 pub struct CallFn {
 pub:
 	pos Pos
@@ -53,12 +34,31 @@ pub mut:
 	args []Expr
 }
 
+pub struct InfixExpr {
+pub:
+	op    Token
+	left  Expr
+	right Expr
+}
+
 pub struct IntLiteral {
 pub:
 	token Token
 }
 
+// expr | expr | expr
+pub struct Pipeline {
+pub:
+	exprs []Expr
+}
+
 pub struct StringLiteral {
 pub:
 	token Token
+}
+
+pub struct Var {
+pub:
+	pos Pos
+	sym symbols.Var
 }
