@@ -2,11 +2,13 @@ module emit
 
 import io
 import cotowari.util { must_write }
+import cotowari.ast { File }
 
 pub struct Emitter {
 mut:
-	indent  int
-	newline bool = true
+	indent   int
+	newline  bool = true
+	cur_file File
 pub:
 	out io.Writer
 }
