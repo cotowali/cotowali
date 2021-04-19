@@ -36,6 +36,7 @@ pub enum TokenKind {
 	op_and
 	op_or
 	op_assign
+	op_not
 	op_eq
 	op_ne
 	op_gt
@@ -61,6 +62,7 @@ fn (k TokenKind) is_op() bool {
 		.op_and,
 		.op_or,
 		.op_assign,
+		.op_not,
 		.op_eq,
 		.op_ne,
 		.op_gt,
