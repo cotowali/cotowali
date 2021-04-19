@@ -2,10 +2,11 @@ module ast
 
 import cotowari.symbols { Scope }
 import cotowari.errors { Err }
+import cotowari.source { Source }
 
 pub struct File {
 pub:
-	path string
+	source Source
 pub mut:
 	stmts  []Stmt
 	scope  &Scope

@@ -6,7 +6,7 @@ import cotowari.ast
 
 pub fn (mut p Parser) parse() ast.File {
 	p.file = ast.File{
-		path: p.source().path
+		source: p.lexer.source
 		scope: p.scope
 	}
 	for !p.@is(.eof) {

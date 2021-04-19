@@ -1,6 +1,6 @@
 module parser
 
-import cotowari.source { Source }
+import cotowari.source
 import cotowari.lexer { Lexer }
 import cotowari.token { Token, TokenKind }
 import cotowari.ast
@@ -127,10 +127,6 @@ pub fn new_parser(lexer Lexer) Parser {
 	return p
 }
 
-pub fn (p &Parser) source() Source {
-	return p.lexer.source
-}
-
 [inline]
 fn (mut p Parser) open_scope(name string) &Scope {
 	p.scope = p.scope.create_child(name)
@@ -146,7 +142,7 @@ fn (mut p Parser) close_scope() &Scope {
 fn (mut p Parser) error(msg string) &Err {
 	tok := p.consume()
 	err := &Err{
-		source: p.source()
+		source: p.file.source
 		msg: msg
 		pos: tok.pos
 	}

@@ -9,7 +9,7 @@ pub fn (mut e Emitter) emit(f ast.File) {
 fn (mut emit Emitter) file(f ast.File) {
 	emit.cur_file = f
 	emit.builtin()
-	emit.writeln('# file: $f.path')
+	emit.writeln('# file: $f.source.path')
 	emit.stmts(f.stmts)
 }
 
