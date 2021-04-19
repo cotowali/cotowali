@@ -3,7 +3,6 @@ module parser
 import cotowari.ast
 import cotowari.symbols { new_placeholder_var }
 import cotowari.errors { unreachable }
-import cotowari.source
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
 	stmt := p.try_parse_stmt() or {

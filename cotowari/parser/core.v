@@ -1,6 +1,5 @@
 module parser
 
-import cotowari.source
 import cotowari.lexer { Lexer }
 import cotowari.token { Token, TokenKind }
 import cotowari.ast
