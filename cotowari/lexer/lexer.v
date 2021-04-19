@@ -52,7 +52,11 @@ pub fn (mut lex Lexer) read() Token {
 			}
 		}
 		`!` {
-			return lex.new_token_with_consume(.op_not)
+			return if lex.next_char()[0] == `=` {
+				lex.new_token_with_consume_n(2, .op_ne)
+			} else {
+				lex.new_token_with_consume(.op_not)
+			}
 		}
 		`<` {
 			return lex.new_token_with_consume(.op_lt)

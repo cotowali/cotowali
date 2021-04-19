@@ -53,7 +53,7 @@ fn test_lexer() {
 	ktest('a < b || c > d', [.ident, .op_lt, .ident, .op_or, .ident, .op_gt, .ident])
 	ktest('!cond', [.op_not, .ident])
 
-	test('if i == 0 { } else if i == 1 {} else {}', [
+	test('if i == 0 { } else if i != 1 {} else {}', [
 		t(.key_if, 'if'),
 		t(.ident, 'i'),
 		t(.op_eq, '=='),
@@ -63,7 +63,7 @@ fn test_lexer() {
 		t(.key_else, 'else'),
 		t(.key_if, 'if'),
 		t(.ident, 'i'),
-		t(.op_eq, '=='),
+		t(.op_ne, '!='),
 		t(.int_lit, '1'),
 		t(.l_brace, '{'),
 		t(.r_brace, '}'),
