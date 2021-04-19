@@ -38,11 +38,11 @@ pub fn run(s Source) ?int {
 	return code
 }
 
-pub fn format_error(err IError, printer errors.Printer) string {
+pub fn format_error(err IError, f errors.Formatter) string {
 	if err is compiler.CompileError {
-		mut sb := strings.new_builder(1000)
+		mut sb := strings.new_builder(10)
 		for e in err.errors {
-			printer.print(sb, e)
+			sb.write_string(f.format(e))
 		}
 		return sb.str()
 	}
