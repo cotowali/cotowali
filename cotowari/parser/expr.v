@@ -60,7 +60,7 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 			return p.parse_pipeline()
 		}
 		.comparsion {
-			return p.parse_infix_expr([.op_eq, .op_gt, .op_lt], operand: kind.inner())
+			return p.parse_infix_expr([.op_eq, .op_ne, .op_gt, .op_lt], operand: kind.inner())
 		}
 		.term {
 			return p.parse_infix_expr([.op_plus, .op_minus], operand: kind.inner())
