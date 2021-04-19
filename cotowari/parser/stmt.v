@@ -16,6 +16,10 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 
 fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 	match p.kind(0) {
+		.key_assert {
+			tok := p.consume()
+			return ast.AssertStmt{tok.pos, p.parse_expr({}) ?}
+		}
 		.key_fn {
 			return ast.Stmt(p.parse_fn_decl() ?)
 		}

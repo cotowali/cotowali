@@ -4,13 +4,19 @@ import cotowari.source { Pos }
 import cotowari.symbols { Scope }
 import cotowari.token { Token }
 
-pub type Stmt = AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt | IfStmt |
-	InlineShell | ReturnStmt
+pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
+	IfStmt | InlineShell | ReturnStmt
 
 pub struct AssignStmt {
 pub:
 	left  Var
 	right Expr
+}
+
+pub struct AssertStmt {
+pub:
+	key_pos Pos
+	expr    Expr
 }
 
 pub struct Block {

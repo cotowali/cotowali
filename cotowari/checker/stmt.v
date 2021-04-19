@@ -5,6 +5,7 @@ import cotowari.ast
 fn (c Checker) stmt(stmt ast.Stmt) {
 	match stmt {
 		ast.AssignStmt {}
+		ast.AssertStmt {}
 		ast.Block {}
 		ast.Expr { c.expr(stmt) }
 		ast.EmptyStmt {}

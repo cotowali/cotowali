@@ -25,6 +25,9 @@ fn (mut emit Emitter) stmts(stmts []Stmt) {
 
 fn (mut emit Emitter) stmt(stmt Stmt) {
 	match stmt {
+		ast.AssertStmt {
+			emit.assert_stmt(stmt)
+		}
 		ast.FnDecl {
 			emit.fn_decl(stmt)
 		}
@@ -54,6 +57,17 @@ fn (mut emit Emitter) stmt(stmt Stmt) {
 			emit.writeln('return 0')
 		}
 	}
+}
+
+fn (mut emit Emitter) assert_stmt(stmt ast.AssertStmt) {
+	emit.write('if falsy ')
+	emit.expr(stmt.expr, as_command: false, writeln: true)
+	emit.writeln('then')
+	emit.indent++
+	emit.writeln("echo 'LINE $stmt.key_pos.line: assertion failed' >&2")
+	emit.writeln('exit 1')
+	emit.indent--
+	emit.writeln('fi')
 }
 
 fn (mut emit Emitter) block(block ast.Block) {

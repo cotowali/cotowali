@@ -1,0 +1,5 @@
+let a = 0
+let b = 1
+assert a == a
+assert a != b
+assert a == b
