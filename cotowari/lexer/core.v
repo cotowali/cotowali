@@ -5,7 +5,7 @@ import cotowari.token { Token, TokenKind }
 import cotowari.util { min }
 
 pub struct Lexer {
-pub mut:
+pub:
 	source Source
 mut:
 	prev_char Char
