@@ -51,6 +51,9 @@ pub fn (mut lex Lexer) read() Token {
 				lex.new_token_with_consume(.op_assign)
 			}
 		}
+		`!` {
+			return lex.new_token_with_consume(.op_not)
+		}
 		`<` {
 			return lex.new_token_with_consume(.op_lt)
 		}

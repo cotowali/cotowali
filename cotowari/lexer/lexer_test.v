@@ -51,6 +51,7 @@ fn test_lexer() {
 	ktest('return 0', [.key_return, .int_lit])
 	ktest('assert a == b', [.key_assert, .ident, .op_eq, .ident])
 	ktest('a < b || c > d', [.ident, .op_lt, .ident, .op_or, .ident, .op_gt, .ident])
+	ktest('!cond', [.op_not, .ident])
 
 	test('if i == 0 { } else if i == 1 {} else {}', [
 		t(.key_if, 'if'),
