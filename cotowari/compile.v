@@ -40,7 +40,7 @@ pub fn run(s Source) ?int {
 
 pub fn format_error(err IError, printer errors.Printer) string {
 	if err is compiler.CompileError {
-		mut sb := strings.new_builder(10)
+		mut sb := strings.new_builder(1000)
 		for e in err.errors {
 			printer.print(sb, e)
 		}
