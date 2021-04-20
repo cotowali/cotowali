@@ -18,9 +18,9 @@ pub fn (expr Expr) pos() Pos {
 pub fn (e Expr) typ() &Type {
 	return match e {
 		Literal { e.typ() }
-		Pipeline { e.exprs.last().typ() } // TODO
-		InfixExpr { e.right.typ() } // TODO
-		CallFn { Expr(e.func).typ() } // TODO
+		Pipeline { e.exprs.last().typ() }
+		InfixExpr { e.right.typ() }
+		CallFn { Expr(e.func).typ() }
 		Var { e.sym.typ }
 	}
 }
