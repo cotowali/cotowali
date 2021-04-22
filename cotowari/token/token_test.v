@@ -30,6 +30,8 @@ fn test_is() {
 	assert !TokenKind.ident.@is(.comparsion_op)
 	assert TokenKind.op_eq.@is(.binary_op)
 	assert !TokenKind.ident.@is(.binary_op)
+	assert TokenKind.op_not.@is(.prefix_op)
+	assert !TokenKind.ident.@is(.prefix_op)
 	assert TokenKind.bool_lit.@is(.literal)
 	assert !TokenKind.ident.@is(.literal)
 	assert TokenKind.key_if.@is(.keyword)
