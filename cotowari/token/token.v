@@ -84,6 +84,11 @@ fn (k TokenKind) is_prefix_op() bool {
 }
 
 [inline]
+fn (k TokenKind) is_suffix_op() bool {
+	return false // TODO
+}
+
+[inline]
 fn (k TokenKind) is_binary_op() bool {
 	return k in [
 		.op_eq,
@@ -128,6 +133,7 @@ pub enum TokenKindClass {
 	comparsion_op
 	binary_op
 	prefix_op
+	suffix_op
 	literal
 	keyword
 }
@@ -139,6 +145,7 @@ pub fn (k TokenKind) @is(class TokenKindClass) bool {
 		.comparsion_op { k.is_comparsion_op() }
 		.binary_op { k.is_binary_op() }
 		.prefix_op { k.is_prefix_op() }
+		.suffix_op { k.is_suffix_op() }
 		.literal { k.is_literal() }
 		.keyword { k.is_keyword() }
 	}
