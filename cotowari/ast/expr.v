@@ -15,7 +15,7 @@ pub fn (expr Expr) pos() Pos {
 	}
 }
 
-pub fn (node Literal) typ() &Type {
+fn (node Literal) typ() &Type {
 	return match node.kind {
 		.string { &string_type }
 		.int { &int_type }
