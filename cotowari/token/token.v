@@ -47,6 +47,7 @@ pub enum TokenKind {
 
 pub enum TokenKindClass {
 	op
+	comparsion_op
 	literal
 	keyword
 }
@@ -63,6 +64,16 @@ fn (k TokenKind) is_op() bool {
 		.op_or,
 		.op_assign,
 		.op_not,
+		.op_eq,
+		.op_ne,
+		.op_gt,
+		.op_lt,
+	]
+}
+
+[inline]
+fn (k TokenKind) is_comparsion_op() bool {
+	return k in [
 		.op_eq,
 		.op_ne,
 		.op_gt,
@@ -97,6 +108,7 @@ fn (k TokenKind) is_keyword() bool {
 pub fn (k TokenKind) @is(class TokenKindClass) bool {
 	return match class {
 		.op { k.is_op() }
+		.comparsion_op { k.is_comparsion_op() }
 		.literal { k.is_literal() }
 		.keyword { k.is_keyword() }
 	}
