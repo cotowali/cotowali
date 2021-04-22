@@ -45,14 +45,6 @@ pub enum TokenKind {
 	eof
 }
 
-pub enum TokenKindClass {
-	op
-	comparsion_op
-	binary_op
-	literal
-	keyword
-}
-
 [inline]
 fn (k TokenKind) is_op() bool {
 	return k in [
@@ -120,6 +112,14 @@ fn (k TokenKind) is_keyword() bool {
 		.key_in,
 		.key_return,
 	]
+}
+
+pub enum TokenKindClass {
+	op
+	comparsion_op
+	binary_op
+	literal
+	keyword
 }
 
 [inline]
