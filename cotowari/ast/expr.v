@@ -15,6 +15,13 @@ pub fn (expr Expr) pos() Pos {
 	}
 }
 
+pub fn (node Literal) typ() &Type {
+	return match node.kind {
+		.string { &string_type }
+		.int { &int_type }
+	}
+}
+
 pub fn (e Expr) typ() &Type {
 	return match e {
 		Literal { e.typ() }
@@ -49,13 +56,6 @@ pub struct Literal {
 pub:
 	kind  LiteralKind
 	token Token
-}
-
-pub fn (node Literal) typ() &Type {
-	return match node.kind {
-		.string { &string_type }
-		.int { &int_type }
-	}
 }
 
 // expr | expr | expr
