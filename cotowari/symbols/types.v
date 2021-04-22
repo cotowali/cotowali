@@ -88,4 +88,9 @@ pub const (
 		name: 'string'
 		info: PrimitiveTypeInfo{}
 	}
+	bool_type    = Type{
+		id: 4
+		name: 'bool'
+		info: PrimitiveTypeInfo{}
+	}
 )
