@@ -41,6 +41,7 @@ pub enum TokenKind {
 	op_ne
 	op_gt
 	op_lt
+	op_plus_plus
 	eol
 	eof
 }
@@ -85,7 +86,7 @@ fn (k TokenKind) is_prefix_op() bool {
 
 [inline]
 fn (k TokenKind) is_suffix_op() bool {
-	return false // TODO
+	return k == .op_plus_plus
 }
 
 [inline]

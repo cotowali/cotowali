@@ -32,6 +32,7 @@ fn test_is() {
 	assert !TokenKind.ident.@is(.binary_op)
 	assert TokenKind.op_not.@is(.prefix_op)
 	assert !TokenKind.ident.@is(.prefix_op)
+	assert TokenKind.op_plus_plus.@is(.suffix_op)
 	assert !TokenKind.ident.@is(.suffix_op)
 	assert TokenKind.bool_lit.@is(.literal)
 	assert !TokenKind.ident.@is(.literal)
