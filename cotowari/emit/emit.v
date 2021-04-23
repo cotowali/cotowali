@@ -1,6 +1,7 @@
 module emit
 
 import cotowari.ast { Pipeline, Stmt }
+import cotowari.token { Token }
 
 pub fn (mut e Emitter) emit(f ast.File) {
 	e.file(f)
@@ -125,6 +126,9 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.InfixExpr {
 			emit.infix_expr(expr, opt)
 		}
+		ast.PrefixExpr {
+			emit.prefix_expr(expr, opt)
+		}
 		ast.Literal {
 			if opt.as_command {
 				emit.write('echo ')
@@ -167,6 +171,34 @@ fn (mut emit Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 			if !opt.inside_arithmetic {
 				emit.write(' ) ))')
 			}
+		}
+		else {
+			panic('unimplemented')
+		}
+	}
+}
+
+fn (mut emit Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
+	op := expr.op
+	match op.kind {
+		.op_plus {
+			emit.expr(expr.expr, opt)
+		}
+		.op_minus {
+			emit.expr(ast.InfixExpr{
+				left: ast.Literal{
+					kind: .int
+					token: Token{
+						kind: .int_lit
+						text: '-1'
+					}
+				}
+				right: expr.expr
+				op: Token{
+					kind: .op_mul
+					text: '*'
+				}
+			}, opt)
 		}
 		else {
 			panic('unimplemented')
