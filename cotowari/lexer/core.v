@@ -56,8 +56,8 @@ fn k(kind TokenKind) TokenKind {
 fn (lex &Lexer) pos_for_new_token() Pos {
 	pos := lex.pos
 	last_col := pos.last_col - 1
-	last_line :=
-		pos.last_line + (if last_col == 0 || lex.prev_char()[0] in [`\n`, `\r`] { -1 } else { 0 })
+	last_line := pos.last_line +
+		(if last_col == 0 || lex.prev_char()[0] in [`\n`, `\r`] { -1 } else { 0 })
 	return Pos{
 		...pos
 		len: pos.len - 1
