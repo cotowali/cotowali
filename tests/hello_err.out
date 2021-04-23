@@ -1,1 +1,0 @@
-hello_err.ri 1,1: unexpected token Token{ .op_plus, '+', Pos{ i: 0-1, line: 1-1, col: 1-0 } }
