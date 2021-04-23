@@ -11,6 +11,7 @@ tasks:
   fmt.c: z fmt && z test && git add . && git commit -m 'fmt'
   ast: z run tools ast $@
   tokens: z run tools tokens $@
+  scope: z run tools scope $@
   ci:
     tasks:
       setup-v: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
