@@ -28,16 +28,15 @@ fn test_var() ? {
 }
 
 fn test_new_fn() ? {
-	f := new_fn('f')
+	f := new_fn('f', [], unknown_type)
 	assert f.name == 'f'
-	assert f.typ.kind() == .placeholder
-	assert f.typ.is_fn()
+	assert f.typ.kind() == .func
 	if _ := f.scope() {
 		assert false
 	}
 
 	s := new_global_scope()
-	v2 := new_scope_fn('name', s)
+	v2 := new_scope_fn('f', [], unknown_type, s)
 	assert (v2.scope() ?).id == s.id
 }
 

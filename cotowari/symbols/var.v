@@ -34,18 +34,18 @@ pub fn new_scope_placeholder_var(name string, typename string, scope &Scope) &Va
 	return new_scope_var(name, new_placeholder_type(typename), scope)
 }
 
-pub fn new_fn(name string) &Var {
-	return &Var{
-		name: name
-		typ: new_type('placeholder_fn', PlaceholderTypeInfo{ is_fn: true })
-		id: auto_id()
-	}
+pub fn new_fn(name string, args []&Type, ret &Type) &Var {
+	return new_var(name, new_type(name, FuncTypeInfo{args, ret}))
 }
 
-pub fn new_scope_fn(name string, scope &Scope) &Var {
-	mut f := new_fn(name)
-	f.scope = scope
-	return f
+pub fn new_scope_fn(name string, args []&Type, ret &Type, scope &Scope) &Var {
+	mut v := new_fn(name, args, ret)
+	v.scope = scope
+	return v
+}
+
+pub fn new_placeholder_fn(name string, arg_typenames []string, ret_typename string) &Var {
+	return new_fn(name, arg_typenames.map(new_placeholder_type(it)), new_placeholder_type(ret_typename))
 }
 
 pub fn (v Var) str() string {

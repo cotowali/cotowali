@@ -14,6 +14,7 @@ pub fn (t Type) is_fn() bool {
 	info := t.info
 	return match info {
 		PlaceholderTypeInfo { info.is_fn }
+		FuncTypeInfo { true }
 		else { false }
 	}
 }
@@ -26,12 +27,18 @@ pub struct PlaceholderTypeInfo {
 	is_fn bool
 }
 
-pub type TypeInfo = PlaceholderTypeInfo | PrimitiveTypeInfo | UnknownTypeInfo
+pub struct FuncTypeInfo {
+	args []&Type
+	ret  &Type
+}
+
+pub type TypeInfo = FuncTypeInfo | PlaceholderTypeInfo | PrimitiveTypeInfo | UnknownTypeInfo
 
 pub enum TypeKind {
 	placeholder
 	unknown
 	primitive
+	func
 }
 
 // type kind
@@ -45,6 +52,7 @@ pub fn (t Type) kind() TypeKind {
 		UnknownTypeInfo { tk(.unknown) }
 		PlaceholderTypeInfo { tk(.placeholder) }
 		PrimitiveTypeInfo { tk(.primitive) }
+		FuncTypeInfo { tk(.func) }
 	}
 }
 
