@@ -1,1 +1,4 @@
 fn f(i int, i int) {}
+
+fn g(i int) {}
+fn g(i int) {}

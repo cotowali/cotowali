@@ -1,1 +1,2 @@
 fn_err.ri 1,20: `i` is duplicated
+fn_err.ri 4,14: `g` is duplicated
