@@ -53,7 +53,7 @@ fn execute_compile(cmd Command) ? {
 fn main() {
 	mod := vmod.decode(@VMOD_FILE) or { panic(err) }
 	mut app := Command{
-		name: mod.name
+		name: 'ric'
 		description: mod.description
 		version: mod.version
 		execute: execute_compile

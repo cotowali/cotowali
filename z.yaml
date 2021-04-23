@@ -1,9 +1,9 @@
 default: hello
 tasks:
   hello: z run examples/hello.ri
-  run: v run cmd/ri/main.v $@
-  build: mkdir -p .bin && v cmd/ri/main.v -o .bin/ri
-  symlink: ln -fs $(pwd)/.bin/ri /usr/local/bin/ri
+  run: v run cmd/ric/main.v $@
+  build: mkdir -p .bin && v cmd/ric/main.v -o .bin/ric
+  symlink: ln -fs $(pwd)/.bin/ric /usr/local/bin/ric
   test: v test .
   test.fix: v -d fix test .
   test.hello: z run examples/hello.ri
