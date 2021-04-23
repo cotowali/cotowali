@@ -1,8 +1,9 @@
 module parser
 
 import cotowari.ast
-import cotowari.symbols { new_placeholder_var }
+import cotowari.symbols { new_placeholder_fn, new_placeholder_var }
 import cotowari.errors { unreachable }
+import cotowari.source { Pos }
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
 	stmt := p.try_parse_stmt() or {
@@ -77,17 +78,24 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 	panic(unreachable)
 }
 
+struct FnParamParsingInfo {
+mut:
+	name     string
+	typename string
+	pos      Pos
+}
+
+struct FnParsingInfo {
+	name string
+mut:
+	params       []FnParamParsingInfo
+	ret_typename string
+}
+
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	p.consume_with_assert(.key_fn)
-	mut node := ast.FnDecl{
+	mut info := FnParsingInfo{
 		name: p.consume().text
-		params: []
-	}
-
-	p.scope.register(symbols.new_fn(node.name)) ?
-	p.open_scope(node.name)
-	defer {
-		p.close_scope()
 	}
 
 	p.consume_with_check(.l_paren) ?
@@ -95,9 +103,10 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		for {
 			name := p.consume_with_check(.ident) ?
 			typ := p.consume_with_check(.ident) ?
-			node.params << ast.Var{
+			info.params << FnParamParsingInfo{
+				name: name.text
 				pos: name.pos
-				sym: p.scope.register_var(new_placeholder_var(name.text, typ.text)) ?
+				typename: typ.text
 			}
 			if p.@is(.r_paren) {
 				break
@@ -107,6 +116,28 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		}
 	}
 	p.consume_with_check(.r_paren) ?
+	if ret := p.consume_if_kind_is(.ident) {
+		info.ret_typename = ret.text
+	}
+
+	mut node := ast.FnDecl{
+		name: info.name
+	}
+	mut outer_scope := p.scope
+	p.open_scope(node.name)
+	defer {
+		p.close_scope()
+	}
+	mut params := []ast.Var{len: info.params.len}
+	for i, param in info.params {
+		params[i] = ast.Var{
+			pos: param.pos
+			sym: p.scope.register_var(new_placeholder_var(param.name, param.typename)) ?
+		}
+	}
+	node.params = params
+	outer_scope.register_var(new_placeholder_fn(info.name, info.params.map(it.typename),
+		info.ret_typename)) ?
 	node.body = p.parse_block_without_new_scope() ?
 	return node
 }
