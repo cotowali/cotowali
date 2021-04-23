@@ -86,7 +86,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 	v := ast.Var{
 		pos: ident.pos
 		sym: p.scope.register_var(new_placeholder_var(name, 'placeholder')) or {
-			return IError(p.error('$name is duplicated'))
+			return p.duplicated_error(name)
 		}
 	}
 	return ast.AssignStmt{

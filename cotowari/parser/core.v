@@ -149,6 +149,10 @@ fn (mut p Parser) error(msg string) IError {
 	return IError(err)
 }
 
+fn (mut p Parser) duplicated_error(name string) IError {
+	return p.error('`$name` is duplicated')
+}
+
 fn error_node(err IError) &Err {
 	if err is errors.Err {
 		return err
