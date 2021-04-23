@@ -16,6 +16,20 @@ pub fn (s &Scope) str() string {
 	return s.full_name()
 }
 
+pub fn (s &Scope) debug_str() string {
+	children_str := s.children.map(it.debug_str()).join('\n').split_into_lines().map('        $it').join('\n')
+	return [
+		'Scope{',
+		'    id: $s.id',
+		'    name: $s.name',
+		'    children: [',
+		children_str,
+		'    ]',
+		'    symbols: $s.symbols',
+		'}',
+	].join('\n')
+}
+
 fn join_name(names ...string) string {
 	return names.join('_')
 }
