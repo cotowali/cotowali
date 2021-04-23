@@ -1,7 +1,6 @@
 module emit
 
 import cotowari.ast { Stmt }
-import cotowari.token
 
 fn (mut emit Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {

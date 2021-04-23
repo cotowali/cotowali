@@ -1,7 +1,6 @@
 module emit
 
 import cotowari.ast
-import cotowari.token
 
 pub fn (mut e Emitter) emit(f ast.File) {
 	e.file(f)
