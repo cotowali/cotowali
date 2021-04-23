@@ -8,6 +8,7 @@ fn (mut c Checker) expr(expr ast.Expr) {
 		ast.InfixExpr { c.infix_expr(expr) }
 		ast.Literal {}
 		ast.Pipeline {}
+		ast.PrefixExpr {}
 		ast.Var {}
 	}
 }
