@@ -10,7 +10,7 @@ fn test_run() ? {
 	for path in sources {
 		println('$path')
 		out_path := path.trim_suffix(os.file_ext(path)) + '.out'
-		expected := os.read_file(out_path) ?
+		expected := os.read_file(out_path) or { '' }
 		println('FILE: $path')
 		if path.ends_with('_err.ri') {
 			result := os.execute('./cmd/ri/ri $path')
