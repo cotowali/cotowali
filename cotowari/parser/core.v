@@ -138,7 +138,7 @@ fn (mut p Parser) close_scope() &Scope {
 	return p.scope
 }
 
-fn (mut p Parser) error(msg string) &Err {
+fn (mut p Parser) error(msg string) IError {
 	tok := p.consume()
 	err := &Err{
 		source: p.file.source
@@ -146,7 +146,7 @@ fn (mut p Parser) error(msg string) &Err {
 		pos: tok.pos
 	}
 	p.file.errors << err
-	return err
+	return IError(err)
 }
 
 fn error_node(err IError) &Err {
