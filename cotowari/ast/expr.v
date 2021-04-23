@@ -30,7 +30,7 @@ pub fn (e Expr) typ() &Type {
 	return match e {
 		Literal { e.typ() }
 		Pipeline { e.exprs.last().typ() }
-		InfixExpr { e.right.typ() }
+		InfixExpr { e.typ() }
 		CallFn { Expr(e.func).typ() }
 		Var { e.sym.typ }
 	}
