@@ -2,5 +2,6 @@ module checker
 
 import cotowari.ast
 
-pub fn (c Checker) check_file(mut f ast.File) {
+pub fn (mut c Checker) check_file(mut f ast.File) {
+	c.cur_file = f
 }

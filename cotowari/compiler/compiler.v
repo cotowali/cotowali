@@ -50,7 +50,7 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	mut f := p.parse()
 	check_compile_error(f) ?
 
-	checker := new_checker()
+	mut checker := new_checker()
 	checker.check_file(mut f)
 	check_compile_error(f) ?
 
