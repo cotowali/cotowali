@@ -6,14 +6,14 @@ fn test_run() ? {
 		return s.ends_with('.ri')
 	}
 	sources := (os.ls(dir) ?).filter(filter).map(os.join_path(dir, it))
-	assert os.execute('v cmd/ri').exit_code == 0
+	assert os.execute('v cmd/ric').exit_code == 0
 	for path in sources {
 		println('$path')
 		out_path := path.trim_suffix(os.file_ext(path)) + '.out'
 		expected := os.read_file(out_path) or { '' }
 		println('FILE: $path')
 		if path.ends_with('_err.ri') {
-			result := os.execute('./cmd/ri/ri $path')
+			result := os.execute('./cmd/ric/ric $path')
 			assert result.exit_code != 0
 			$if fix ? {
 				if result.output != expected {
@@ -23,7 +23,7 @@ fn test_run() ? {
 				assert result.output == expected
 			}
 		} else {
-			result := os.execute('./cmd/ri/ri run $path')
+			result := os.execute('./cmd/ric/ric run $path')
 			assert result.exit_code == 0
 			$if fix ? {
 				if result.output != expected {
