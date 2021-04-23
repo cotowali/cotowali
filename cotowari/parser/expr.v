@@ -21,6 +21,7 @@ enum ExprKind {
 	comparsion
 	term
 	factor
+	prefix
 	value
 }
 
@@ -51,6 +52,16 @@ fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.
 	}
 }
 
+fn (mut p Parser) parse_prefix_expr() ?ast.Expr {
+	if op := p.consume_if_kind_is(.prefix_op) {
+		return ast.PrefixExpr{
+			op: op
+			expr: p.parse_expr(.prefix.inner()) ?
+		}
+	}
+	return p.parse_expr(.prefix.inner())
+}
+
 fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 	match kind {
 		.toplevel {
@@ -67,6 +78,9 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 		}
 		.factor {
 			return p.parse_infix_expr([.op_div, .op_mul, .op_mod], operand: kind.inner())
+		}
+		.prefix {
+			return p.parse_prefix_expr()
 		}
 		.value {
 			return p.parse_value()
