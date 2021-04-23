@@ -11,16 +11,16 @@ mut:
 	pos      Pos
 }
 
-struct FnParsingInfo {
+struct FnSignatureParsingInfo {
 	name string
 mut:
 	params       []FnParamParsingInfo
 	ret_typename string
 }
 
-fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
+fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	p.consume_with_assert(.key_fn)
-	mut info := FnParsingInfo{
+	mut info := FnSignatureParsingInfo{
 		name: p.consume().text
 	}
 
@@ -46,6 +46,11 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		info.ret_typename = ret.text
 	}
 
+	return info
+}
+
+fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
+	info := p.parse_fn_signature_info() ?
 	mut node := ast.FnDecl{
 		name: info.name
 	}
