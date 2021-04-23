@@ -10,6 +10,6 @@ pub const (
 			cmd.execute_help()
 			return
 		}
-		commands: [tokens_command, ast_command]
+		commands: [tokens_command, ast_command, scope_command]
 	}
 )
