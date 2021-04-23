@@ -1,7 +1,7 @@
 module parser
 
 import cotowari.lexer { Lexer }
-import cotowari.token { Token, TokenKind }
+import cotowari.token { Token, TokenKind, TokenKindClass }
 import cotowari.ast
 import cotowari.errors { Err }
 import cotowari.symbols { Scope, new_global_scope }
@@ -30,11 +30,6 @@ pub fn (p &Parser) token(i int) Token {
 [inline]
 pub fn (p &Parser) kind(i int) TokenKind {
 	return p.token(i).kind
-}
-
-[inline]
-fn (p &Parser) @is(kind TokenKind) bool {
-	return p.kind(0) == kind
 }
 
 pub fn (mut p Parser) consume() Token {
@@ -66,8 +61,15 @@ fn (mut p Parser) consume_if(cond TokenCond) ?Token {
 	return none
 }
 
-fn (mut p Parser) consume_if_kind_is(kind TokenKind) ?Token {
-	if p.@is(kind) {
+fn (mut p Parser) consume_if_kind_eq(kind TokenKind) ?Token {
+	if p.kind(0) == kind {
+		return p.consume()
+	}
+	return none
+}
+
+fn (mut p Parser) consume_if_kind_is(class TokenKindClass) ?Token {
+	if p.kind(0).@is(class) {
 		return p.consume()
 	}
 	return none
@@ -77,7 +79,7 @@ fn (mut p Parser) skip_until_eol() {
 	p.consume_for(fn (t Token) bool {
 		return t.kind !in [.eol, .eof]
 	})
-	if p.@is(.eol) {
+	if p.kind(0) == .eol {
 		p.consume_with_assert(.eol)
 	}
 }

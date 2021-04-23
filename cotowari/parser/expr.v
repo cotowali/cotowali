@@ -8,7 +8,7 @@ fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
 	expr := p.parse_expr({}) ?
 
 	// eol or close blace
-	if !(p.brace_depth > 0 && p.@is(.r_brace)) {
+	if !(p.brace_depth > 0 && p.kind(0) == .r_brace) {
 		p.consume_with_check(.eol, .eof) ?
 	}
 
@@ -77,7 +77,7 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 fn (mut p Parser) parse_pipeline() ?ast.Expr {
 	inner := ExprKind.pipeline.inner()
 	expr := p.parse_expr(inner) ?
-	if !p.@is(.pipe) {
+	if p.kind(0) != .pipe {
 		return expr
 	}
 	mut exprs := [expr]
@@ -93,7 +93,7 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 fn (mut p Parser) parse_ident() ?ast.Expr {
 	ident := p.consume()
 	name := ident.text
-	p.consume_if_kind_is(.l_paren) or {
+	p.consume_if_kind_eq(.l_paren) or {
 		// TODO: Move to checker
 		return ast.Var{
 			pos: ident.pos
@@ -101,10 +101,10 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 		}
 	}
 	mut args := []ast.Expr{}
-	if !p.@is(.r_paren) {
+	if p.kind(0) != .r_paren {
 		for {
 			args << p.parse_expr({}) ?
-			if p.@is(.r_paren) {
+			if p.kind(0) == .r_paren {
 				break
 			}
 			p.consume_with_check(.comma) ?

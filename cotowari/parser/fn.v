@@ -25,7 +25,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	}
 
 	p.consume_with_check(.l_paren) ?
-	if p.@is(.ident) {
+	if p.kind(0) == .ident {
 		for {
 			name := p.consume_with_check(.ident) ?
 			typ := p.consume_with_check(.ident) ?
@@ -34,7 +34,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 				pos: name.pos
 				typename: typ.text
 			}
-			if p.@is(.r_paren) {
+			if p.kind(0) == .r_paren {
 				break
 			} else {
 				p.consume_with_check(.comma) ?
@@ -42,7 +42,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 		}
 	}
 	p.consume_with_check(.r_paren) ?
-	if ret := p.consume_if_kind_is(.ident) {
+	if ret := p.consume_if_kind_eq(.ident) {
 		info.ret_typename = ret.text
 	}
 

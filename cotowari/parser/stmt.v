@@ -69,7 +69,7 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 		scope: p.scope
 	}
 	for {
-		if _ := p.consume_if_kind_is(.r_brace) {
+		if _ := p.consume_if_kind_eq(.r_brace) {
 			return node
 		}
 		node.stmts << p.parse_stmt()
@@ -128,9 +128,9 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 	mut has_else := false
 	mut elif_count := 0
 	for {
-		p.consume_if_kind_is(.key_else) or { break }
+		p.consume_if_kind_eq(.key_else) or { break }
 
-		if _ := p.consume_if_kind_is(.key_if) {
+		if _ := p.consume_if_kind_eq(.key_if) {
 			elif_cond := p.parse_expr({}) ?
 			branches << ast.IfBranch{
 				cond: elif_cond

@@ -9,7 +9,7 @@ pub fn (mut p Parser) parse() ast.File {
 		source: p.lexer.source
 		scope: p.scope
 	}
-	for !p.@is(.eof) {
+	for p.kind(0) != .eof {
 		p.file.stmts << p.parse_stmt()
 	}
 	return p.file
