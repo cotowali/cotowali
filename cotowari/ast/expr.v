@@ -4,13 +4,14 @@ import cotowari.source { Pos }
 import cotowari.token { Token }
 import cotowari.symbols { Type, bool_type, int_type, string_type }
 
-pub type Expr = CallFn | InfixExpr | Literal | Pipeline | Var
+pub type Expr = CallFn | InfixExpr | Literal | Pipeline | PrefixExpr | Var
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
 		CallFn, Var { expr.pos }
 		InfixExpr { expr.left.pos().merge(expr.right.pos()) }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
+		PrefixExpr { expr.op.pos.merge(expr.expr.pos()) }
 		Literal { expr.token.pos }
 	}
 }
@@ -30,6 +31,7 @@ pub fn (e Expr) typ() &Type {
 	return match e {
 		Literal { e.typ() }
 		Pipeline { e.exprs.last().typ() }
+		PrefixExpr { e.expr.typ() }
 		InfixExpr { e.typ() }
 		CallFn { Expr(e.func).typ() }
 		Var { e.sym.typ }
@@ -66,6 +68,12 @@ pub:
 pub struct Pipeline {
 pub:
 	exprs []Expr
+}
+
+pub struct PrefixExpr {
+pub:
+	op   Token
+	expr Expr
 }
 
 pub struct Var {
