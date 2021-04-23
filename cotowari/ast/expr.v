@@ -2,7 +2,7 @@ module ast
 
 import cotowari.source { Pos }
 import cotowari.token { Token }
-import cotowari.symbols { Type, int_type, string_type }
+import cotowari.symbols { Type, bool_type, int_type, string_type }
 
 pub type Expr = CallFn | InfixExpr | Literal | Pipeline | Var
 
@@ -20,6 +20,10 @@ fn (node Literal) typ() &Type {
 		.string { &string_type }
 		.int { &int_type }
 	}
+}
+
+fn (e InfixExpr) typ() &Type {
+	return if e.op.kind.@is(.comparsion_op) { &bool_type } else { e.right.typ() }
 }
 
 pub fn (e Expr) typ() &Type {
