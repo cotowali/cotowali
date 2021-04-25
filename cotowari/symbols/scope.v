@@ -18,6 +18,7 @@ pub fn (s &Scope) str() string {
 
 pub fn (s &Scope) debug_str() string {
 	children_str := s.children.map(it.debug_str()).join('\n').split_into_lines().map('        $it').join('\n')
+	syms_str := s.symbols.keys().map("        '$it': ${s.symbols[it]}").join('\n')
 	return [
 		'Scope{',
 		'    id: $s.id',
@@ -25,7 +26,9 @@ pub fn (s &Scope) debug_str() string {
 		'    children: [',
 		children_str,
 		'    ]',
-		'    symbols: $s.symbols',
+		'    symbols: {',
+		syms_str,
+		'    }',
 		'}',
 	].join('\n')
 }
