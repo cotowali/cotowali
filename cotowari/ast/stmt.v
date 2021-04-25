@@ -32,6 +32,7 @@ pub struct FnDecl {
 pub:
 	name_pos Pos
 	name     string
+	has_body bool
 pub mut:
 	params []Var
 	body   Block

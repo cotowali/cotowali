@@ -51,11 +51,8 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	info := p.parse_fn_signature_info() ?
-	mut node := ast.FnDecl{
-		name: info.name
-	}
 	mut outer_scope := p.scope
-	p.open_scope(node.name)
+	p.open_scope(info.name)
 	defer {
 		p.close_scope()
 	}
@@ -68,9 +65,17 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 			}
 		}
 	}
-	node.params = params
 	outer_scope.register_var(new_placeholder_fn(info.name, info.params.map(it.typename),
 		info.ret_typename)) or { return p.duplicated_error(info.name) }
-	node.body = p.parse_block_without_new_scope() ?
+
+	has_body := p.kind(0) == .l_brace
+	mut node := ast.FnDecl{
+		name: info.name
+		params: params
+		has_body: has_body
+	}
+	if has_body {
+		node.body = p.parse_block_without_new_scope() ?
+	}
 	return node
 }
