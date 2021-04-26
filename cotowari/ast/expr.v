@@ -16,18 +16,18 @@ pub fn (expr Expr) pos() Pos {
 	}
 }
 
-fn (node Literal) typ() &Type {
+fn (node Literal) typ() Type {
 	return match node.kind {
-		.string { &string_type }
-		.int { &int_type }
+		.string { string_type }
+		.int { int_type }
 	}
 }
 
-fn (e InfixExpr) typ() &Type {
-	return if e.op.kind.@is(.comparsion_op) { &bool_type } else { e.right.typ() }
+fn (e InfixExpr) typ() Type {
+	return if e.op.kind.@is(.comparsion_op) { bool_type } else { e.right.typ() }
 }
 
-pub fn (e Expr) typ() &Type {
+pub fn (e Expr) typ() Type {
 	return match e {
 		Literal { e.typ() }
 		Pipeline { e.exprs.last().typ() }

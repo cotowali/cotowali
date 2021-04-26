@@ -28,8 +28,8 @@ pub struct PlaceholderTypeInfo {
 }
 
 pub struct FuncTypeInfo {
-	args []&Type
-	ret  &Type
+	args []Type
+	ret  Type
 }
 
 pub type TypeInfo = FuncTypeInfo | PlaceholderTypeInfo | PrimitiveTypeInfo | UnknownTypeInfo
@@ -56,15 +56,15 @@ pub fn (t Type) kind() TypeKind {
 	}
 }
 
-pub fn new_type(name string, info TypeInfo) &Type {
-	return &Type{
+pub fn new_type(name string, info TypeInfo) Type {
+	return Type{
 		id: auto_id()
 		name: name
 		info: info
 	}
 }
 
-pub fn new_placeholder_type(name string) &Type {
+pub fn new_placeholder_type(name string) Type {
 	return new_type(name, PlaceholderTypeInfo{})
 }
 
