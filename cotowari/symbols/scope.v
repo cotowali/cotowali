@@ -150,6 +150,10 @@ pub fn (s &Scope) lookup_var(name string) ?Var {
 	return none
 }
 
+pub fn (s &Scope) must_lookup_var(name string) Var {
+	return s.lookup_var(name) or { panic(err) }
+}
+
 pub fn (s &Scope) lookup_type(name string) ?Type {
 	if found := s.lookup(name) {
 		if found is Type {
@@ -161,6 +165,10 @@ pub fn (s &Scope) lookup_type(name string) ?Type {
 	return none
 }
 
+pub fn (s &Scope) must_lookup_type(name string) Type {
+	return s.lookup_type(name) or { panic(err) }
+}
+
 pub fn (s &Scope) lookup(name string) ?Symbol {
 	if name in s.symbols {
 		return s.symbols[name]
@@ -169,6 +177,10 @@ pub fn (s &Scope) lookup(name string) ?Symbol {
 		return p.lookup(name)
 	}
 	return none
+}
+
+pub fn (s &Scope) must_lookup(name string) Symbol {
+	return s.lookup(name) or { panic(err) }
 }
 
 pub fn (s &Scope) ident_for(sym Symbol) string {

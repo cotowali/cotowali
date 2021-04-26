@@ -5,12 +5,9 @@ fn test_global_scope() {
 	assert s.is_global()
 	builtins := [unknown_type, int_type, string_type, bool_type]
 	for t in builtins {
-		if found := s.lookup(t.name) {
-			assert found.id == t.id
-			assert found.name == t.name
-		} else {
-			assert false
-		}
+		found := s.must_lookup(t.name)
+		assert found.id == t.id
+		assert found.name == t.name
 	}
 	assert !s.create_child('s').is_global()
 }
@@ -47,11 +44,9 @@ fn test_scope() ? {
 		assert false
 	}
 
-	if found := s.lookup(v1.name) {
-		assert found.id == v1.id
-	} else {
-		assert false
-	}
+	found := s.must_lookup(v1.name)
+	assert found.id == v1.id
+
 	if _ := child.lookup('nothing') {
 		assert false
 	}
@@ -84,20 +79,14 @@ fn test_lookup() ? {
 	}
 
 	child.register(child_v) ?
-	if found := parent.lookup(name_v) {
-		assert found.id == parent_v.id
-		assert found.id != child_v.id
-		assert found is Var
-	} else {
-		assert false
-	}
-	if found := child.lookup(name_v) {
-		assert found.id != parent_v.id
-		assert found.id == child_v.id
-		assert found is Var
-	} else {
-		assert false
-	}
+	mut found := parent.must_lookup(name_v)
+	assert found.id == parent_v.id
+	assert found.id != child_v.id
+	assert found is Var
+	found = child.must_lookup(name_v)
+	assert found.id != parent_v.id
+	assert found.id == child_v.id
+	assert found is Var
 
 	if _ := child.lookup('nothing') {
 		assert false
@@ -111,16 +100,10 @@ fn test_lookup() ? {
 
 	t := new_type('t', PlaceholderTypeInfo{})
 	parent.register(t) ?
-	if found := parent.lookup_var(name_v) {
-		assert found.name == name_v
-	} else {
-		assert false
-	}
-	if found := parent.lookup_type(t.name) {
-		assert found.name == t.name
-	} else {
-		assert false
-	}
+	found_v := parent.must_lookup_var(name_v)
+	assert found_v.name == name_v
+	found_t := parent.must_lookup_type(t.name)
+	assert found_t.name == t.name
 
 	if _ := parent.lookup_var(t.name) {
 		assert false
