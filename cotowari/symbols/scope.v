@@ -44,7 +44,7 @@ pub fn new_global_scope() &Scope {
 		id: symbols.global_id
 		parent: 0
 	}
-	s.must_register_multi(unknown_type, int_type, string_type, bool_type)
+	s.must_register_multi(...builtin_types.keys().map(Symbol(builtin_types[it])))
 	return s
 }
 

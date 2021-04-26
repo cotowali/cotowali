@@ -28,7 +28,7 @@ fn test_var() ? {
 }
 
 fn test_new_fn() ? {
-	f := new_fn('f', [], unknown_type)
+	f := new_fn('f', [], builtin_type(.unknown))
 	assert f.name == 'f'
 	assert f.typ.kind() == .func
 	if _ := f.scope() {
@@ -36,7 +36,7 @@ fn test_new_fn() ? {
 	}
 
 	s := new_global_scope()
-	v2 := new_scope_fn('f', [], unknown_type, s)
+	v2 := new_scope_fn('f', [], builtin_type(.unknown), s)
 	assert (v2.scope() ?).id == s.id
 }
 
@@ -54,7 +54,7 @@ fn test_type() {
 }
 
 fn test_is_fn() {
-	assert unknown_type.is_fn() == false
+	assert builtin_type(.unknown).is_fn() == false
 	assert new_type('t', PlaceholderTypeInfo{}).is_fn() == false
 	assert new_type('t', PlaceholderTypeInfo{ is_fn: true }).is_fn()
 }

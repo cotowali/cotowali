@@ -1,7 +1,7 @@
 module checker
 
 import cotowari.ast
-import cotowari.symbols
+import cotowari.symbols { builtin_type }
 
 fn (mut c Checker) stmt(stmt ast.Stmt) {
 	match stmt {
@@ -24,7 +24,7 @@ fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 			break
 		}
 		cond_type := branch.cond.typ()
-		if cond_type.id != symbols.bool_type.id {
+		if cond_type.id != builtin_type(.bool).id {
 			c.error('non-bool type `$cond_type.name` used as if condition', branch.cond.pos())
 		}
 	}

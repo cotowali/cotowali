@@ -3,9 +3,8 @@ module symbols
 fn test_global_scope() {
 	mut s := new_global_scope()
 	assert s.is_global()
-	builtins := [unknown_type, int_type, string_type, bool_type]
-	for t in builtins {
-		found := s.must_lookup(t.name)
+	for _, t in builtin_types {
+		found := s.must_lookup_type(t.name)
 		assert found.id == t.id
 		assert found.name == t.name
 	}
