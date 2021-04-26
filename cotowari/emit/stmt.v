@@ -78,7 +78,7 @@ fn (mut emit Emitter) if_stmt(stmt ast.IfStmt) {
 }
 
 fn (mut emit Emitter) for_in_stmt(stmt ast.ForInStmt) {
-	emit.write('for $stmt.val.sym.full_name() in ')
+	emit.write('for $stmt.val.out_name() in ')
 	emit.expr(stmt.expr, writeln: true)
 	emit.writeln('do')
 	emit.indent++
@@ -97,7 +97,7 @@ fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
 	emit.writeln('${node.name}() {')
 	emit.indent++
 	for i, param in node.params {
-		emit.writeln('$param.sym.full_name()=\$${i + 1}')
+		emit.writeln('$param.out_name()=\$${i + 1}')
 	}
 	emit.block(node.body)
 	emit.indent--
@@ -105,7 +105,7 @@ fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
 }
 
 fn (mut emit Emitter) assign(node ast.AssignStmt) {
-	emit.write('$node.left.sym.full_name()=')
+	emit.write('$node.left.out_name()=')
 	emit.expr(node.right, {})
 	emit.writeln('')
 }

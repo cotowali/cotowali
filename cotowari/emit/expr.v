@@ -38,9 +38,9 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 			}
 			// '$(( n == 0 ))' or 'echo "$n"'
 			emit.write(if opt.inside_arithmetic {
-				'$expr.sym.full_name()'
+				'$expr.out_name()'
 			} else {
-				'"\$$expr.sym.full_name()"'
+				'"\$$expr.out_name()"'
 			})
 		}
 	}
@@ -123,7 +123,7 @@ fn (mut emit Emitter) call_fn(expr ast.CallFn, opt ExprOpt) {
 		emit.write('\$(')
 	}
 
-	emit.write(expr.func.sym.full_name())
+	emit.write(expr.func.out_name())
 	for arg in expr.args {
 		emit.write(' ')
 		emit.expr(arg, {})
