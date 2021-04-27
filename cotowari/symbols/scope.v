@@ -145,6 +145,14 @@ pub fn (s &Scope) must_lookup(name string) Symbol {
 	return s.lookup(name) or { panic(err) }
 }
 
+pub fn (mut s Scope) lookup_or_register_var(v Var) Var {
+	return s.lookup_var(v.name) or { s.register_var(v) or { panic(err) } }
+}
+
+pub fn (mut s Scope) lookup_or_register(v Symbol) Symbol {
+	return s.lookup(v.name) or { s.register(v) or { panic(err) } }
+}
+
 pub fn (s &Scope) ident_for(sym Symbol) string {
 	if s.id == symbols.global_id {
 		return sym.name

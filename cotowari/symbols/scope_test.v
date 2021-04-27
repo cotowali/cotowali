@@ -80,3 +80,16 @@ fn test_lookup() ? {
 	found_v := parent.must_lookup_var(name_v)
 	assert found_v.name == name_v
 }
+
+fn test_lookup_or_register() ? {
+	mut s := new_global_scope()
+	assert s.symbols.keys().len == 0
+	registered := s.lookup_or_register_var(name: 'v')
+	assert registered.id != 0
+	assert s.symbols.keys().len == 1
+	assert (registered.scope() ?).id == s.id
+
+	found := s.lookup_or_register_var(name: 'v')
+	assert registered.id == found.id
+	assert s.symbols.keys().len == 1
+}
