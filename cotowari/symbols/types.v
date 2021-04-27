@@ -1,16 +1,8 @@
 module symbols
 
-import cotowari.util { auto_id }
+import cotowari.util
 
 pub type Type = int
-
-pub fn new_type(name string, info TypeInfo) Type {
-	return Type(int(auto_id()))
-}
-
-pub fn new_placeholder_type(name string) Type {
-	return new_type(name, PlaceholderTypeInfo{})
-}
 
 /*
 pub struct Type {
@@ -29,7 +21,6 @@ pub fn (t Type) is_fn() bool {
 		else { false }
 	}
 }
-*/
 
 pub struct UnknownTypeInfo {}
 
@@ -46,7 +37,6 @@ pub struct FuncTypeInfo {
 
 pub type TypeInfo = FuncTypeInfo | PlaceholderTypeInfo | PrimitiveTypeInfo | UnknownTypeInfo
 
-/*
 pub enum TypeKind {
 	placeholder
 	unknown

@@ -1,7 +1,7 @@
 module parser
 
 import cotowari.ast
-import cotowari.symbols { new_placeholder_var }
+import cotowari.symbols
 import cotowari.errors { unreachable }
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
@@ -53,7 +53,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
 	p.open_scope(name)
 	for local in locals {
-		p.scope.register_var(new_placeholder_var(local, 'placeholder')) or { panic(err) }
+		p.scope.register_var(name: local) or { panic(err) }
 	}
 	defer {
 		p.close_scope()
@@ -85,9 +85,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 
 	v := ast.Var{
 		pos: ident.pos
-		sym: p.scope.register_var(new_placeholder_var(name, 'placeholder')) or {
-			return p.duplicated_error(name)
-		}
+		sym: p.scope.register_var(name: name) or { return p.duplicated_error(name) }
 	}
 	return ast.AssignStmt{
 		left: v
@@ -102,7 +100,7 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 	return ast.AssignStmt{
 		left: ast.Var{
 			pos: ident.pos
-			sym: symbols.new_scope_placeholder_var(name, 'placeholder', p.scope)
+			sym: p.scope.lookup_or_register_var(name: name)
 		}
 		right: p.parse_expr({}) ?
 	}

@@ -1,7 +1,7 @@
 module parser
 
 import cotowari.ast
-import cotowari.symbols { new_placeholder_fn, new_placeholder_var }
+import cotowari.symbols
 import cotowari.source { Pos }
 
 struct FnParamParsingInfo {
@@ -60,13 +60,12 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	for i, param in info.params {
 		params[i] = ast.Var{
 			pos: param.pos
-			sym: p.scope.register_var(new_placeholder_var(param.name, param.typename)) or {
-				return p.duplicated_error(param.name)
-			}
+			// TODO: type
+			sym: p.scope.register_var(name: param.name) or { return p.duplicated_error(param.name) }
 		}
 	}
-	outer_scope.register_var(new_placeholder_fn(info.name, info.params.map(it.typename),
-		info.ret_typename)) or { return p.duplicated_error(info.name) }
+	// TODO: type
+	outer_scope.register_var(name: info.name) or { return p.duplicated_error(info.name) }
 
 	has_body := p.kind(0) == .l_brace
 	mut node := ast.FnDecl{
