@@ -9,7 +9,7 @@ pub:
 	name string
 	id   u64
 pub mut:
-	typ Type
+	typ Type = builtin_type(.placeholder)
 }
 
 pub fn new_var(name string, typ Type) Var {
