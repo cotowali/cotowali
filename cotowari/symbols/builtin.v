@@ -3,6 +3,7 @@ module symbols
 import cotowari.errors
 
 pub enum BuiltinTypeKey {
+	placeholder = 0
 	unknown
 	int
 	string
@@ -29,10 +30,11 @@ pub const (
 			return builtin_type(k)
 		}
 		return map{
-			k(.unknown): t(.unknown)
-			k(.int):     t(.int)
-			k(.string):  t(.string)
-			k(.bool):    t(.bool)
+			k(.placeholder): t(.placeholder)
+			k(.unknown):     t(.unknown)
+			k(.int):         t(.int)
+			k(.string):      t(.string)
+			k(.bool):        t(.bool)
 		}
 	}())
 		/*
