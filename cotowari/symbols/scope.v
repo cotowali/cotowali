@@ -98,12 +98,6 @@ fn (mut s Scope) must_register_multi(syms ...Symbol) []Symbol {
 }
 
 fn (mut s Scope) check_before_register(sym Symbol) ? {
-	$if !prod {
-		if sym.id == 0 {
-			dump(sym)
-			panic('sym.id is not assigned')
-		}
-	}
 	key := sym.name
 	if key in s.symbols {
 		return error('$key is exists')
@@ -114,6 +108,7 @@ pub fn (mut s Scope) register_var(v Var) ?Var {
 	s.check_before_register(v) ?
 	sym := Var{
 		...v
+		id: if v.id == 0 { auto_id() } else { v.id }
 		scope: s
 	}
 	s.symbols[sym.name] = Symbol(sym)
