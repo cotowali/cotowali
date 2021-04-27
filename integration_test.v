@@ -1,7 +1,7 @@
 import os
 
 const skip_list = [
-	'examples/hello.ri'
+	'examples/hello.ri',
 ]
 
 fn is_target_file(s string) bool {

@@ -12,11 +12,7 @@ const (
 				cmd.execute_help()
 				return
 			}
-			if f := parser.parse_file(cmd.args[0]) {
-				println(f)
-			} else {
-				println('ERROR')
-			}
+			if f := parser.parse_file(cmd.args[0]) { println(f) } else { println('ERROR') }
 			return
 		}
 	}
