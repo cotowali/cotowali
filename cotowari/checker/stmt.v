@@ -24,8 +24,8 @@ fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 			break
 		}
 		cond_type := branch.cond.typ()
-		if cond_type.id != builtin_type(.bool).id {
-			c.error('non-bool type `$cond_type.name` used as if condition', branch.cond.pos())
+		if cond_type != builtin_type(.bool) {
+			c.error('non-bool type used as if condition', branch.cond.pos())
 		}
 	}
 }

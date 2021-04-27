@@ -44,7 +44,6 @@ pub fn new_global_scope() &Scope {
 		id: symbols.global_id
 		parent: 0
 	}
-	s.must_register_multi(...builtin_types.keys().map(Symbol(builtin_types[it])))
 	return s
 }
 
@@ -121,52 +120,20 @@ pub fn (mut s Scope) register_var(v Var) ?Var {
 	return sym
 }
 
-pub fn (mut s Scope) register_type(v Type) ?Type {
-	s.check_before_register(v) ?
-	sym := Type{
-		...v
-		scope: s
-	}
-	s.symbols[sym.name] = Symbol(sym)
-	return sym
-}
-
 pub fn (mut s Scope) register(sym Symbol) ?Symbol {
 	// because compiler bug, `retrun match sym` couldn't be use
-	match sym {
-		Var { return Symbol(s.register_var(sym) ?) }
-		Type { return Symbol(s.register_type(sym) ?) }
-	}
+	return Symbol(s.register_var(sym) ?)
 }
 
 pub fn (s &Scope) lookup_var(name string) ?Var {
 	if found := s.lookup(name) {
-		if found is Var {
-			return found
-		} else {
-			return error('`$name` is not a variable')
-		}
+		return found
 	}
 	return none
 }
 
 pub fn (s &Scope) must_lookup_var(name string) Var {
 	return s.lookup_var(name) or { panic(err) }
-}
-
-pub fn (s &Scope) lookup_type(name string) ?Type {
-	if found := s.lookup(name) {
-		if found is Type {
-			return found
-		} else {
-			return error('`$name` is not a type')
-		}
-	}
-	return none
-}
-
-pub fn (s &Scope) must_lookup_type(name string) Type {
-	return s.lookup_type(name) or { panic(err) }
 }
 
 pub fn (s &Scope) lookup(name string) ?Symbol {

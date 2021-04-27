@@ -1,13 +1,6 @@
 module symbols
 
-pub type Symbol = Type | Var
-
-pub fn (s Symbol) str() string {
-	return match s {
-		Type { s.str() }
-		Var { s.str() }
-	}
-}
+pub type Symbol = Var
 
 pub fn (sym Symbol) scope() ?&Scope {
 	if isnil(sym.scope) {

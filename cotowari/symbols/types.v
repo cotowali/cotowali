@@ -2,6 +2,17 @@ module symbols
 
 import cotowari.util { auto_id }
 
+pub type Type = int
+
+pub fn new_type(name string, info TypeInfo) Type {
+	return Type(int(auto_id()))
+}
+
+pub fn new_placeholder_type(name string) Type {
+	return new_type(name, PlaceholderTypeInfo{})
+}
+
+/*
 pub struct Type {
 	scope &Scope = 0
 pub:
@@ -18,6 +29,7 @@ pub fn (t Type) is_fn() bool {
 		else { false }
 	}
 }
+*/
 
 pub struct UnknownTypeInfo {}
 
@@ -34,6 +46,7 @@ pub struct FuncTypeInfo {
 
 pub type TypeInfo = FuncTypeInfo | PlaceholderTypeInfo | PrimitiveTypeInfo | UnknownTypeInfo
 
+/*
 pub enum TypeKind {
 	placeholder
 	unknown
@@ -79,3 +92,4 @@ pub fn (v Type) scope() ?&Scope {
 pub fn (v Type) str() string {
 	return 'Type{ name: \'$v.name\', kind: $v.kind().str(), scope: ${Symbol(v).scope_str()} }'
 }
+*/

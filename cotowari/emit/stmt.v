@@ -90,7 +90,8 @@ fn (mut emit Emitter) for_in_stmt(stmt ast.ForInStmt) {
 fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
 	if !node.has_body {
 		emit.writeln('')
-		emit.writeln('# info: fn ${node.name}(${node.params.map('$it.sym.name $it.sym.typ.name').join(', ')})')
+		// emit.writeln('# info: fn ${node.name}(${node.params.map('$it.sym.name $it.sym.typ.name').join(', ')})')
+		emit.writeln('# info: fn ${node.name}(${node.params.map('$it.sym.name').join(', ')})')
 		emit.writeln('')
 		return
 	}

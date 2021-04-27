@@ -1,2 +1,2 @@
-if_err.ri 1,4: non-bool type `int` used as if condition
-if_err.ri 2,12: non-bool type `int` used as if condition
+if_err.ri 1,4: non-bool type used as if condition
+if_err.ri 2,12: non-bool type used as if condition
