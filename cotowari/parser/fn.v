@@ -1,7 +1,6 @@
 module parser
 
 import cotowari.ast
-import cotowari.symbols
 import cotowari.source { Pos }
 
 struct FnParamParsingInfo {

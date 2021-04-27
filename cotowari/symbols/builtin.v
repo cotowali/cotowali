@@ -1,7 +1,5 @@
 module symbols
 
-import cotowari.errors
-
 pub enum BuiltinTypeKey {
 	placeholder = 0
 	unknown

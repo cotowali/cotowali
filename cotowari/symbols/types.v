@@ -1,7 +1,5 @@
 module symbols
 
-import cotowari.util
-
 pub type Type = int
 
 /*
@@ -83,3 +81,4 @@ pub fn (v Type) str() string {
 	return 'Type{ name: \'$v.name\', kind: $v.kind().str(), scope: ${Symbol(v).scope_str()} }'
 }
 */
+

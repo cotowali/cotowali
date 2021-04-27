@@ -1,7 +1,5 @@
 module symbols
 
-import cotowari.util
-
 pub struct Var {
 mut:
 	scope &Scope = 0

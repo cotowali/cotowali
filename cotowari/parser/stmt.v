@@ -1,7 +1,6 @@
 module parser
 
 import cotowari.ast
-import cotowari.symbols
 import cotowari.errors { unreachable }
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
