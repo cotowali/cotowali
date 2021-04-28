@@ -107,5 +107,5 @@ pub fn (t TypeSymbol) kind() TypeKind {
 }
 
 pub fn (v TypeSymbol) str() string {
-	return 'TypeSymbol{ typ: $v.typ, name: \'$v.name\', kind: $v.kind().str() }'
+	return 'TypeSymbol{ typ: $v.typ, name: $v.name, kind: $v.kind() }'
 }
