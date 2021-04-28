@@ -7,9 +7,10 @@ pub:
 	id   u64
 	name string
 mut:
-	parent   &Scope
-	children []&Scope
-	symbols  map[string]Symbol
+	parent       &Scope
+	children     []&Scope
+	symbols      map[string]Symbol
+	type_symbols map[int]TypeSymbol // map[Type]TypeSymbol
 }
 
 pub fn (s &Scope) str() string {
@@ -19,6 +20,7 @@ pub fn (s &Scope) str() string {
 pub fn (s &Scope) debug_str() string {
 	children_str := s.children.map(it.debug_str()).join('\n').split_into_lines().map('        $it').join('\n')
 	syms_str := s.symbols.keys().map("        '$it': ${s.symbols[it]}").join('\n')
+	types_str := s.type_symbols.keys().map('        ${s.type_symbols[it]}').join(',\n')
 	return [
 		'Scope{',
 		'    id: $s.id',
@@ -29,6 +31,9 @@ pub fn (s &Scope) debug_str() string {
 		'    symbols: {',
 		syms_str,
 		'    }',
+		'    types: [',
+		types_str,
+		'    ]',
 		'}',
 	].join('\n')
 }
@@ -151,6 +156,42 @@ pub fn (mut s Scope) lookup_or_register_var(v Var) Var {
 
 pub fn (mut s Scope) lookup_or_register(v Symbol) Symbol {
 	return s.lookup(v.name) or { s.register(v) or { panic(err) } }
+}
+
+fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
+	if int(ts.typ) in s.type_symbols {
+		return error('$ts.typ is exists')
+	}
+}
+
+pub fn (mut s Scope) register_type(ts TypeSymbol) ?TypeSymbol {
+	s.check_before_register_type(ts) ?
+	typ := if ts.typ == 0 { Type(int(auto_id())) } else { ts.typ }
+	new_ts := TypeSymbol{
+		...ts
+		typ: typ
+	}
+	s.type_symbols[int(typ)] = new_ts
+	return new_ts
+}
+
+pub fn (s &Scope) lookup_type(typ Type) ?TypeSymbol {
+	key := int(typ)
+	if key in s.type_symbols {
+		return s.type_symbols[key]
+	}
+	if p := s.parent() {
+		return p.lookup_type(typ)
+	}
+	return none
+}
+
+pub fn (s &Scope) must_lookup_type(typ Type) TypeSymbol {
+	return s.lookup_type(typ) or { panic(err) }
+}
+
+pub fn (mut s Scope) lookup_or_register_type(ts TypeSymbol) TypeSymbol {
+	return s.lookup_type(ts.typ) or { s.register_type(ts) or { panic(err) } }
 }
 
 pub fn (s &Scope) ident_for(sym Symbol) string {
