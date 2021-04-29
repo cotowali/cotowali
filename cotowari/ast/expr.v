@@ -82,6 +82,10 @@ pub:
 	sym symbols.Var
 }
 
+pub fn (v Var) name() string {
+	return v.sym.name
+}
+
 pub fn (v Var) out_name() string {
 	return v.sym.full_name()
 }
