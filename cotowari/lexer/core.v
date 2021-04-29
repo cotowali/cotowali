@@ -191,3 +191,8 @@ fn (mut lex Lexer) skip_for(cond CharCond) {
 	lex.consume_for(cond)
 	lex.start_pos()
 }
+
+fn (mut lex Lexer) skip_not_for(cond CharCond) {
+	lex.consume_not_for(cond)
+	lex.start_pos()
+}
