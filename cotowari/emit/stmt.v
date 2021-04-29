@@ -20,7 +20,10 @@ fn (mut emit Emitter) stmt(stmt Stmt) {
 			emit.block(stmt)
 		}
 		ast.Expr {
-			emit.expr(stmt, as_command: true, writeln: true)
+			// TODO: register builtin function to global scope then use it to compare.
+			use_stdout := !emit.inside_fn
+				|| if stmt is ast.CallFn { stmt.func.name() == 'echo' } else { false }
+			emit.expr(stmt, as_command: true, discard_stdout: !use_stdout, writeln: true)
 		}
 		ast.AssignStmt {
 			emit.assign(stmt)
