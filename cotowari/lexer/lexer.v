@@ -2,6 +2,7 @@ module lexer
 
 import cotowari.token { Token }
 import cotowari.source { Char }
+import cotowari.errors { unreachable }
 
 pub fn (mut lex Lexer) next() ?Token {
 	if lex.closed {
@@ -16,91 +17,94 @@ fn (mut lex Lexer) prepare_to_read() {
 }
 
 pub fn (mut lex Lexer) read() Token {
-	lex.prepare_to_read()
-	if lex.is_eof() {
-		lex.close()
-		return Token{.eof, '', lex.pos}
-	}
+	for {
+		lex.prepare_to_read()
+		if lex.is_eof() {
+			lex.close()
+			return Token{.eof, '', lex.pos}
+		}
 
-	c := lex.char()
-	if is_ident_first_char(c) {
-		return lex.read_ident_or_keyword()
-	} else if is_digit(c) {
-		return lex.read_number()
-	}
+		c := lex.char()
+		if is_ident_first_char(c) {
+			return lex.read_ident_or_keyword()
+		} else if is_digit(c) {
+			return lex.read_number()
+		}
 
-	match c[0] {
-		`+` {
-			return if lex.next_char()[0] == `+` {
-				lex.new_token_with_consume_n(2, .op_plus_plus)
-			} else {
-				lex.new_token_with_consume(.op_plus)
+		match c[0] {
+			`+` {
+				return if lex.next_char()[0] == `+` {
+					lex.new_token_with_consume_n(2, .op_plus_plus)
+				} else {
+					lex.new_token_with_consume(.op_plus)
+				}
+			}
+			`-` {
+				return if lex.next_char()[0] == `-` {
+					lex.new_token_with_consume_n(2, .op_minus_minus)
+				} else {
+					lex.new_token_with_consume(.op_minus)
+				}
+			}
+			`&` {
+				return if lex.next_char()[0] == `&` {
+					lex.new_token_with_consume_n(2, .op_and)
+				} else {
+					lex.new_token_with_consume(.amp)
+				}
+			}
+			`|` {
+				return if lex.next_char()[0] == `|` {
+					lex.new_token_with_consume_n(2, .op_or)
+				} else {
+					lex.new_token_with_consume(.pipe)
+				}
+			}
+			`=` {
+				return if lex.next_char()[0] == `=` {
+					lex.new_token_with_consume_n(2, .op_eq)
+				} else {
+					lex.new_token_with_consume(.op_assign)
+				}
+			}
+			`!` {
+				return if lex.next_char()[0] == `=` {
+					lex.new_token_with_consume_n(2, .op_ne)
+				} else {
+					lex.new_token_with_consume(.op_not)
+				}
+			}
+			`<` {
+				return lex.new_token_with_consume(.op_lt)
+			}
+			`>` {
+				return lex.new_token_with_consume(.op_gt)
+			}
+			else {
+				if lex.is_eol() {
+					return lex.read_newline()
+				}
 			}
 		}
-		`-` {
-			return if lex.next_char()[0] == `-` {
-				lex.new_token_with_consume_n(2, .op_minus_minus)
-			} else {
-				lex.new_token_with_consume(.op_minus)
-			}
-		}
-		`&` {
-			return if lex.next_char()[0] == `&` {
-				lex.new_token_with_consume_n(2, .op_and)
-			} else {
-				lex.new_token_with_consume(.amp)
-			}
-		}
-		`|` {
-			return if lex.next_char()[0] == `|` {
-				lex.new_token_with_consume_n(2, .op_or)
-			} else {
-				lex.new_token_with_consume(.pipe)
-			}
-		}
-		`=` {
-			return if lex.next_char()[0] == `=` {
-				lex.new_token_with_consume_n(2, .op_eq)
-			} else {
-				lex.new_token_with_consume(.op_assign)
-			}
-		}
-		`!` {
-			return if lex.next_char()[0] == `=` {
-				lex.new_token_with_consume_n(2, .op_ne)
-			} else {
-				lex.new_token_with_consume(.op_not)
-			}
-		}
-		`<` {
-			return lex.new_token_with_consume(.op_lt)
-		}
-		`>` {
-			return lex.new_token_with_consume(.op_gt)
-		}
-		else {
-			if lex.is_eol() {
-				return lex.read_newline()
-			}
+		return match c[0] {
+			`(` { lex.new_token_with_consume(.l_paren) }
+			`)` { lex.new_token_with_consume(.r_paren) }
+			`{` { lex.new_token_with_consume(.l_brace) }
+			`}` { lex.new_token_with_consume(.r_brace) }
+			`[` { lex.new_token_with_consume(.l_bracket) }
+			`]` { lex.new_token_with_consume(.r_bracket) }
+			`*` { lex.new_token_with_consume(.op_mul) }
+			`/` { lex.new_token_with_consume(.op_div) }
+			`%` { lex.new_token_with_consume(.op_mod) }
+			`,` { lex.new_token_with_consume(.comma) }
+			`.` { lex.new_token_with_consume(.dot) }
+			`@` { lex.read_at_ident() }
+			`\$` { lex.read_dollar_directive() }
+			`\'`, `"` { lex.read_string_lit(c[0]) }
+			else { lex.read_unknown() }
 		}
 	}
-	return match c[0] {
-		`(` { lex.new_token_with_consume(.l_paren) }
-		`)` { lex.new_token_with_consume(.r_paren) }
-		`{` { lex.new_token_with_consume(.l_brace) }
-		`}` { lex.new_token_with_consume(.r_brace) }
-		`[` { lex.new_token_with_consume(.l_bracket) }
-		`]` { lex.new_token_with_consume(.r_bracket) }
-		`*` { lex.new_token_with_consume(.op_mul) }
-		`/` { lex.new_token_with_consume(.op_div) }
-		`%` { lex.new_token_with_consume(.op_mod) }
-		`,` { lex.new_token_with_consume(.comma) }
-		`.` { lex.new_token_with_consume(.dot) }
-		`@` { lex.read_at_ident() }
-		`\$` { lex.read_dollar_directive() }
-		`\'`, `"` { lex.read_string_lit(c[0]) }
-		else { lex.read_unknown() }
-	}
+	panic(unreachable)
 }
 
 fn (lex Lexer) is_eol() bool {
