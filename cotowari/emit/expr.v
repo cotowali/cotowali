@@ -6,6 +6,7 @@ import cotowari.token { Token }
 struct ExprOpt {
 	as_command        bool
 	writeln           bool
+	discard_stdout    bool
 	inside_arithmetic bool
 }
 
@@ -43,6 +44,9 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 				'"\$$expr.out_name()"'
 			})
 		}
+	}
+	if opt.as_command && opt.discard_stdout {
+		emit.write(' > /dev/null')
 	}
 	if opt.writeln {
 		emit.writeln('')
