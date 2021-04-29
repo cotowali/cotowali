@@ -6,9 +6,9 @@ import cotowari.ast { File }
 
 pub struct Emitter {
 mut:
-	indent   int
-	newline  bool = true
-	cur_file File
+	indent    int
+	newline   bool  = true
+	cur_file  &File = 0
 pub:
 	out io.Writer
 }
