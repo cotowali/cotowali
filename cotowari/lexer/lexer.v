@@ -152,6 +152,10 @@ fn is_whitespace(c Char) bool {
 	return c.@is(.whitespace)
 }
 
+fn is_eol(c Char) bool {
+	return c.@is(.eol)
+}
+
 fn (mut lex Lexer) skip_whitespaces() {
 	lex.consume_for(is_whitespace)
 }
