@@ -175,6 +175,11 @@ pub fn (mut s Scope) register_type(ts TypeSymbol) ?TypeSymbol {
 	return new_ts
 }
 
+[inline]
+fn (mut s Scope) must_register_type(ts TypeSymbol) TypeSymbol {
+	return s.register_type(ts) or { panic(err) }
+}
+
 pub fn (s &Scope) lookup_type(typ Type) ?TypeSymbol {
 	key := int(typ)
 	if key in s.type_symbols {
