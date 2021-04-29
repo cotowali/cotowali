@@ -3,6 +3,14 @@ module symbols
 fn test_global_scope() {
 	mut s := new_global_scope()
 	assert s.is_global()
+	for _, t in builtin.types {
+		if t != builtin_type(.placeholder) {
+			s.must_lookup_type(t)
+		}
+	}
+	for _, ts in builtin.type_symbols {
+		s.must_lookup_type(ts.typ)
+	}
 	assert !s.create_child('s').is_global()
 }
 
@@ -109,12 +117,12 @@ fn test_lookup_type_and_register_type() ? {
 
 fn test_lookup_or_register_type() ? {
 	mut s := new_global_scope()
-	assert s.type_symbols.keys().len == 0
+	ts_n := s.type_symbols.keys().len
 	registered := s.lookup_or_register_type(name: 't')
 	assert registered.typ != Type(0)
-	assert s.type_symbols.keys().len == 1
+	assert s.type_symbols.keys().len == ts_n + 1
 
 	found := s.lookup_or_register_var(typ: registered.typ)
 	assert registered.typ == found.typ
-	assert s.type_symbols.keys().len == 1
+	assert s.type_symbols.keys().len == ts_n + 1
 }

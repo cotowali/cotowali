@@ -49,6 +49,7 @@ pub fn new_global_scope() &Scope {
 		id: symbols.global_id
 		parent: 0
 	}
+	s.register_builtin()
 	return s
 }
 
@@ -62,6 +63,12 @@ pub fn new_scope(name string, parent &Scope) &Scope {
 
 pub fn (s &Scope) is_global() bool {
 	return s.id == symbols.global_id
+}
+
+pub fn (mut s Scope) register_builtin() {
+	for _, ts in builtin.type_symbols {
+		s.must_register_type(ts)
+	}
 }
 
 pub fn (s &Scope) full_name() string {
