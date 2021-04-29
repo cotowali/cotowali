@@ -36,6 +36,8 @@ fn t(kind TokenKind, text string) Token {
 }
 
 fn test_lexer() {
+	cr, lf := '\r', '\n'
+	crlf := cr + lf
 	test(' 🐈__ a ', [
 		// Pos{i, line, col, len, last_line, last_col}
 		Token{.unknown, '🐈__', Pos{1, 1, 2, 6, 1, 4}},
@@ -102,6 +104,15 @@ fn test_lexer() {
 		t(.int_lit, '0'),
 		t(.r_brace, '}'),
 		t(.eof, ''),
+	])
+	test('a//abc' + cr + 'b//xxx' + lf + 'c//cr' + crlf + 'd//eee', [
+		t(.ident, 'a'),
+		t(.eol, cr),
+		t(.ident, 'b'),
+		t(.eol, lf),
+		t(.ident, 'c'),
+		t(.eol, crlf),
+		t(.ident, 'd'),
 	])
 }
 
