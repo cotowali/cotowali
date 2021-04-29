@@ -11,6 +11,7 @@ fn test_global_scope() {
 	for _, ts in builtin.type_symbols {
 		s.must_lookup_type(ts.typ)
 	}
+	assert s.name_to_type.keys().len == builtin.type_symbols.keys().len
 	assert !s.create_child('s').is_global()
 }
 

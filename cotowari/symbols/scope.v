@@ -11,6 +11,7 @@ mut:
 	children     []&Scope
 	symbols      map[string]Symbol
 	type_symbols map[int]TypeSymbol // map[Type]TypeSymbol
+	name_to_type map[string]Type
 }
 
 pub fn (s &Scope) str() string {
@@ -169,6 +170,9 @@ fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
 	if int(ts.typ) in s.type_symbols {
 		return error('$ts.typ is exists')
 	}
+	if ts.name.len > 0 && ts.name in s.name_to_type {
+		return error('$ts.name is exists')
+	}
 }
 
 pub fn (mut s Scope) register_type(ts TypeSymbol) ?TypeSymbol {
@@ -179,6 +183,9 @@ pub fn (mut s Scope) register_type(ts TypeSymbol) ?TypeSymbol {
 		typ: typ
 	}
 	s.type_symbols[int(typ)] = new_ts
+	if new_ts.name.len > 0 {
+		s.name_to_type[new_ts.name] = new_ts.typ
+	}
 	return new_ts
 }
 
