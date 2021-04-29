@@ -27,6 +27,11 @@ fn test_is_whitespace() {
 	}
 }
 
+fn test_is_eol() {
+	assert !Char('a').@is(.eol)
+	assert Char('\n').@is(.eol)
+}
+
 fn test_is_alphabet() {
 	assert !Char('Ａ').@is(.alphabet)
 	assert Char('A').@is(.alphabet)
