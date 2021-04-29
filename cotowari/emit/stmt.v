@@ -95,6 +95,13 @@ fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
 		emit.writeln('')
 		return
 	}
+
+	save_inside_fn := emit.inside_fn
+	emit.inside_fn = true
+	defer {
+		emit.inside_fn = save_inside_fn
+	}
+
 	emit.writeln('${node.name}() {')
 	emit.indent++
 	for i, param in node.params {

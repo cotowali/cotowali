@@ -9,6 +9,7 @@ mut:
 	indent    int
 	newline   bool  = true
 	cur_file  &File = 0
+	inside_fn bool
 pub:
 	out io.Writer
 }
