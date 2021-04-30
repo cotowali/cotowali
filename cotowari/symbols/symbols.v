@@ -25,11 +25,11 @@ pub fn (sym Symbol) full_name() string {
 	}
 }
 
-pub fn (sym Symbol) type_symbol() ?TypeSymbol {
+pub fn (sym Symbol) type_symbol() TypeSymbol {
 	if scope := sym.scope() {
-		return scope.lookup_type(sym.typ)
+		return scope.lookup_type(sym.typ) or { symbols.unresolved_type_symbol }
 	}
-	return none
+	return symbols.unresolved_type_symbol
 }
 
 // --- Var --- //
@@ -79,7 +79,13 @@ pub struct TypeSymbol {
 pub:
 	typ  Type
 	name string
-	info TypeInfo //= TypeInfo(PlaceholderTypeInfo{})
+	info TypeInfo = TypeInfo(PlaceholderTypeInfo{})
+}
+
+const unresolved_type_symbol = TypeSymbol{
+	typ: Type(-1)
+	name: 'unresolved'
+	info: PlaceholderTypeInfo{}
 }
 
 pub fn (t TypeSymbol) is_fn() bool {
