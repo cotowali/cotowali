@@ -25,6 +25,13 @@ pub fn (sym Symbol) full_name() string {
 	}
 }
 
+pub fn (sym Symbol) type_symbol() ?TypeSymbol {
+	if scope := sym.scope() {
+		return scope.lookup_type(sym.typ)
+	}
+	return none
+}
+
 // --- Var --- //
 
 pub struct Var {
@@ -61,12 +68,12 @@ pub struct PlaceholderTypeInfo {
 	is_fn bool
 }
 
-pub struct FuncTypeInfo {
+pub struct FunctionTypeInfo {
 	args []Type
 	ret  Type
 }
 
-pub type TypeInfo = PlaceholderTypeInfo | PrimitiveTypeInfo | UnknownTypeInfo
+pub type TypeInfo = FunctionTypeInfo | PlaceholderTypeInfo | PrimitiveTypeInfo | UnknownTypeInfo
 
 pub struct TypeSymbol {
 pub:
@@ -79,7 +86,7 @@ pub fn (t TypeSymbol) is_fn() bool {
 	info := t.info
 	return match info {
 		PlaceholderTypeInfo { info.is_fn }
-		// FuncTypeInfo { true }
+		FunctionTypeInfo { true }
 		else { false }
 	}
 }
@@ -102,7 +109,7 @@ pub fn (t TypeSymbol) kind() TypeKind {
 		UnknownTypeInfo { tk(.unknown) }
 		PlaceholderTypeInfo { tk(.placeholder) }
 		PrimitiveTypeInfo { tk(.primitive) }
-		// FuncTypeInfo { tk(.func) }
+		FunctionTypeInfo { tk(.func) }
 	}
 }
 
