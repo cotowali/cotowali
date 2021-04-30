@@ -83,6 +83,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 	p.consume_with_check(.op_assign) ?
 
 	v := ast.Var{
+		scope: p.scope
 		pos: ident.pos
 		sym: p.scope.register_var(name: name) or { return p.duplicated_error(name) }
 	}
@@ -98,6 +99,7 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 	p.consume_with_check(.op_assign) ?
 	return ast.AssignStmt{
 		left: ast.Var{
+			scope: p.scope
 			pos: ident.pos
 			sym: p.scope.lookup_or_register_var(name: name)
 		}
@@ -158,6 +160,7 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 	p.count++
 	return ast.ForInStmt{
 		val: ast.Var{
+			scope: body.scope
 			pos: ident.pos
 			sym: body.scope.lookup_var(ident.text) or { panic(unreachable) }
 		}

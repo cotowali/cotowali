@@ -2,7 +2,7 @@ module ast
 
 import cotowari.source { Pos }
 import cotowari.token { Token }
-import cotowari.symbols { Type, builtin_type }
+import cotowari.symbols { Scope, Type, builtin_type }
 
 pub type Expr = CallFn | InfixExpr | Literal | Pipeline | PrefixExpr | Var
 
@@ -38,9 +38,14 @@ pub fn (e Expr) typ() Type {
 	}
 }
 
+pub fn (e Expr) scope() &Scope {
+	return e.scope
+}
+
 pub struct CallFn {
 pub:
-	pos Pos
+	scope &Scope
+	pos   Pos
 pub mut:
 	func Var
 	args []Expr
@@ -48,6 +53,7 @@ pub mut:
 
 pub struct InfixExpr {
 pub:
+	scope &Scope
 	op    Token
 	left  Expr
 	right Expr
@@ -60,6 +66,7 @@ pub enum LiteralKind {
 
 pub struct Literal {
 pub:
+	scope &Scope
 	kind  LiteralKind
 	token Token
 }
@@ -67,19 +74,22 @@ pub:
 // expr | expr | expr
 pub struct Pipeline {
 pub:
+	scope &Scope
 	exprs []Expr
 }
 
 pub struct PrefixExpr {
 pub:
-	op   Token
-	expr Expr
+	scope &Scope
+	op    Token
+	expr  Expr
 }
 
 pub struct Var {
 pub:
-	pos Pos
-	sym symbols.Var
+	scope &Scope
+	pos   Pos
+	sym   symbols.Var
 }
 
 pub fn (v Var) name() string {

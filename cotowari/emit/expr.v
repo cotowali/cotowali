@@ -84,7 +84,9 @@ fn (mut emit Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		}
 		.op_minus {
 			emit.expr(ast.InfixExpr{
+				scope: expr.scope
 				left: ast.Literal{
+					scope: expr.scope
 					kind: .int
 					token: Token{
 						kind: .int_lit

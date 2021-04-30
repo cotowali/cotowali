@@ -46,6 +46,7 @@ fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.
 	p.consume_with_assert(...op_kinds)
 	right := p.parse_infix_expr(op_kinds, opt) ?
 	return ast.InfixExpr{
+		scope: p.scope
 		op: op
 		left: left
 		right: right
@@ -55,6 +56,7 @@ fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.
 fn (mut p Parser) parse_prefix_expr() ?ast.Expr {
 	if op := p.consume_if_kind_is(.prefix_op) {
 		return ast.PrefixExpr{
+			scope: p.scope
 			op: op
 			expr: p.parse_expr(.prefix.inner()) ?
 		}
@@ -100,6 +102,7 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 		exprs << p.parse_expr(inner) ?
 	}
 	return ast.Pipeline{
+		scope: p.scope
 		exprs: exprs
 	}
 }
@@ -110,6 +113,7 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	p.consume_if_kind_eq(.l_paren) or {
 		// TODO: Move to checker
 		return ast.Var{
+			scope: p.scope
 			pos: ident.pos
 			sym: p.scope.lookup_var(name) or { return IError(p.error('undefined variable $name')) }
 		}
@@ -126,8 +130,9 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	}
 	r_paren := p.consume_with_check(.r_paren) ?
 	f := ast.CallFn{
+		scope: p.scope
 		pos: ident.pos.merge(r_paren.pos)
-		func: ast.Var{ident.pos, symbols.Var{
+		func: ast.Var{p.scope, ident.pos, symbols.Var{
 			name: name
 		}} // TODO: lookup
 		args: args
@@ -144,6 +149,7 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 		.int_lit {
 			p.consume()
 			return ast.Literal{
+				scope: p.scope
 				kind: .int
 				token: tok
 			}
@@ -151,6 +157,7 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 		.string_lit {
 			p.consume()
 			return ast.Literal{
+				scope: p.scope
 				kind: .string
 				token: tok
 			}
