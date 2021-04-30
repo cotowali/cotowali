@@ -1,1 +1,1 @@
-type_mismatch_err.ri 1,1: mismatch type: `2` (left), `3` (right)
+type_mismatch_err.ri 1,1: mismatch type: `int` (left), `string` (right)

@@ -14,10 +14,10 @@ fn (mut c Checker) expr(expr ast.Expr) {
 }
 
 fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
-	left_type := expr.left.typ()
-	right_type := expr.right.typ()
-	if left_type != right_type {
+	left_ts := expr.left.type_symbol()
+	right_ts := expr.right.type_symbol()
+	if left_ts.typ != right_ts.typ {
 		// c.error('mismatch type: `$left_type.name` (left), `$right_type.name` (right)',
-		c.error('mismatch type: `$left_type` (left), `$right_type` (right)', ast.Expr(expr).pos())
+		c.error('mismatch type: `$left_ts.name` (left), `$right_ts.name` (right)', ast.Expr(expr).pos())
 	}
 }
