@@ -2,7 +2,8 @@ module ast
 
 import cotowari.source { Pos }
 import cotowari.token { Token }
-import cotowari.symbols { Scope, Type, builtin_type }
+import cotowari.symbols { Scope, Type, TypeSymbol, builtin_type }
+import cotowari.errors { unreachable }
 
 pub type Expr = CallFn | InfixExpr | Literal | Pipeline | PrefixExpr | Var
 
@@ -36,6 +37,10 @@ pub fn (e Expr) typ() Type {
 		CallFn { Expr(e.func).typ() }
 		Var { e.sym.typ }
 	}
+}
+
+pub fn (e Expr) type_symbol() TypeSymbol {
+	return e.scope().lookup_type(e.typ()) or { panic(unreachable) }
 }
 
 pub fn (e Expr) scope() &Scope {
