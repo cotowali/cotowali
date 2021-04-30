@@ -122,8 +122,8 @@ pub enum BuiltinTypeKey {
 
 pub struct Builtin {
 pub:
-	types        map[BuiltinTypeKey]Type
-	type_symbols map[BuiltinTypeKey]TypeSymbol
+	types        []Type
+	type_symbols []TypeSymbol
 }
 
 pub fn builtin_type(key BuiltinTypeKey) Type {
@@ -132,9 +132,6 @@ pub fn builtin_type(key BuiltinTypeKey) Type {
 
 pub const (
 	builtin = (fn () Builtin {
-		k := fn (k BuiltinTypeKey) BuiltinTypeKey {
-			return k
-		}
 		t := fn (k BuiltinTypeKey) Type {
 			return builtin_type(k)
 		}
@@ -145,19 +142,19 @@ pub const (
 				info: info
 			}
 		}
-		types := map{
-			k(.placeholder): t(.placeholder)
-			k(.unknown):     t(.unknown)
-			k(.int):         t(.int)
-			k(.string):      t(.string)
-			k(.bool):        t(.bool)
-		}
-		type_symbols := map{
-			k(.unknown): ts(.unknown, UnknownTypeInfo{})
-			k(.int):     ts(.int, PrimitiveTypeInfo{})
-			k(.string):  ts(.string, PrimitiveTypeInfo{})
-			k(.bool):    ts(.bool, PrimitiveTypeInfo{})
-		}
+		types := [
+			t(.placeholder),
+			t(.unknown),
+			t(.int),
+			t(.string),
+			t(.bool),
+		]
+		type_symbols := [
+			ts(.unknown, UnknownTypeInfo{}),
+			ts(.int, PrimitiveTypeInfo{}),
+			ts(.string, PrimitiveTypeInfo{}),
+			ts(.bool, PrimitiveTypeInfo{}),
+		]
 		return Builtin{types, type_symbols}
 	}())
 )

@@ -67,7 +67,7 @@ pub fn (s &Scope) is_global() bool {
 }
 
 pub fn (mut s Scope) register_builtin() {
-	for _, ts in builtin.type_symbols {
+	for ts in builtin.type_symbols {
 		s.must_register_type(ts)
 	}
 }

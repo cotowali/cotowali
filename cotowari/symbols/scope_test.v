@@ -3,15 +3,15 @@ module symbols
 fn test_global_scope() {
 	mut s := new_global_scope()
 	assert s.is_global()
-	for _, t in builtin.types {
+	for t in builtin.types {
 		if t != builtin_type(.placeholder) {
 			s.must_lookup_type(t)
 		}
 	}
-	for _, ts in builtin.type_symbols {
+	for ts in builtin.type_symbols {
 		s.must_lookup_type(ts.typ)
 	}
-	assert s.name_to_type.keys().len == builtin.type_symbols.keys().len
+	assert s.name_to_type.keys().len == builtin.type_symbols.len
 	assert !s.create_child('s').is_global()
 }
 
