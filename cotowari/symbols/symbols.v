@@ -1,5 +1,34 @@
 module symbols
 
+type Symbol = TypeSymbol | Var
+
+pub fn (v Symbol) scope() ?&Scope {
+	if isnil(v.scope) {
+		return none
+	}
+	return v.scope
+}
+
+pub fn (v Symbol) full_name() string {
+	id := match v {
+		Var { v.id }
+		TypeSymbol { u64(v.typ) }
+	}
+	name := if v.name.len > 0 { v.name } else { 'sym$id' }
+	if s := v.scope() {
+		if s.is_global() {
+			return name
+		}
+		return join_name(s.full_name(), name)
+	} else {
+		return name
+	}
+}
+
+fn (v Symbol) scope_str() string {
+	return if scope := v.scope() { scope.str() } else { 'none' }
+}
+
 // --- Var --- //
 
 pub struct Var {
@@ -17,26 +46,15 @@ pub fn (v Var) str() string {
 }
 
 pub fn (v Var) scope() ?&Scope {
-	if isnil(v.scope) {
-		return none
-	}
-	return v.scope
+	return Symbol(v).scope()
 }
 
 fn (v Var) scope_str() string {
-	return if scope := v.scope() { scope.str() } else { 'none' }
+	return Symbol(v).scope_str()
 }
 
 pub fn (v Var) full_name() string {
-	name := if v.name.len > 0 { v.name } else { 'v$v.id' }
-	if s := v.scope() {
-		if s.is_global() {
-			return name
-		}
-		return join_name(s.full_name(), name)
-	} else {
-		return name
-	}
+	return Symbol(v).full_name()
 }
 
 pub fn (v Var) type_symbol() TypeSymbol {
