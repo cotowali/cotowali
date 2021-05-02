@@ -101,6 +101,13 @@ const unresolved_type_symbol = TypeSymbol{
 pub fn (v TypeSymbol) scope() ?&Scope {
 	return Symbol(v).scope()
 }
+
+fn (v TypeSymbol) scope_str() string {
+	return Symbol(v).scope_str()
+}
+
+pub fn (v TypeSymbol) full_name() string {
+	return Symbol(v).full_name()
 }
 
 pub fn (t TypeSymbol) is_fn() bool {
