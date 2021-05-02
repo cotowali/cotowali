@@ -36,6 +36,17 @@ pub fn (s &Scope) lookup_var(name string) ?Var {
 	return none
 }
 
+pub fn (mut s Scope) register_fn(name string, args []Type, ret Type) Var {
+	/*
+	TODO
+	info := FunrctionTypeInfo { args, ret }
+	name := info.signature()
+	fn_type := s.register_or_lookup_type(name: name, info: info)
+	return s.register_var(name, fn_type)
+	*/
+	return Var{}
+}
+
 fn (s &Scope) must_lookup_var(name string) Var {
 	return s.lookup_var(name) or { panic(err) }
 }
