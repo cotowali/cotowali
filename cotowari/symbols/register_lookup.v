@@ -9,40 +9,38 @@ pub fn (mut s Scope) register_builtin() {
 }
 
 [inline]
-fn (mut s Scope) must_register(sym Symbol) Symbol {
-	return s.register(sym) or { panic(err) }
+fn (mut s Scope) must_register_var(v Var) Var {
+	return s.register_var(v) or { panic(err) }
 }
 
-fn (mut s Scope) must_register_multi(syms ...Symbol) []Symbol {
-	return syms.map(s.must_register(it))
+fn (mut s Scope) must_register_var_multi(vars ...Var) []Var {
+	return vars.map(s.must_register_var(it))
 }
 
-fn (mut s Scope) check_before_register(sym Symbol) ? {
-	key := sym.name
-	if key in s.symbols {
+fn (mut s Scope) check_before_register_var(v Var) ? {
+	key := v.name
+	if key in s.vars {
 		return error('$key is exists')
 	}
 }
 
 pub fn (mut s Scope) register_var(v Var) ?Var {
-	s.check_before_register(v) ?
-	sym := Var{
+	s.check_before_register_var(v) ?
+	new_v := Var{
 		...v
 		id: if v.id == 0 { auto_id() } else { v.id }
 		scope: s
 	}
-	s.symbols[sym.name] = Symbol(sym)
-	return sym
-}
-
-pub fn (mut s Scope) register(sym Symbol) ?Symbol {
-	// because compiler bug, `retrun match sym` couldn't be use
-	return Symbol(s.register_var(sym) ?)
+	s.vars[new_v.name] = new_v
+	return new_v
 }
 
 pub fn (s &Scope) lookup_var(name string) ?Var {
-	if found := s.lookup(name) {
-		return found
+	if name in s.vars {
+		return s.vars[name]
+	}
+	if p := s.parent() {
+		return p.lookup_var(name)
 	}
 	return none
 }
@@ -51,26 +49,8 @@ pub fn (s &Scope) must_lookup_var(name string) Var {
 	return s.lookup_var(name) or { panic(err) }
 }
 
-pub fn (s &Scope) lookup(name string) ?Symbol {
-	if name in s.symbols {
-		return s.symbols[name]
-	}
-	if p := s.parent() {
-		return p.lookup(name)
-	}
-	return none
-}
-
-pub fn (s &Scope) must_lookup(name string) Symbol {
-	return s.lookup(name) or { panic(err) }
-}
-
 pub fn (mut s Scope) lookup_or_register_var(v Var) Var {
 	return s.lookup_var(v.name) or { s.register_var(v) or { panic(err) } }
-}
-
-pub fn (mut s Scope) lookup_or_register(v Symbol) Symbol {
-	return s.lookup(v.name) or { s.register(v) or { panic(err) } }
 }
 
 fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {

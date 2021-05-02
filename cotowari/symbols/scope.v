@@ -9,7 +9,7 @@ pub:
 mut:
 	parent       &Scope
 	children     []&Scope
-	symbols      map[string]Symbol
+	vars         map[string]Var
 	type_symbols map[int]TypeSymbol // map[Type]TypeSymbol
 	name_to_type map[string]Type
 }
@@ -20,7 +20,7 @@ pub fn (s &Scope) str() string {
 
 pub fn (s &Scope) debug_str() string {
 	children_str := s.children.map(it.debug_str()).join('\n').split_into_lines().map('        $it').join('\n')
-	syms_str := s.symbols.keys().map("        '$it': ${s.symbols[it]}").join('\n')
+	vars_str := s.vars.keys().map("        '$it': ${s.vars[it]}").join('\n')
 	types_str := s.type_symbols.keys().map('        ${s.type_symbols[it]}').join(',\n')
 	return [
 		'Scope{',
@@ -29,8 +29,8 @@ pub fn (s &Scope) debug_str() string {
 		'    children: [',
 		children_str,
 		'    ]',
-		'    symbols: {',
-		syms_str,
+		'    var: {',
+		vars_str,
 		'    }',
 		'    types: [',
 		types_str,
@@ -95,9 +95,9 @@ pub fn (mut s Scope) create_child(name string) &Scope {
 	return child
 }
 
-pub fn (s &Scope) ident_for(sym Symbol) string {
+pub fn (s &Scope) ident_for(v Var) string {
 	if s.id == symbols.global_id {
-		return sym.name
+		return v.name
 	}
-	return 's${s.id}_$sym.name'
+	return 's${s.id}_$v.name'
 }

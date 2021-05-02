@@ -1,37 +1,5 @@
 module symbols
 
-pub type Symbol = Var
-
-pub fn (sym Symbol) scope() ?&Scope {
-	if isnil(sym.scope) {
-		return none
-	}
-	return sym.scope
-}
-
-fn (sym Symbol) scope_str() string {
-	return if scope := sym.scope() { scope.str() } else { 'none' }
-}
-
-pub fn (sym Symbol) full_name() string {
-	name := if sym.name.len > 0 { sym.name } else { 'sym$sym.id' }
-	if s := sym.scope() {
-		if s.is_global() {
-			return name
-		}
-		return join_name(s.full_name(), name)
-	} else {
-		return name
-	}
-}
-
-pub fn (sym Symbol) type_symbol() TypeSymbol {
-	if scope := sym.scope() {
-		return scope.lookup_type(sym.typ) or { symbols.unresolved_type_symbol }
-	}
-	return symbols.unresolved_type_symbol
-}
-
 // --- Var --- //
 
 pub struct Var {
@@ -45,15 +13,37 @@ pub mut:
 }
 
 pub fn (v Var) str() string {
-	return 'Var{ name: $v.name, scope: ${Symbol(v).scope_str()}, typ: $v.typ }'
-}
-
-pub fn (v Var) full_name() string {
-	return Symbol(v).full_name()
+	return 'Var{ name: $v.name, scope: $v.scope_str(), typ: $v.typ }'
 }
 
 pub fn (v Var) scope() ?&Scope {
-	return Symbol(v).scope()
+	if isnil(v.scope) {
+		return none
+	}
+	return v.scope
+}
+
+fn (v Var) scope_str() string {
+	return if scope := v.scope() { scope.str() } else { 'none' }
+}
+
+pub fn (v Var) full_name() string {
+	name := if v.name.len > 0 { v.name } else { 'v$v.id' }
+	if s := v.scope() {
+		if s.is_global() {
+			return name
+		}
+		return join_name(s.full_name(), name)
+	} else {
+		return name
+	}
+}
+
+pub fn (v Var) type_symbol() TypeSymbol {
+	if scope := v.scope() {
+		return scope.lookup_type(v.typ) or { symbols.unresolved_type_symbol }
+	}
+	return symbols.unresolved_type_symbol
 }
 
 // --- Type --- //
