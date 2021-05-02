@@ -8,15 +8,6 @@ pub fn (mut s Scope) register_builtin() {
 	}
 }
 
-[inline]
-fn (mut s Scope) must_register_var(v Var) Var {
-	return s.register_var(v) or { panic(err) }
-}
-
-fn (mut s Scope) must_register_var_multi(vars ...Var) []Var {
-	return vars.map(s.must_register_var(it))
-}
-
 fn (mut s Scope) check_before_register_var(v Var) ? {
 	key := v.name
 	if key in s.vars {
