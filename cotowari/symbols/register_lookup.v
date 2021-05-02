@@ -36,7 +36,7 @@ pub fn (s &Scope) lookup_var(name string) ?Var {
 	return none
 }
 
-pub fn (s &Scope) must_lookup_var(name string) Var {
+fn (s &Scope) must_lookup_var(name string) Var {
 	return s.lookup_var(name) or { panic(err) }
 }
 
