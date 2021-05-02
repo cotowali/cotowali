@@ -98,11 +98,9 @@ const unresolved_type_symbol = TypeSymbol{
 	info: PlaceholderTypeInfo{}
 }
 
-pub fn (t TypeSymbol) scope() ?&Scope {
-	if isnil(t.scope) {
-		return none
-	}
-	return t.scope
+pub fn (v TypeSymbol) scope() ?&Scope {
+	return Symbol(v).scope()
+}
 }
 
 pub fn (t TypeSymbol) is_fn() bool {
