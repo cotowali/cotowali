@@ -66,6 +66,8 @@ pub struct FunctionTypeInfo {
 pub type TypeInfo = FunctionTypeInfo | PlaceholderTypeInfo | PrimitiveTypeInfo | UnknownTypeInfo
 
 pub struct TypeSymbol {
+mut:
+	scope &Scope = 0
 pub:
 	typ  Type
 	name string
@@ -76,6 +78,13 @@ const unresolved_type_symbol = TypeSymbol{
 	typ: Type(-1)
 	name: 'unresolved'
 	info: PlaceholderTypeInfo{}
+}
+
+pub fn (t TypeSymbol) scope() ?&Scope {
+	if isnil(t.scope) {
+		return none
+	}
+	return t.scope
 }
 
 pub fn (t TypeSymbol) is_fn() bool {

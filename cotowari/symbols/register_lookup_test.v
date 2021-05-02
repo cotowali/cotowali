@@ -86,6 +86,7 @@ fn test_lookup_or_register_type() ? {
 	mut s := new_global_scope()
 	ts_n := s.type_symbols.keys().len
 	registered := s.lookup_or_register_type(name: 't')
+	assert (registered.scope() ?).id == s.id
 	assert registered.typ != Type(0)
 	assert s.type_symbols.keys().len == ts_n + 1
 

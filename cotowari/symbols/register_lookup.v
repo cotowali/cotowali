@@ -70,6 +70,7 @@ pub fn (mut s Scope) register_type(ts TypeSymbol) ?TypeSymbol {
 	new_ts := TypeSymbol{
 		...ts
 		typ: typ
+		scope: s
 	}
 	s.type_symbols[int(typ)] = new_ts
 	if new_ts.name.len > 0 {
