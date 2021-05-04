@@ -6,7 +6,7 @@ fn f(a any) {
   if a == 1 {
     let a = 0
     echo(39)
-  } else if echo() {
+  } else if a == 2 {
     let a = 0
     echo(a)
     echo(2)
