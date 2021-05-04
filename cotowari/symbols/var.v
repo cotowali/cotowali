@@ -72,6 +72,10 @@ pub fn (mut s Scope) register_fn(name string, args []Type, ret Type) ?Var {
 	return s.register_var(name: name, typ: fn_type)
 }
 
+fn (mut s Scope) must_register_fn(name string, args []Type, ret Type) Var {
+	return s.register_fn(name, args, ret) or { panic(err) }
+}
+
 fn (s &Scope) must_lookup_var(name string) Var {
 	return s.lookup_var(name) or { panic(err) }
 }
