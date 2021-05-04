@@ -2,6 +2,7 @@ module symbols
 
 pub enum BuiltinTypeKey {
 	placeholder = 0
+	placeholder_fn
 	void
 	any
 	unknown
@@ -35,6 +36,7 @@ pub fn (mut s Scope) register_builtin() {
 
 	type_symbols := [
 		ts_without_name(.placeholder, PlaceholderTypeInfo{}),
+		ts_without_name(.placeholder_fn, PlaceholderTypeInfo{ is_function: true }),
 		ts(.void, PrimitiveTypeInfo{}),
 		ts(.unknown, UnknownTypeInfo{}),
 		ts(.any, PrimitiveTypeInfo{}),
