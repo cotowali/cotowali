@@ -10,13 +10,13 @@ fn (mut c Checker) stmts(stmts []ast.Stmt) {
 }
 
 fn (mut c Checker) stmt(stmt ast.Stmt) {
-	match stmt {
+	match mut stmt {
 		ast.AssignStmt {}
 		ast.AssertStmt {}
 		ast.Block { c.block(stmt) }
 		ast.Expr { c.expr(stmt) }
 		ast.EmptyStmt {}
-		ast.FnDecl {}
+		ast.FnDecl { c.fn_decl(stmt) }
 		ast.ForInStmt {}
 		ast.IfStmt { c.if_stmt(stmt) }
 		ast.InlineShell {}
@@ -26,6 +26,10 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 
 fn (mut c Checker) block(block ast.Block) {
 	c.stmts(block.stmts)
+}
+
+fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
+	c.block(stmt.body)
 }
 
 fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
