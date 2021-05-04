@@ -2,6 +2,7 @@ module parser
 
 import cotowari.ast
 import cotowari.source { Pos }
+import cotowari.token { Token }
 
 struct FnParamParsingInfo {
 mut:
@@ -11,7 +12,7 @@ mut:
 }
 
 struct FnSignatureParsingInfo {
-	name string
+	name Token
 mut:
 	params       []FnParamParsingInfo
 	ret_typename string
@@ -41,7 +42,7 @@ fn (mut p Parser) parse_fn_params() ?[]FnParamParsingInfo {
 fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	p.consume_with_assert(.key_fn)
 	mut info := FnSignatureParsingInfo{
-		name: p.consume().text
+		name: p.consume_with_check(.ident) ?
 	}
 
 	p.consume_with_check(.l_paren) ?
@@ -57,7 +58,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	info := p.parse_fn_signature_info() ?
 	mut outer_scope := p.scope
-	p.open_scope(info.name)
+	p.open_scope(info.name.text)
 	defer {
 		p.close_scope()
 	}
@@ -67,15 +68,19 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 			scope: p.scope
 			pos: param.pos
 			// TODO: type
-			sym: p.scope.register_var(name: param.name) or { return p.duplicated_error(param.name) }
+			sym: p.scope.register_var(name: param.name, pos: param.pos) or {
+				return p.duplicated_error(param.name)
+			}
 		}
 	}
 	// TODO: type
-	outer_scope.register_var(name: info.name) or { return p.duplicated_error(info.name) }
+	outer_scope.register_var(name: info.name.text, pos: info.name.pos) or {
+		return p.duplicated_error(info.name.text)
+	}
 
 	has_body := p.kind(0) == .l_brace
 	mut node := ast.FnDecl{
-		name: info.name
+		name: info.name.text
 		params: params
 		has_body: has_body
 	}

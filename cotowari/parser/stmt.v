@@ -85,7 +85,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 	v := ast.Var{
 		scope: p.scope
 		pos: ident.pos
-		sym: p.scope.register_var(name: name) or { return p.duplicated_error(name) }
+		sym: p.scope.register_var(name: name, pos: ident.pos) or { return p.duplicated_error(name) }
 	}
 	return ast.AssignStmt{
 		left: v
@@ -101,7 +101,7 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 		left: ast.Var{
 			scope: p.scope
 			pos: ident.pos
-			sym: p.scope.lookup_or_register_var(name: name)
+			sym: p.scope.lookup_or_register_var(name: name, pos: ident.pos)
 		}
 		right: p.parse_expr({}) ?
 	}
