@@ -13,7 +13,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 	match stmt {
 		ast.AssignStmt {}
 		ast.AssertStmt {}
-		ast.Block {}
+		ast.Block { c.block(stmt) }
 		ast.Expr { c.expr(stmt) }
 		ast.EmptyStmt {}
 		ast.FnDecl {}
@@ -22,6 +22,10 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 		ast.InlineShell {}
 		ast.ReturnStmt {}
 	}
+}
+
+fn (mut c Checker) block(block ast.Block) {
+	c.stmts(block.stmts)
 }
 
 fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
