@@ -1,8 +1,8 @@
 module checker
 
-import cotowari.ast
+import cotowari.ast { Expr }
 
-fn (mut c Checker) expr(expr ast.Expr) {
+fn (mut c Checker) expr(expr Expr) {
 	match expr {
 		ast.CallFn {}
 		ast.InfixExpr { c.infix_expr(expr) }
@@ -18,6 +18,6 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 	right_ts := expr.right.type_symbol()
 	if left_ts.typ != right_ts.typ {
 		// c.error('mismatch type: `$left_type.name` (left), `$right_type.name` (right)',
-		c.error('mismatch type: `$left_ts.name` (left), `$right_ts.name` (right)', ast.Expr(expr).pos())
+		c.error('mismatch type: `$left_ts.name` (left), `$right_ts.name` (right)', Expr(expr).pos())
 	}
 }
