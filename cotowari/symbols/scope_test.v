@@ -5,6 +5,7 @@ fn test_global_scope() {
 	assert s.is_global()
 	s.must_lookup_type(builtin_type(.int))
 	s.must_lookup_type(builtin_type(.void))
+	s.must_lookup_type('string')
 	assert !s.create_child('s').is_global()
 }
 
