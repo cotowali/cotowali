@@ -3,6 +3,12 @@ module checker
 import cotowari.ast
 import cotowari.symbols { builtin_type }
 
+fn (mut c Checker) stmts(stmts []ast.Stmt) {
+	for stmt in stmts {
+		c.stmt(stmt)
+	}
+}
+
 fn (mut c Checker) stmt(stmt ast.Stmt) {
 	match stmt {
 		ast.AssignStmt {}
