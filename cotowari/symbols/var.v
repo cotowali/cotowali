@@ -12,6 +12,10 @@ pub mut:
 	typ Type = builtin_type(.placeholder)
 }
 
+pub fn (v Var) is_function() bool {
+	return v.type_symbol().is_function()
+}
+
 pub fn (v Var) str() string {
 	return 'Var{ name: $v.name, scope: $v.scope_str(), typ: $v.typ }'
 }

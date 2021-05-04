@@ -35,7 +35,7 @@ fn test_register_fn() ? {
 	mut s := new_global_scope()
 	f := s.register_fn('f', [builtin_type(.int)], builtin_type(.void)) ?
 	assert f.id != 0
-	assert f.type_symbol().is_function()
+	assert f.is_function()
 }
 
 fn test_lookup_or_register_var() ? {
