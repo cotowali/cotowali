@@ -17,7 +17,6 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 	left_ts := expr.left.type_symbol()
 	right_ts := expr.right.type_symbol()
 	if left_ts.typ != right_ts.typ {
-		// c.error('mismatch type: `$left_type.name` (left), `$right_type.name` (right)',
 		c.error('mismatch type: `$left_ts.name` (left), `$right_ts.name` (right)', Expr(expr).pos())
 	}
 }
