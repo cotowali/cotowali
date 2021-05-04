@@ -17,4 +17,7 @@ fn test_fn_signature() ? {
 	) ?
 	assert f1.fn_signature() ? == 'fn (int, bool) void'
 	assert f2.fn_signature() ? == 'fn (int, bool) int'
+	if _ := s.must_lookup_type(builtin_type(.int)).fn_signature() {
+		assert false
+	}
 }
