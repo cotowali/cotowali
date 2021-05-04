@@ -2,6 +2,7 @@ module symbols
 
 import cotowari.errors { unreachable }
 import cotowari.util { auto_id }
+import cotowari.source { Pos }
 
 pub type Type = int
 
@@ -24,6 +25,7 @@ pub struct TypeSymbol {
 mut:
 	scope &Scope = 0
 pub:
+	pos  Pos
 	typ  Type
 	name string
 	info TypeInfo = TypeInfo(PlaceholderTypeInfo{})

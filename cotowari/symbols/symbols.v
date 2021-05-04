@@ -1,5 +1,7 @@
 module symbols
 
+import cotowari.source { Pos }
+
 type Symbol = TypeSymbol | Var
 
 pub fn (v Symbol) scope() ?&Scope {
@@ -27,4 +29,8 @@ pub fn (v Symbol) full_name() string {
 
 fn (v Symbol) scope_str() string {
 	return if scope := v.scope() { scope.str() } else { 'none' }
+}
+
+fn (v Symbol) pos() Pos {
+	return v.pos
 }

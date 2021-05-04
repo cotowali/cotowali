@@ -1,6 +1,7 @@
 module symbols
 
 import cotowari.util { auto_id }
+import cotowari.source { Pos }
 
 pub struct Var {
 mut:
@@ -8,6 +9,7 @@ mut:
 pub:
 	name string
 	id   u64
+	pos  Pos
 pub mut:
 	typ Type = builtin_type(.placeholder)
 }
