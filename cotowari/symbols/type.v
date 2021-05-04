@@ -1,5 +1,7 @@
 module symbols
 
+import cotowari.errors { unreachable }
+
 pub type Type = int
 
 pub struct UnknownTypeInfo {}
@@ -77,4 +79,14 @@ pub fn (t TypeSymbol) kind() TypeKind {
 
 pub fn (v TypeSymbol) str() string {
 	return 'TypeSymbol{ typ: $v.typ, name: $v.name, kind: $v.kind().str() }'
+}
+
+pub fn (t TypeSymbol) fn_signature() ?string {
+	if t.info is FunctionTypeInfo {
+		f := t.info
+		s := t.scope() or { panic(unreachable) }
+		args_str := f.args.map(s.must_lookup_type(it).name).join(', ')
+		return 'fn ($args_str) ${s.must_lookup_type(f.ret).name}'
+	}
+	return none
 }
