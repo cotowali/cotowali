@@ -3,6 +3,7 @@ module symbols
 pub enum BuiltinTypeKey {
 	placeholder = 0
 	void
+	any
 	unknown
 	int
 	string
@@ -25,6 +26,7 @@ pub fn (mut s Scope) register_builtin() {
 	type_symbols := [
 		ts(.void, PrimitiveTypeInfo{}),
 		ts(.unknown, UnknownTypeInfo{}),
+		ts(.any, PrimitiveTypeInfo{}),
 		ts(.int, PrimitiveTypeInfo{}),
 		ts(.string, PrimitiveTypeInfo{}),
 		ts(.bool, PrimitiveTypeInfo{}),
