@@ -23,6 +23,10 @@ pub fn (mut s Scope) register_builtin() {
 		}
 	}
 
+	t := fn (k BuiltinTypeKey) Type {
+		return builtin_type(k)
+	}
+
 	type_symbols := [
 		ts(.void, PrimitiveTypeInfo{}),
 		ts(.unknown, UnknownTypeInfo{}),
@@ -31,7 +35,9 @@ pub fn (mut s Scope) register_builtin() {
 		ts(.string, PrimitiveTypeInfo{}),
 		ts(.bool, PrimitiveTypeInfo{}),
 	]
-	for t in type_symbols {
-		s.must_register_type(t)
+	for typ in type_symbols {
+		s.must_register_type(typ)
 	}
+
+	s.must_register_fn('echo', [t(.any)], t(.string))
 }

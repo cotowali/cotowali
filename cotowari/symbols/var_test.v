@@ -40,13 +40,14 @@ fn test_register_fn() ? {
 
 fn test_lookup_or_register_var() ? {
 	mut s := new_global_scope()
-	assert s.vars.keys().len == 0
+	v_n := s.vars.keys().len
+
 	registered := s.lookup_or_register_var(name: 'v')
 	assert registered.id != 0
-	assert s.vars.keys().len == 1
+	assert s.vars.keys().len == v_n + 1
 	assert (registered.scope() ?).id == s.id
 
 	found := s.lookup_or_register_var(name: 'v')
 	assert registered.id == found.id
-	assert s.vars.keys().len == 1
+	assert s.vars.keys().len == v_n + 1
 }

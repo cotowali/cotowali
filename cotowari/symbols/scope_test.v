@@ -6,6 +6,7 @@ fn test_global_scope() {
 	s.must_lookup_type(builtin_type(.int))
 	s.must_lookup_type(builtin_type(.void))
 	s.must_lookup_type('string')
+	assert s.must_lookup_var('echo').type_symbol().is_fn()
 	assert !s.create_child('s').is_global()
 }
 
