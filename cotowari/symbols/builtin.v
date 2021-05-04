@@ -22,12 +22,19 @@ pub fn (mut s Scope) register_builtin() {
 			info: info
 		}
 	}
+	ts_without_name := fn (k BuiltinTypeKey, info TypeInfo) TypeSymbol {
+		return TypeSymbol{
+			typ: builtin_type(k)
+			info: info
+		}
+	}
 
 	t := fn (k BuiltinTypeKey) Type {
 		return builtin_type(k)
 	}
 
 	type_symbols := [
+		ts_without_name(.placeholder, PlaceholderTypeInfo{}),
 		ts(.void, PrimitiveTypeInfo{}),
 		ts(.unknown, UnknownTypeInfo{}),
 		ts(.any, PrimitiveTypeInfo{}),
