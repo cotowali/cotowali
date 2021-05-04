@@ -10,7 +10,7 @@ pub struct UnknownTypeInfo {}
 pub struct PrimitiveTypeInfo {}
 
 pub struct PlaceholderTypeInfo {
-	is_fn bool
+	is_function bool
 }
 
 pub struct FunctionTypeInfo {
@@ -47,10 +47,10 @@ pub fn (v TypeSymbol) full_name() string {
 	return Symbol(v).full_name()
 }
 
-pub fn (t TypeSymbol) is_fn() bool {
+pub fn (t TypeSymbol) is_function() bool {
 	info := t.info
 	return match info {
-		PlaceholderTypeInfo { info.is_fn }
+		PlaceholderTypeInfo { info.is_function }
 		FunctionTypeInfo { true }
 		else { false }
 	}
