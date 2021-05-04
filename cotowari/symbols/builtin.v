@@ -2,6 +2,7 @@ module symbols
 
 pub enum BuiltinTypeKey {
 	placeholder = 0
+	void
 	unknown
 	int
 	string
@@ -32,12 +33,14 @@ pub const (
 		}
 		types := [
 			t(.placeholder),
+			t(.void),
 			t(.unknown),
 			t(.int),
 			t(.string),
 			t(.bool),
 		]
 		type_symbols := [
+			ts(.void, PrimitiveTypeInfo{}),
 			ts(.unknown, UnknownTypeInfo{}),
 			ts(.int, PrimitiveTypeInfo{}),
 			ts(.string, PrimitiveTypeInfo{}),

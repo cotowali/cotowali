@@ -12,7 +12,7 @@ pub struct PlaceholderTypeInfo {
 
 pub struct FunctionTypeInfo {
 	args []Type
-	ret  Type
+	ret  Type = builtin_type(.void)
 }
 
 pub type TypeInfo = FunctionTypeInfo | PlaceholderTypeInfo | PrimitiveTypeInfo | UnknownTypeInfo
