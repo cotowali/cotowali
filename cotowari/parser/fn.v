@@ -17,18 +17,13 @@ mut:
 	ret_typename string
 }
 
-fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
-	p.consume_with_assert(.key_fn)
-	mut info := FnSignatureParsingInfo{
-		name: p.consume().text
-	}
-
-	p.consume_with_check(.l_paren) ?
+fn (mut p Parser) parse_fn_params() ?[]FnParamParsingInfo {
+	mut params := []FnParamParsingInfo{}
 	if p.kind(0) == .ident {
 		for {
 			name := p.consume_with_check(.ident) ?
 			typ := p.consume_with_check(.ident) ?
-			info.params << FnParamParsingInfo{
+			params << FnParamParsingInfo{
 				name: name.text
 				pos: name.pos
 				typename: typ.text
@@ -40,6 +35,17 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 			}
 		}
 	}
+	return params
+}
+
+fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
+	p.consume_with_assert(.key_fn)
+	mut info := FnSignatureParsingInfo{
+		name: p.consume().text
+	}
+
+	p.consume_with_check(.l_paren) ?
+	info.params = p.parse_fn_params() ?
 	p.consume_with_check(.r_paren) ?
 	if ret := p.consume_if_kind_eq(.ident) {
 		info.ret_typename = ret.text
