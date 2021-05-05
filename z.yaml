@@ -1,6 +1,5 @@
-default: hello
+default: build
 tasks:
-  hello: z run examples/hello.ri
   run: v run cmd/ric/main.v $@
   build: mkdir -p .bin && v cmd/ric/main.v -o .bin/ric
   build.c: v cmd/ric/main.v -o main.c
