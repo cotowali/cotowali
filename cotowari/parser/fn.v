@@ -25,10 +25,11 @@ fn (mut p Parser) parse_fn_params() ?[]FnParamParsingInfo {
 		for {
 			name_tok := p.consume_with_check(.ident) ?
 			type_tok := p.consume_with_check(.ident) ?
+			typ := (p.scope.lookup_type(type_tok.text) or { return p.error(err, type_tok.pos) }).typ
 			params << FnParamParsingInfo{
 				name: name_tok.text
 				pos: name_tok.pos
-				typ: (p.scope.lookup_type(type_tok.text) or { return p.error(err) }).typ
+				typ: typ
 			}
 			if p.kind(0) == .r_paren {
 				break
@@ -50,7 +51,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	info.params = p.parse_fn_params() ?
 	p.consume_with_check(.r_paren) ?
 	if ret := p.consume_if_kind_eq(.ident) {
-		info.ret_typ = (p.scope.lookup_type(ret.text) or { return p.error(err) }).typ
+		info.ret_typ = (p.scope.lookup_type(ret.text) or { return p.error(err, ret.pos) }).typ
 	}
 
 	return info
@@ -69,7 +70,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 			scope: p.scope
 			pos: param.pos
 			sym: p.scope.register_var(name: param.name, pos: param.pos, typ: param.typ) or {
-				return p.duplicated_error(param.name)
+				return p.duplicated_error(param.name, param.pos)
 			}
 		}
 	}
@@ -77,7 +78,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		name: info.name.text
 		pos: info.name.pos
 		typ: outer_scope.lookup_or_register_fn_type(params.map(it.sym.typ), info.ret_typ).typ
-	) or { return p.duplicated_error(info.name.text) }
+	) or { return p.duplicated_error(info.name.text, info.name.pos) }
 
 	has_body := p.kind(0) == .l_brace
 	mut node := ast.FnDecl{

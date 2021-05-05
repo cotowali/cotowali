@@ -115,7 +115,9 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 		return ast.Var{
 			scope: p.scope
 			pos: ident.pos
-			sym: p.scope.lookup_var(name) or { return IError(p.error('undefined variable $name')) }
+			sym: p.scope.lookup_var(name) or {
+				return p.error('undefined variable $name', ident.pos)
+			}
 		}
 	}
 	mut args := []ast.Expr{}
@@ -163,8 +165,7 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 			}
 		}
 		else {
-			p.consume()
-			return IError(p.error('unexpected token $tok'))
+			return p.error('unexpected token $tok.kind', tok.pos)
 		}
 	}
 }
