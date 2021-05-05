@@ -188,6 +188,7 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 		'fn' { k(.key_fn) }
 		'return' { k(.key_return) }
 		'decl' { k(.key_decl) }
+		'struct' { k(.key_struct) }
 		'true', 'false' { k(.bool_lit) }
 		else { k(.ident) }
 	}

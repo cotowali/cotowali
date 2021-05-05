@@ -57,6 +57,7 @@ fn test_lexer() {
 	ktest('a+++++', [.ident, .op_plus_plus, .op_plus_plus, .op_plus])
 	ktest('a-----', [.ident]) // TODO
 	ktest('a -----', [.ident, .op_minus_minus, .op_minus_minus, .op_minus])
+	ktest('struct f { }', [.key_struct, .ident, .l_brace, .r_brace])
 
 	test('if i == 0 { } else if i != 1 {} else {}', [
 		t(.key_if, 'if'),
