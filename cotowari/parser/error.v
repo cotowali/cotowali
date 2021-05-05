@@ -3,8 +3,6 @@ module parser
 import cotowari.errors { unreachable }
 import cotowari.token { Token }
 
-type ErrorValue = errors.Err | errors.ErrorWithPos | string
-
 fn (p &Parser) value_to_err<T>(v T, tok Token) errors.Err {
 	$if T is string {
 		return errors.Err{
