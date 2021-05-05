@@ -44,7 +44,7 @@ fn execute_compile(cmd Command) ? {
 	}
 	s := source.read_file(cmd.args[0]) ?
 	out := compile(s) or {
-		eprint(format_error(err, errors.SimpleFormatter{}))
+		eprint(format_error(err, errors.PrettyFormatter{}))
 		exit(1)
 	}
 	println(out)
