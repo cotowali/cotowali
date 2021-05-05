@@ -3,7 +3,6 @@ module parser
 import cotowari.lexer { Lexer }
 import cotowari.token { Token, TokenKind, TokenKindClass }
 import cotowari.ast
-import cotowari.errors { Err }
 import cotowari.symbols { Scope, new_global_scope }
 
 pub struct Parser {
@@ -138,26 +137,4 @@ fn (mut p Parser) open_scope(name string) &Scope {
 fn (mut p Parser) close_scope() &Scope {
 	p.scope = p.scope.parent() or { panic(err) }
 	return p.scope
-}
-
-fn (mut p Parser) error(msg string) IError {
-	tok := p.consume()
-	err := &Err{
-		source: p.file.source
-		msg: msg
-		pos: tok.pos
-	}
-	p.file.errors << err
-	return IError(err)
-}
-
-fn (mut p Parser) duplicated_error(name string) IError {
-	return p.error('`$name` is duplicated')
-}
-
-fn error_node(err IError) &Err {
-	if err is errors.Err {
-		return err
-	}
-	panic(err)
 }
