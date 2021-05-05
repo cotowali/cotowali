@@ -1,38 +1,14 @@
 module parser
 
-import cotowari.errors { unreachable }
-import cotowari.token { Token }
+import cotowari.errors { Err }
 
-fn (p &Parser) value_to_err<T>(v T, tok Token) errors.Err {
-	$if T is string {
-		return errors.Err{
-			source: p.file.source
-			msg: v
-			pos: tok.pos
-		}
-	} $else $if T is errors.ErrorWithPos {
-		return errors.Err{
-			source: p.file.source
-			msg: v.msg
-			pos: v.pos
-			code: v.code
-		}
-	} $else $if T is errors.Err {
-		return v
-	} $else $if T is IError {
-		return match v {
-			errors.Err { p.value_to_error(v) }
-			errors.ErrorWithPos { p.value_to_error(v) }
-			else { p.value_to_error(v.msg) }
-		}
-	} $else {
-		panic(unreachable)
-	}
-}
-
-fn (mut p Parser) error<T>(v T) IError {
+fn (mut p Parser) error(msg string) IError {
 	tok := p.consume()
-	err := p.value_to_err(v, tok)
+	err := Err{
+		source: p.file.source
+		msg: msg
+		pos: tok.pos
+	}
 	p.file.errors << err
 	return err
 }
