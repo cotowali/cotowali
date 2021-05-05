@@ -27,4 +27,8 @@ fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 		c.error('function `$name` is not defined', Expr(expr).pos())
 		return
 	}
+	if !func.is_function() {
+		c.error('`$name` is not function (`$func.type_symbol().name`)', Expr(expr).pos())
+		return
+	}
 }
