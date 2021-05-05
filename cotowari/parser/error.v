@@ -19,6 +19,12 @@ fn (p &Parser) value_to_err<T>(v T, tok Token) errors.Err {
 		}
 	} $else $if T is errors.Err {
 		return v
+	} $else $if T is IError {
+		return match v {
+			errors.Err { p.value_to_error(v) }
+			errors.ErrorWithPos { p.value_to_error(v) }
+			else { p.value_to_error(v.msg) }
+		}
 	} $else {
 		panic(unreachable)
 	}
