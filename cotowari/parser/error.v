@@ -1,38 +1,36 @@
 module parser
 
-import cotowari.errors
+import cotowari.errors { unreachable }
 import cotowari.token { Token }
 
 type ErrorValue = errors.Err | errors.ErrorWithPos | string
 
-fn (v ErrorValue) to_err(p &Parser, tok Token) errors.Err {
-	return match v {
-		string {
-			errors.Err{
-				source: p.file.source
-				msg: v
-				pos: tok.pos
-			}
+fn (p &Parser) value_to_err<T>(v T, tok Token) errors.Err {
+	$if T is string {
+		return errors.Err{
+			source: p.file.source
+			msg: v
+			pos: tok.pos
 		}
-		errors.ErrorWithPos {
-			errors.Err{
-				source: p.file.source
-				msg: v.msg
-				pos: v.pos
-				code: v.code
-			}
+	} $else $if T is errors.ErrorWithPos {
+		return errors.Err{
+			source: p.file.source
+			msg: v.msg
+			pos: v.pos
+			code: v.code
 		}
-		errors.Err {
-			v
-		}
+	} $else $if T is errors.Err {
+		return v
+	} $else {
+		panic(unreachable)
 	}
 }
 
-fn (mut p Parser) error(v ErrorValue) IError {
+fn (mut p Parser) error<T>(v T) IError {
 	tok := p.consume()
-	err := v.to_err(p, tok)
+	err := p.value_to_err(v, tok)
 	p.file.errors << err
-	return IError(err)
+	return err
 }
 
 fn (mut p Parser) duplicated_error(name string) IError {
