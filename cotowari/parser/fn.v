@@ -24,8 +24,7 @@ fn (mut p Parser) parse_fn_params() ?[]FnParamParsingInfo {
 	if p.kind(0) == .ident {
 		for {
 			name_tok := p.consume_with_check(.ident) ?
-			type_tok := p.consume_with_check(.ident) ?
-			typ := (p.scope.lookup_type(type_tok.text) or { return p.error(err, type_tok.pos) }).typ
+			typ := p.parse_type() ?
 			params << FnParamParsingInfo{
 				name: name_tok.text
 				pos: name_tok.pos
@@ -50,8 +49,8 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	p.consume_with_check(.l_paren) ?
 	info.params = p.parse_fn_params() ?
 	p.consume_with_check(.r_paren) ?
-	if ret := p.consume_if_kind_eq(.ident) {
-		info.ret_typ = (p.scope.lookup_type(ret.text) or { return p.error(err, ret.pos) }).typ
+	if p.kind(0) != .l_brace {
+		info.ret_typ = p.parse_type() ?
 	}
 
 	return info
