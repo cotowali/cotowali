@@ -140,7 +140,7 @@ pub fn (s &Scope) lookup_type(key TypeOrName) ?TypeSymbol {
 		} else if p := s.parent() {
 			return p.lookup_type(key)
 		} else {
-			return none
+			return error('unknown type `$key`')
 		}
 	} else {
 		int_typ = int(key as Type)
