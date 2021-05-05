@@ -3,32 +3,32 @@ module parser
 import cotowari.ast
 import cotowari.source { Pos }
 import cotowari.token { Token }
-import cotowari.symbols
+import cotowari.symbols { Type, builtin_type }
 
 struct FnParamParsingInfo {
 mut:
-	name     string
-	typename string
-	pos      Pos
+	name string
+	typ  Type
+	pos  Pos
 }
 
 struct FnSignatureParsingInfo {
 	name Token
 mut:
-	params       []FnParamParsingInfo
-	ret_typename string = 'void'
+	params  []FnParamParsingInfo
+	ret_typ Type = builtin_type(.void)
 }
 
 fn (mut p Parser) parse_fn_params() ?[]FnParamParsingInfo {
 	mut params := []FnParamParsingInfo{}
 	if p.kind(0) == .ident {
 		for {
-			name := p.consume_with_check(.ident) ?
-			typ := p.consume_with_check(.ident) ?
+			name_tok := p.consume_with_check(.ident) ?
+			type_tok := p.consume_with_check(.ident) ?
 			params << FnParamParsingInfo{
-				name: name.text
-				pos: name.pos
-				typename: typ.text
+				name: name_tok.text
+				pos: name_tok.pos
+				typ: (p.scope.lookup_type(type_tok.text) or { return p.error(err) }).typ
 			}
 			if p.kind(0) == .r_paren {
 				break
@@ -50,7 +50,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	info.params = p.parse_fn_params() ?
 	p.consume_with_check(.r_paren) ?
 	if ret := p.consume_if_kind_eq(.ident) {
-		info.ret_typename = ret.text
+		info.ret_typ = (p.scope.lookup_type(ret.text) or { return p.error(err) }).typ
 	}
 
 	return info
@@ -65,20 +65,18 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	}
 	mut params := []ast.Var{len: info.params.len}
 	for i, param in info.params {
-		typ := (p.scope.lookup_type(param.typename) or { return p.error(err) }).typ
 		params[i] = ast.Var{
 			scope: p.scope
 			pos: param.pos
-			sym: p.scope.register_var(name: param.name, pos: param.pos, typ: typ) or {
+			sym: p.scope.register_var(name: param.name, pos: param.pos, typ: param.typ) or {
 				return p.duplicated_error(param.name)
 			}
 		}
 	}
-	ret_type := (p.scope.lookup_type(info.ret_typename) or { return p.error(err) }).typ
 	outer_scope.register_var(
 		name: info.name.text
 		pos: info.name.pos
-		typ: outer_scope.lookup_or_register_fn_type(params.map(it.sym.typ), ret_type).typ
+		typ: outer_scope.lookup_or_register_fn_type(params.map(it.sym.typ), info.ret_typ).typ
 	) or { return p.duplicated_error(info.name.text) }
 
 	has_body := p.kind(0) == .l_brace
