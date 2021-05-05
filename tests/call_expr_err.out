@@ -1,0 +1,2 @@
+call_expr_err.ri 2,4: function `unknown_fn` is not defined
+call_expr_err.ri 4,4: `v` is not function (`unresolved`)

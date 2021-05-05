@@ -1,3 +1,5 @@
 fn f() {
   unknown_fn()
+  let v = 0
+  v()
 }
