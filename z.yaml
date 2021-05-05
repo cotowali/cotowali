@@ -1,4 +1,4 @@
-default: build
+default: run
 tasks:
   run: v run cmd/ric/main.v $@
   build: mkdir -p .bin && v cmd/ric/main.v -o .bin/ric
