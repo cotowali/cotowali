@@ -3,6 +3,7 @@ module parser
 import cotowari.ast
 import cotowari.source { Pos }
 import cotowari.token { Token }
+import cotowari.symbols { builtin_type }
 
 struct FnParamParsingInfo {
 mut:
@@ -74,9 +75,11 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		}
 	}
 	// TODO: type
-	outer_scope.register_var(name: info.name.text, pos: info.name.pos) or {
-		return p.duplicated_error(info.name.text)
-	}
+	outer_scope.register_var(
+		name: info.name.text
+		pos: info.name.pos
+		typ: builtin_type(.placeholder_fn)
+	) or { return p.duplicated_error(info.name.text) }
 
 	has_body := p.kind(0) == .l_brace
 	mut node := ast.FnDecl{
