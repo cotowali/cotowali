@@ -3,7 +3,7 @@ module parser
 import cotowari.ast
 import cotowari.source { Pos }
 import cotowari.token { Token }
-import cotowari.symbols { builtin_type }
+import cotowari.symbols
 
 struct FnParamParsingInfo {
 mut:
@@ -16,7 +16,7 @@ struct FnSignatureParsingInfo {
 	name Token
 mut:
 	params       []FnParamParsingInfo
-	ret_typename string
+	ret_typename string = 'void'
 }
 
 fn (mut p Parser) parse_fn_params() ?[]FnParamParsingInfo {
@@ -65,20 +65,20 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	}
 	mut params := []ast.Var{len: info.params.len}
 	for i, param in info.params {
+		typ := (p.scope.lookup_type(param.typename) or { return p.error(err) }).typ
 		params[i] = ast.Var{
 			scope: p.scope
 			pos: param.pos
-			// TODO: type
-			sym: p.scope.register_var(name: param.name, pos: param.pos) or {
+			sym: p.scope.register_var(name: param.name, pos: param.pos, typ: typ) or {
 				return p.duplicated_error(param.name)
 			}
 		}
 	}
-	// TODO: type
+	ret_type := (p.scope.lookup_type(info.ret_typename) or { return p.error(err) }).typ
 	outer_scope.register_var(
 		name: info.name.text
 		pos: info.name.pos
-		typ: builtin_type(.placeholder_fn)
+		typ: outer_scope.lookup_or_register_fn_type(params.map(it.sym.typ), ret_type).typ
 	) or { return p.duplicated_error(info.name.text) }
 
 	has_body := p.kind(0) == .l_brace
