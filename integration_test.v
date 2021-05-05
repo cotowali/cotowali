@@ -1,8 +1,6 @@
 import os
 
-const skip_list = [
-	'examples/hello.ri',
-]
+const skip_list = ['nothing']
 
 fn is_target_file(s string) bool {
 	for skip in skip_list {
