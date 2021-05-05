@@ -1,21 +1,21 @@
 module parser
 
-import cotowari.errors { Err }
+import cotowari.errors
 
-type ErrorValue = Err | errors.ErrorWithPos | string
+type ErrorValue = errors.Err | errors.ErrorWithPos | string
 
 fn (mut p Parser) error(v ErrorValue) IError {
 	tok := p.consume()
 	err := match v {
 		string {
-			Err{
+			errors.Err{
 				source: p.file.source
 				msg: v
 				pos: tok.pos
 			}
 		}
 		errors.ErrorWithPos {
-			Err{
+			errors.Err{
 				source: p.file.source
 				msg: v.msg
 				pos: v.pos
@@ -32,11 +32,4 @@ fn (mut p Parser) error(v ErrorValue) IError {
 
 fn (mut p Parser) duplicated_error(name string) IError {
 	return p.error('`$name` is duplicated')
-}
-
-fn error_node(err IError) &Err {
-	if err is errors.Err {
-		return err
-	}
-	panic(err)
 }
