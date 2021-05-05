@@ -1,1 +1,3 @@
 type_mismatch_err.ri 1,1: mismatch type: `int` (left), `string` (right)
+  > 1 + 'a'
+    ^^^^^^^
