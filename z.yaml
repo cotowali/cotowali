@@ -1,6 +1,7 @@
 default: run
 tasks:
   run: v run cmd/ric/main.v $@
+  fib: z run examples/fib.ri
   build: mkdir -p .bin && v cmd/ric/main.v -o .bin/ric
   build.c: v cmd/ric/main.v -o main.c
   symlink: ln -fs $(pwd)/.bin/ric /usr/local/bin/ric
