@@ -38,13 +38,12 @@ fn t(kind TokenKind, text string) Token {
 fn test_lexer() {
 	cr, lf := '\r', '\n'
 	crlf := cr + lf
-	test(' 🐈__ a ', [
+	test(' "🐈__" a ', [
 		// Pos{i, line, col, len, last_line, last_col}
-		Token{.unknown, '🐈__', Pos{1, 1, 2, 6, 1, 4}},
-		Token{.ident, 'a', Pos{8, 1, 6, 1, 1, 6}},
-		Token{.eof, '', Pos{10, 1, 8, 1, 1, 8}},
+		Token{.string_lit, '🐈__', Pos{1, 1, 2, 8, 1, 6}},
+		Token{.ident, 'a', Pos{10, 1, 8, 1, 1, 8}},
+		Token{.eof, '', Pos{12, 1, 10, 1, 1, 10}},
 	])
-
 	ktest('fn f(a, b){}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren, .l_brace,
 		.r_brace, .eof])
 	ktest('decl fn f()', [.key_decl, .key_fn, .ident, .l_paren, .r_paren])

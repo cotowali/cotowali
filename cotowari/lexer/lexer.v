@@ -126,7 +126,7 @@ fn (mut lex Lexer) read_newline() Token {
 
 fn (mut lex Lexer) read_string_lit(quote byte) Token {
 	lex.assert_by_match_byte(quote)
-	lex.skip()
+	lex.consume()
 	for lex.char()[0] != quote {
 		lex.consume()
 		if lex.is_eof() || lex.is_eol() {
@@ -134,9 +134,13 @@ fn (mut lex Lexer) read_string_lit(quote byte) Token {
 		}
 	}
 	lex.assert_by_match_byte(quote)
-	t := lex.new_token(.string_lit)
-	lex.skip()
-	return t
+	lex.consume()
+	text := lex.text()
+	return Token{
+		kind: .string_lit
+		pos: lex.pos_for_new_token()
+		text: text[1..text.len - 1]
+	}
 }
 
 fn (mut lex Lexer) read_unknown() Token {
