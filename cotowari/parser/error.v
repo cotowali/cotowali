@@ -1,12 +1,12 @@
 module parser
 
 import cotowari.errors
+import cotowari.token { Token }
 
 type ErrorValue = errors.Err | errors.ErrorWithPos | string
 
-fn (mut p Parser) error(v ErrorValue) IError {
-	tok := p.consume()
-	err := match v {
+fn (v ErrorValue) to_err(p &Parser, tok Token) errors.Err {
+	return match v {
 		string {
 			errors.Err{
 				source: p.file.source
@@ -26,6 +26,11 @@ fn (mut p Parser) error(v ErrorValue) IError {
 			v
 		}
 	}
+}
+
+fn (mut p Parser) error(v ErrorValue) IError {
+	tok := p.consume()
+	err := v.to_err(p, tok)
 	p.file.errors << err
 	return IError(err)
 }
