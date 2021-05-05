@@ -72,10 +72,7 @@ pub fn (s &Scope) lookup_var(name string) ?Var {
 }
 
 pub fn (mut s Scope) register_fn(name string, args []Type, ret Type) ?Var {
-	info := FunctionTypeInfo{args, ret}
-	typename := info.signature(s)
-	fn_type := s.lookup_or_register_type(name: typename, info: info).typ
-	return s.register_var(name: name, typ: fn_type)
+	return s.register_var(name: name, typ: s.lookup_or_register_fn_type(args, ret).typ)
 }
 
 fn (mut s Scope) must_register_fn(name string, args []Type, ret Type) Var {

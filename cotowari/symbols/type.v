@@ -165,3 +165,9 @@ pub fn (mut s Scope) lookup_or_register_type(ts TypeSymbol) TypeSymbol {
 	}
 	return s.lookup_type(ts.typ) or { s.register_type(ts) or { panic(err) } }
 }
+
+pub fn (mut s Scope) lookup_or_register_fn_type(args []Type, ret Type) TypeSymbol {
+	info := FunctionTypeInfo{args, ret}
+	typename := info.signature(s)
+	return s.lookup_or_register_type(name: typename, info: info)
+}
