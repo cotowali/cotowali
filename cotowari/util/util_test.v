@@ -18,3 +18,22 @@ fn test_escape() {
 	assert escape(bs, []) == bs + bs
 	assert escape('abc', ['a', 'b', 'd']) == '${bs}a${bs}bc'
 }
+
+struct Ref {
+mut:
+	ref &string = 0
+}
+
+fn (v Ref) opt() ?&string {
+	return nil_to_none(v.ref)
+}
+
+fn test_nil_to_none() {
+	mut v := Ref{}
+	if _ := v.opt() {
+		assert false
+	}
+	s := 'x'
+	v.ref = &s
+	assert v.opt() or { assert false } == &s
+}

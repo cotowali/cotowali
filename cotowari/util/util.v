@@ -17,3 +17,8 @@ pub fn escape(s string, targets []string) string {
 	}
 	return s2.replace_each(reps)
 }
+
+[inline]
+pub fn nil_to_none<T>(ref &T) ?&T {
+	return if isnil(ref) { none } else { ref }
+}
