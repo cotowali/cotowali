@@ -24,14 +24,17 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.PrefixExpr {
 			emit.prefix_expr(expr, opt)
 		}
-		ast.Literal {
+		ast.IntLiteral {
 			if opt.as_command {
 				emit.write('echo ')
 			}
-			match expr.kind {
-				.int { emit.write(expr.token.text) }
-				.string { emit.write("'$expr.token.text'") }
+			emit.write(expr.token.text)
+		}
+		ast.StringLiteral {
+			if opt.as_command {
+				emit.write('echo ')
 			}
+			emit.write("'$expr.token.text'")
 		}
 		ast.Var {
 			if opt.as_command {
@@ -85,9 +88,8 @@ fn (mut emit Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		.op_minus {
 			emit.expr(ast.InfixExpr{
 				scope: expr.scope
-				left: ast.Literal{
+				left: ast.IntLiteral{
 					scope: expr.scope
-					kind: .int
 					token: Token{
 						kind: .int_lit
 						text: '-1'

@@ -150,17 +150,15 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 		}
 		.int_lit {
 			p.consume()
-			return ast.Literal{
+			return ast.IntLiteral{
 				scope: p.scope
-				kind: .int
 				token: tok
 			}
 		}
 		.string_lit {
 			p.consume()
-			return ast.Literal{
+			return ast.StringLiteral{
 				scope: p.scope
-				kind: .string
 				token: tok
 			}
 		}

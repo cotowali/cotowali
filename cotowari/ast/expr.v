@@ -5,7 +5,8 @@ import cotowari.token { Token }
 import cotowari.symbols { Scope, Type, TypeSymbol, builtin_type }
 import cotowari.errors { unreachable }
 
-pub type Expr = CallFn | InfixExpr | Literal | Pipeline | PrefixExpr | Var
+pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline | PrefixExpr | StringLiteral |
+	Var
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
@@ -13,14 +14,7 @@ pub fn (expr Expr) pos() Pos {
 		InfixExpr { expr.left.pos().merge(expr.right.pos()) }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
 		PrefixExpr { expr.op.pos.merge(expr.expr.pos()) }
-		Literal { expr.token.pos }
-	}
-}
-
-fn (node Literal) typ() Type {
-	return match node.kind {
-		.string { builtin_type(.string) }
-		.int { builtin_type(.int) }
+		StringLiteral, IntLiteral { expr.token.pos }
 	}
 }
 
@@ -30,7 +24,8 @@ fn (e InfixExpr) typ() Type {
 
 pub fn (e Expr) typ() Type {
 	return match e {
-		Literal { e.typ() }
+		StringLiteral { builtin_type(.string) }
+		IntLiteral { builtin_type(.int) }
 		Pipeline { e.exprs.last().typ() }
 		PrefixExpr { e.expr.typ() }
 		InfixExpr { e.typ() }
@@ -64,15 +59,15 @@ pub:
 	right Expr
 }
 
-pub enum LiteralKind {
-	string
-	int
-}
-
-pub struct Literal {
+pub struct StringLiteral {
 pub:
 	scope &Scope
-	kind  LiteralKind
+	token Token
+}
+
+pub struct IntLiteral {
+pub:
+	scope &Scope
 	token Token
 }
 
