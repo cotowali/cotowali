@@ -1,6 +1,6 @@
 module symbols
 
-import cotowari.util { auto_id }
+import cotowari.util { auto_id, nil_to_none }
 
 pub struct Scope {
 pub:
@@ -78,11 +78,9 @@ pub fn (s &Scope) full_name() string {
 	}
 }
 
+[inline]
 pub fn (s &Scope) parent() ?&Scope {
-	if isnil(s.parent) {
-		return none
-	}
-	return s.parent
+	return nil_to_none(s.parent)
 }
 
 pub fn (s &Scope) children() []&Scope {
