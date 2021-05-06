@@ -19,7 +19,6 @@ pub struct PrettyFormatter {}
 
 pub fn (p PrettyFormatter) format(err Err) string {
 	s := err.source
-	println(s)
 	file := os.file_name(s.path)
 	pos := err.pos
 	// TODO: More pretty
