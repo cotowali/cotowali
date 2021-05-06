@@ -142,7 +142,7 @@ pub fn (s &Scope) must_lookup_type(key TypeOrName) TypeSymbol {
 
 pub fn (mut s Scope) lookup_or_register_type(ts TypeSymbol) TypeSymbol {
 	if ts.name.len > 0 {
-		return s.lookup_type(ts.name) or { s.register_type(ts) or { panic(err) } }
+		return s.lookup_type(ts.name) or { s.must_register_type(ts) }
 	}
-	return s.lookup_type(ts.typ) or { s.register_type(ts) or { panic(err) } }
+	return s.lookup_type(ts.typ) or { s.must_register_type(ts) }
 }
