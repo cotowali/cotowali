@@ -17,4 +17,4 @@ tasks:
     tasks:
       setup-v: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
       format: v fmt -verify .
-      test: z test
+      test: VFLAGS="-cc clang" z test
