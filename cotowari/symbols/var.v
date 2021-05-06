@@ -76,12 +76,12 @@ pub fn (s &Scope) lookup_var(name string) ?Var {
 	return none
 }
 
-pub fn (mut s Scope) register_fn(name string, args []Type, ret Type) ?Var {
-	return s.register_var(name: name, typ: s.lookup_or_register_fn_type(args, ret).typ)
+pub fn (mut s Scope) register_fn(name string, info FunctionTypeInfo) ?Var {
+	return s.register_var(name: name, typ: s.lookup_or_register_fn_type(info).typ)
 }
 
-fn (mut s Scope) must_register_fn(name string, args []Type, ret Type) Var {
-	return s.register_fn(name, args, ret) or { panic(unreachable) }
+fn (mut s Scope) must_register_fn(name string, info FunctionTypeInfo) Var {
+	return s.register_fn(name, info) or { panic(unreachable) }
 }
 
 fn (s &Scope) must_lookup_var(name string) Var {

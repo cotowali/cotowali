@@ -76,7 +76,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	outer_scope.register_var(
 		name: info.name.text
 		pos: info.name.pos
-		typ: outer_scope.lookup_or_register_fn_type(params.map(it.sym.typ), info.ret_typ).typ
+		typ: outer_scope.lookup_or_register_fn_type(args: params.map(it.sym.typ), ret: info.ret_typ).typ
 	) or { return p.duplicated_error(info.name.text, info.name.pos) }
 
 	has_body := p.kind(0) == .l_brace

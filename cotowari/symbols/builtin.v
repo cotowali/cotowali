@@ -48,5 +48,5 @@ pub fn (mut s Scope) register_builtin() {
 		s.must_register_type(typ)
 	}
 
-	s.must_register_fn('echo', [t(.any)], t(.string))
+	s.must_register_fn('echo', args: [t(.any)], ret: t(.string))
 }
