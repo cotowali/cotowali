@@ -24,3 +24,11 @@ pub fn (mut s Scope) lookup_or_register_fn_type(info FunctionTypeInfo) TypeSymbo
 	typename := info.signature(s)
 	return s.lookup_or_register_type(name: typename, info: info)
 }
+
+pub fn (mut s Scope) register_fn(name string, info FunctionTypeInfo) ?Var {
+	return s.register_var(name: name, typ: s.lookup_or_register_fn_type(info).typ)
+}
+
+fn (mut s Scope) must_register_fn(name string, info FunctionTypeInfo) Var {
+	return s.register_fn(name, info) or { panic(unreachable) }
+}
