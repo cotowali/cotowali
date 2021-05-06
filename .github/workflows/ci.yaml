@@ -27,3 +27,16 @@ jobs:
       - uses: actions/checkout@v2
       - run: z ci setup-v
       - run: z ci test
+  sanitize:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        fsanitize: [memory, address, undefined]
+    env:
+      ASAN_OPTIONS: "detect_leaks=0"
+      VFLAGS: "-cc clang -cflags '-fsanitize=${{ matrix.fsanitize }}'"
+    steps:
+      - uses: zakuro9715/setup-z@main
+      - uses: actions/checkout@v2
+      - run: z ci setup-v
+      - run: z ci test
