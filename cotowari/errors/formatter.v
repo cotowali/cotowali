@@ -22,7 +22,7 @@ pub fn (p PrettyFormatter) format(err Err) string {
 	file := os.file_name(s.path)
 	pos := err.pos
 	// TODO: More pretty
-	code := s.slice(pos.i, pos.i + pos.len)
+	code := s.slice(pos.i, pos.i + pos.len).clone()
 	underline_len := utf8_str_visible_length(code)
 	l1 := '$file $pos.line,$pos.col: $err.msg'
 	l2 := '  > ' + code
