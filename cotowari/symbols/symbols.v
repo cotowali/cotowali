@@ -1,14 +1,13 @@
 module symbols
 
 import cotowari.source { Pos }
+import cotowari.util { nil_to_none }
 
 type Symbol = TypeSymbol | Var
 
+[inline]
 pub fn (v Symbol) scope() ?&Scope {
-	if isnil(v.scope) {
-		return none
-	}
-	return v.scope
+	return nil_to_none(v.scope)
 }
 
 pub fn (v Symbol) full_name() string {
