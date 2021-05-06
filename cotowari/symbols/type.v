@@ -1,6 +1,5 @@
 module symbols
 
-import cotowari.errors { unreachable }
 import cotowari.util { auto_id }
 import cotowari.source { Pos }
 
@@ -12,11 +11,6 @@ pub struct PrimitiveTypeInfo {}
 
 pub struct PlaceholderTypeInfo {
 	is_function bool
-}
-
-pub struct FunctionTypeInfo {
-	args []Type
-	ret  Type = builtin_type(.void)
 }
 
 pub type TypeInfo = FunctionTypeInfo | PlaceholderTypeInfo | PrimitiveTypeInfo | UnknownTypeInfo
@@ -82,19 +76,6 @@ pub fn (t TypeSymbol) kind() TypeKind {
 
 pub fn (v TypeSymbol) str() string {
 	return 'TypeSymbol{ typ: $v.typ, name: $v.name, kind: $v.kind().str() }'
-}
-
-fn (f FunctionTypeInfo) signature(s &Scope) string {
-	args_str := f.args.map(s.must_lookup_type(it).name).join(', ')
-	return 'fn ($args_str) ${s.must_lookup_type(f.ret).name}'
-}
-
-pub fn (t TypeSymbol) fn_signature() ?string {
-	return if t.info is FunctionTypeInfo {
-		t.info.signature(t.scope() or { panic(unreachable) })
-	} else {
-		none
-	}
 }
 
 // -- register / lookup --
@@ -164,10 +145,4 @@ pub fn (mut s Scope) lookup_or_register_type(ts TypeSymbol) TypeSymbol {
 		return s.lookup_type(ts.name) or { s.register_type(ts) or { panic(err) } }
 	}
 	return s.lookup_type(ts.typ) or { s.register_type(ts) or { panic(err) } }
-}
-
-pub fn (mut s Scope) lookup_or_register_fn_type(args []Type, ret Type) TypeSymbol {
-	info := FunctionTypeInfo{args, ret}
-	typename := info.signature(s)
-	return s.lookup_or_register_type(name: typename, info: info)
 }
