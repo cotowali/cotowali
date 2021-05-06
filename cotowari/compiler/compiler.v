@@ -24,7 +24,7 @@ pub:
 
 fn check_compile_error(file ast.File) ? {
 	if file.errors.len > 0 {
-		return IError(CompileError{
+		return IError(&CompileError{
 			errors: file.errors
 			code: file.errors.len
 			msg: 'compile error: $file.errors.len errors'
