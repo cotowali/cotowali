@@ -2,6 +2,7 @@ module symbols
 
 import cotowari.util { auto_id }
 import cotowari.source { Pos }
+import cotowari.errors { unreachable }
 
 pub struct Var {
 mut:
@@ -76,13 +77,13 @@ pub fn (mut s Scope) register_fn(name string, args []Type, ret Type) ?Var {
 }
 
 fn (mut s Scope) must_register_fn(name string, args []Type, ret Type) Var {
-	return s.register_fn(name, args, ret) or { panic(err) }
+	return s.register_fn(name, args, ret) or { panic(unreachable) }
 }
 
 fn (s &Scope) must_lookup_var(name string) Var {
-	return s.lookup_var(name) or { panic(err) }
+	return s.lookup_var(name) or { panic(unreachable) }
 }
 
 pub fn (mut s Scope) lookup_or_register_var(v Var) Var {
-	return s.lookup_var(v.name) or { s.register_var(v) or { panic(err) } }
+	return s.lookup_var(v.name) or { s.register_var(v) or { panic(unreachable) } }
 }

@@ -2,6 +2,7 @@ module symbols
 
 import cotowari.util { auto_id }
 import cotowari.source { Pos }
+import cotowari.errors { unreachable }
 
 pub type Type = int
 
@@ -106,7 +107,7 @@ pub fn (mut s Scope) register_type(ts TypeSymbol) ?TypeSymbol {
 
 [inline]
 fn (mut s Scope) must_register_type(ts TypeSymbol) TypeSymbol {
-	return s.register_type(ts) or { panic(err) }
+	return s.register_type(ts) or { panic(unreachable) }
 }
 
 type TypeOrName = Type | string
@@ -137,7 +138,7 @@ pub fn (s &Scope) lookup_type(key TypeOrName) ?TypeSymbol {
 }
 
 pub fn (s &Scope) must_lookup_type(key TypeOrName) TypeSymbol {
-	return s.lookup_type(key) or { panic(err) }
+	return s.lookup_type(key) or { panic(unreachable) }
 }
 
 pub fn (mut s Scope) lookup_or_register_type(ts TypeSymbol) TypeSymbol {
