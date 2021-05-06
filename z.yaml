@@ -6,8 +6,8 @@ tasks:
   build: mkdir -p .bin && v cmd/ric/main.v -o .bin/ric
   build.c: v cmd/ric/main.v -o main.c
   symlink: ln -fs $(pwd)/.bin/ric /usr/local/bin/ric
-  test: v test .
-  test.fix: v -d fix test .
+  test: v test ${@:-.}
+  test.fix: v -d fix test ${@:-.}
   test.hello: z run examples/hello.ri
   fmt: v fmt -w .
   fmt.c: z fmt && z test && git add . && git commit -m 'fmt'
