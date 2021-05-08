@@ -2,9 +2,7 @@ fn fib(n int) {
   if n < 2 {
     return n
   }
-  let a = fib(n - 1)
-  let b = fib(n - 2)
-  return a + b
+  return fib(n - 1) + fib(n - 2)
 }
 fib(5)
 fib(6)
