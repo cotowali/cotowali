@@ -56,7 +56,8 @@ fn run() bool {
 	tests_dir := os.join_path(dir, 'tests')
 	sources := get_sources(examples_dir, tests_dir)
 	assert os.execute('v $ric_dir').exit_code == 0
-	mut results := []TestResult{}
+
+	mut ok := true
 	for path in sources {
 		out_path := path.trim_suffix(os.file_ext(path)) + '.out'
 		is_err_test := path.ends_with('_err.ri')
@@ -65,36 +66,29 @@ fn run() bool {
 		expected := os.read_file(out_path) or { '' }
 		output := cmd_result.output
 		exit_code := cmd_result.exit_code
-		mut ok := true
 
+		mut case_ok := true
 		$if fix ? {
 			if output != expected {
 				os.write_file(out_path, output) or { panic(err) }
 			}
-			ok = true
+			case_ok = true
 		} $else {
-			ok = output == expected && (if is_err_test { exit_code != 0 } else { exit_code == 0 })
+			case_ok = output == expected
+				&& (if is_err_test { exit_code != 0 } else { exit_code == 0 })
 		}
-		results << TestResult{
+		result := TestResult{
 			file: os.join_path(os.base(os.dir(path)), os.base(path))
 			is_err_test: is_err_test
-			ok: ok
+			ok: case_ok
 			exit_code: exit_code
 			output: output
 			expected: expected
 		}
-	}
-
-	mut ok := true
-	for result in results {
-		if result.ok {
-			continue
+		if !result.ok {
+			ok = false
+			result.print_fail_info()
 		}
-		ok = false
-		result.print_fail_info()
-	}
-	if ok {
-		println('OK')
 	}
 	return ok
 }
