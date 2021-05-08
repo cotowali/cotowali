@@ -1,4 +1,5 @@
 import os
+import term
 
 const skip_list = ['nothing']
 
@@ -29,7 +30,10 @@ mut:
 	expected    string [required]
 }
 
-fn (result TestResult) print_fail_info() {
+fn (result TestResult) str() string {
+	if result.ok {
+		return '${term.ok_message('[ OK ]')} $result.file'
+	}
 	indent := ' '.repeat(2)
 	format_output := fn (text string) string {
 		indent := ' '.repeat(4)
@@ -39,13 +43,14 @@ fn (result TestResult) print_fail_info() {
 			text.split_into_lines().map('$indent$it').join('\n')
 		}
 	}
-	println('[FAIL] $result.file')
-	println('${indent}exit_code: $result.exit_code')
-	println('${indent}output:')
-	println(format_output(result.output))
-	println('${indent}expected:')
-	println(format_output(result.expected))
-	println('')
+	return [
+		'${term.fail_message('[FAIL]')} $result.file',
+		'${indent}exit_code: $result.exit_code',
+		'${indent}output:',
+		format_output(result.output),
+		'${indent}expected:',
+		format_output(result.expected),
+	].map(it + '\n').join('')
 }
 
 fn run() bool {
@@ -87,8 +92,8 @@ fn run() bool {
 		}
 		if !result.ok {
 			ok = false
-			result.print_fail_info()
 		}
+		println(result)
 	}
 	return ok
 }
