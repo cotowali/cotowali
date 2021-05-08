@@ -7,8 +7,17 @@ tasks:
   build: mkdir -p .bin && v cmd/ric/main.v -o .bin/ric
   build.c: v cmd/ric/main.v -o main.c
   symlink: ln -fs $(pwd)/.bin/ric /usr/local/bin/ric
-  test: v test ${@:-.}
-  test.fix: v -d fix test ${@:-.}
+  test: |
+    if [ "$#" -eq "0" ]
+    then
+      z test.unit
+      z test.integration
+    else
+      z test.unit $@
+    fi
+  test.unit: v test ${@:-./cotowari}
+  test.integration: v run tests/run.v
+  test.fix: v -d fix run tests/run.v
   test.hello: z run examples/hello.ri
   fmt: v fmt -w .
   fmt.c: z fmt && z test && git add . && git commit -m 'fmt'

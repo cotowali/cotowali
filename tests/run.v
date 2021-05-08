@@ -48,13 +48,14 @@ fn (result TestResult) print_fail_info() {
 	println('')
 }
 
-fn test_run() ? {
-	dir := os.dir(@FILE)
+fn run() bool {
+	dir := os.real_path(@VMODROOT)
+	ric_dir := os.join_path(dir, 'cmd/ric')
+	bin := os.join_path(ric_dir, 'ric')
 	examples_dir := os.join_path(dir, 'examples')
 	tests_dir := os.join_path(dir, 'tests')
 	sources := get_sources(examples_dir, tests_dir)
-	assert os.execute('v cmd/ric').exit_code == 0
-	bin := './cmd/ric/ric'
+	assert os.execute('v $ric_dir').exit_code == 0
 	mut results := []TestResult{}
 	for path in sources {
 		out_path := path.trim_suffix(os.file_ext(path)) + '.out'
@@ -68,7 +69,7 @@ fn test_run() ? {
 
 		$if fix ? {
 			if output != expected {
-				os.write_file(out_path, output) ?
+				os.write_file(out_path, output) or { panic(err) }
 			}
 			ok = true
 		} $else {
@@ -92,7 +93,12 @@ fn test_run() ? {
 		ok = false
 		result.print_fail_info()
 	}
-	if !ok {
-		assert false
+	if ok {
+		println('OK')
 	}
+	return ok
+}
+
+fn main() {
+	exit(if run() { 0 } else { 1 })
 }
