@@ -33,4 +33,9 @@ fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 		c.error('`$name` is not function (`$ts.name`)', Expr(expr).pos())
 		return
 	}
+	params, args := fn_info.params, expr.args
+	if params.len != args.len {
+		c.error('expected $params.len arguments, but got $args.len', Expr(expr).pos())
+		return
+	}
 }
