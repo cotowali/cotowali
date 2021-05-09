@@ -8,6 +8,10 @@ pub:
 	ret    Type = builtin_type(.void)
 }
 
+pub fn (t TypeSymbol) fn_info() ?FunctionTypeInfo {
+	return if t.info is FunctionTypeInfo { t.info } else { none }
+}
+
 fn (f FunctionTypeInfo) signature(s &Scope) string {
 	params_str := f.params.map(s.must_lookup_type(it).name).join(', ')
 	return 'fn ($params_str) ${s.must_lookup_type(f.ret).name}'
