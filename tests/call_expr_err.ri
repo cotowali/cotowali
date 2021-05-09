@@ -1,5 +1,12 @@
-fn f() {
-  unknown_fn()
-  let v = 0
-  v()
+fn f(a int) {
+
 }
+
+unknown_fn()
+
+let v = 0
+v()
+
+f(0)
+f()
+f(0, 1)

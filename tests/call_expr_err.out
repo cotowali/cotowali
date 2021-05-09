@@ -1,6 +1,12 @@
-call_expr_err.ri 2,4: function `unknown_fn` is not defined
+call_expr_err.ri 5,2: function `unknown_fn` is not defined
   > unknown_fn()
     ^^^^^^^^^^^^
-call_expr_err.ri 4,4: `v` is not function (`unresolved`)
+call_expr_err.ri 8,2: `v` is not function (`unresolved`)
   > v()
     ^^^
+call_expr_err.ri 11,2: expected 1 arguments, but got 0
+  > f()
+    ^^^
+call_expr_err.ri 12,2: expected 1 arguments, but got 2
+  > f(0, 1)
+    ^^^^^^^
