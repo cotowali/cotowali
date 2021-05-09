@@ -4,13 +4,13 @@ import cotowari.errors { unreachable }
 
 pub struct FunctionTypeInfo {
 pub:
-	args []Type
-	ret  Type = builtin_type(.void)
+	params []Type
+	ret    Type = builtin_type(.void)
 }
 
 fn (f FunctionTypeInfo) signature(s &Scope) string {
-	args_str := f.args.map(s.must_lookup_type(it).name).join(', ')
-	return 'fn ($args_str) ${s.must_lookup_type(f.ret).name}'
+	params_str := f.params.map(s.must_lookup_type(it).name).join(', ')
+	return 'fn ($params_str) ${s.must_lookup_type(f.ret).name}'
 }
 
 pub fn (t TypeSymbol) fn_signature() ?string {
