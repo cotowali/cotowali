@@ -20,19 +20,74 @@ fn get_sources(dirs ...string) []string {
 	return res
 }
 
-struct TestResult {
-mut:
-	file        string [required]
-	is_err_test bool   [required]
-	ok          bool   [required]
-	exit_code   int    [required]
-	output      string [required]
-	expected    string [required]
+struct Ric {
+	source string [required]
+	bin    string [required]
 }
 
-fn (result TestResult) str() string {
-	if result.ok {
-		return '${term.ok_message('[ OK ]')} $result.file'
+enum RicCommand {
+	compile
+	run
+}
+
+fn (ric Ric) compile() os.Result {
+	return os.execute('v $ric.source -o $ric.bin')
+}
+
+fn (ric Ric) execute(c RicCommand, file string) os.Result {
+	return match c {
+		.compile { os.execute('$ric.bin $file') }
+		.run { os.execute('$ric.bin run $file') }
+	}
+}
+
+fn (ric Ric) new_test_case(path string) TestCase {
+	out_path := path.trim_suffix(os.file_ext(path)) + '.out'
+	return {
+		ric: ric
+		path: path
+		out_path: out_path
+		is_err_test: path.ends_with('_err.ri')
+		expected: os.read_file(out_path) or { '' }
+	}
+}
+
+struct TestCase {
+	ric Ric
+mut:
+	path        string [required]
+	out_path    string [required]
+	is_err_test bool   [required]
+	ok          bool
+
+	exit_code int
+	expected  string [required]
+	output    string
+}
+
+fn (mut t TestCase) run() {
+	result := if t.is_err_test {
+		t.ric.execute(.compile, t.path)
+	} else {
+		t.ric.execute(.run, t.path)
+	}
+	t.output = result.output
+	t.exit_code = result.exit_code
+	$if fix ? {
+		if output != t.expected {
+			os.write_file(t.out_path, output) or { panic(err) }
+		}
+		t.ok = true
+	} $else {
+		t.ok = t.output == t.expected
+			&& (if t.is_err_test { t.exit_code != 0 } else { t.exit_code == 0 })
+	}
+}
+
+fn (t TestCase) result() string {
+	file := os.join_path(os.base(os.dir(t.path)), os.base(t.path))
+	if t.ok {
+		return '${term.ok_message('[ OK ]')} $file'
 	}
 	indent := ' '.repeat(2)
 	format_output := fn (text string) string {
@@ -44,56 +99,35 @@ fn (result TestResult) str() string {
 		}
 	}
 	return [
-		'${term.fail_message('[FAIL]')} $result.file',
-		'${indent}exit_code: $result.exit_code',
+		'${term.fail_message('[FAIL]')} $file',
+		'${indent}exit_code: $t.exit_code',
 		'${indent}output:',
-		format_output(result.output),
+		format_output(t.output),
 		'${indent}expected:',
-		format_output(result.expected),
+		format_output(t.expected),
 	].map(it + '\n').join('')
 }
 
 fn run() bool {
 	dir := os.real_path(@VMODROOT)
 	ric_dir := os.join_path(dir, 'cmd/ric')
-	bin := os.join_path(ric_dir, 'ric')
 	examples_dir := os.join_path(dir, 'examples')
 	tests_dir := os.join_path(dir, 'tests')
 	sources := get_sources(examples_dir, tests_dir)
-	assert os.execute('v $ric_dir').exit_code == 0
+
+	ric := Ric{
+		source: ric_dir
+		bin: os.join_path(ric_dir, 'ric')
+	}
+
+	assert ric.compile().exit_code == 0
 
 	mut ok := true
 	for path in sources {
-		out_path := path.trim_suffix(os.file_ext(path)) + '.out'
-		is_err_test := path.ends_with('_err.ri')
-
-		cmd_result := os.execute(if is_err_test { '$bin $path' } else { '$bin run $path' })
-		expected := os.read_file(out_path) or { '' }
-		output := cmd_result.output
-		exit_code := cmd_result.exit_code
-
-		mut case_ok := true
-		$if fix ? {
-			if output != expected {
-				os.write_file(out_path, output) or { panic(err) }
-			}
-			case_ok = true
-		} $else {
-			case_ok = output == expected
-				&& (if is_err_test { exit_code != 0 } else { exit_code == 0 })
-		}
-		result := TestResult{
-			file: os.join_path(os.base(os.dir(path)), os.base(path))
-			is_err_test: is_err_test
-			ok: case_ok
-			exit_code: exit_code
-			output: output
-			expected: expected
-		}
-		if !result.ok {
-			ok = false
-		}
-		println(result)
+		mut t := ric.new_test_case(path)
+		t.run()
+		ok = ok && t.ok
+		println(t.result())
 	}
 	return ok
 }
