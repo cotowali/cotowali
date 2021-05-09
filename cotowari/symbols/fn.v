@@ -3,6 +3,7 @@ module symbols
 import cotowari.errors { unreachable }
 
 pub struct FunctionTypeInfo {
+pub:
 	args []Type
 	ret  Type = builtin_type(.void)
 }
