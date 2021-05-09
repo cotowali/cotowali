@@ -74,8 +74,8 @@ fn (mut t TestCase) run() {
 	t.output = result.output
 	t.exit_code = result.exit_code
 	$if fix ? {
-		if output != t.expected {
-			os.write_file(t.out_path, output) or { panic(err) }
+		if t.output != t.expected {
+			os.write_file(t.out_path, t.output) or { panic(err) }
 		}
 		t.ok = true
 	} $else {
