@@ -14,7 +14,8 @@ pub struct PlaceholderTypeInfo {
 	is_function bool
 }
 
-pub type TypeInfo = FunctionTypeInfo | PlaceholderTypeInfo | PrimitiveTypeInfo | UnknownTypeInfo
+pub type TypeInfo = ArrayTypeInfo | FunctionTypeInfo | PlaceholderTypeInfo | PrimitiveTypeInfo |
+	UnknownTypeInfo
 
 pub struct TypeSymbol {
 mut:
@@ -58,6 +59,7 @@ pub enum TypeKind {
 	unknown
 	primitive
 	func
+	array
 }
 
 // type kind
@@ -72,6 +74,7 @@ pub fn (t TypeSymbol) kind() TypeKind {
 		PlaceholderTypeInfo { tk(.placeholder) }
 		PrimitiveTypeInfo { tk(.primitive) }
 		FunctionTypeInfo { tk(.func) }
+		ArrayTypeInfo { tk(.array) }
 	}
 }
 
