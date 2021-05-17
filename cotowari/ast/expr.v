@@ -8,10 +8,14 @@ import cotowari.errors { unreachable }
 pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline | PrefixExpr | StringLiteral |
 	Var
 
+pub fn (e InfixExpr) pos() Pos {
+	return e.left.pos().merge(e.right.pos())
+}
+
 pub fn (expr Expr) pos() Pos {
 	return match expr {
 		CallFn, Var { expr.pos }
-		InfixExpr { expr.left.pos().merge(expr.right.pos()) }
+		InfixExpr { expr.pos() }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
 		PrefixExpr { expr.op.pos.merge(expr.expr.pos()) }
 		StringLiteral, IntLiteral { expr.token.pos }
