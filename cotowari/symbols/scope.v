@@ -2,6 +2,7 @@ module symbols
 
 import cotowari.util { auto_id, nil_to_none }
 
+[heap]
 pub struct Scope {
 pub:
 	id   u64

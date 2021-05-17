@@ -4,6 +4,7 @@ import cotowari.symbols { Scope }
 import cotowari.errors { Err }
 import cotowari.source { Source }
 
+[heap]
 pub struct File {
 pub:
 	source Source
