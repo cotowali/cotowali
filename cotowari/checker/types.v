@@ -13,8 +13,9 @@ struct TypeCheckingConfig {
 
 fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
 	if v.want.typ != v.got.typ {
-		c.error('mismatched types: `$v.want.name` ($v.want_label) and `$v.got.name` ($v.got_label)',
-			v.pos)
+		m1 := '`$v.want.name` ($v.want_label)'
+		m2 := '`$v.got.name` ($v.got_label)'
+		c.error('mismatched types: $m1 and $m2', v.pos)
 		return none
 	}
 	return
