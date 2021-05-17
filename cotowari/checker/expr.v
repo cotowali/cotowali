@@ -26,18 +26,22 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 
 fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 	name := expr.func.name()
+	pos := Expr(expr).pos()
+
 	func := expr.scope.lookup_var(name) or {
-		c.error('function `$name` is not defined', Expr(expr).pos())
+		c.error('function `$name` is not defined', pos)
 		return
 	}
+
 	ts := func.type_symbol()
 	fn_info := ts.fn_info() or {
-		c.error('`$name` is not function (`$ts.name`)', Expr(expr).pos())
+		c.error('`$name` is not function (`$ts.name`)', pos)
 		return
 	}
+
 	params, args := fn_info.params, expr.args
 	if params.len != args.len {
-		c.error('expected $params.len arguments, but got $args.len', Expr(expr).pos())
+		c.error('expected $params.len arguments, but got $args.len', pos)
 		return
 	}
 }
