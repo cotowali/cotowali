@@ -5,13 +5,13 @@ fn test_fn_signature() ? {
 	f1 := s.register_type(
 		name: 'f1'
 		info: FunctionTypeInfo{
-			args: [builtin_type(.int), builtin_type(.bool)]
+			params: [builtin_type(.int), builtin_type(.bool)]
 		}
 	) ?
 	f2 := s.register_type(
 		name: 'f2'
 		info: FunctionTypeInfo{
-			args: [builtin_type(.int), builtin_type(.bool)]
+			params: [builtin_type(.int), builtin_type(.bool)]
 			ret: builtin_type(.int)
 		}
 	) ?
