@@ -15,11 +15,13 @@ fn (mut c Checker) expr(expr Expr) {
 }
 
 fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
-	left_ts := expr.left.type_symbol()
-	right_ts := expr.right.type_symbol()
-	if left_ts.typ != right_ts.typ {
-		c.error('mismatch type: `$left_ts.name` (left), `$right_ts.name` (right)', Expr(expr).pos())
-	}
+	c.check_types(
+		want: expr.left.type_symbol()
+		want_label: 'left'
+		got: expr.right.type_symbol()
+		got_label: 'right'
+		pos: expr.pos()
+	) or { return }
 }
 
 fn (mut c Checker) call_expr(mut expr ast.CallFn) {
