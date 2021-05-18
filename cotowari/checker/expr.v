@@ -23,6 +23,7 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 		got: expr.right.type_symbol()
 		got_label: 'right'
 		pos: expr.pos()
+		synmetric: true
 	) or { return }
 }
 
