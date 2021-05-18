@@ -1,6 +1,8 @@
 module checker
 
 import cotowari.ast { Expr }
+import cotowari.source { Pos }
+import cotowari.symbols { FunctionTypeInfo, TypeSymbol }
 
 fn (mut c Checker) expr(expr Expr) {
 	match mut expr {
@@ -24,6 +26,14 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 	) or { return }
 }
 
+fn (mut c Checker) check_call_args(params []TypeSymbol, args []TypeSymbol, pos Pos) ? {
+	if params.len != args.len {
+		c.error('expected $params.len arguments, but got $args.len', pos)
+		return none
+	}
+	return
+}
+
 fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 	name := expr.func.name()
 	pos := Expr(expr).pos()
@@ -39,9 +49,7 @@ fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 		return
 	}
 
-	params, args := fn_info.params, expr.args
-	if params.len != args.len {
-		c.error('expected $params.len arguments, but got $args.len', pos)
-		return
-	}
+	params := fn_info.params.map(expr.scope.must_lookup_type(it))
+	args := expr.args.map(it.type_symbol())
+	c.check_call_args(params, args, pos) or { return }
 }
