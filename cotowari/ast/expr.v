@@ -39,7 +39,11 @@ pub fn (e Expr) typ() Type {
 }
 
 pub fn (e Expr) type_symbol() TypeSymbol {
-	return e.scope().lookup_type(e.typ()) or { panic(unreachable) }
+	return match e {
+		CallFn { e.func.sym.type_symbol() }
+		Var { e.sym.type_symbol() }
+		else { e.scope().must_lookup_type(e.typ()) }
+	}
 }
 
 pub fn (e Expr) scope() &Scope {
