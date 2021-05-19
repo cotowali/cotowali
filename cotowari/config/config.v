@@ -10,6 +10,7 @@ pub enum Backend {
 
 [heap]
 pub struct Config {
+pub mut:
 	backend Backend = .sh
 }
 
