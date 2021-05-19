@@ -131,6 +131,10 @@ fn run(paths []string) bool {
 }
 
 fn main() {
+	if ['--help', '-h', 'help'].any(it in os.args) {
+		println('Usage: v run tests/run.v [test.ri|tests]...')
+		return
+	}
 	paths := if os.args.len > 1 {
 		os.args[1..]
 	} else {
