@@ -1,7 +1,5 @@
 module symbols
 
-import cotowari.errors
-
 pub struct ArrayTypeInfo {
 	elem Type
 }

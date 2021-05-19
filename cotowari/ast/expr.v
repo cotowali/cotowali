@@ -3,7 +3,6 @@ module ast
 import cotowari.source { Pos }
 import cotowari.token { Token }
 import cotowari.symbols { Scope, Type, TypeSymbol, builtin_type }
-import cotowari.errors
 
 pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline | PrefixExpr | StringLiteral |
 	Var
