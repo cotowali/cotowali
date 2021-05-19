@@ -14,6 +14,7 @@ const backend_flag = Flag{
 	name: 'backend'
 	abbrev: 'b'
 	default_value: ['sh']
+	global: true
 }
 
 fn new_source_to_run(args []string) ?Source {
