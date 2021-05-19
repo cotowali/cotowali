@@ -28,6 +28,11 @@ If filename has suffix, `_err.ri`, it is error test.
 `tests/testname_err.ri`: source code
 `tests/testname_err.out`: error output
 
+### TODO Test
+
+If filename has suffix `.todo.ri`, it is todo test. todo test will be executed but it does not checked.
+If output matches with `.todo.out`, `.todo` will be removed by using fix mode.
+
 ### Fix mode
 
 `z test fix` will be update output automatically. You should check that updated output is correct before commit it.
