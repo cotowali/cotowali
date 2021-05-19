@@ -12,7 +12,7 @@ fn is_target_file(s string) bool {
 	return s.ends_with('.ri')
 }
 
-fn get_sources(dirs ...string) []string {
+fn get_sources(dirs []string) []string {
 	mut res := []string{}
 	for dir in dirs {
 		res << (os.ls(dir) or { panic(err) }).map(os.join_path(dir, it)).filter(is_target_file)
@@ -108,12 +108,10 @@ fn (t TestCase) result() string {
 	].map(it + '\n').join('')
 }
 
-fn run() bool {
+fn run(paths []string) bool {
 	dir := os.real_path(@VMODROOT)
 	ric_dir := os.join_path(dir, 'cmd/ric')
-	examples_dir := os.join_path(dir, 'examples')
-	tests_dir := os.join_path(dir, 'tests')
-	sources := get_sources(examples_dir, tests_dir)
+	sources := get_sources(paths)
 
 	ric := Ric{
 		source: ric_dir
@@ -133,5 +131,10 @@ fn run() bool {
 }
 
 fn main() {
-	exit(if run() { 0 } else { 1 })
+	paths := if os.args.len > 1 {
+		os.args[1..]
+	} else {
+		['examples', 'tests'].map(os.join_path(@VMODROOT, it))
+	}
+	exit(if run(paths) { 0 } else { 1 })
 }
