@@ -25,7 +25,7 @@ fn (f TestPath) trim_suffixes(s ...FileSuffix) TestPath {
 	if s.len == 0 {
 		return f
 	}
-	return f.trim_suffixes(...s[..s.len - 1]).trim_suffix(suffix(s.last()))
+	return TestPath(f.trim_suffix(suffix(s.last()))).trim_suffixes(...s[..s.len - 1])
 }
 
 fn is_err_test_file(f string) bool {
