@@ -17,3 +17,13 @@ pub mut:
 pub fn new_config() &Config {
 	return {}
 }
+
+pub fn backend_from_str(s string) ?Backend {
+	match s {
+		'sh' { return .sh }
+		'dash' { return .dash }
+		'bash' { return .bash }
+		'zsh' { return .zsh }
+		else { return error('unknown backend `$s`') }
+	}
+}
