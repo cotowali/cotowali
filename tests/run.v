@@ -91,13 +91,19 @@ fn (ric Ric) new_test_case(path string) TestCase {
 	}
 }
 
+enum TestResult {
+	ok
+	failed
+	fixed
+}
+
 struct TestCase {
 	ric Ric
 mut:
-	path        string [required]
-	out_path    string [required]
-	is_err_test bool   [required]
-	ok          bool
+	path        string     [required]
+	out_path    string     [required]
+	is_err_test bool       [required]
+	result      TestResult
 
 	exit_code int
 	expected  string [required]
@@ -112,39 +118,51 @@ fn (mut t TestCase) run() {
 	}
 	t.output = result.output
 	t.exit_code = result.exit_code
+
+	correct_exit_code := if t.is_err_test { t.exit_code != 0 } else { t.exit_code == 0 }
+	t.result = if t.output == t.expected && correct_exit_code {
+		TestResult.ok
+	} else {
+		TestResult.failed
+	}
 	$if fix ? {
 		if t.output != t.expected {
 			os.write_file(t.out_path, t.output) or { panic(err) }
+			t.result = .fixed
 		}
-		t.ok = true
-	} $else {
-		t.ok = t.output == t.expected
-			&& (if t.is_err_test { t.exit_code != 0 } else { t.exit_code == 0 })
 	}
 }
 
 fn (t TestCase) result() string {
 	file := os.join_path(os.base(os.dir(t.path)), os.base(t.path))
-	if t.ok {
-		return '${term.ok_message('[ OK ]')} $file'
-	}
-	indent := ' '.repeat(2)
-	format_output := fn (text string) string {
-		indent := ' '.repeat(4)
-		return if text.len == 0 {
-			'${indent}__EMPTY__'
-		} else {
-			text.split_into_lines().map('$indent$it').join('\n')
+	return match t.result {
+		.ok {
+			'${term.ok_message('[ OK ]')} $file'
+		}
+		.fixed {
+			'${term.ok_message('[ OK ]')} $file (FIXED)'
+		}
+		.failed {
+			indent := ' '.repeat(2)
+			format_output := fn (text string) string {
+				indent := ' '.repeat(4)
+				return if text.len == 0 {
+					'${indent}__EMPTY__'
+				} else {
+					text.split_into_lines().map('$indent$it').join('\n')
+				}
+			}
+
+			[
+				'${term.fail_message('[FAIL]')} $file',
+				'${indent}exit_code: $t.exit_code',
+				'${indent}output:',
+				format_output(t.output),
+				'${indent}expected:',
+				format_output(t.expected),
+			].map(it + '\n').join('')
 		}
 	}
-	return [
-		'${term.fail_message('[FAIL]')} $file',
-		'${indent}exit_code: $t.exit_code',
-		'${indent}output:',
-		format_output(t.output),
-		'${indent}expected:',
-		format_output(t.expected),
-	].map(it + '\n').join('')
 }
 
 fn run(paths []string) bool {
@@ -163,7 +181,7 @@ fn run(paths []string) bool {
 	for path in sources {
 		mut t := ric.new_test_case(path)
 		t.run()
-		ok = ok && t.ok
+		ok = ok && t.result != .failed
 		println(t.result())
 	}
 	return ok
