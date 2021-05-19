@@ -1,8 +1,39 @@
 import os
 import term
 
-fn is_err_test_file(s string) bool {
-	return s.ends_with('_err.ri')
+enum FileSuffix {
+	ri
+	err
+	out
+}
+
+type TestPath = string
+
+fn suffix(s FileSuffix) string {
+	return match s {
+		.ri { '.ri' }
+		.err { '_err' }
+		.out { '.out' }
+	}
+}
+
+fn (f TestPath) has_suffix(s FileSuffix) bool {
+	return f.ends_with(suffix(s))
+}
+
+fn (f TestPath) trim_suffixes(s ...FileSuffix) TestPath {
+	if s.len == 0 {
+		return f
+	}
+	return f.trim_suffixes(...s[..s.len - 1]).trim_suffix(suffix(s.last()))
+}
+
+fn is_err_test_file(f string) bool {
+	return TestPath(f).trim_suffixes(.ri).has_suffix(.err)
+}
+
+fn out_path(f string) string {
+	return TestPath(f).trim_suffixes(.ri) + suffix(.out)
 }
 
 const skip_list = ['nothing']
@@ -13,7 +44,7 @@ fn is_target_file(s string) bool {
 			return false
 		}
 	}
-	return s.ends_with('.ri')
+	return TestPath(s).has_suffix(.ri)
 }
 
 fn get_sources(paths []string) []string {
@@ -50,13 +81,13 @@ fn (ric Ric) execute(c RicCommand, file string) os.Result {
 }
 
 fn (ric Ric) new_test_case(path string) TestCase {
-	out_path := path.trim_suffix(os.file_ext(path)) + '.out'
+	out := out_path(path)
 	return {
 		ric: ric
 		path: path
-		out_path: out_path
+		out_path: out
 		is_err_test: is_err_test_file(path)
-		expected: os.read_file(out_path) or { '' }
+		expected: os.read_file(out) or { '' }
 	}
 }
 
