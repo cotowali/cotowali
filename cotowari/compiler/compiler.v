@@ -49,6 +49,9 @@ pub fn (c &Compiler) compile() ?string {
 }
 
 pub fn (c &Compiler) compile_to(w io.Writer) ? {
+	if c.config.backend != .sh {
+		return error('$c.config.backend backend is not yet implemented.')
+	}
 	mut p := new_parser(new_lexer(c.source, c.config))
 	mut f := p.parse()
 	check_compile_error(f) ?
