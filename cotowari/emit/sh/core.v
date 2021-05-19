@@ -1,4 +1,4 @@
-module emit
+module sh
 
 import io
 import cotowari.emit.code

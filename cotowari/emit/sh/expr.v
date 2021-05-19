@@ -1,4 +1,4 @@
-module emit
+module sh
 
 import cotowari.ast { Pipeline }
 import cotowari.token { Token }

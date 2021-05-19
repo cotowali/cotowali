@@ -1,4 +1,4 @@
-module emit
+module sh
 
 import cotowari.ast
 
@@ -15,8 +15,8 @@ fn (mut emit Emitter) file(f &ast.File) {
 
 fn (mut emit Emitter) builtin() {
 	builtins := [
-		$embed_file('../../builtin/builtin.sh'),
-		$embed_file('../../builtin/array.sh'),
+		$embed_file('../../../builtin/builtin.sh'),
+		$embed_file('../../../builtin/array.sh'),
 	]
 	for f in builtins {
 		emit.writeln(f.to_string())

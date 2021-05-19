@@ -6,7 +6,7 @@ import cotowari.source { Source }
 import cotowari.lexer { new_lexer }
 import cotowari.parser { new_parser }
 import cotowari.checker { new_checker }
-import cotowari.emit { new_emitter }
+import cotowari.emit.sh
 import cotowari.ast
 import cotowari.errors { Err }
 
@@ -54,6 +54,6 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	checker.check_file(mut f)
 	check_compile_error(f) ?
 
-	mut e := new_emitter(w)
+	mut e := sh.new_emitter(w)
 	e.emit(f)
 }
