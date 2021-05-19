@@ -70,7 +70,7 @@ enum RicCommand {
 }
 
 fn (ric Ric) compile() os.Result {
-	return os.execute('v $ric.source -o $ric.bin')
+	return os.execute('v -cg $ric.source -o $ric.bin')
 }
 
 fn (ric Ric) execute(c RicCommand, file string) os.Result {
