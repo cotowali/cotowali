@@ -1,6 +1,10 @@
 import os
 import term
 
+fn is_err_test_file(s string) bool {
+	return s.ends_with('_err.ri')
+}
+
 const skip_list = ['nothing']
 
 fn is_target_file(s string) bool {
@@ -51,7 +55,7 @@ fn (ric Ric) new_test_case(path string) TestCase {
 		ric: ric
 		path: path
 		out_path: out_path
-		is_err_test: path.ends_with('_err.ri')
+		is_err_test: is_err_test_file(path)
 		expected: os.read_file(out_path) or { '' }
 	}
 }
