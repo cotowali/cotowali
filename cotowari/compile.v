@@ -47,5 +47,5 @@ pub fn format_error(err IError, f errors.Formatter) string {
 		}
 		return sb.str()
 	}
-	return err.msg
+	return err.msg + '\n'
 }
