@@ -1,43 +1,39 @@
 module emit
 
 import io
-import cotowari.util { must_write }
+import cotowari.emit.code
 import cotowari.ast { File }
 
 pub struct Emitter {
 mut:
-	indent    int
-	newline   bool  = true
 	cur_file  &File = 0
 	inside_fn bool
-pub:
-	out io.Writer
+	w         code.Writer
 }
 
 [inline]
 pub fn new_emitter(out io.Writer) Emitter {
 	return Emitter{
-		out: out
+		w: code.new_writer(out)
 	}
 }
 
-pub fn (mut emit Emitter) write(s string) {
-	$if !prod {
-		if s == '' {
-			panic('writing empty')
-		}
-	}
-	if emit.newline {
-		emit.write_indent()
-	}
-	must_write(emit.out, s)
-	emit.newline = s[s.len - 1] == `\n`
+[inline]
+fn (mut e Emitter) writeln(s string) {
+	e.w.writeln(s)
 }
 
-pub fn (mut emit Emitter) writeln(s string) {
-	emit.write(s + '\n')
+[inline]
+fn (mut e Emitter) write(s string) {
+	e.w.write(s)
 }
 
-pub fn (mut emit Emitter) write_indent() {
-	must_write(emit.out, '  '.repeat(emit.indent))
+[inline]
+fn (mut e Emitter) indent() {
+	e.w.indent()
+}
+
+[inline]
+fn (mut e Emitter) unindent() {
+	e.w.unindent()
 }

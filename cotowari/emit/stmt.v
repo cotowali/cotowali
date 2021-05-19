@@ -51,10 +51,10 @@ fn (mut emit Emitter) assert_stmt(stmt ast.AssertStmt) {
 	emit.write('if falsy ')
 	emit.expr(stmt.expr, as_command: false, writeln: true)
 	emit.writeln('then')
-	emit.indent++
+	emit.indent()
 	emit.writeln("echo 'LINE $stmt.key_pos.line: assertion failed' >&2")
 	emit.writeln('exit 1')
-	emit.indent--
+	emit.unindent()
 	emit.writeln('fi')
 }
 
@@ -73,9 +73,9 @@ fn (mut emit Emitter) if_stmt(stmt ast.IfStmt) {
 			emit.expr(branch.cond, as_command: false, writeln: true)
 			emit.writeln('then')
 		}
-		emit.indent++
+		emit.indent()
 		emit.block(branch.body)
-		emit.indent--
+		emit.unindent()
 	}
 	emit.writeln('fi')
 }
@@ -84,9 +84,9 @@ fn (mut emit Emitter) for_in_stmt(stmt ast.ForInStmt) {
 	emit.write('for $stmt.val.out_name() in ')
 	emit.expr(stmt.expr, writeln: true)
 	emit.writeln('do')
-	emit.indent++
+	emit.indent()
 	emit.block(stmt.body)
-	emit.indent--
+	emit.unindent()
 	emit.writeln('done')
 }
 
@@ -106,12 +106,12 @@ fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
 	}
 
 	emit.writeln('${node.name}() {')
-	emit.indent++
+	emit.indent()
 	for i, param in node.params {
 		emit.writeln('$param.out_name()=\$${i + 1}')
 	}
 	emit.block(node.body)
-	emit.indent--
+	emit.unindent()
 	emit.writeln('}')
 }
 
