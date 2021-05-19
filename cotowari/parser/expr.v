@@ -38,19 +38,22 @@ struct InfixExprOpt {
 }
 
 fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.Expr {
-	left := p.parse_expr(opt.operand) ?
-	op := p.token(0)
-	if op.kind !in op_kinds {
-		return left
+	mut expr := p.parse_expr(opt.operand) ?
+	for {
+		op := p.token(0)
+		if op.kind !in op_kinds {
+			break
+		}
+		p.consume_with_assert(...op_kinds)
+		right := p.parse_expr(opt.operand) ?
+		expr = ast.InfixExpr {
+			scope: p.scope
+			op: op
+			left: expr
+			right: right
+		}
 	}
-	p.consume_with_assert(...op_kinds)
-	right := p.parse_infix_expr(op_kinds, opt) ?
-	return ast.InfixExpr{
-		scope: p.scope
-		op: op
-		left: left
-		right: right
-	}
+	return expr
 }
 
 fn (mut p Parser) parse_prefix_expr() ?ast.Expr {
