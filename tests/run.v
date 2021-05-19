@@ -12,10 +12,14 @@ fn is_target_file(s string) bool {
 	return s.ends_with('.ri')
 }
 
-fn get_sources(dirs []string) []string {
+fn get_sources(paths []string) []string {
 	mut res := []string{}
-	for dir in dirs {
-		res << (os.ls(dir) or { panic(err) }).map(os.join_path(dir, it)).filter(is_target_file)
+	for path in paths {
+		if os.is_dir(path) {
+			res << (os.ls(path) or { panic(err) }).map(os.join_path(path, it)).filter(is_target_file)
+		} else if is_target_file(path) {
+			res << path
+		}
 	}
 	return res
 }
