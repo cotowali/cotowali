@@ -16,7 +16,7 @@ tasks:
       z test.unit $@
     fi
   test.unit: v test ${@:-./cotowari}
-  test.integration: v run tests/run.v
+  test.integration: v run tests/run.v $@
   test.fix: v -d fix run tests/run.v
   test.hello: z run examples/hello.ri
   fmt: v fmt -w .
