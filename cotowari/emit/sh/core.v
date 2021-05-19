@@ -1,6 +1,7 @@
 module sh
 
 import io
+import cotowari.config { Config }
 import cotowari.emit.code
 import cotowari.ast { File }
 
@@ -12,9 +13,9 @@ mut:
 }
 
 [inline]
-pub fn new_emitter(out io.Writer) Emitter {
+pub fn new_emitter(out io.Writer, config &Config) Emitter {
 	return Emitter{
-		w: code.new_writer(out)
+		w: code.new_writer(out, config)
 	}
 }
 

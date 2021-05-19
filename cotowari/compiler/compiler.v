@@ -2,6 +2,7 @@ module compiler
 
 import io
 import strings
+import cotowari.config { Config }
 import cotowari.source { Source }
 import cotowari.lexer { new_lexer }
 import cotowari.parser { new_parser }
@@ -11,6 +12,7 @@ import cotowari.ast
 import cotowari.errors { Err }
 
 pub struct Compiler {
+	config &Config
 mut:
 	source Source
 }
@@ -33,9 +35,10 @@ fn check_compile_error(file ast.File) ? {
 }
 
 [inline]
-pub fn new_compiler(source Source) Compiler {
+pub fn new_compiler(source Source, config &Config) Compiler {
 	return Compiler{
 		source: source
+		config: config
 	}
 }
 
@@ -46,7 +49,7 @@ pub fn (c &Compiler) compile() ?string {
 }
 
 pub fn (c &Compiler) compile_to(w io.Writer) ? {
-	mut p := new_parser(new_lexer(c.source))
+	mut p := new_parser(new_lexer(c.source, c.config))
 	mut f := p.parse()
 	check_compile_error(f) ?
 
@@ -54,6 +57,6 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	checker.check_file(mut f)
 	check_compile_error(f) ?
 
-	mut e := sh.new_emitter(w)
+	mut e := sh.new_emitter(w, c.config)
 	e.emit(f)
 }

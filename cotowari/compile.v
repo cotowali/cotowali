@@ -4,22 +4,23 @@ import os
 import io
 import strings
 import rand { ulid }
+import cotowari.config { Config }
 import cotowari.source { Source }
 import cotowari.compiler { new_compiler }
 import cotowari.errors
 
-pub fn compile(s Source) ?string {
-	c := new_compiler(s)
+pub fn compile(s Source, config &Config) ?string {
+	c := new_compiler(s, config)
 	return c.compile()
 }
 
-pub fn compile_to(w io.Writer, s Source) ? {
-	c := new_compiler(s)
+pub fn compile_to(w io.Writer, s Source, config &Config) ? {
+	c := new_compiler(s, config)
 	return c.compile_to(w)
 }
 
-fn compile_to_temp_file(s Source) ?string {
-	c := new_compiler(s)
+fn compile_to_temp_file(s Source, config &Config) ?string {
+	c := new_compiler(s, config)
 	temp_path := os.join_path(os.temp_dir(), '${os.file_name(s.path)}_${ulid()}.sh')
 	mut f := os.create(temp_path) or { panic(err) }
 	c.compile_to(f) ?
@@ -29,8 +30,8 @@ fn compile_to_temp_file(s Source) ?string {
 	return temp_path
 }
 
-pub fn run(s Source) ?int {
-	temp_file := compile_to_temp_file(s) ?
+pub fn run(s Source, config &Config) ?int {
+	temp_file := compile_to_temp_file(s, config) ?
 	defer {
 		os.rm(temp_file) or { panic(err) }
 	}

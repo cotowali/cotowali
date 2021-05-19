@@ -4,6 +4,7 @@ import os
 import cli { Command }
 import v.vmod
 import cotowari { compile, format_error }
+import cotowari.config { new_config }
 import cotowari.source { Source }
 import cotowari.errors
 import cmd.tools
@@ -28,7 +29,8 @@ fn execute_run(cmd Command) ? {
 		eprintln(err)
 		exit(1)
 	}
-	cotowari.run(s) or {
+	config := new_config()
+	cotowari.run(s, config) or {
 		eprintln(err)
 		exit(1)
 	}
@@ -43,7 +45,8 @@ fn execute_compile(cmd Command) ? {
 		exit(1)
 	}
 	s := source.read_file(cmd.args[0]) ?
-	out := compile(s) or {
+	config := new_config()
+	out := compile(s, config) or {
 		eprint(format_error(err, errors.PrettyFormatter{}))
 		exit(1)
 	}

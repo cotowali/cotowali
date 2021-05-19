@@ -2,20 +2,23 @@ module lexer
 
 import cotowari.source { Char, Pos, Source, pos }
 import cotowari.token { Token, TokenKind }
+import cotowari.config { Config }
 import cotowari.util { min }
 
 pub struct Lexer {
 pub:
 	source Source
+	config &Config
 mut:
 	prev_char Char
 	pos       Pos
 	closed    bool // for iter
 }
 
-pub fn new_lexer(source Source) &Lexer {
+pub fn new_lexer(source Source, config &Config) &Lexer {
 	return &Lexer{
 		source: source
+		config: config
 	}
 }
 

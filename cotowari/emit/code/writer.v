@@ -2,8 +2,10 @@ module code
 
 import io
 import cotowari.util { must_write }
+import cotowari.config { Config }
 
 pub struct Writer {
+	config &Config
 mut:
 	indent  int
 	newline bool = true
@@ -12,9 +14,10 @@ pub:
 }
 
 [inline]
-pub fn new_writer(out io.Writer) Writer {
+pub fn new_writer(out io.Writer, config &Config) Writer {
 	return Writer{
 		out: out
+		config: config
 	}
 }
 

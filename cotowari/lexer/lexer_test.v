@@ -1,10 +1,12 @@
 module lexer
 
+import cotowari.config { new_config }
 import cotowari.token { Token, TokenKind }
 import cotowari.source { Pos, none_pos }
 
 fn test(code string, tokens []Token) {
-	lexer := new_lexer(path: '', code: code)
+	config := new_config()
+	lexer := new_lexer({ path: '', code: code }, config)
 	mut i := 0
 	for t1 in lexer {
 		if !(i < tokens.len) {
@@ -18,7 +20,8 @@ fn test(code string, tokens []Token) {
 }
 
 fn ktest(code string, kinds []TokenKind) {
-	lexer := new_lexer(path: '', code: code)
+	config := new_config()
+	lexer := new_lexer({ path: '', code: code }, config)
 	mut i := 0
 	for t1 in lexer {
 		if !(i < kinds.len) {

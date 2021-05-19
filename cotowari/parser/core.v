@@ -2,10 +2,13 @@ module parser
 
 import cotowari.lexer { Lexer }
 import cotowari.token { Token, TokenKind, TokenKindClass }
+import cotowari.config { Config }
 import cotowari.ast
 import cotowari.symbols { Scope, new_global_scope }
 
 pub struct Parser {
+pub:
+	config &Config
 mut:
 	count       int // counter to avoid some duplication (tmp name, etc...)
 	brace_depth int
@@ -117,6 +120,7 @@ fn (mut p Parser) consume_with_assert(kinds ...TokenKind) Token {
 pub fn new_parser(lexer Lexer) Parser {
 	mut p := Parser{
 		lexer: lexer
+		config: lexer.config
 		buf: []Token{len: 3}
 		scope: new_global_scope()
 	}
