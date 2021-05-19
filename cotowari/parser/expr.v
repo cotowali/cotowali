@@ -46,7 +46,7 @@ fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.
 		}
 		p.consume_with_assert(...op_kinds)
 		right := p.parse_expr(opt.operand) ?
-		expr = ast.InfixExpr {
+		expr = ast.InfixExpr{
 			scope: p.scope
 			op: op
 			left: expr

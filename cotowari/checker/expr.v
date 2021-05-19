@@ -50,9 +50,7 @@ fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 	for i, arg in args {
 		arg_ts := arg.type_symbol()
 		param_ts := expr.scope.must_lookup_type(params[i])
-		c.check_types(want: param_ts, got: arg_ts, pos: arg.pos()) or {
-			call_args_types_ok = false
-		}
+		c.check_types(want: param_ts, got: arg_ts, pos: arg.pos()) or { call_args_types_ok = false }
 	}
 	if !call_args_types_ok {
 		return

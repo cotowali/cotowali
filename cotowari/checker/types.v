@@ -9,7 +9,7 @@ struct TypeCheckingConfig {
 	got        TypeSymbol [required]
 	got_label  string = 'found'
 	pos        Pos        [required]
-	synmetric bool
+	synmetric  bool
 }
 
 fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
