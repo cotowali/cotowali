@@ -4,6 +4,7 @@ import term
 enum FileSuffix {
 	ri
 	err
+	todo
 	out
 }
 
@@ -13,6 +14,7 @@ fn suffix(s FileSuffix) string {
 	return match s {
 		.ri { '.ri' }
 		.err { '_err' }
+		.todo { '.todo' }
 		.out { '.out' }
 	}
 }
@@ -29,7 +31,11 @@ fn (f TestPath) trim_suffixes(s ...FileSuffix) TestPath {
 }
 
 fn is_err_test_file(f string) bool {
-	return TestPath(f).trim_suffixes(.ri).has_suffix(.err)
+	return TestPath(f).trim_suffixes(.todo, .ri).has_suffix(.err)
+}
+
+fn is_todo_test_file(f string) bool {
+	return TestPath(f).trim_suffixes(.ri).has_suffix(.todo)
 }
 
 fn out_path(f string) string {
@@ -87,6 +93,7 @@ fn (ric Ric) new_test_case(path string) TestCase {
 		path: path
 		out_path: out
 		is_err_test: is_err_test_file(path)
+		is_todo_test: is_todo_test_file(path)
 		expected: os.read_file(out) or { '' }
 	}
 }
@@ -95,19 +102,25 @@ enum TestResult {
 	ok
 	failed
 	fixed
+	todo
 }
 
 struct TestCase {
 	ric Ric
 mut:
-	path        string     [required]
-	out_path    string     [required]
-	is_err_test bool       [required]
-	result      TestResult
+	path         string     [required]
+	out_path     string     [required]
+	is_err_test  bool       [required]
+	is_todo_test bool       [required]
+	result       TestResult
 
 	exit_code int
 	expected  string [required]
 	output    string
+}
+
+fn fix_todo(f string, s FileSuffix) {
+	os.mv(f, TestPath(f).trim_suffixes(.todo, s) + suffix(s)) or { panic(err) }
 }
 
 fn (mut t TestCase) run() {
@@ -119,14 +132,24 @@ fn (mut t TestCase) run() {
 	t.output = result.output
 	t.exit_code = result.exit_code
 
-	correct_exit_code := if t.is_err_test { t.exit_code != 0 } else { t.exit_code == 0 }
-	t.result = if t.output == t.expected && correct_exit_code {
-		TestResult.ok
+	if t.is_todo_test {
+		t.result = .todo
 	} else {
-		TestResult.failed
+		correct_exit_code := if t.is_err_test { t.exit_code != 0 } else { t.exit_code == 0 }
+		t.result = if t.output == t.expected && correct_exit_code {
+			TestResult.ok
+		} else {
+			TestResult.failed
+		}
 	}
 	$if fix ? {
-		if t.output != t.expected {
+		if t.is_todo_test {
+			if t.output == t.expected {
+				fix_todo(t.path, .ri)
+				fix_todo(t.out_path, .out)
+				t.result = .fixed
+			}
+		} else if t.output != t.expected {
 			os.write_file(t.out_path, t.output) or { panic(err) }
 			t.result = .fixed
 		}
@@ -141,6 +164,9 @@ fn (t TestCase) result() string {
 		}
 		.fixed {
 			'${term.ok_message('[ OK ]')} $file (FIXED)'
+		}
+		.todo {
+			'${term.warn_message('[TODO]')} $file'
 		}
 		.failed {
 			indent := ' '.repeat(2)
