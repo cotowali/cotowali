@@ -34,14 +34,13 @@ fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 		c.error('function `$name` is not defined', pos)
 		return
 	}
-
 	ts := func.type_symbol()
-	fn_info := ts.fn_info() or {
+	if !func.is_function() {
 		c.error('`$name` is not function (`$ts.name`)', pos)
 		return
 	}
 
-	params, args := fn_info.params, expr.args
+	params, args := ts.fn_info().params, expr.args
 	if params.len != args.len {
 		c.error('expected $params.len arguments, but got $args.len', pos)
 		return

@@ -8,8 +8,12 @@ pub:
 	ret    Type = builtin_type(.void)
 }
 
-pub fn (t TypeSymbol) fn_info() ?FunctionTypeInfo {
-	return if t.info is FunctionTypeInfo { t.info } else { none }
+pub fn (t TypeSymbol) fn_info() FunctionTypeInfo {
+	if t.info is FunctionTypeInfo {
+		return t.info
+	} else {
+		panic(unreachable)
+	}
 }
 
 fn (f FunctionTypeInfo) signature(s &Scope) string {
