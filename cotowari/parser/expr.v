@@ -145,6 +145,40 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	return f
 }
 
+fn (mut p Parser) parse_array_literal() ?ast.Expr {
+	first_tok := p.consume_with_check(.l_bracket) ?
+	mut last_tok := first_tok
+	if _ := p.consume_if_kind_eq(.r_paren) {
+		// []Type{}
+		elem_typ := p.parse_type() ?
+		p.consume_with_check(.l_brace) ?
+		last_tok = p.consume_with_check(.r_brace) ?
+		return ast.ArrayLiteral{
+			scope: p.scope
+			pos: first_tok.pos.merge(last_tok.pos)
+			elem_typ: elem_typ
+			elements: []
+		}
+	}
+	mut elements := []ast.Expr{}
+	for {
+		elements << (p.parse_expr({}) ?)
+		last_tok = p.consume_with_check(.r_bracket, .comma) ?
+		if last_tok.kind == .r_bracket {
+			break
+		}
+	}
+	$if !prod {
+		assert elements.len > 0
+	}
+	return ast.ArrayLiteral{
+		scope: p.scope
+		pos: first_tok.pos.merge(last_tok.pos)
+		elem_typ: elements[0].typ()
+		elements: elements
+	}
+}
+
 fn (mut p Parser) parse_value() ?ast.Expr {
 	tok := p.token(0)
 	match tok.kind {
@@ -164,6 +198,9 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 				scope: p.scope
 				token: tok
 			}
+		}
+		.l_bracket {
+			return p.parse_array_literal()
 		}
 		else {
 			return p.error('unexpected token $tok.kind', tok.pos)
