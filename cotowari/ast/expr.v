@@ -41,7 +41,7 @@ pub fn (e Expr) typ() Type {
 pub fn (e Expr) type_symbol() TypeSymbol {
 	return match e {
 		ArrayLiteral { e.scope.must_lookup_array_type(elem: e.elem_typ) }
-		CallFn { e.func.sym.type_symbol() }
+		CallFn { e.scope.must_lookup_type(e.func.sym.type_symbol().fn_info().ret) }
 		Var { e.sym.type_symbol() }
 		else { e.scope().must_lookup_type(e.typ()) }
 	}
