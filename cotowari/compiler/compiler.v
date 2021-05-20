@@ -12,6 +12,7 @@ import cotowari.ast
 import cotowari.errors { Err }
 
 pub struct Compiler {
+pub:
 	config &Config
 mut:
 	source Source
