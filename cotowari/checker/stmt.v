@@ -33,6 +33,11 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 }
 
 fn (mut c Checker) for_in_stmt(stmt ast.ForInStmt) {
+	c.expr(stmt.expr)
+	ts := stmt.expr.type_symbol()
+	if ts.kind() != .array {
+		c.error('non-array type `$ts.name` is not iterable', stmt.expr.pos())
+	}
 	c.block(stmt.body)
 }
 
