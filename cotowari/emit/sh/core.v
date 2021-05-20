@@ -39,6 +39,14 @@ fn (mut e Emitter) unindent() {
 	e.w.unindent()
 }
 
+fn (mut e Emitter) write_block<T>(begin string, end string, f fn (mut Emitter, T), v T) {
+	e.writeln(begin)
+	e.indent()
+	f(mut e, v)
+	e.unindent()
+	e.writeln(end)
+}
+
 [inline]
 fn (mut e Emitter) new_tmp_var() string {
 	return e.w.new_tmp_var()
