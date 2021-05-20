@@ -37,7 +37,7 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 			emit.write(expr.token.text)
 		}
 		ast.ArrayLiteral {
-			panic('array literal is unimplemented')
+			emit.array_literal(expr, opt)
 		}
 		ast.StringLiteral {
 			emit.write("'$expr.token.text'")
