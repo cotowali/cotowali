@@ -55,4 +55,5 @@ pub fn (mut s Scope) register_builtin() {
 
 	s.must_register_fn('echo', params: [t(.any)], ret: t(.string))
 	s.must_register_fn('cat', params: [], ret: t(.string))
+	s.must_register_fn('seq', params: [t(.int)], ret: array_types[t(.int)])
 }
