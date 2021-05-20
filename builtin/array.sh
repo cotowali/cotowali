@@ -32,3 +32,18 @@ array_set() {
   val=$3
   eval "${name}_$i=$val"
 }
+
+array_elements() {
+  name=$1
+  len="$(eval "echo \$${name}_len" )"
+  for i in $(seq 0 $(( len - 1 )) )
+  do
+    elem="${name}_$i"
+    printf '"$%s"' "$elem"
+    if [ "$i" -ne "$(( len - 1 ))" ]
+    then
+      printf ' '
+    fi
+  done
+}
+
