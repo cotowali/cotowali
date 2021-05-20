@@ -8,7 +8,7 @@ pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | Fo
 	IfStmt | InlineShell | ReturnStmt
 
 pub struct AssignStmt {
-pub:
+pub mut:
 	left  Var
 	right Expr
 }
@@ -16,7 +16,8 @@ pub:
 pub struct AssertStmt {
 pub:
 	key_pos Pos
-	expr    Expr
+pub mut:
+	expr Expr
 }
 
 pub struct Block {
@@ -41,21 +42,23 @@ pub mut:
 pub struct ForInStmt {
 pub:
 	// for var in expr
-	val  Var
-	expr Expr
+	val Var
 pub mut:
+	expr Expr
 	body Block
 }
 
 pub struct IfBranch {
-pub:
+pub mut:
 	cond Expr
+pub:
 	body Block
 }
 
 pub struct IfStmt {
-pub:
+pub mut:
 	branches []IfBranch
+pub:
 	has_else bool
 }
 

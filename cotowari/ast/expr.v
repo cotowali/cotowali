@@ -64,6 +64,7 @@ pub struct InfixExpr {
 pub:
 	scope &Scope
 	op    Token
+pub mut:
 	left  Expr
 	right Expr
 }
@@ -85,6 +86,7 @@ pub:
 	pos      Pos
 	scope    &Scope
 	elem_typ Type
+pub mut:
 	elements []Expr
 }
 
@@ -92,6 +94,7 @@ pub:
 pub struct Pipeline {
 pub:
 	scope &Scope
+pub mut:
 	exprs []Expr
 }
 
@@ -99,7 +102,8 @@ pub struct PrefixExpr {
 pub:
 	scope &Scope
 	op    Token
-	expr  Expr
+pub mut:
+	expr Expr
 }
 
 pub struct Var {
