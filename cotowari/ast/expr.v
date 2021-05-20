@@ -106,7 +106,8 @@ pub struct Var {
 pub:
 	scope &Scope
 	pos   Pos
-	sym   symbols.Var
+pub mut:
+	sym symbols.Var
 }
 
 pub fn (v Var) name() string {

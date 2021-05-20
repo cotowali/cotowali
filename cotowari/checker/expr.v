@@ -34,6 +34,7 @@ fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 		c.error('function `$name` is not defined', pos)
 		return
 	}
+	expr.func.sym = func
 	ts := func.type_symbol()
 	if !func.is_function() {
 		c.error('`$name` is not function (`$ts.name`)', pos)

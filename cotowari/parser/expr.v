@@ -139,7 +139,7 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 		pos: ident.pos.merge(r_paren.pos)
 		func: ast.Var{p.scope, ident.pos, symbols.Var{
 			name: name
-		}} // TODO: lookup
+		}} // resolved by checker
 		args: args
 	}
 	return f
