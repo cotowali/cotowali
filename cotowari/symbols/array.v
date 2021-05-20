@@ -1,5 +1,7 @@
 module symbols
 
+import cotowari.errors { unreachable }
+
 pub struct ArrayTypeInfo {
 	elem Type
 }
@@ -15,4 +17,8 @@ pub fn (mut s Scope) lookup_or_register_array_type(info ArrayTypeInfo) TypeSymbo
 
 pub fn (s Scope) lookup_array_type(info ArrayTypeInfo) ?TypeSymbol {
 	return s.lookup_type(info.typename(s))
+}
+
+pub fn (s Scope) must_lookup_array_type(info ArrayTypeInfo) TypeSymbol {
+	return s.lookup_array_type(info) or { panic(unreachable) }
 }
