@@ -30,6 +30,11 @@ pub fn (mut s Scope) lookup_or_register_fn_type(info FunctionTypeInfo) TypeSymbo
 	return s.lookup_or_register_type(name: typename, info: info)
 }
 
+pub fn (s Scope) lookup_fn_type(info FunctionTypeInfo) ?TypeSymbol {
+	typename := info.signature(s)
+	return s.lookup_type(typename)
+}
+
 pub fn (mut s Scope) register_fn(name string, info FunctionTypeInfo) ?Var {
 	return s.register_var(name: name, typ: s.lookup_or_register_fn_type(info).typ)
 }
