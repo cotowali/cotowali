@@ -1,6 +1,7 @@
 default: run
 disable_help: true
 tasks:
+  run.debug: v -cg run cmd/ric/main.v $@
   run: v run cmd/ric/main.v $@
   run.bin: ./.bin/ric $@
   fib: z run examples/fib.ri
