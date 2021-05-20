@@ -13,7 +13,15 @@ tasks:
       z test.unit
       z test.integration
     else
-      z test.unit $@
+      for f in "$@"
+      do
+        if [ "$(dirname "$f")" = 'tests' ] || [ "$(basename "$f")" = 'tests' ]
+        then
+          z test.integration $f
+        else
+          z test.unit $f
+        fi
+      done
     fi
   test.unit: v test ${@:-./cotowari}
   test.integration: v run tests/run.v $@
