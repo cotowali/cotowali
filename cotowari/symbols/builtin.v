@@ -44,8 +44,13 @@ pub fn (mut s Scope) register_builtin() {
 		ts(.string, PrimitiveTypeInfo{}),
 		ts(.bool, PrimitiveTypeInfo{}),
 	]
-	for typ in type_symbols {
-		s.must_register_type(typ)
+	mut array_types := map[int]Type{}
+	for ts_ in type_symbols {
+		s.must_register_type(ts_)
+		typ := ts_.typ
+		if typ !in [t(.placeholder), t(.void), t(.unknown)] {
+			array_types[typ] = s.lookup_or_register_array_type(elem: typ).typ
+		}
 	}
 
 	s.must_register_fn('echo', params: [t(.any)], ret: t(.string))
