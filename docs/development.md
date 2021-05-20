@@ -7,19 +7,27 @@
 - `/tests` Integration tests
 - `/cotowari` Compiler code
 
+## Testing
 
-## Integration Test
+### Run
+
+- `z test`: run all tests
+- `z test test.ri|some_test.v`: run specified test. Test runner is automaticaly selected
+- `z test unit`: run all unit tests
+- `z test integration`: run all integration tests
+
+### Integration Test
 
 See `z test integration --help`
 
-### Success Test
+#### Success Test
 
 Check exit status is 0 and output.
 
 `tests/testname.ri`: source code
 `tests/testname.out`: output
 
-### Error Test
+#### Error Test
 
 Check exit status is not 0 and error output
 
@@ -28,7 +36,7 @@ If filename has suffix, `_err.ri`, it is error test.
 `tests/testname_err.ri`: source code
 `tests/testname_err.out`: error output
 
-### TODO Test
+#### TODO Test
 
 If filename has suffix `.todo.ri`, it is todo test. todo test will be executed but it does not checked.
 If output matches with `.todo.out`, `.todo` will be removed by using fix mode.
