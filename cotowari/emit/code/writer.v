@@ -7,8 +7,9 @@ import cotowari.config { Config }
 pub struct Writer {
 	config &Config
 mut:
-	indent  int
-	newline bool = true
+	indent    int
+	newline   bool = true
+	tmp_count int
 pub:
 	out io.Writer
 }
@@ -48,4 +49,11 @@ pub fn (mut w Writer) indent() {
 
 pub fn (mut w Writer) unindent() {
 	w.indent--
+}
+
+pub fn (mut w Writer) new_tmp_var() string {
+	defer {
+		w.tmp_count++
+	}
+	return '_cotowari_tmp_$w.tmp_count'
 }

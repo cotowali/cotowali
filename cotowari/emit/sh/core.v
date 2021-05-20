@@ -38,3 +38,8 @@ fn (mut e Emitter) indent() {
 fn (mut e Emitter) unindent() {
 	e.w.unindent()
 }
+
+[inline]
+fn (mut e Emitter) new_tmp_var() string {
+	return e.w.new_tmp_var()
+}
