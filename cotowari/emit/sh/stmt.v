@@ -1,6 +1,7 @@
 module sh
 
 import cotowari.ast { Stmt }
+import cotowari.symbols { builtin_type }
 
 fn (mut emit Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {
@@ -20,10 +21,9 @@ fn (mut emit Emitter) stmt(stmt Stmt) {
 			emit.block(stmt)
 		}
 		ast.Expr {
-			// TODO: register builtin function to global scope then use it to compare.
-			use_stdout := !emit.inside_fn
-				|| if stmt is ast.CallFn { stmt.func.name() == 'echo' } else { false }
-			emit.expr(stmt, as_command: true, discard_stdout: !use_stdout, writeln: true)
+			discard_stdout := emit.inside_fn
+				&& if stmt is ast.CallFn { stmt.func.type_symbol().fn_info().ret != builtin_type(.void) } else { true }
+			emit.expr(stmt, as_command: true, discard_stdout: discard_stdout, writeln: true)
 		}
 		ast.AssignStmt {
 			emit.assign(stmt)
