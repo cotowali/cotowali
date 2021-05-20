@@ -35,11 +35,13 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 	for i, branch in stmt.branches {
 		if i == stmt.branches.len - 1 && stmt.has_else {
+			c.block(branch.body)
 			break
 		}
 		cond_type := branch.cond.typ()
 		if cond_type != builtin_type(.bool) {
 			c.error('non-bool type used as if condition', branch.cond.pos())
 		}
+		c.block(branch.body)
 	}
 }
