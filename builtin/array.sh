@@ -47,3 +47,13 @@ array_elements() {
   done
 }
 
+array_assign() {
+  name=$1
+  shift
+  len="$#"
+  eval "${name}_len=$len"
+  for i in $(seq 0 $(( len - 1 )) )
+  do
+    array_set "$name" "$i" "$(eval echo "\$$(( i + 1 ))")"
+  done
+}
