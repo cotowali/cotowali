@@ -76,7 +76,7 @@ pub fn (s &Scope) lookup_var(name string) ?Var {
 	return none
 }
 
-fn (s &Scope) must_lookup_var(name string) Var {
+pub fn (s &Scope) must_lookup_var(name string) Var {
 	return s.lookup_var(name) or { panic(unreachable) }
 }
 
