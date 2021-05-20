@@ -2,6 +2,7 @@ module sh
 
 import cotowari.ast { Pipeline }
 import cotowari.token { Token }
+import cotowari.errors { unreachable }
 
 struct ExprOpt {
 	as_command        bool
@@ -60,6 +61,9 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 
 fn (mut emit Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op := expr.op
+	if !op.kind.@is(.binary_op) {
+		panic(unreachable)
+	}
 	match op.kind {
 		.op_plus, .op_minus, .op_div, .op_mul, .op_mod, .op_eq, .op_ne, .op_gt, .op_lt {
 			if !opt.inside_arithmetic {
@@ -80,6 +84,10 @@ fn (mut emit Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 
 fn (mut emit Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 	op := expr.op
+	if !op.kind.@is(.prefix_op) {
+		panic(unreachable)
+	}
+
 	opt_for_expr := ExprOpt{
 		...opt
 		as_command: false
