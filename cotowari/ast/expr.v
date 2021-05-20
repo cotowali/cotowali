@@ -4,8 +4,8 @@ import cotowari.source { Pos }
 import cotowari.token { Token }
 import cotowari.symbols { Scope, Type, TypeSymbol, builtin_type }
 
-pub type Expr = CallFn | InfixExpr | IntLiteral | Pipeline | PrefixExpr | StringLiteral |
-	Var
+pub type Expr = ArrayLiteral | CallFn | InfixExpr | IntLiteral | Pipeline | PrefixExpr |
+	StringLiteral | Var
 
 pub fn (e InfixExpr) pos() Pos {
 	return e.left.pos().merge(e.right.pos())
@@ -13,7 +13,7 @@ pub fn (e InfixExpr) pos() Pos {
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
-		CallFn, Var { expr.pos }
+		ArrayLiteral, CallFn, Var { expr.pos }
 		InfixExpr { expr.pos() }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
 		PrefixExpr { expr.op.pos.merge(expr.expr.pos()) }
@@ -27,6 +27,7 @@ fn (e InfixExpr) typ() Type {
 
 pub fn (e Expr) typ() Type {
 	return match e {
+		ArrayLiteral { Expr(e).type_symbol().typ }
 		StringLiteral { builtin_type(.string) }
 		IntLiteral { builtin_type(.int) }
 		Pipeline { e.exprs.last().typ() }
@@ -39,6 +40,7 @@ pub fn (e Expr) typ() Type {
 
 pub fn (e Expr) type_symbol() TypeSymbol {
 	return match e {
+		ArrayLiteral { e.scope.must_lookup_array_type(elem: e.elem_typ) }
 		CallFn { e.func.sym.type_symbol() }
 		Var { e.sym.type_symbol() }
 		else { e.scope().must_lookup_type(e.typ()) }
@@ -76,6 +78,14 @@ pub struct IntLiteral {
 pub:
 	scope &Scope
 	token Token
+}
+
+pub struct ArrayLiteral {
+pub:
+	pos      Pos
+	scope    &Scope
+	elem_typ Type
+	elements []Expr
 }
 
 // expr | expr | expr

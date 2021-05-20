@@ -6,6 +6,7 @@ fn (mut c Checker) expr(expr Expr) {
 	match mut expr {
 		ast.CallFn { c.call_expr(mut expr) }
 		ast.InfixExpr { c.infix_expr(expr) }
+		ast.ArrayLiteral {}
 		ast.IntLiteral {}
 		ast.StringLiteral {}
 		ast.Pipeline {}

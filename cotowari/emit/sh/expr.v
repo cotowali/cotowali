@@ -30,6 +30,9 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 			}
 			emit.write(expr.token.text)
 		}
+		ast.ArrayLiteral {
+			panic('array literal is unimplemented')
+		}
 		ast.StringLiteral {
 			if opt.as_command {
 				emit.write('echo ')
