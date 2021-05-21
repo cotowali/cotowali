@@ -15,7 +15,7 @@ pub mut:
 }
 
 pub fn new_config() &Config {
-	return {}
+	return &Config{}
 }
 
 pub fn backend_from_str(s string) ?Backend {

@@ -11,8 +11,6 @@ import cotowari.errors
 
 pub fn compile(s Source, config &Config) ?string {
 	c := new_compiler(s, config)
-	// workaround for avoid V's bug. unknown enum error will be showed without this in some environment
-	_ := c.config.backend
 	return c.compile()
 }
 
