@@ -2,7 +2,7 @@ module parser
 
 import cotowari.token { TokenKind }
 import cotowari.ast
-import cotowari.symbols
+import cotowari.symbols { new_placeholder_var }
 
 fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
 	expr := p.parse_expr({}) ?
@@ -137,9 +137,7 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	f := ast.CallFn{
 		scope: p.scope
 		pos: ident.pos.merge(r_paren.pos)
-		func: ast.Var{p.scope, ident.pos, symbols.Var{
-			name: name
-		}} // resolved by checker
+		func: ast.Var{p.scope, ident.pos, new_placeholder_var(name)}
 		args: args
 	}
 	return f

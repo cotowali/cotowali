@@ -39,10 +39,10 @@ pub fn (s Scope) lookup_fn_type(info FunctionTypeInfo) ?TypeSymbol {
 	return s.lookup_type(typename)
 }
 
-pub fn (mut s Scope) register_fn(name string, info FunctionTypeInfo) ?Var {
+pub fn (mut s Scope) register_fn(name string, info FunctionTypeInfo) ?&Var {
 	return s.register_var(name: name, typ: s.lookup_or_register_fn_type(info).typ)
 }
 
-fn (mut s Scope) must_register_fn(name string, info FunctionTypeInfo) Var {
+fn (mut s Scope) must_register_fn(name string, info FunctionTypeInfo) &Var {
 	return s.register_fn(name, info) or { panic(unreachable) }
 }

@@ -116,7 +116,7 @@ pub:
 	scope &Scope
 	pos   Pos
 pub mut:
-	sym symbols.Var
+	sym &symbols.Var
 }
 
 pub fn (v Var) name() string {

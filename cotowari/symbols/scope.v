@@ -10,7 +10,7 @@ pub:
 mut:
 	parent       &Scope
 	children     []&Scope
-	vars         map[string]Var
+	vars         map[string]&Var
 	type_symbols map[int]TypeSymbol // map[Type]TypeSymbol
 	name_to_type map[string]Type
 }

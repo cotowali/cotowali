@@ -51,9 +51,9 @@ fn (mut s Scope) check_before_register_var(v Var) ? {
 	}
 }
 
-pub fn (mut s Scope) register_var(v Var) ?Var {
+pub fn (mut s Scope) register_var(v Var) ?&Var {
 	s.check_before_register_var(v) ?
-	new_v := Var{
+	new_v := &Var{
 		...v
 		id: if v.id == 0 { auto_id() } else { v.id }
 		scope: s
@@ -62,18 +62,18 @@ pub fn (mut s Scope) register_var(v Var) ?Var {
 	return new_v
 }
 
-pub fn new_placeholder_var(name string) Var {
-	return Var{
+pub fn new_placeholder_var(name string) &Var {
+	return &Var{
 		name: name
 		typ: builtin_type(.placeholder)
 	}
 }
 
-fn (mut s Scope) must_register_var(v Var) Var {
+fn (mut s Scope) must_register_var(v Var) &Var {
 	return s.register_var(v) or { panic(unreachable) }
 }
 
-pub fn (s &Scope) lookup_var(name string) ?Var {
+pub fn (s &Scope) lookup_var(name string) ?&Var {
 	if name in s.vars {
 		return s.vars[name]
 	}
@@ -83,10 +83,10 @@ pub fn (s &Scope) lookup_var(name string) ?Var {
 	return none
 }
 
-pub fn (s &Scope) must_lookup_var(name string) Var {
+pub fn (s &Scope) must_lookup_var(name string) &Var {
 	return s.lookup_var(name) or { panic(unreachable) }
 }
 
-pub fn (mut s Scope) lookup_or_register_var(v Var) Var {
+pub fn (mut s Scope) lookup_or_register_var(v Var) &Var {
 	return s.lookup_var(v.name) or { s.register_var(v) or { panic(unreachable) } }
 }
