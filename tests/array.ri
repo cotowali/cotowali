@@ -1,4 +1,5 @@
 fn f(arr []int) []int {}
 
 [0, 1, 2]
-['a', 'b', 'c']
+let v = ['a', 'b', 'c']
+v
