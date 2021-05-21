@@ -1,7 +1,7 @@
 module ast
 
 import cotowari.source { Pos }
-import cotowari.symbols { Scope }
+import cotowari.symbols { Scope, Type }
 import cotowari.token { Token }
 
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
@@ -34,6 +34,7 @@ pub:
 	name_pos Pos
 	name     string
 	has_body bool
+	ret_typ  Type
 pub mut:
 	params []Var
 	body   Block

@@ -87,6 +87,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		name: info.name.text
 		params: params
 		has_body: has_body
+		ret_typ: info.ret_typ
 	}
 	if has_body {
 		node.body = p.parse_block_without_new_scope() ?
