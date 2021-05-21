@@ -1,5 +1,16 @@
-fn f(arr []int) []int {}
+fn echo_arr(arr []int) {
+  // echo(arr)
+}
+
+// fn raw_arr(arr []int) []int {
+//   return arr
+// }
 
 [0, 1, 2]
 let v = ['a', 'b', 'c']
 v
+
+// let arr = [0, 1, 2]
+// echo_arr(arr)
+// raw_arr(arr)
+// assert raw_arr(arr) == arr
