@@ -114,6 +114,10 @@ fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
 }
 
 fn (mut emit Emitter) assign(node ast.AssignStmt) {
+	if node.left.type_symbol().kind() == .array {
+		emit.array_assign(node.left.out_name(), node.right)
+		return
+	}
 	emit.write('$node.left.out_name()=')
 	emit.expr(node.right, {})
 	emit.writeln('')

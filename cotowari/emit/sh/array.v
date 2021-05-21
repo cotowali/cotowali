@@ -20,7 +20,8 @@ fn (mut emit Emitter) array_assign(name string, expr ast.Expr) {
 			emit.writeln('')
 		}
 		ast.Var {
-			panic('unimplemented')
+			right_name := expr.out_name()
+			emit.writeln('array_assign "$name" \$(array_elements "$right_name")')
 		}
 		else {
 			panic(unreachable)
