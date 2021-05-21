@@ -96,10 +96,10 @@ fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
 		return
 	}
 
-	save_inside_fn := emit.inside_fn
+	old_inside_fn := emit.inside_fn
 	emit.inside_fn = true
 	defer {
-		emit.inside_fn = save_inside_fn
+		emit.inside_fn = old_inside_fn
 	}
 
 	emit.write_block('${node.name}() {', '}', fn (mut emit Emitter, node ast.FnDecl) {
