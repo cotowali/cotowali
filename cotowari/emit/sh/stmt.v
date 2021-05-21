@@ -22,7 +22,7 @@ fn (mut emit Emitter) stmt(stmt Stmt) {
 		}
 		ast.Expr {
 			discard_stdout := emit.inside_fn
-				&& if stmt is ast.CallFn { stmt.func.type_symbol().fn_info().ret != builtin_type(.void) } else { true }
+				&& if stmt is ast.CallFn { emit.cur_fn.ret_typ != builtin_type(.void) } else { true }
 			emit.expr(stmt, as_command: true, discard_stdout: discard_stdout, writeln: true)
 		}
 		ast.AssignStmt {
