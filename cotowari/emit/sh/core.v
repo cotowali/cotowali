@@ -3,11 +3,12 @@ module sh
 import io
 import cotowari.config { Config }
 import cotowari.emit.code
-import cotowari.ast { File }
+import cotowari.ast { File, FnDecl }
 
 pub struct Emitter {
 mut:
 	cur_file  &File = 0
+	cur_fn    FnDecl
 	inside_fn bool
 	w         code.Writer
 }
