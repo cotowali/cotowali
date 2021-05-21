@@ -1,5 +1,7 @@
 import os
+import rand
 import term
+import v.util { color_compare_strings, find_working_diff_command }
 
 enum FileSuffix {
 	ri
@@ -156,38 +158,43 @@ fn (mut t TestCase) run() {
 	}
 }
 
+fn (t TestCase) failed_result(file string) string {
+	indent := ' '.repeat(2)
+	format_output := fn (text string) string {
+		indent := ' '.repeat(4)
+		return if text.len == 0 {
+			'${indent}__EMPTY__'
+		} else {
+			text.split_into_lines().map('$indent$it').join('\n')
+		}
+	}
+
+	mut lines := [
+		'${term.fail_message('[FAIL]')} $file',
+		'${indent}exit_code: $t.exit_code',
+		'${indent}output:',
+		format_output(t.output),
+		'${indent}expected:',
+		format_output(t.expected),
+	]
+	if diff_cmd := find_working_diff_command() {
+		diff := color_compare_strings(diff_cmd, rand.ulid(), t.expected, t.output)
+		lines << [
+			'${indent}diff:',
+			diff.split_into_lines().map(indent.repeat(2) + it).join('\n'),
+		]
+	}
+
+	return lines.map(it + '\n').join('')
+}
+
 fn (t TestCase) result() string {
 	file := os.join_path(os.base(os.dir(t.path)), os.base(t.path))
 	return match t.result {
-		.ok {
-			'${term.ok_message('[ OK ]')} $file'
-		}
-		.fixed {
-			'${term.ok_message('[ OK ]')} $file (FIXED)'
-		}
-		.todo {
-			'${term.warn_message('[TODO]')} $file'
-		}
-		.failed {
-			indent := ' '.repeat(2)
-			format_output := fn (text string) string {
-				indent := ' '.repeat(4)
-				return if text.len == 0 {
-					'${indent}__EMPTY__'
-				} else {
-					text.split_into_lines().map('$indent$it').join('\n')
-				}
-			}
-
-			[
-				'${term.fail_message('[FAIL]')} $file',
-				'${indent}exit_code: $t.exit_code',
-				'${indent}output:',
-				format_output(t.output),
-				'${indent}expected:',
-				format_output(t.expected),
-			].map(it + '\n').join('')
-		}
+		.ok { '${term.ok_message('[ OK ]')} $file' }
+		.fixed { '${term.ok_message('[ OK ]')} $file (FIXED)' }
+		.todo { '${term.warn_message('[TODO]')} $file' }
+		.failed { t.failed_result(file) }
 	}
 }
 
