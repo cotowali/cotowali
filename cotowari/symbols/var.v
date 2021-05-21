@@ -62,6 +62,13 @@ pub fn (mut s Scope) register_var(v Var) ?Var {
 	return new_v
 }
 
+pub fn new_placeholder_var(name string) Var {
+	return Var{
+		name: name
+		typ: builtin_type(.placeholder)
+	}
+}
+
 fn (mut s Scope) must_register_var(v Var) Var {
 	return s.register_var(v) or { panic(unreachable) }
 }
