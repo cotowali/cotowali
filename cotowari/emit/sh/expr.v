@@ -13,7 +13,7 @@ struct ExprOpt {
 
 fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 	match expr {
-		ast.IntLiteral, ast.StringLiteral, ast.InfixExpr, ast.PrefixExpr, ast.Var {
+		ast.IntLiteral, ast.StringLiteral, ast.InfixExpr, ast.PrefixExpr {
 			if opt.as_command {
 				emit.write('echo ')
 			}
@@ -43,12 +43,7 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 			emit.write("'$expr.token.text'")
 		}
 		ast.Var {
-			// '$(( n == 0 ))' or 'echo "$n"'
-			emit.write(if opt.inside_arithmetic {
-				'$expr.out_name()'
-			} else {
-				'"\$$expr.out_name()"'
-			})
+			emit.var_(expr, opt)
 		}
 	}
 	if opt.as_command && opt.discard_stdout {
@@ -56,6 +51,21 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 	}
 	if opt.writeln {
 		emit.writeln('')
+	}
+}
+
+fn (mut emit Emitter) var_(v ast.Var, opt ExprOpt) {
+	match v.type_symbol().kind() {
+		.array {
+			emit.array(v.out_name(), opt)
+		}
+		else {
+			if opt.as_command {
+				emit.write('echo ')
+			}
+			// '$(( n == 0 ))' or 'echo "$n"'
+			emit.write(if opt.inside_arithmetic { '$v.out_name()' } else { '"\$$v.out_name()"' })
+		}
 	}
 }
 
