@@ -1,7 +1,7 @@
 call_expr_err.ri 5,2: function `unknown_fn` is not defined
   > unknown_fn()
     ^^^^^^^^^^^^
-call_expr_err.ri 8,2: `v` is not function (`unresolved`)
+call_expr_err.ri 8,2: `v` is not function (`int`)
   > v()
     ^^^
 call_expr_err.ri 11,4: mismatched types: `int` (expected) and `string` (found)
