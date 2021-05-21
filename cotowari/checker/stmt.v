@@ -11,7 +11,7 @@ fn (mut c Checker) stmts(stmts []ast.Stmt) {
 
 fn (mut c Checker) stmt(stmt ast.Stmt) {
 	match mut stmt {
-		ast.AssignStmt {}
+		ast.AssignStmt { c.assign_stmt(mut stmt) }
 		ast.AssertStmt {}
 		ast.Block { c.block(stmt) }
 		ast.Expr { c.expr(stmt) }
@@ -22,6 +22,10 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 		ast.InlineShell {}
 		ast.ReturnStmt {}
 	}
+}
+
+fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
+	stmt.resolve_type()
 }
 
 fn (mut c Checker) block(block ast.Block) {
