@@ -1,10 +1,6 @@
 module sh
 
-import cotowari.ast { Pipeline }
-import cotowari.token { Token }
-import cotowari.errors { unreachable }
-import cotowari.symbols { builtin_type }
-
+import cotowari.ast
 
 fn (mut emit Emitter) call_fn(expr ast.CallFn, opt ExprOpt) {
 	if !opt.as_command {
