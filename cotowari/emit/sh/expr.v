@@ -13,14 +13,6 @@ struct ExprOpt {
 
 fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 	match expr {
-		ast.IntLiteral, ast.StringLiteral, ast.InfixExpr, ast.PrefixExpr {
-			if opt.as_command {
-				emit.write('echo ')
-			}
-		}
-		else {}
-	}
-	match expr {
 		ast.CallFn {
 			emit.call_fn(expr, opt)
 		}
@@ -34,12 +26,14 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 			emit.prefix_expr(expr, opt)
 		}
 		ast.IntLiteral {
+			emit.write_echo_if_command(opt)
 			emit.write(expr.token.text)
 		}
 		ast.ArrayLiteral {
 			emit.array_literal(expr, opt)
 		}
 		ast.StringLiteral {
+			emit.write_echo_if_command(opt)
 			emit.write("'$expr.token.text'")
 		}
 		ast.Var {
@@ -54,15 +48,19 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 	}
 }
 
+fn (mut emit Emitter) write_echo_if_command(opt ExprOpt) {
+	if opt.as_command {
+		emit.write('echo ')
+	}
+}
+
 fn (mut emit Emitter) var_(v ast.Var, opt ExprOpt) {
 	match v.type_symbol().kind() {
 		.array {
 			emit.array(v.out_name(), opt)
 		}
 		else {
-			if opt.as_command {
-				emit.write('echo ')
-			}
+			emit.write_echo_if_command(opt)
 			// '$(( n == 0 ))' or 'echo "$n"'
 			emit.write(if opt.inside_arithmetic { '$v.out_name()' } else { '"\$$v.out_name()"' })
 		}
@@ -74,6 +72,7 @@ fn (mut emit Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	if !op.kind.@is(.binary_op) {
 		panic(unreachable)
 	}
+	emit.write_echo_if_command(opt)
 	match op.kind {
 		.op_plus, .op_minus, .op_div, .op_mul, .op_mod, .op_eq, .op_ne, .op_gt, .op_lt {
 			if !opt.inside_arithmetic {
@@ -98,6 +97,7 @@ fn (mut emit Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		panic(unreachable)
 	}
 
+	emit.write_echo_if_command(opt)
 	opt_for_expr := ExprOpt{
 		...opt
 		as_command: false
