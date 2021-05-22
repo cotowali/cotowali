@@ -10,45 +10,47 @@ mut:
 	cur_file  &File = 0
 	cur_fn    FnDecl
 	inside_fn bool
-	w         code.Writer
+	out       io.Writer
+	code      code.Builder
 }
 
 [inline]
 pub fn new_emitter(out io.Writer, config &Config) Emitter {
 	return Emitter{
-		w: code.new_writer(out, config)
+		out: out
+		code: code.new_builder(100, config)
 	}
 }
 
 [inline]
 fn (mut e Emitter) writeln(s string) {
-	e.w.writeln(s)
+	e.code.writeln(s)
 }
 
 [inline]
 fn (mut e Emitter) write(s string) {
-	e.w.write(s)
+	e.code.write(s)
 }
 
 [inline]
 fn (mut e Emitter) indent() {
-	e.w.indent()
+	e.code.indent()
 }
 
 [inline]
 fn (mut e Emitter) unindent() {
-	e.w.unindent()
+	e.code.unindent()
 }
 
 fn (mut e Emitter) write_block<T>(begin string, end string, f fn (mut Emitter, T), v T) {
-	e.writeln(begin)
+	e.code.writeln(begin)
 	e.indent()
 	f(mut e, v)
 	e.unindent()
-	e.writeln(end)
+	e.code.writeln(end)
 }
 
 [inline]
 fn (mut e Emitter) new_tmp_var() string {
-	return e.w.new_tmp_var()
+	return e.code.new_tmp_var()
 }

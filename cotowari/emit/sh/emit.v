@@ -1,9 +1,11 @@
 module sh
 
 import cotowari.ast
+import cotowari.util { must_write }
 
 pub fn (mut e Emitter) emit(f &ast.File) {
 	e.file(f)
+	must_write(e.out, e.code.bytes())
 }
 
 fn (mut emit Emitter) file(f &ast.File) {
