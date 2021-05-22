@@ -87,12 +87,25 @@ fn (mut emit Emitter) for_in_stmt(stmt ast.ForInStmt) {
 	}, stmt)
 }
 
-fn (mut emit Emitter) assign_stmt(node ast.AssignStmt) {
-	if node.left.type_symbol().kind() == .array {
-		emit.array_assign(node.left.out_name(), node.right)
-		return
+type AssignValue = ast.Expr | string
+
+fn (mut emit Emitter) assign(name string, value AssignValue) {
+	match value {
+		string {
+			emit.writeln('$name="\$$value"')
+		}
+		ast.Expr {
+			if value.type_symbol().kind() == .array {
+				emit.array_assign(name, value)
+				return
+			}
+			emit.write('$name=')
+			emit.expr(value, {})
+			emit.writeln('')
+		}
 	}
-	emit.write('$node.left.out_name()=')
-	emit.expr(node.right, {})
-	emit.writeln('')
+}
+
+fn (mut emit Emitter) assign_stmt(node ast.AssignStmt) {
+	emit.assign(node.left.out_name(), node.right)
 }

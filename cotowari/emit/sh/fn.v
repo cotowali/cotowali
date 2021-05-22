@@ -38,7 +38,7 @@ fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
 
 	emit.write_block('${node.name}() {', '}', fn (mut emit Emitter, node ast.FnDecl) {
 		for i, param in node.params {
-			emit.writeln('$param.out_name()=\$${i + 1}')
+			emit.assign(param.out_name(), (i + 1).str())
 		}
 		emit.block(node.body)
 	}, node)
