@@ -1,7 +1,7 @@
 module sh
 
 import cotowari.ast { Stmt }
-import cotowari.symbols { builtin_type }
+import cotowari.symbols { TypeSymbol, builtin_type }
 
 fn (mut emit Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {
@@ -89,16 +89,36 @@ fn (mut emit Emitter) for_in_stmt(stmt ast.ForInStmt) {
 
 type AssignValue = ast.Expr | string
 
-fn (mut emit Emitter) assign(name string, value AssignValue) {
+fn (mut emit Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
+	if ts.kind() == .array {
+		match value {
+			ast.Expr {
+				match value {
+					ast.ArrayLiteral {
+						emit.write('array_assign "$name"')
+						for elem in value.elements {
+							emit.write(' ')
+							emit.expr(elem, as_command: false)
+						}
+						emit.writeln('')
+					}
+					ast.Var {
+						emit.assign(name, value.out_name(), ts)
+					}
+					else {}
+				}
+			}
+			string {
+				emit.writeln('array_assign "$name" \$(array_elements "$value")')
+			}
+		}
+		return
+	}
 	match value {
 		string {
-			emit.writeln('$name="\$$value"')
+			emit.writeln('$name="$value"')
 		}
 		ast.Expr {
-			if value.type_symbol().kind() == .array {
-				emit.array_assign(name, value)
-				return
-			}
 			emit.write('$name=')
 			emit.expr(value, {})
 			emit.writeln('')
@@ -107,5 +127,5 @@ fn (mut emit Emitter) assign(name string, value AssignValue) {
 }
 
 fn (mut emit Emitter) assign_stmt(node ast.AssignStmt) {
-	emit.assign(node.left.out_name(), node.right)
+	emit.assign(node.left.out_name(), node.right, node.left.type_symbol())
 }
