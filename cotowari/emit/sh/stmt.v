@@ -87,32 +87,6 @@ fn (mut emit Emitter) for_in_stmt(stmt ast.ForInStmt) {
 	}, stmt)
 }
 
-fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
-	if !node.has_body {
-		emit.writeln('')
-		// emit.writeln('# info: fn ${node.name}(${node.params.map('$it.sym.name $it.sym.typ.name').join(', ')})')
-		emit.writeln('# info: fn ${node.name}(${node.params.map('$it.sym.name').join(', ')})')
-		emit.writeln('')
-		return
-	}
-
-	old_inside_fn := emit.inside_fn
-	emit.inside_fn = true
-	old_cur_fn := emit.cur_fn
-	emit.cur_fn = node
-	defer {
-		emit.inside_fn = old_inside_fn
-		emit.cur_fn = old_cur_fn
-	}
-
-	emit.write_block('${node.name}() {', '}', fn (mut emit Emitter, node ast.FnDecl) {
-		for i, param in node.params {
-			emit.writeln('$param.out_name()=\$${i + 1}')
-		}
-		emit.block(node.body)
-	}, node)
-}
-
 fn (mut emit Emitter) assign_stmt(node ast.AssignStmt) {
 	if node.left.type_symbol().kind() == .array {
 		emit.array_assign(node.left.out_name(), node.right)

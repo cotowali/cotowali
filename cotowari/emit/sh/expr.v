@@ -146,19 +146,3 @@ fn (mut emit Emitter) pipeline(stmt Pipeline, opt ExprOpt) {
 		emit.write(')')
 	}
 }
-
-fn (mut emit Emitter) call_fn(expr ast.CallFn, opt ExprOpt) {
-	if !opt.as_command {
-		emit.write('\$(')
-	}
-
-	emit.write(expr.func.out_name())
-	for arg in expr.args {
-		emit.write(' ')
-		emit.expr(arg, {})
-	}
-
-	if !opt.as_command {
-		emit.write(')')
-	}
-}
