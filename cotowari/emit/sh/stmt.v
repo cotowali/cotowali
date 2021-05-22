@@ -26,7 +26,7 @@ fn (mut emit Emitter) stmt(stmt Stmt) {
 			emit.expr(stmt, as_command: true, discard_stdout: discard_stdout, writeln: true)
 		}
 		ast.AssignStmt {
-			emit.assign(stmt)
+			emit.assign_stmt(stmt)
 		}
 		ast.EmptyStmt {
 			emit.writeln('')
@@ -113,7 +113,7 @@ fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
 	}, node)
 }
 
-fn (mut emit Emitter) assign(node ast.AssignStmt) {
+fn (mut emit Emitter) assign_stmt(node ast.AssignStmt) {
 	if node.left.type_symbol().kind() == .array {
 		emit.array_assign(node.left.out_name(), node.right)
 		return
