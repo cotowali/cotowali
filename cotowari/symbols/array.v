@@ -3,6 +3,7 @@ module symbols
 import cotowari.errors { unreachable }
 
 pub struct ArrayTypeInfo {
+pub:
 	elem Type
 }
 
