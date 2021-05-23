@@ -1,4 +1,4 @@
-fn f(a any) {
+fn f(a int) {
   let b = 0
   echo(echo(a))
   echo(b)
