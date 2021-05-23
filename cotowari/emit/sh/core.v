@@ -7,11 +7,12 @@ import cotowari.ast { File, FnDecl }
 
 pub struct Emitter {
 mut:
-	cur_file  &File = 0
-	cur_fn    FnDecl
-	inside_fn bool
-	out       io.Writer
-	code      code.Builder
+	cur_file     &File = 0
+	cur_fn       FnDecl
+	inside_fn    bool
+	out          io.Writer
+	code         code.Builder
+	builtin_code code.Builder
 }
 
 [inline]

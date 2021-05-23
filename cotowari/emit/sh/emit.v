@@ -5,6 +5,7 @@ import cotowari.util { must_write }
 
 pub fn (mut e Emitter) emit(f &ast.File) {
 	e.file(f)
+	must_write(e.out, e.builtin_code.bytes())
 	must_write(e.out, e.code.bytes())
 }
 
@@ -21,6 +22,6 @@ fn (mut e Emitter) builtin() {
 		$embed_file('../../../builtin/array.sh'),
 	]
 	for f in builtins {
-		e.code.writeln(f.to_string())
+		e.builtin_code.writeln(f.to_string())
 	}
 }
