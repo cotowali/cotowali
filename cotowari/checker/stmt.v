@@ -25,7 +25,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 }
 
 fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
-	stmt.resolve_type()
+	stmt.left.sym.typ = stmt.right.typ()
 }
 
 fn (mut c Checker) block(block ast.Block) {

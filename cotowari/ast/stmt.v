@@ -13,10 +13,6 @@ pub mut:
 	right Expr
 }
 
-pub fn (mut stmt AssignStmt) resolve_type() {
-	stmt.left.sym.typ = stmt.right.typ()
-}
-
 pub struct AssertStmt {
 pub:
 	key_pos Pos
