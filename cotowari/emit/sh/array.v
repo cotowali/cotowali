@@ -1,7 +1,6 @@
 module sh
 
 import cotowari.ast
-import cotowari.errors
 
 fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 	name := e.new_tmp_var()
