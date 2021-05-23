@@ -4,7 +4,12 @@ import cotowari.ast
 
 fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 	name := e.new_tmp_var()
+
+	old_kind := e.cur_kind
+	e.cur_kind = .literal
 	e.assign(name, ast.Expr(expr), ast.Expr(expr).type_symbol())
+	e.cur_kind = old_kind
+
 	e.array(name, opt)
 }
 

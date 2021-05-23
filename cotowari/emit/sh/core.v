@@ -8,10 +8,12 @@ import cotowari.ast { File, FnDecl }
 enum CodeKind {
 	builtin
 	main
+	literal
 }
 
 const ordered_code_kinds = [
 	CodeKind.builtin,
+	.literal,
 	.main,
 ]
 
@@ -31,6 +33,7 @@ pub fn new_emitter(out io.Writer, config &Config) Emitter {
 		out: out
 		code: map{
 			CodeKind.builtin: code.new_builder(100, config)
+			CodeKind.literal: code.new_builder(100, config)
 			CodeKind.main:    code.new_builder(100, config)
 		}
 	}
