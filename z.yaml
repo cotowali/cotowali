@@ -36,7 +36,5 @@ tasks:
   ci:
     tasks:
       setup-v: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
-      format: |
-        v fmt -diff .
-        v fmt -verify .
+      format: v fmt -verify .
       test: z test
