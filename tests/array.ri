@@ -13,6 +13,6 @@ v
 
 let arr = [0, 1, 2]
 echo_arr(arr)
-// echo_arr([0, 1, 2])
+echo_arr([0, 1, 2])
 // raw_arr(arr)
 // assert raw_arr(arr) == arr
