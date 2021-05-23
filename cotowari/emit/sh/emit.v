@@ -11,7 +11,7 @@ pub fn (mut e Emitter) emit(f &ast.File) {
 fn (mut emit Emitter) file(f &ast.File) {
 	emit.cur_file = f
 	emit.builtin()
-	emit.writeln('# file: $f.source.path')
+	emit.code.writeln('# file: $f.source.path')
 	emit.stmts(f.stmts)
 }
 
@@ -21,6 +21,6 @@ fn (mut emit Emitter) builtin() {
 		$embed_file('../../../builtin/array.sh'),
 	]
 	for f in builtins {
-		emit.writeln(f.to_string())
+		emit.code.writeln(f.to_string())
 	}
 }

@@ -4,26 +4,26 @@ import cotowari.ast
 
 fn (mut emit Emitter) call_fn(expr ast.CallFn, opt ExprOpt) {
 	if !opt.as_command {
-		emit.write('\$(')
+		emit.code.write('\$(')
 	}
 
-	emit.write(expr.func.out_name())
+	emit.code.write(expr.func.out_name())
 	for arg in expr.args {
-		emit.write(' ')
+		emit.code.write(' ')
 		emit.expr(arg, {})
 	}
 
 	if !opt.as_command {
-		emit.write(')')
+		emit.code.write(')')
 	}
 }
 
 fn (mut emit Emitter) fn_decl(node ast.FnDecl) {
 	if !node.has_body {
-		emit.writeln('')
-		// emit.writeln('# info: fn ${node.name}(${node.params.map('$it.sym.name $it.sym.typ.name').join(', ')})')
-		emit.writeln('# info: fn ${node.name}(${node.params.map('$it.sym.name').join(', ')})')
-		emit.writeln('')
+		emit.code.writeln('')
+		// emit.code.writeln('# info: fn ${node.name}(${node.params.map('$it.sym.name $it.sym.typ.name').join(', ')})')
+		emit.code.writeln('# info: fn ${node.name}(${node.params.map('$it.sym.name').join(', ')})')
+		emit.code.writeln('')
 		return
 	}
 

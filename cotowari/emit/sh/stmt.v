@@ -29,7 +29,7 @@ fn (mut emit Emitter) stmt(stmt Stmt) {
 			emit.assign_stmt(stmt)
 		}
 		ast.EmptyStmt {
-			emit.writeln('')
+			emit.code.writeln('')
 		}
 		ast.ForInStmt {
 			emit.for_in_stmt(stmt)
@@ -38,22 +38,22 @@ fn (mut emit Emitter) stmt(stmt Stmt) {
 			emit.if_stmt(stmt)
 		}
 		ast.InlineShell {
-			emit.writeln(stmt.text)
+			emit.code.writeln(stmt.text)
 		}
 		ast.ReturnStmt {
 			emit.expr(stmt.expr, as_command: true, writeln: true)
-			emit.writeln('return 0')
+			emit.code.writeln('return 0')
 		}
 	}
 }
 
 fn (mut emit Emitter) assert_stmt(stmt ast.AssertStmt) {
-	emit.write('if falsy ')
+	emit.code.write('if falsy ')
 	emit.expr(stmt.expr, as_command: false, writeln: true)
 
 	emit.write_block('then', 'fi', fn (mut emit Emitter, stmt ast.AssertStmt) {
-		emit.writeln("echo 'LINE $stmt.key_pos.line: assertion failed' >&2")
-		emit.writeln('exit 1')
+		emit.code.writeln("echo 'LINE $stmt.key_pos.line: assertion failed' >&2")
+		emit.code.writeln('exit 1')
 	}, stmt)
 }
 
@@ -65,22 +65,22 @@ fn (mut emit Emitter) if_stmt(stmt ast.IfStmt) {
 	for i, branch in stmt.branches {
 		mut is_else := i == stmt.branches.len - 1 && stmt.has_else
 		if is_else {
-			emit.writeln('else')
+			emit.code.writeln('else')
 		} else {
-			emit.write(if i == 0 { 'if ' } else { 'elif ' })
-			emit.write('truthy ')
+			emit.code.write(if i == 0 { 'if ' } else { 'elif ' })
+			emit.code.write('truthy ')
 			emit.expr(branch.cond, as_command: false, writeln: true)
-			emit.writeln('then')
+			emit.code.writeln('then')
 		}
 		emit.indent()
 		emit.block(branch.body)
 		emit.unindent()
 	}
-	emit.writeln('fi')
+	emit.code.writeln('fi')
 }
 
 fn (mut emit Emitter) for_in_stmt(stmt ast.ForInStmt) {
-	emit.write('for $stmt.val.out_name() in ')
+	emit.code.write('for $stmt.val.out_name() in ')
 	emit.expr(stmt.expr, writeln: true)
 	emit.write_block('do', 'done', fn (mut e Emitter, stmt ast.ForInStmt) {
 		e.block(stmt.body)
@@ -95,12 +95,12 @@ fn (mut emit Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
 			ast.Expr {
 				match value {
 					ast.ArrayLiteral {
-						emit.write('array_assign "$name"')
+						emit.code.write('array_assign "$name"')
 						for elem in value.elements {
-							emit.write(' ')
+							emit.code.write(' ')
 							emit.expr(elem, as_command: false)
 						}
-						emit.writeln('')
+						emit.code.writeln('')
 					}
 					ast.Var {
 						emit.assign(name, value.out_name(), ts)
@@ -109,19 +109,19 @@ fn (mut emit Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
 				}
 			}
 			string {
-				emit.writeln('array_assign "$name" \$(array_elements "$value")')
+				emit.code.writeln('array_assign "$name" \$(array_elements "$value")')
 			}
 		}
 		return
 	}
 	match value {
 		string {
-			emit.writeln('$name="$value"')
+			emit.code.writeln('$name="$value"')
 		}
 		ast.Expr {
-			emit.write('$name=')
+			emit.code.write('$name=')
 			emit.expr(value, {})
-			emit.writeln('')
+			emit.code.writeln('')
 		}
 	}
 }

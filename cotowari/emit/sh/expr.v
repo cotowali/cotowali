@@ -27,30 +27,30 @@ fn (mut emit Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		}
 		ast.IntLiteral {
 			emit.write_echo_if_command(opt)
-			emit.write(expr.token.text)
+			emit.code.write(expr.token.text)
 		}
 		ast.ArrayLiteral {
 			emit.array_literal(expr, opt)
 		}
 		ast.StringLiteral {
 			emit.write_echo_if_command(opt)
-			emit.write("'$expr.token.text'")
+			emit.code.write("'$expr.token.text'")
 		}
 		ast.Var {
 			emit.var_(expr, opt)
 		}
 	}
 	if opt.as_command && opt.discard_stdout {
-		emit.write(' > /dev/null')
+		emit.code.write(' > /dev/null')
 	}
 	if opt.writeln {
-		emit.writeln('')
+		emit.code.writeln('')
 	}
 }
 
 fn (mut emit Emitter) write_echo_if_command(opt ExprOpt) {
 	if opt.as_command {
-		emit.write('echo ')
+		emit.code.write('echo ')
 	}
 }
 
@@ -62,7 +62,7 @@ fn (mut emit Emitter) var_(v ast.Var, opt ExprOpt) {
 		else {
 			emit.write_echo_if_command(opt)
 			// '$(( n == 0 ))' or 'echo "$n"'
-			emit.write(if opt.inside_arithmetic { '$v.out_name()' } else { '"\$$v.out_name()"' })
+			emit.code.write(if opt.inside_arithmetic { '$v.out_name()' } else { '"\$$v.out_name()"' })
 		}
 	}
 }
@@ -76,13 +76,13 @@ fn (mut emit Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	match op.kind {
 		.op_plus, .op_minus, .op_div, .op_mul, .op_mod, .op_eq, .op_ne, .op_gt, .op_lt {
 			if !opt.inside_arithmetic {
-				emit.write('\$(( ( ')
+				emit.code.write('\$(( ( ')
 			}
 			emit.expr(expr.left, inside_arithmetic: true)
-			emit.write(' $op.text ')
+			emit.code.write(' $op.text ')
 			emit.expr(expr.right, inside_arithmetic: true)
 			if !opt.inside_arithmetic {
-				emit.write(' ) ))')
+				emit.code.write(' ) ))')
 			}
 		}
 		else {
@@ -131,18 +131,18 @@ fn (mut emit Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 
 fn (mut emit Emitter) pipeline(stmt Pipeline, opt ExprOpt) {
 	if !opt.as_command {
-		emit.write('\$(')
+		emit.code.write('\$(')
 	}
 
 	for i, expr in stmt.exprs {
 		if i > 0 {
-			emit.write(' | ')
+			emit.code.write(' | ')
 		}
 		emit.expr(expr, as_command: true)
 	}
-	emit.writeln('')
+	emit.code.writeln('')
 
 	if !opt.as_command {
-		emit.write(')')
+		emit.code.write(')')
 	}
 }

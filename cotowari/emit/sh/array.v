@@ -14,23 +14,23 @@ type ArrayAssignValue = ast.ArrayLiteral | string
 fn (mut emit Emitter) array_assign(name string, value ArrayAssignValue) {
 	match value {
 		ast.ArrayLiteral {
-			emit.write('array_assign "$name"')
+			emit.code.write('array_assign "$name"')
 			for elem in value.elements {
-				emit.write(' ')
+				emit.code.write(' ')
 				emit.expr(elem, as_command: false)
 			}
-			emit.writeln('')
+			emit.code.writeln('')
 		}
 		string {
-			emit.writeln('array_assign "$name" \$(array_elements "$value")')
+			emit.code.writeln('array_assign "$name" \$(array_elements "$value")')
 		}
 	}
 }
 
 fn (mut emit Emitter) array(name string, opt ExprOpt) {
 	if opt.as_command {
-		emit.writeln('echo \$(eval echo \$(array_elements $name) )')
+		emit.code.writeln('echo \$(eval echo \$(array_elements $name) )')
 		return
 	}
-	emit.write(name)
+	emit.code.write(name)
 }
