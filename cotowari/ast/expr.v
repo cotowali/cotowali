@@ -119,6 +119,10 @@ pub mut:
 	sym &symbols.Var
 }
 
+pub fn (mut v Var) set_typ(typ Type) {
+	v.sym.typ = typ
+}
+
 pub fn (v Var) name() string {
 	return v.sym.name
 }

@@ -25,7 +25,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 }
 
 fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
-	stmt.left.sym.typ = stmt.right.typ()
+	stmt.left.set_typ(stmt.right.typ())
 }
 
 fn (mut c Checker) block(block ast.Block) {
@@ -42,7 +42,7 @@ fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {
 	if ts.kind() != .array {
 		c.error('non-array type `$ts.name` is not iterable', stmt.expr.pos())
 	}
-	stmt.val.sym.typ = (ts.info as symbols.ArrayTypeInfo).elem
+	stmt.val.set_typ((ts.info as symbols.ArrayTypeInfo).elem)
 	c.block(stmt.body)
 }
 
