@@ -3,129 +3,129 @@ module sh
 import cotowari.ast { Stmt }
 import cotowari.symbols { TypeSymbol, builtin_type }
 
-fn (mut emit Emitter) stmts(stmts []Stmt) {
+fn (mut e Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {
-		emit.stmt(stmt)
+		e.stmt(stmt)
 	}
 }
 
-fn (mut emit Emitter) stmt(stmt Stmt) {
+fn (mut e Emitter) stmt(stmt Stmt) {
 	match stmt {
 		ast.AssertStmt {
-			emit.assert_stmt(stmt)
+			e.assert_stmt(stmt)
 		}
 		ast.FnDecl {
-			emit.fn_decl(stmt)
+			e.fn_decl(stmt)
 		}
 		ast.Block {
-			emit.block(stmt)
+			e.block(stmt)
 		}
 		ast.Expr {
-			discard_stdout := emit.inside_fn
-				&& if stmt is ast.CallFn { emit.cur_fn.ret_typ != builtin_type(.void) } else { true }
-			emit.expr(stmt, as_command: true, discard_stdout: discard_stdout, writeln: true)
+			discard_stdout := e.inside_fn
+				&& if stmt is ast.CallFn { e.cur_fn.ret_typ != builtin_type(.void) } else { true }
+			e.expr(stmt, as_command: true, discard_stdout: discard_stdout, writeln: true)
 		}
 		ast.AssignStmt {
-			emit.assign_stmt(stmt)
+			e.assign_stmt(stmt)
 		}
 		ast.EmptyStmt {
-			emit.code.writeln('')
+			e.code.writeln('')
 		}
 		ast.ForInStmt {
-			emit.for_in_stmt(stmt)
+			e.for_in_stmt(stmt)
 		}
 		ast.IfStmt {
-			emit.if_stmt(stmt)
+			e.if_stmt(stmt)
 		}
 		ast.InlineShell {
-			emit.code.writeln(stmt.text)
+			e.code.writeln(stmt.text)
 		}
 		ast.ReturnStmt {
-			emit.expr(stmt.expr, as_command: true, writeln: true)
-			emit.code.writeln('return 0')
+			e.expr(stmt.expr, as_command: true, writeln: true)
+			e.code.writeln('return 0')
 		}
 	}
 }
 
-fn (mut emit Emitter) assert_stmt(stmt ast.AssertStmt) {
-	emit.code.write('if falsy ')
-	emit.expr(stmt.expr, as_command: false, writeln: true)
+fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
+	e.code.write('if falsy ')
+	e.expr(stmt.expr, as_command: false, writeln: true)
 
-	emit.write_block('then', 'fi', fn (mut emit Emitter, stmt ast.AssertStmt) {
-		emit.code.writeln("echo 'LINE $stmt.key_pos.line: assertion failed' >&2")
-		emit.code.writeln('exit 1')
+	e.write_block('then', 'fi', fn (mut e Emitter, stmt ast.AssertStmt) {
+		e.code.writeln("echo 'LINE $stmt.key_pos.line: assertion failed' >&2")
+		e.code.writeln('exit 1')
 	}, stmt)
 }
 
-fn (mut emit Emitter) block(block ast.Block) {
-	emit.stmts(block.stmts)
+fn (mut e Emitter) block(block ast.Block) {
+	e.stmts(block.stmts)
 }
 
-fn (mut emit Emitter) if_stmt(stmt ast.IfStmt) {
+fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
 	for i, branch in stmt.branches {
 		mut is_else := i == stmt.branches.len - 1 && stmt.has_else
 		if is_else {
-			emit.code.writeln('else')
+			e.code.writeln('else')
 		} else {
-			emit.code.write(if i == 0 { 'if ' } else { 'elif ' })
-			emit.code.write('truthy ')
-			emit.expr(branch.cond, as_command: false, writeln: true)
-			emit.code.writeln('then')
+			e.code.write(if i == 0 { 'if ' } else { 'elif ' })
+			e.code.write('truthy ')
+			e.expr(branch.cond, as_command: false, writeln: true)
+			e.code.writeln('then')
 		}
-		emit.indent()
-		emit.block(branch.body)
-		emit.unindent()
+		e.indent()
+		e.block(branch.body)
+		e.unindent()
 	}
-	emit.code.writeln('fi')
+	e.code.writeln('fi')
 }
 
-fn (mut emit Emitter) for_in_stmt(stmt ast.ForInStmt) {
-	emit.code.write('for $stmt.val.out_name() in ')
-	emit.expr(stmt.expr, writeln: true)
-	emit.write_block('do', 'done', fn (mut e Emitter, stmt ast.ForInStmt) {
+fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
+	e.code.write('for $stmt.val.out_name() in ')
+	e.expr(stmt.expr, writeln: true)
+	e.write_block('do', 'done', fn (mut e Emitter, stmt ast.ForInStmt) {
 		e.block(stmt.body)
 	}, stmt)
 }
 
 type AssignValue = ast.Expr | string
 
-fn (mut emit Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
+fn (mut e Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
 	if ts.kind() == .array {
 		match value {
 			ast.Expr {
 				match value {
 					ast.ArrayLiteral {
-						emit.code.write('array_assign "$name"')
+						e.code.write('array_assign "$name"')
 						for elem in value.elements {
-							emit.code.write(' ')
-							emit.expr(elem, as_command: false)
+							e.code.write(' ')
+							e.expr(elem, as_command: false)
 						}
-						emit.code.writeln('')
+						e.code.writeln('')
 					}
 					ast.Var {
-						emit.assign(name, value.out_name(), ts)
+						e.assign(name, value.out_name(), ts)
 					}
 					else {}
 				}
 			}
 			string {
-				emit.code.writeln('array_assign "$name" \$(array_elements "$value")')
+				e.code.writeln('array_assign "$name" \$(array_elements "$value")')
 			}
 		}
 		return
 	}
 	match value {
 		string {
-			emit.code.writeln('$name="$value"')
+			e.code.writeln('$name="$value"')
 		}
 		ast.Expr {
-			emit.code.write('$name=')
-			emit.expr(value, {})
-			emit.code.writeln('')
+			e.code.write('$name=')
+			e.expr(value, {})
+			e.code.writeln('')
 		}
 	}
 }
 
-fn (mut emit Emitter) assign_stmt(node ast.AssignStmt) {
-	emit.assign(node.left.out_name(), node.right, node.left.type_symbol())
+fn (mut e Emitter) assign_stmt(node ast.AssignStmt) {
+	e.assign(node.left.out_name(), node.right, node.left.type_symbol())
 }
