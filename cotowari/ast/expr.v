@@ -21,7 +21,7 @@ pub fn (expr Expr) pos() Pos {
 	}
 }
 
-fn (e InfixExpr) typ() Type {
+pub fn (e InfixExpr) typ() Type {
 	return if e.op.kind.@is(.comparsion_op) { builtin_type(.bool) } else { e.right.typ() }
 }
 
