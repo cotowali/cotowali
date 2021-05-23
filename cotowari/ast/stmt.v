@@ -45,10 +45,9 @@ pub mut:
 }
 
 pub struct ForInStmt {
-pub:
-	// for var in expr
-	val Var
 pub mut:
+	// for var in expr
+	val  Var
 	expr Expr
 	body Block
 }
