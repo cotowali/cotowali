@@ -16,7 +16,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.CallFn {
 			e.call_fn(expr, opt)
 		}
-		ast.Pipeline {
+		Pipeline {
 			e.pipeline(expr, opt)
 		}
 		ast.InfixExpr {
