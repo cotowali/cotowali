@@ -5,14 +5,15 @@ import cotowari.util { must_write }
 
 pub fn (mut e Emitter) emit(f &ast.File) {
 	e.file(f)
-	must_write(e.out, e.builtin_code.bytes())
-	must_write(e.out, e.code.bytes())
+	for k in ordered_code_kinds {
+		must_write(e.out, e.code[k].bytes())
+	}
 }
 
 fn (mut e Emitter) file(f &ast.File) {
 	e.cur_file = f
 	e.builtin()
-	e.code.writeln('# file: $f.source.path')
+	e.writeln('# file: $f.source.path')
 	e.stmts(f.stmts)
 }
 
@@ -21,7 +22,12 @@ fn (mut e Emitter) builtin() {
 		$embed_file('../../../builtin/builtin.sh'),
 		$embed_file('../../../builtin/array.sh'),
 	]
+	old_kind := e.cur_kind
+	defer {
+		e.cur_kind = old_kind
+	}
+	e.cur_kind = .builtin
 	for f in builtins {
-		e.builtin_code.writeln(f.to_string())
+		e.writeln(f.to_string())
 	}
 }

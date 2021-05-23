@@ -10,8 +10,8 @@ fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 
 fn (mut e Emitter) array(name string, opt ExprOpt) {
 	if opt.as_command {
-		e.code.writeln('echo \$(eval echo \$(array_elements $name) )')
+		e.writeln('echo \$(eval echo \$(array_elements $name) )')
 		return
 	}
-	e.code.write(name)
+	e.write(name)
 }

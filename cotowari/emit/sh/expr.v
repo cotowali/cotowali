@@ -27,30 +27,30 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		}
 		ast.IntLiteral {
 			e.write_echo_if_command(opt)
-			e.code.write(expr.token.text)
+			e.write(expr.token.text)
 		}
 		ast.ArrayLiteral {
 			e.array_literal(expr, opt)
 		}
 		ast.StringLiteral {
 			e.write_echo_if_command(opt)
-			e.code.write("'$expr.token.text'")
+			e.write("'$expr.token.text'")
 		}
 		ast.Var {
 			e.var_(expr, opt)
 		}
 	}
 	if opt.as_command && opt.discard_stdout {
-		e.code.write(' > /dev/null')
+		e.write(' > /dev/null')
 	}
 	if opt.writeln {
-		e.code.writeln('')
+		e.writeln('')
 	}
 }
 
 fn (mut e Emitter) write_echo_if_command(opt ExprOpt) {
 	if opt.as_command {
-		e.code.write('echo ')
+		e.write('echo ')
 	}
 }
 
@@ -62,7 +62,7 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 		else {
 			e.write_echo_if_command(opt)
 			// '$(( n == 0 ))' or 'echo "$n"'
-			e.code.write(if opt.inside_arithmetic { '$v.out_name()' } else { '"\$$v.out_name()"' })
+			e.write(if opt.inside_arithmetic { '$v.out_name()' } else { '"\$$v.out_name()"' })
 		}
 	}
 }
@@ -76,13 +76,13 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	match op.kind {
 		.op_plus, .op_minus, .op_div, .op_mul, .op_mod, .op_eq, .op_ne, .op_gt, .op_lt {
 			if !opt.inside_arithmetic {
-				e.code.write('\$(( ( ')
+				e.write('\$(( ( ')
 			}
 			e.expr(expr.left, inside_arithmetic: true)
-			e.code.write(' $op.text ')
+			e.write(' $op.text ')
 			e.expr(expr.right, inside_arithmetic: true)
 			if !opt.inside_arithmetic {
-				e.code.write(' ) ))')
+				e.write(' ) ))')
 			}
 		}
 		else {
@@ -131,18 +131,18 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 
 fn (mut e Emitter) pipeline(stmt Pipeline, opt ExprOpt) {
 	if !opt.as_command {
-		e.code.write('\$(')
+		e.write('\$(')
 	}
 
 	for i, expr in stmt.exprs {
 		if i > 0 {
-			e.code.write(' | ')
+			e.write(' | ')
 		}
 		e.expr(expr, as_command: true)
 	}
-	e.code.writeln('')
+	e.writeln('')
 
 	if !opt.as_command {
-		e.code.write(')')
+		e.write(')')
 	}
 }
