@@ -4,3 +4,9 @@ expr_err.ri 5,4: mismatched types: `int` (expected) and `string` (found)
 expr_err.ri 5,2: mismatched types: `int` (left) and `string` (right)
   > f("a") + "a"
     ^^^^^^^^^^^^
+expr_err.ri 6,10: mismatched types: `int` (expected) and `string` (found)
+  > "a"
+    ^^^
+expr_err.ri 6,2: mismatched types: `string` (left) and `int` (right)
+  > "a" + f("a")
+    ^^^^^^^^^^^^
