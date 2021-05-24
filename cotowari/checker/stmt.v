@@ -33,6 +33,12 @@ fn (mut c Checker) block(block ast.Block) {
 }
 
 fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
+	old_fn := c.cur_fn
+	c.cur_fn = stmt
+	defer {
+		c.cur_fn = old_fn
+	}
+
 	c.block(stmt.body)
 }
 

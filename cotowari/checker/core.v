@@ -7,6 +7,7 @@ import cotowari.source { Pos }
 pub struct Checker {
 mut:
 	cur_file &ast.File = 0
+	cur_fn   ast.FnDecl
 }
 
 pub fn new_checker() Checker {
