@@ -1,21 +1,43 @@
 module tools
 
-import cli { Command }
+import cli { Command, Flag }
 import cotowari.config { new_config }
 import cotowari.parser
+import cotowari.checker { new_checker }
 
 const (
+	use_checker_flag = Flag{
+		flag: .bool
+		name: 'use-checker'
+		abbrev: 'c'
+		default_value: ['true']
+	}
 	ast_command = Command{
 		name: 'ast'
 		description: 'print ast'
-		execute: fn (cmd Command) ? {
-			if cmd.args.len != 1 {
-				cmd.execute_help()
-				return
-			}
-			config := new_config()
-			if f := parser.parse_file(cmd.args[0], config) { println(f) } else { println('ERROR') }
-			return
-		}
+		flags: [use_checker_flag]
+		execute: execute_ast
 	}
 )
+
+fn execute_ast(cmd Command) ? {
+	if cmd.args.len != 1 {
+		cmd.execute_help()
+		return
+	}
+	config := new_config()
+	use_checker := cmd.flags.get_bool(tools.use_checker_flag.name) or { panic(err) }
+	mut f := parser.parse_file(cmd.args[0], config) or {
+		eprintln('ERROR')
+		return
+	}
+	if use_checker {
+		mut checker := new_checker()
+		checker.check_file(mut f)
+		println(f)
+		if f.errors.len > 0 {
+			eprintln('checker error')
+		}
+	}
+	return
+}
