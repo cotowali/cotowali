@@ -16,6 +16,8 @@ fn (mut c Checker) expr(expr Expr) {
 }
 
 fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
+	c.expr(expr.left)
+	c.expr(expr.right)
 	c.check_types(
 		want: expr.left.type_symbol()
 		want_label: 'left'
