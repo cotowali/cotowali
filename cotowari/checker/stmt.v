@@ -68,4 +68,9 @@ fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 
 fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
 	c.expr(stmt.expr)
+	c.check_types(
+		want: c.cur_fn.type_symbol()
+		got: stmt.expr.type_symbol()
+		pos: stmt.pos()
+	) or {}
 }

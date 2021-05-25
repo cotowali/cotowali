@@ -5,6 +5,7 @@ import cotowari.ast
 import cotowari.symbols { new_placeholder_var }
 
 fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
+	p.trace(@FN)
 	expr := p.parse_expr({}) ?
 
 	// eol or close blace
@@ -38,6 +39,7 @@ struct InfixExprOpt {
 }
 
 fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.Expr {
+	p.trace(@FN, '$op_kinds', '$opt')
 	mut expr := p.parse_expr(opt.operand) ?
 	for {
 		op := p.token(0)
@@ -57,6 +59,7 @@ fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.
 }
 
 fn (mut p Parser) parse_prefix_expr() ?ast.Expr {
+	p.trace(@FN)
 	if op := p.consume_if_kind_is(.prefix_op) {
 		return ast.PrefixExpr{
 			scope: p.scope
@@ -68,6 +71,7 @@ fn (mut p Parser) parse_prefix_expr() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
+	p.trace(@FN, '$kind')
 	match kind {
 		.toplevel {
 			return p.parse_expr(kind.inner())
@@ -94,6 +98,7 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 }
 
 fn (mut p Parser) parse_pipeline() ?ast.Expr {
+	p.trace(@FN)
 	inner := ExprKind.pipeline.inner()
 	expr := p.parse_expr(inner) ?
 	if p.kind(0) != .pipe {
@@ -111,6 +116,7 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_ident() ?ast.Expr {
+	p.trace(@FN)
 	ident := p.consume()
 	name := ident.text
 	p.consume_if_kind_eq(.l_paren) or {
@@ -144,6 +150,7 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_array_literal() ?ast.Expr {
+	p.trace(@FN)
 	first_tok := p.consume_with_check(.l_bracket) ?
 	mut last_tok := first_tok
 	if _ := p.consume_if_kind_eq(.r_paren) {
@@ -178,6 +185,7 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_value() ?ast.Expr {
+	p.trace(@FN)
 	tok := p.token(0)
 	match tok.kind {
 		.ident {

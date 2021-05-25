@@ -4,6 +4,7 @@ import cotowari.errors { Err }
 import cotowari.source { Pos }
 
 fn (mut p Parser) error(msg string, pos Pos) IError {
+	p.trace(@FN, msg, '$pos')
 	err := Err{
 		source: p.file.source
 		msg: msg

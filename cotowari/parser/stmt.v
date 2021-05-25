@@ -4,6 +4,7 @@ import cotowari.ast
 import cotowari.errors { unreachable }
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
+	p.trace(@FN)
 	stmt := p.try_parse_stmt() or {
 		p.skip_until_eol()
 		ast.EmptyStmt{}
@@ -13,6 +14,7 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 }
 
 fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
+	p.trace(@FN)
 	match p.kind(0) {
 		.key_assert {
 			tok := p.consume()
@@ -50,6 +52,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 }
 
 fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
+	p.trace(@FN, name, '$locals')
 	p.open_scope(name)
 	for local in locals {
 		p.scope.register_var(name: local) or { panic(err) }
@@ -77,6 +80,7 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 }
 
 fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
+	p.trace(@FN)
 	p.consume_with_assert(.key_let)
 	ident := p.consume_with_check(.ident) ?
 	name := ident.text
@@ -96,6 +100,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 }
 
 fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
+	p.trace(@FN)
 	ident := p.consume_with_check(.ident) ?
 	name := ident.text
 	p.consume_with_check(.op_assign) ?
@@ -110,6 +115,7 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 }
 
 fn (mut p Parser) parse_if_branch(name string) ?ast.IfBranch {
+	p.trace(@FN)
 	cond := p.parse_expr({}) ?
 	block := p.parse_block(name, []) ?
 	return ast.IfBranch{
@@ -119,6 +125,7 @@ fn (mut p Parser) parse_if_branch(name string) ?ast.IfBranch {
 }
 
 fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
+	p.trace(@FN)
 	p.consume_with_assert(.key_if)
 
 	cond := p.parse_expr({}) ?
@@ -154,6 +161,7 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 }
 
 fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
+	p.trace(@FN)
 	p.consume_with_assert(.key_for)
 	ident := p.consume_with_check(.ident) ?
 	p.consume_with_check(.key_in) ?
@@ -172,6 +180,7 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 }
 
 fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
+	p.trace(@FN)
 	tok := p.consume_with_assert(.key_return)
 	return ast.ReturnStmt{
 		token: tok

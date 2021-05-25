@@ -19,6 +19,13 @@ mut:
 	scope       &Scope
 }
 
+[inline]
+pub fn (p &Parser) trace(f string, args ...string) {
+	$if trace_parser ? {
+		eprintln('${f}(${args.join(', ')}) > token: ${p.token(0)}')
+	}
+}
+
 pub fn (p &Parser) token(i int) Token {
 	if i >= p.buf.len {
 		panic('cannot take token($i) (p.buf.len = $p.buf.len)')
