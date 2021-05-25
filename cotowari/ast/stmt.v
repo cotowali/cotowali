@@ -78,3 +78,7 @@ pub:
 	token Token // key_return token
 	expr  Expr
 }
+
+pub fn (stmt ReturnStmt) pos() Pos {
+	return stmt.token.pos.merge(stmt.expr.pos())
+}
