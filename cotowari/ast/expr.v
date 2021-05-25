@@ -33,7 +33,7 @@ pub fn (e Expr) typ() Type {
 		Pipeline { e.exprs.last().typ() }
 		PrefixExpr { e.expr.typ() }
 		InfixExpr { e.typ() }
-		CallFn { Expr(e.func).typ() }
+		CallFn { e.func.sym.type_symbol().fn_info().ret }
 		Var { e.sym.typ }
 	}
 }
@@ -46,7 +46,6 @@ pub fn (v Var) type_symbol() TypeSymbol {
 pub fn (e Expr) type_symbol() TypeSymbol {
 	return match e {
 		ArrayLiteral { e.scope.must_lookup_array_type(elem: e.elem_typ) }
-		CallFn { e.scope.must_lookup_type(e.func.sym.type_symbol().fn_info().ret) }
 		Var { e.type_symbol() }
 		else { e.scope().must_lookup_type(e.typ()) }
 	}
