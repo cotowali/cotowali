@@ -4,6 +4,9 @@ fn_err.ri 1,14: `i` is duplicated
 fn_err.ri 2,10: unknown type `foo`
   > foo
     ^^^
-fn_err.ri 5,5: `g` is duplicated
+fn_err.ri 7,5: `g` is duplicated
   > g
+    ^
+fn_err.ri 5,11: mismatched types: `string` (expected) and `int` (found)
+  > i
     ^

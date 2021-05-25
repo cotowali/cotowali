@@ -1,6 +1,8 @@
 fn f1(i int, i int) {}
 fn f2(i foo) {}
 
-fn g(i int) {}
+fn g(i int) string {
+  return i
+}
 fn g(i int) {}
 
