@@ -2,6 +2,7 @@ module sh
 
 import cotowari.ast
 import cotowari.token { Token }
+import cotowari.symbols { builtin_type }
 import cotowari.errors { unreachable }
 
 struct ExprOpt {
@@ -72,14 +73,26 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	if !op.kind.@is(.binary_op) {
 		panic(unreachable)
 	}
+
+	if expr.left.typ() == builtin_type(.int) {
+		e.infix_expr_for_int(expr, opt)
+	} else {
+		panic('infix_expr for `$expr.left.type_symbol().name` is unimplemented')
+	}
+}
+
+fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
+	if expr.left.typ() != builtin_type(.int) {
+		panic(unreachable)
+	}
 	e.write_echo_if_command(opt)
-	match op.kind {
+	match expr.op.kind {
 		.op_plus, .op_minus, .op_div, .op_mul, .op_mod, .op_eq, .op_ne, .op_gt, .op_lt {
 			if !opt.inside_arithmetic {
 				e.write('\$(( ( ')
 			}
 			e.expr(expr.left, inside_arithmetic: true)
-			e.write(' $op.text ')
+			e.write(' $expr.op.text ')
 			e.expr(expr.right, inside_arithmetic: true)
 			if !opt.inside_arithmetic {
 				e.write(' ) ))')
