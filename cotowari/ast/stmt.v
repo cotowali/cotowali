@@ -45,6 +45,11 @@ pub fn (f FnDecl) type_symbol() TypeSymbol {
 	return f.parent_scope.must_lookup_type(f.typ)
 }
 
+pub fn (f FnDecl) ret_type_symbol() TypeSymbol {
+	ret := f.parent_scope.must_lookup_type(f.typ).fn_info().ret
+	return f.parent_scope.must_lookup_type(ret)
+}
+
 pub struct ForInStmt {
 pub mut:
 	// for var in expr
