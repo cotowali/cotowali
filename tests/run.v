@@ -134,10 +134,10 @@ fn (mut t TestCase) run() {
 	t.output = result.output
 	t.exit_code = result.exit_code
 
+	correct_exit_code := if t.is_err_test { t.exit_code != 0 } else { t.exit_code == 0 }
 	if t.is_todo_test {
 		t.result = .todo
 	} else {
-		correct_exit_code := if t.is_err_test { t.exit_code != 0 } else { t.exit_code == 0 }
 		t.result = if t.output == t.expected && correct_exit_code {
 			TestResult.ok
 		} else {
@@ -145,15 +145,17 @@ fn (mut t TestCase) run() {
 		}
 	}
 	$if fix ? {
-		if t.is_todo_test {
-			if t.output == t.expected {
-				fix_todo(t.path, .ri)
-				fix_todo(t.out_path, .out)
+		if correct_exit_code {
+			if t.is_todo_test {
+				if t.output == t.expected {
+					fix_todo(t.path, .ri)
+					fix_todo(t.out_path, .out)
+					t.result = .fixed
+				}
+			} else if t.output != t.expected {
+				os.write_file(t.out_path, t.output) or { panic(err) }
 				t.result = .fixed
 			}
-		} else if t.output != t.expected {
-			os.write_file(t.out_path, t.output) or { panic(err) }
-			t.result = .fixed
 		}
 	}
 }
