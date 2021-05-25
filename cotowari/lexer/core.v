@@ -167,12 +167,16 @@ fn (lex Lexer) assert_by_match_byte(c byte) {
 }
 
 fn (mut lex Lexer) consume_with_assert(cond CharCond) {
-	lex.@assert(cond)
+	$if debug {
+		lex.@assert(cond)
+	}
 	lex.consume()
 }
 
 fn (mut lex Lexer) skip_with_assert(cond CharCond) {
-	lex.@assert(cond)
+	$if debug {
+		lex.@assert(cond)
+	}
 	lex.skip()
 }
 
