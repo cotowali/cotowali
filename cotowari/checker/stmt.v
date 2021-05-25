@@ -20,7 +20,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 		ast.ForInStmt { c.for_in_stmt(mut stmt) }
 		ast.IfStmt { c.if_stmt(stmt) }
 		ast.InlineShell {}
-		ast.ReturnStmt {}
+		ast.ReturnStmt { c.return_stmt(stmt) }
 	}
 }
 
@@ -64,4 +64,8 @@ fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 		}
 		c.block(branch.body)
 	}
+}
+
+fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
+	c.expr(stmt.expr)
 }
