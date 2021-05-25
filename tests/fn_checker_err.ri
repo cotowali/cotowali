@@ -1,0 +1,3 @@
+fn f(i int) string {
+  return i
+}

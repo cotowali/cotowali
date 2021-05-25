@@ -1,0 +1,3 @@
+fn_checker_err.ri 2,11: mismatched types: `fn (int) string` (expected) and `int` (found)
+  > i
+    ^
