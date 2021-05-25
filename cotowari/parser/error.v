@@ -23,7 +23,7 @@ fn (mut p Parser) error(msg string, pos Pos) IError {
 
 fn (mut p Parser) unexpected_token_error(found Token, expects ...TokenKind) IError {
 	if expects.len == 0 {
-		return p.error('unexpected token `$found.text`', found.pos)
+		return p.syntax_error('unexpected token `$found.text`', found.pos)
 	}
 	mut expect := 'expect '
 	if expects.len == 1 {
