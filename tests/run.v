@@ -20,7 +20,8 @@ fn suffix(s FileSuffix) string {
 }
 
 fn is_err_test_file(f string) bool {
-	return f.trim_suffix(suffix(.ri)).trim_suffix(suffix(.todo)).ends_with(suffix(.err))
+	name := f.trim_suffix(suffix(.ri)).trim_suffix(suffix(.todo))
+	return name.ends_with(suffix(.err)) || name == 'error'
 }
 
 fn is_todo_test_file(f string) bool {
