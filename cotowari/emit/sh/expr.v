@@ -1,6 +1,6 @@
 module sh
 
-import cotowari.ast { Pipeline }
+import cotowari.ast
 import cotowari.token { Token }
 import cotowari.errors { unreachable }
 
@@ -16,7 +16,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.CallFn {
 			e.call_fn(expr, opt)
 		}
-		Pipeline {
+		ast.Pipeline {
 			e.pipeline(expr, opt)
 		}
 		ast.InfixExpr {
@@ -129,7 +129,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 	}
 }
 
-fn (mut e Emitter) pipeline(stmt Pipeline, opt ExprOpt) {
+fn (mut e Emitter) pipeline(stmt ast.Pipeline, opt ExprOpt) {
 	if !opt.as_command {
 		e.write('\$(')
 	}
