@@ -31,7 +31,12 @@ fn (mut p Parser) unexpected_token_error(found Token, expects ...TokenKind) IErr
 	} else {
 		expect = expects[..expects.len - 1].map(it.str()).join(', ') + ', or `$expects.last()`'
 	}
-	return p.error(expect + ', but found `$found.text`', found.pos)
+	return p.syntax_error(expect + ', but found `$found.text`', found.pos)
+}
+
+fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
+	p.file.has_syntax_error = true
+	return p.error(msg, pos)
 }
 
 fn (mut p Parser) duplicated_error(name string, pos Pos) IError {
