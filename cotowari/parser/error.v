@@ -4,9 +4,11 @@ import cotowari.errors { Err }
 import cotowari.source { Pos }
 
 fn (mut p Parser) error(msg string, pos Pos) IError {
-	p.trace_begin(@FN, msg, '$pos')
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN, msg, '$pos')
+		defer {
+			p.trace_end()
+		}
 	}
 
 	err := Err{

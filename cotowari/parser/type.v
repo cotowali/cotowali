@@ -3,9 +3,11 @@ module parser
 import cotowari.symbols { Type }
 
 fn (mut p Parser) parse_array_type() ?Type {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	p.consume_with_assert(.l_bracket)
@@ -15,9 +17,11 @@ fn (mut p Parser) parse_array_type() ?Type {
 }
 
 fn (mut p Parser) parse_type() ?Type {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	match p.kind(0) {

@@ -57,9 +57,11 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 }
 
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	info := p.parse_fn_signature_info() ?

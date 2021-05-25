@@ -5,9 +5,11 @@ import cotowari.ast
 import cotowari.symbols { new_placeholder_var }
 
 fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	expr := p.parse_expr({}) ?
@@ -47,9 +49,11 @@ fn (opt InfixExprOpt) str() string {
 }
 
 fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.Expr {
-	p.trace_begin(@FN, '$op_kinds', '$opt')
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN, '$op_kinds', '$opt')
+		defer {
+			p.trace_end()
+		}
 	}
 
 	mut expr := p.parse_expr(opt.operand) ?
@@ -71,9 +75,11 @@ fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.
 }
 
 fn (mut p Parser) parse_prefix_expr() ?ast.Expr {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	if op := p.consume_if_kind_is(.prefix_op) {
@@ -87,9 +93,11 @@ fn (mut p Parser) parse_prefix_expr() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
-	p.trace_begin(@FN, '$kind')
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN, '$kind')
+		defer {
+			p.trace_end()
+		}
 	}
 
 	match kind {
@@ -118,9 +126,11 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 }
 
 fn (mut p Parser) parse_pipeline() ?ast.Expr {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	inner := ExprKind.pipeline.inner()
@@ -140,9 +150,11 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_ident() ?ast.Expr {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	ident := p.consume()
@@ -178,9 +190,11 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_array_literal() ?ast.Expr {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	first_tok := p.consume_with_check(.l_bracket) ?
@@ -217,9 +231,11 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_value() ?ast.Expr {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	tok := p.token(0)

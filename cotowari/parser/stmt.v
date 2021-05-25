@@ -4,9 +4,11 @@ import cotowari.ast
 import cotowari.errors { unreachable }
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	stmt := p.try_parse_stmt() or {
@@ -18,9 +20,11 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 }
 
 fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	match p.kind(0) {
@@ -60,9 +64,11 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 }
 
 fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
-	p.trace_begin(@FN, name, '$locals')
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN, name, '$locals')
+		defer {
+			p.trace_end()
+		}
 	}
 
 	p.open_scope(name)
@@ -92,9 +98,11 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 }
 
 fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	p.consume_with_assert(.key_let)
@@ -116,9 +124,11 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 }
 
 fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	ident := p.consume_with_check(.ident) ?
@@ -135,9 +145,11 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 }
 
 fn (mut p Parser) parse_if_branch(name string) ?ast.IfBranch {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	cond := p.parse_expr({}) ?
@@ -149,9 +161,11 @@ fn (mut p Parser) parse_if_branch(name string) ?ast.IfBranch {
 }
 
 fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	p.consume_with_assert(.key_if)
@@ -189,9 +203,11 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 }
 
 fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	p.consume_with_assert(.key_for)
@@ -212,9 +228,11 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 }
 
 fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
-	p.trace_begin(@FN)
-	defer {
-		p.trace_end()
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
 	}
 
 	tok := p.consume_with_assert(.key_return)
