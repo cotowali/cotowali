@@ -55,10 +55,11 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	}
 	mut p := new_parser(new_lexer(c.source, c.config))
 	mut f := p.parse()
-	check_compile_error(f) ?
 
-	mut checker := new_checker()
-	checker.check_file(mut f)
+	if !f.has_syntax_error {
+		mut checker := new_checker()
+		checker.check_file(mut f)
+	}
 	check_compile_error(f) ?
 
 	mut e := sh.new_emitter(w, c.config)
