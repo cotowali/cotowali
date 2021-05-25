@@ -22,25 +22,25 @@ See `z test integration --help`
 
 #### Success Test
 
-Check exit status is 0 and output.
+`xxx.ri`
 
-`tests/testname.ri`: source code
-`tests/testname.out`: output
+- It can be compiled with no error.
+- It runs successfully (exit with zero).
+- output matches `xxx.out`.
 
 #### Error Test
 
-Check exit status is not 0 and error output
+`xxx_err.ri` or `error.ri`
 
-If filename has suffix, `_err.ri`, it is error test.
-
-`tests/testname_err.ri`: source code
-`tests/testname_err.out`: error output
+- It fail to compile (compiler exit with non-zero status).
+- Compiler output matches `xxx_err.out` or `error.out`
 
 #### TODO Test
 
-If filename has suffix `.todo.ri`, it is todo test. todo test will be executed but it does not checked.
+`xxx.todo.ri` or `xxx_err.todo.ri`
+
 If output matches with `.todo.out`, `.todo` will be removed by using fix mode.
 
-### Fix mode
+#### Fix mode
 
 `z test fix` will be update output automatically. You should check that updated output is correct before commit it.
