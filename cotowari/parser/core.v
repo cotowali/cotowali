@@ -110,20 +110,8 @@ fn (mut p Parser) skip_eol() {
 }
 
 fn (mut p Parser) consume_with_check(kinds ...TokenKind) ?Token {
-	if p.kind(0) !in kinds {
-		found := p.token(0)
-		if kinds.len == 0 {
-			return p.error('unexpected token `$found.text`', found.pos)
-		}
-		mut expect := 'expect '
-		if kinds.len == 1 {
-			expect = '`$kinds[0].str()`'
-		} else {
-			expect = kinds[..kinds.len - 1].map(it.str()).join(', ') + ', or `$kinds.last()`'
-		}
-		return p.error(expect + ', but found `$found.text`', found.pos)
-	}
-	return p.consume()
+	found := p.consume()
+	return if found.kind !in kinds { p.unexpected_token_error(found, ...kinds) } else { found }
 }
 
 fn (mut p Parser) consume_with_assert(kinds ...TokenKind) Token {

@@ -261,7 +261,8 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 			return p.parse_array_literal()
 		}
 		else {
-			return p.error('unexpected token $tok.kind', tok.pos)
+			found := p.consume()
+			return p.unexpected_token_error(found)
 		}
 	}
 }
