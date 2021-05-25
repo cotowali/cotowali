@@ -31,10 +31,11 @@ pub struct EmptyStmt {}
 
 pub struct FnDecl {
 pub:
-	name_pos Pos
-	name     string
-	has_body bool
-	ret_typ  Type
+	parent_scope &Scope
+	name_pos     Pos
+	name         string
+	has_body     bool
+	ret_typ      Type
 pub mut:
 	params []Var
 	body   Block

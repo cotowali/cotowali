@@ -84,6 +84,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	has_body := p.kind(0) == .l_brace
 	mut node := ast.FnDecl{
+		parent_scope: outer_scope
 		name: info.name.text
 		params: params
 		has_body: has_body
