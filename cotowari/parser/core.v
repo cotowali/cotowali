@@ -24,7 +24,7 @@ mut:
 pub fn (mut p Parser) trace_begin(f string, args ...string) {
 	$if trace_parser ? {
 		eprint('  '.repeat(p.trace_indent))
-		eprintln('${f}(${args.join(', ')}) > token: ${p.token(0)}')
+		eprintln('${f}(${args.join(', ')}) > token: ${p.kind(0).str()}')
 		p.trace_indent++
 	}
 }
