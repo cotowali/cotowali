@@ -71,6 +71,6 @@ fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
 	c.check_types(
 		want: c.cur_fn.type_symbol()
 		got: stmt.expr.type_symbol()
-		pos: stmt.pos()
+		pos: stmt.expr.pos()
 	) or {}
 }
