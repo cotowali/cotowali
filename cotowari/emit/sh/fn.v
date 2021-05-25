@@ -21,8 +21,8 @@ fn (mut e Emitter) call_fn(expr ast.CallFn, opt ExprOpt) {
 fn (mut e Emitter) fn_decl(node ast.FnDecl) {
 	if !node.has_body {
 		e.writeln('')
-		// e.writeln('# info: fn ${node.name}(${node.params.map('$it.sym.name $it.sym.typ.name').join(', ')})')
-		e.writeln('# info: fn ${node.name}(${node.params.map('$it.sym.name').join(', ')})')
+		params_str := node.params.map('$it.sym.name').join(', ')
+		e.writeln('# info: fn ${node.name}($params_str)')
 		e.writeln('')
 		return
 	}
