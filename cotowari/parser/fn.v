@@ -73,13 +73,15 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 			}
 		}
 	}
+
+	typ := outer_scope.lookup_or_register_fn_type(
+		params: params.map(it.sym.typ)
+		ret: info.ret_typ
+	).typ
 	outer_scope.register_var(
 		name: info.name.text
 		pos: info.name.pos
-		typ: outer_scope.lookup_or_register_fn_type(
-			params: params.map(it.sym.typ)
-			ret: info.ret_typ
-		).typ
+		typ: typ
 	) or { return p.duplicated_error(info.name.text, info.name.pos) }
 
 	has_body := p.kind(0) == .l_brace
@@ -88,7 +90,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		name: info.name.text
 		params: params
 		has_body: has_body
-		ret_typ: info.ret_typ
+		typ: typ
 	}
 	if has_body {
 		node.body = p.parse_block_without_new_scope() ?

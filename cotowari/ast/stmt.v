@@ -1,7 +1,7 @@
 module ast
 
 import cotowari.source { Pos }
-import cotowari.symbols { Scope, Type }
+import cotowari.symbols { Scope, Type, TypeSymbol }
 import cotowari.token { Token }
 
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
@@ -35,10 +35,14 @@ pub:
 	name_pos     Pos
 	name         string
 	has_body     bool
-	ret_typ      Type
+	typ          Type
 pub mut:
 	params []Var
 	body   Block
+}
+
+pub fn (f FnDecl) type_symbol() TypeSymbol {
+	return f.parent_scope.must_lookup_type(f.typ)
 }
 
 pub struct ForInStmt {
