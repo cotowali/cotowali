@@ -5,34 +5,34 @@ import cotowari.token { Token, TokenKind, TokenKindClass }
 import cotowari.config { Config }
 import cotowari.ast
 import cotowari.symbols { Scope, new_global_scope }
+import cotowari.tracer { Tracer }
 
 pub struct Parser {
 pub:
 	config &Config
 mut:
-	count        int // counter to avoid some duplication (tmp name, etc...)
-	trace_indent int
-	brace_depth  int
-	lexer        Lexer
-	buf          []Token
-	token_idx    int
-	file         ast.File
-	scope        &Scope
+	count       int // counter to avoid some duplication (tmp name, etc...)
+	tracer      Tracer
+	brace_depth int
+	lexer       Lexer
+	buf         []Token
+	token_idx   int
+	file        ast.File
+	scope       &Scope
 }
 
 [inline]
 pub fn (mut p Parser) trace_begin(f string, args ...string) {
 	$if trace_parser ? {
-		eprint('  '.repeat(p.trace_indent))
-		eprintln('${f}(${args.join(', ')}) > token: ${p.kind(0).str()}')
-		p.trace_indent++
+		p.tracer.begin_fn(f, ...args)
+		p.tracer.writeln('token: ${p.kind(0).str()}')
 	}
 }
 
 [inline]
 pub fn (mut p Parser) trace_end() {
 	$if trace_parser ? {
-		p.trace_indent--
+		p.tracer.end_fn()
 	}
 }
 
