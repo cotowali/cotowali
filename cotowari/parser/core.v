@@ -115,7 +115,7 @@ fn (mut p Parser) consume_with_check(kinds ...TokenKind) ?Token {
 }
 
 fn (mut p Parser) consume_with_assert(kinds ...TokenKind) Token {
-	$if !prod {
+	$if debug {
 		assert p.kind(0) in kinds
 	}
 	return p.consume()

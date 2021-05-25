@@ -148,7 +148,7 @@ fn (mut lex Lexer) consume() {
 
 [inline]
 fn (lex Lexer) @assert(cond CharCond) {
-	$if !prod {
+	$if debug {
 		if !cond(lex.char()) {
 			dump(lex.char())
 			assert cond(lex.char())
@@ -158,7 +158,7 @@ fn (lex Lexer) @assert(cond CharCond) {
 
 [inline]
 fn (lex Lexer) assert_by_match_byte(c byte) {
-	$if !prod {
+	$if debug {
 		if c != lex.char()[0] {
 			dump(lex.char())
 			assert c != lex.char()[0]
