@@ -57,7 +57,11 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 }
 
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
-	p.trace(@FN)
+	p.trace_begin(@FN)
+	defer {
+		p.trace_end()
+	}
+
 	info := p.parse_fn_signature_info() ?
 	mut outer_scope := p.scope
 	p.open_scope(info.name.text)

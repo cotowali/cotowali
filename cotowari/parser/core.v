@@ -10,19 +10,29 @@ pub struct Parser {
 pub:
 	config &Config
 mut:
-	count       int // counter to avoid some duplication (tmp name, etc...)
-	brace_depth int
-	lexer       Lexer
-	buf         []Token
-	token_idx   int
-	file        ast.File
-	scope       &Scope
+	count        int // counter to avoid some duplication (tmp name, etc...)
+	trace_indent int
+	brace_depth  int
+	lexer        Lexer
+	buf          []Token
+	token_idx    int
+	file         ast.File
+	scope        &Scope
 }
 
 [inline]
-pub fn (p &Parser) trace(f string, args ...string) {
+pub fn (mut p Parser) trace_begin(f string, args ...string) {
 	$if trace_parser ? {
+		eprint('  '.repeat(p.trace_indent))
 		eprintln('${f}(${args.join(', ')}) > token: ${p.token(0)}')
+		p.trace_indent++
+	}
+}
+
+[inline]
+pub fn (mut p Parser) trace_end() {
+	$if trace_parser ? {
+		p.trace_indent--
 	}
 }
 
