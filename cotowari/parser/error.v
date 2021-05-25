@@ -17,7 +17,6 @@ fn (mut p Parser) error(msg string, pos Pos) IError {
 		pos: pos
 	}
 	p.file.errors << err
-	p.consume()
 	return err
 }
 
