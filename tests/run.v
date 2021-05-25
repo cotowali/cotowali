@@ -10,8 +10,6 @@ enum FileSuffix {
 	out
 }
 
-type TestPath = string
-
 fn suffix(s FileSuffix) string {
 	return match s {
 		.ri { '.ri' }
@@ -21,27 +19,16 @@ fn suffix(s FileSuffix) string {
 	}
 }
 
-fn (f TestPath) has_suffix(s FileSuffix) bool {
-	return f.ends_with(suffix(s))
-}
-
-fn (f TestPath) trim_suffixes(s ...FileSuffix) TestPath {
-	if s.len == 0 {
-		return f
-	}
-	return TestPath(f.trim_suffix(suffix(s.last()))).trim_suffixes(...s[..s.len - 1])
-}
-
 fn is_err_test_file(f string) bool {
-	return TestPath(f).trim_suffixes(.todo, .ri).has_suffix(.err)
+	return f.trim_suffix(suffix(.ri)).trim_suffix(suffix(.todo)).ends_with(suffix(.err))
 }
 
 fn is_todo_test_file(f string) bool {
-	return TestPath(f).trim_suffixes(.ri).has_suffix(.todo)
+	return f.trim_suffix(suffix(.ri)).ends_with(suffix(.todo))
 }
 
 fn out_path(f string) string {
-	return TestPath(f).trim_suffixes(.ri) + suffix(.out)
+	return f.trim_suffix(suffix(.ri)) + suffix(.out)
 }
 
 const skip_list = ['nothing']
@@ -52,7 +39,7 @@ fn is_target_file(s string) bool {
 			return false
 		}
 	}
-	return TestPath(s).has_suffix(.ri)
+	return s.ends_with(suffix(.ri))
 }
 
 fn get_sources(paths []string) []string {
@@ -122,7 +109,8 @@ mut:
 }
 
 fn fix_todo(f string, s FileSuffix) {
-	os.mv(f, TestPath(f).trim_suffixes(.todo, s) + suffix(s)) or { panic(err) }
+	base := f.trim_suffix(suffix(s)).trim_suffix(suffix(.todo))
+	os.mv(f, base + suffix(s)) or { panic(err) }
 }
 
 fn (mut t TestCase) run() {
