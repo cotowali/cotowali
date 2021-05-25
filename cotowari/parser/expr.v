@@ -42,6 +42,10 @@ struct InfixExprOpt {
 	operand ExprKind
 }
 
+fn (opt InfixExprOpt) str() string {
+	return '{ operand: $opt.operand }'
+}
+
 fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.Expr {
 	p.trace_begin(@FN, '$op_kinds', '$opt')
 	defer {
