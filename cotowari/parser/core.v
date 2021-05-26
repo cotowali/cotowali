@@ -15,6 +15,7 @@ mut:
 	tracer      Tracer
 	brace_depth int
 	lexer       Lexer
+	prev_tok    Token
 	buf         []Token
 	token_idx   int
 	file        ast.File
@@ -43,6 +44,9 @@ pub fn (p &Parser) token(i int) Token {
 		panic('cannot take token($i) (p.buf.len = $p.buf.len)')
 	}
 	if i < 0 {
+		if i == -1 {
+			return p.prev_tok
+		}
 		panic('cannot take negative token($i)')
 	}
 	return p.buf[(p.token_idx + i) % p.buf.len]
@@ -60,7 +64,9 @@ pub fn (mut p Parser) consume() Token {
 		.r_brace { p.brace_depth-- }
 		else {}
 	}
-	p.buf[p.token_idx % p.buf.len] = p.lexer.read()
+	last_idx := p.token_idx % p.buf.len
+	p.prev_tok = p.buf[last_idx]
+	p.buf[last_idx] = p.lexer.read()
 	p.token_idx++
 	return t
 }
