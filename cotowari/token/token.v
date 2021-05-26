@@ -5,6 +5,7 @@ import cotowari.source { Pos }
 pub enum TokenKind {
 	unknown
 	ident
+	key_as
 	key_assert
 	key_fn
 	key_let
@@ -124,6 +125,7 @@ fn (k TokenKind) is_literal() bool {
 [inline]
 fn (k TokenKind) is_keyword() bool {
 	return k in [
+		.key_as,
 		.key_assert,
 		.key_fn,
 		.key_let,
