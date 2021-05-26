@@ -4,6 +4,11 @@ import cotowari.errors { Err }
 import cotowari.source { Pos }
 import cotowari.token { Token, TokenKind }
 
+enum RestoreStrategy {
+	@none
+	eol
+}
+
 fn (mut p Parser) error(msg string, pos Pos) IError {
 	$if trace_parser ? {
 		p.trace_begin(@FN, msg, '$pos')
@@ -21,6 +26,13 @@ fn (mut p Parser) error(msg string, pos Pos) IError {
 	return err
 }
 
+fn (mut p Parser) restore_from_syntax_error() {
+	match p.restore_strategy {
+		.@none {}
+		.eol { p.skip_until_eol() }
+	}
+}
+
 fn (mut p Parser) unexpected_token_error(found Token, expects ...TokenKind) IError {
 	if expects.len == 0 {
 		return p.syntax_error('unexpected token `$found.text`', found.pos)
@@ -35,7 +47,10 @@ fn (mut p Parser) unexpected_token_error(found Token, expects ...TokenKind) IErr
 }
 
 fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
-	p.file.has_syntax_error = true
+	defer {
+		p.file.has_syntax_error = true
+		p.restore_from_syntax_error()
+	}
 	return p.error(msg, pos)
 }
 

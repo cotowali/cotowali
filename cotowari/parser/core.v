@@ -19,6 +19,8 @@ mut:
 	token_idx   int
 	file        ast.File
 	scope       &Scope
+
+	restore_strategy RestoreStrategy
 }
 
 [inline]
