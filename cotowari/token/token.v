@@ -18,6 +18,7 @@ pub enum TokenKind {
 	key_struct
 	inline_shell
 	comma
+	hash
 	dot
 	amp
 	pipe
