@@ -27,7 +27,7 @@ pub fn (e InfixExpr) typ() Type {
 
 pub fn (e Expr) typ() Type {
 	return match e {
-		ArrayLiteral { Expr(e).type_symbol().typ }
+		ArrayLiteral { e.scope.must_lookup_array_type(elem: e.elem_typ).typ }
 		StringLiteral { builtin_type(.string) }
 		IntLiteral { builtin_type(.int) }
 		Pipeline { e.exprs.last().typ() }
@@ -45,7 +45,6 @@ pub fn (v Var) type_symbol() TypeSymbol {
 
 pub fn (e Expr) type_symbol() TypeSymbol {
 	return match e {
-		ArrayLiteral { e.scope.must_lookup_array_type(elem: e.elem_typ) }
 		Var { e.type_symbol() }
 		else { e.scope().must_lookup_type(e.typ()) }
 	}
