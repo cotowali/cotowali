@@ -28,6 +28,7 @@ enum ExprKind {
 	comparsion
 	term
 	factor
+	as_cast
 	prefix
 	value
 }
@@ -116,12 +117,36 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 		.factor {
 			return p.parse_infix_expr([.op_div, .op_mul, .op_mod], operand: kind.inner())
 		}
+		.as_cast {
+			return p.parse_as_expr()
+		}
 		.prefix {
 			return p.parse_prefix_expr()
 		}
 		.value {
 			return p.parse_value()
 		}
+	}
+}
+
+fn (mut p Parser) parse_as_expr() ?ast.Expr {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
+	expr := p.parse_expr(ExprKind.as_cast.inner()) ?
+	if _ := p.consume_if_kind_eq(.key_as) {
+		typ := p.parse_type() ?
+		return ast.AsExpr{
+			pos: expr.pos().merge(p.token(-1).pos)
+			typ: typ
+			expr: expr
+		}
+	} else {
+		return expr
 	}
 }
 
