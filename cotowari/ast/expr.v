@@ -4,7 +4,7 @@ import cotowari.source { Pos }
 import cotowari.token { Token }
 import cotowari.symbols { Scope, Type, TypeSymbol, builtin_type }
 
-pub type Expr = ArrayLiteral | CallFn | InfixExpr | IntLiteral | Pipeline | PrefixExpr |
+pub type Expr = ArrayLiteral | AsExpr | CallFn | InfixExpr | IntLiteral | Pipeline | PrefixExpr |
 	StringLiteral | Var
 
 pub fn (e InfixExpr) pos() Pos {
@@ -13,7 +13,7 @@ pub fn (e InfixExpr) pos() Pos {
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
-		ArrayLiteral, CallFn, Var { expr.pos }
+		ArrayLiteral, AsExpr, CallFn, Var { expr.pos }
 		InfixExpr { expr.pos() }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
 		PrefixExpr { expr.op.pos.merge(expr.expr.pos()) }
@@ -28,6 +28,7 @@ pub fn (e InfixExpr) typ() Type {
 pub fn (e Expr) typ() Type {
 	return match e {
 		ArrayLiteral { e.scope.must_lookup_array_type(elem: e.elem_typ).typ }
+		AsExpr { e.typ }
 		StringLiteral { builtin_type(.string) }
 		IntLiteral { builtin_type(.int) }
 		Pipeline { e.exprs.last().typ() }
@@ -51,7 +52,17 @@ pub fn (e Expr) type_symbol() TypeSymbol {
 }
 
 pub fn (e Expr) scope() &Scope {
-	return e.scope
+	return match e {
+		AsExpr { e.expr.scope() }
+		ArrayLiteral, CallFn, InfixExpr, IntLiteral, Pipeline, PrefixExpr, StringLiteral, Var { e.scope }
+	}
+}
+
+pub struct AsExpr {
+pub:
+	pos  Pos
+	expr Expr
+	typ  Type
 }
 
 pub struct CallFn {

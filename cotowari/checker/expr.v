@@ -4,6 +4,7 @@ import cotowari.ast { Expr }
 
 fn (mut c Checker) expr(expr Expr) {
 	match mut expr {
+		ast.AsExpr { c.expr(expr.expr) }
 		ast.CallFn { c.call_expr(mut expr) }
 		ast.InfixExpr { c.infix_expr(expr) }
 		ast.ArrayLiteral {}

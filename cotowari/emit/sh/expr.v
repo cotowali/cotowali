@@ -14,6 +14,9 @@ struct ExprOpt {
 
 fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 	match expr {
+		ast.AsExpr {
+			e.expr(expr.expr, opt)
+		}
 		ast.CallFn {
 			e.call_fn(expr, opt)
 		}
