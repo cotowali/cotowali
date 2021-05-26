@@ -100,6 +100,7 @@ pub fn (mut lex Lexer) read() Token {
 			`}` { lex.new_token_with_consume(.r_brace) }
 			`[` { lex.new_token_with_consume(.l_bracket) }
 			`]` { lex.new_token_with_consume(.r_bracket) }
+			`#` { lex.new_token_with_consume(.hash) }
 			`*` { lex.new_token_with_consume(.op_mul) }
 			`%` { lex.new_token_with_consume(.op_mod) }
 			`,` { lex.new_token_with_consume(.comma) }
