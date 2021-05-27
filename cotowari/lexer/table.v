@@ -1,0 +1,35 @@
+module lexer
+
+const (
+	table_for_one_char_symbols = map{
+		`(`: k(.l_paren)
+		`)`: k(.r_paren)
+		`{`: k(.l_brace)
+		`}`: k(.r_brace)
+		`[`: k(.l_bracket)
+		`]`: k(.r_bracket)
+		`<`: k(.op_lt)
+		`>`: k(.op_gt)
+		`#`: k(.hash)
+		`+`: k(.op_plus)
+		`-`: k(.op_minus)
+		`*`: k(.op_mul)
+		`/`: k(.op_div)
+		`%`: k(.op_mod)
+		`&`: k(.amp)
+		`|`: k(.pipe)
+		`=`: k(.op_assign)
+		`!`: k(.op_not)
+		`,`: k(.comma)
+		`.`: k(.dot)
+	}
+
+	table_for_two_chars_symbols = map{
+		'++': k(.op_plus_plus)
+		'--': k(.op_minus_minus)
+		'&&': k(.op_and)
+		'||': k(.op_or)
+		'==': k(.op_eq)
+		'!=': k(.op_ne)
+	}
+)
