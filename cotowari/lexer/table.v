@@ -32,4 +32,20 @@ const (
 		'==': k(.op_eq)
 		'!=': k(.op_ne)
 	}
+
+	table_for_keywords = map{
+		'as':     k(.key_as)
+		'assert': k(.key_assert)
+		'let':    k(.key_let)
+		'if':     k(.key_if)
+		'else':   k(.key_else)
+		'for':    k(.key_for)
+		'in':     k(.key_in)
+		'fn':     k(.key_fn)
+		'return': k(.key_return)
+		'decl':   k(.key_decl)
+		'struct': k(.key_struct)
+		'true':   k(.bool_lit)
+		'false':  k(.bool_lit)
+	}
 )

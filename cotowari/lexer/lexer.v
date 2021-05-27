@@ -126,21 +126,7 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 	lex.consume_for(is_ident_char)
 	text := lex.text()
 	pos := lex.pos_for_new_token()
-	kind := match text {
-		'as' { k(.key_as) }
-		'assert' { k(.key_assert) }
-		'let' { k(.key_let) }
-		'if' { k(.key_if) }
-		'else' { k(.key_else) }
-		'for' { k(.key_for) }
-		'in' { k(.key_in) }
-		'fn' { k(.key_fn) }
-		'return' { k(.key_return) }
-		'decl' { k(.key_decl) }
-		'struct' { k(.key_struct) }
-		'true', 'false' { k(.bool_lit) }
-		else { k(.ident) }
-	}
+	kind := table_for_keywords[text] or { k(.ident) }
 	return Token{
 		pos: pos
 		text: text
