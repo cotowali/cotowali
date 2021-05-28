@@ -2,6 +2,10 @@ ARG vroot="/usr/local/v"
 ARG vflags="-cc clang"
 ARG cotowari_root=/usr/local/cotowari
 
+
+# build-deps
+# ==========
+
 FROM buildpack-deps:curl AS build-deps
 
 RUN apt-get update \
@@ -22,7 +26,9 @@ RUN git clone https://github.com/vlang/v $VROOT \
   && cd $VROOT \
   && make
 
-# --
+
+# dev
+# ===
 
 FROM build-deps as dev
 
