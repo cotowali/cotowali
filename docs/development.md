@@ -17,13 +17,6 @@
 - Of course it's better to be fast. But it is not important.
 - This doesn't mean the code has to be super slow.
 
-## Directories
-
-- `/cmd/ri` CLI entrypoint
-- `/examples` Examples that can be compiled
-- `/tests` Integration tests
-- `/cotowari` Compiler code
-
 ## Testing
 
 ### Run
