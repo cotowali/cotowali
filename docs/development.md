@@ -1,5 +1,14 @@
 # Docs for developpers
 
+## Development Philosophy
+
+### Be readable code
+
+**Be readable code is the most important**
+
+- It's easy to spoil clean code, but hard to get it back.
+- In any time, improving readability is justice.
+
 ## Directories
 
 - `/cmd/ri` CLI entrypoint
