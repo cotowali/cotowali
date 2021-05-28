@@ -4,23 +4,23 @@ ARG cotowari_root=/usr/local/cotowari
 
 FROM buildpack-deps:curl AS build-deps
 
-RUN set -ex; \
-  apt-get update; \
-  apt-get install -yqq --no-install-recommends \
-    git make clang \
-    ; \
-  rm -rf /var/lib/apt/lists/*;
+RUN apt-get update \
+  && apt-get install -yqq --no-install-recommends \
+    git \
+    make \
+    clang \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sSL https://gobinaries.com/zakuro9715/z | sh;
+RUN curl -sSL https://gobinaries.com/zakuro9715/z | sh
 
 ARG vflags
 ARG vroot
 ENV VFLAGS=$vflags
 ENV VROOT=$vroot
-RUN set -ex; \
-  git clone https://github.com/vlang/v $VROOT; \
-  cd $VROOT; \
-  make;
+
+RUN git clone https://github.com/vlang/v $VROOT \
+  && cd $VROOT \
+  && make
 
 # --
 
