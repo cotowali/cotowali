@@ -1,0 +1,11 @@
+version: "3"
+services:
+  dev:
+    build:
+      context: .
+      target: dev
+    image: ${COTOWARI_IMAGE_PREFIX}cotowari-dev:${COTOWARI_IMAGE_TAG:-latest}
+    environment:
+      - COTOWARI_ROOT="${COTOWARI_ROOT:-/usr/local/cotowari}"
+    volumes:
+      - .:${COTOWARI_ROOT:-/usr/local/cotowari}
