@@ -37,3 +37,9 @@ ri examples/add.ri | sh
 ## Development
 
 See [docs/development.md](./docs/development.md)
+
+### Docker
+
+```
+docker compose run dev
+```
