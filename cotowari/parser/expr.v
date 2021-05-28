@@ -3,6 +3,7 @@ module parser
 import cotowari.token { TokenKind }
 import cotowari.ast
 import cotowari.symbols { new_placeholder_var }
+import cotowari.errors { unreachable }
 
 fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
 	$if trace_parser ? {
@@ -33,6 +34,25 @@ enum ExprKind {
 	value
 }
 
+const expr_kind_to_op_table = (fn () map[ExprKind][]TokenKind {
+	k := fn (e ExprKind) ExprKind {
+		return e
+	}
+	v := fn (ops ...TokenKind) []TokenKind {
+		return ops
+	}
+	return map{
+		k(.pipeline):   v(.pipe)
+		k(.comparsion): v(.op_eq, .op_ne, .op_gt, .op_lt)
+		k(.term):       v(.op_plus, .op_minus)
+		k(.factor):     v(.op_mul, .op_div, .op_mod)
+	}
+}())
+
+fn (e ExprKind) op_kinds() []TokenKind {
+	return parser.expr_kind_to_op_table[e] or { panic(unreachable) }
+}
+
 fn (k ExprKind) outer() ExprKind {
 	return if k == .toplevel { k } else { ExprKind(int(k) - 1) }
 }
@@ -41,30 +61,25 @@ fn (k ExprKind) inner() ExprKind {
 	return if k == .value { k } else { ExprKind(int(k) + 1) }
 }
 
-struct InfixExprOpt {
-	operand ExprKind
-}
-
-fn (opt InfixExprOpt) str() string {
-	return '{ operand: $opt.operand }'
-}
-
-fn (mut p Parser) parse_infix_expr(op_kinds []TokenKind, opt InfixExprOpt) ?ast.Expr {
+fn (mut p Parser) parse_infix_expr(kind ExprKind) ?ast.Expr {
 	$if trace_parser ? {
-		p.trace_begin(@FN, '$op_kinds', '$opt')
+		p.trace_begin(@FN, '$kind')
 		defer {
 			p.trace_end()
 		}
 	}
 
-	mut expr := p.parse_expr(opt.operand) ?
+	operand := kind.inner()
+	op_kinds := kind.op_kinds()
+
+	mut expr := p.parse_expr(operand) ?
 	for {
 		op := p.token(0)
 		if op.kind !in op_kinds {
 			break
 		}
 		p.consume_with_assert(...op_kinds)
-		right := p.parse_expr(opt.operand) ?
+		right := p.parse_expr(operand) ?
 		expr = ast.InfixExpr{
 			scope: p.scope
 			op: op
@@ -108,14 +123,8 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 		.pipeline {
 			return p.parse_pipeline()
 		}
-		.comparsion {
-			return p.parse_infix_expr([.op_eq, .op_ne, .op_gt, .op_lt], operand: kind.inner())
-		}
-		.term {
-			return p.parse_infix_expr([.op_plus, .op_minus], operand: kind.inner())
-		}
-		.factor {
-			return p.parse_infix_expr([.op_div, .op_mul, .op_mod], operand: kind.inner())
+		.comparsion, .term, .factor {
+			return p.parse_infix_expr(kind)
 		}
 		.as_cast {
 			return p.parse_as_expr()
