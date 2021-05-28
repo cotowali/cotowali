@@ -41,7 +41,8 @@ fn (mut p Parser) unexpected_token_error(found Token, expects ...TokenKind) IErr
 	if expects.len == 1 {
 		expect = '`$expects[0].str()`'
 	} else {
-		expect = expects[..expects.len - 1].map(it.str()).join(', ') + ', or `$expects.last()`'
+		last := expects.last().str()
+		expect = expects[..expects.len - 1].map(it.str()).join(', ') + ', or `$last`'
 	}
 	return p.syntax_error(expect + ', but found `$found.text`', found.pos)
 }
