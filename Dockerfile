@@ -45,4 +45,6 @@ ARG cotowari_root
 ENV COTOWARI_ROOT=$cotowari_root
 WORKDIR $COTOWARI_ROOT
 
+COPY . .
+
 CMD ["bash"]
