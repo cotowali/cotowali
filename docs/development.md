@@ -9,6 +9,14 @@
 - It's easy to spoil clean code, but hard to get it back.
 - In any time, improving readability is justice.
 
+### Performance
+
+**Cotowari doesn't have to be fast.**
+
+- Cotowari target small (~10k LoC) `.ri` source code.
+- Of course it's better to be fast. But it is not important.
+- This doesn't mean the code has to be super slow.
+
 ## Directories
 
 - `/cmd/ri` CLI entrypoint
