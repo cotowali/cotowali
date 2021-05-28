@@ -1,6 +1,8 @@
-FROM buildpack-deps:curl AS build-deps
+ARG vroot="/usr/local/v"
+ARG vflags="-cc clang"
+ARG cotowari_root=/usr/local/cotowari
 
-ENV VFLAGS="-cc clang"
+FROM buildpack-deps:curl AS build-deps
 
 RUN set -ex; \
   apt-get update; \
@@ -11,16 +13,30 @@ RUN set -ex; \
 
 RUN curl -sSL https://gobinaries.com/zakuro9715/z | sh;
 
-WORKDIR /usr/local
+ARG vflags
+ARG vroot
+ENV VFLAGS=$vflags
+ENV VROOT=$vroot
 RUN set -ex; \
-  git clone https://github.com/vlang/v && cd v; \
-  make; \
-  ./v symlink;
-
-ENV COTOWARI_ROOT=/usr/local/cotowari
-WORKDIR $COTOWARI_ROOT
+  git clone https://github.com/vlang/v $VROOT; \
+  cd $VROOT; \
+  make;
 
 # --
 
 FROM build-deps as dev
+
+ARG vflags
+ARG vroot
+ENV VFLAGS=$vflags
+ENV VROOT=$vroot
+
+COPY --from=build-deps $VROOT $VROOT
+WORKDIR $VROOT
+RUN ./v symlink
+
+ARG cotowari_root
+ENV COTOWARI_ROOT=$cotowari_root
+WORKDIR $COTOWARI_ROOT
+
 CMD ["bash"]
