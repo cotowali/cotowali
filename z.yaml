@@ -34,6 +34,12 @@ tasks:
   ast: z run tools ast $@
   tokens: z run tools tokens $@
   scope: z run tools scope $@
+
+  publish:
+    tasks:
+      docker:
+        - docker compose --env-file ./docker/push.env build
+        - docker compose --env-file ./docker/push.env push
   ci:
     tasks:
       setup-v: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
