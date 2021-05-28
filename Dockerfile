@@ -27,6 +27,28 @@ RUN git clone https://github.com/vlang/v $VROOT \
   && make
 
 
+# dev-emscripten
+# ==============
+
+FROM emscripten/emsdk:latest as dev-emscripten
+
+ARG vflags
+ARG vroot
+ENV VFLAGS=$vflags
+ENV VROOT=$vroot
+
+COPY --from=build-deps $VROOT $VROOT
+WORKDIR $VROOT
+RUN ./v symlink
+
+ARG cotowari_root
+ENV COTOWARI_ROOT=$cotowari_root
+WORKDIR $COTOWARI_ROOT
+
+COPY . .
+
+CMD ["bash"]
+
 # dev
 # ===
 
