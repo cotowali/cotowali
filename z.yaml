@@ -36,6 +36,7 @@ tasks:
   scope: z run tools scope $@
 
   publish:
+    run: z publish.docker
     tasks:
       docker:
         - docker compose --env-file ./docker/push.env build
