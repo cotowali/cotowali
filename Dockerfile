@@ -1,4 +1,4 @@
-FROM buildpack-deps:curl
+FROM buildpack-deps:curl AS build-deps
 
 ENV VFLAGS="-cc clang"
 
@@ -20,6 +20,7 @@ RUN set -ex; \
 ENV COTOWARI_ROOT=/usr/local/cotowari
 WORKDIR $COTOWARI_ROOT
 
-COPY . .
+# --
 
-RUN ["bash"]
+FROM build-deps as dev
+CMD ["bash"]
