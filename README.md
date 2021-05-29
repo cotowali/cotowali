@@ -2,6 +2,15 @@
 
 A statically typed script language that transpile into POSIX sh
 
+
+## Concepts of Cotowari
+
+- Outputs shell script that is fully compliant with POSIX standards.
+- Easy to learn syntax.
+- Super simple statically type system.
+- Inline shell integration.
+- Syntax for shell specific feature like pipe and redirection.
+
 ## Installation
 
 See [installation.md](docs/installation.md)
