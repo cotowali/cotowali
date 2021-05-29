@@ -252,6 +252,16 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 	}
 }
 
+fn (mut p Parser) parse_paren_expr() ?ast.Expr {
+	l_paren := p.consume()
+	expr := p.parse_expr(.toplevel) ?
+	r_paren := p.consume_with_check(.r_paren) ?
+	return ast.ParenExpr{
+		pos: l_paren.pos.merge(r_paren.pos)
+		expr: expr
+	}
+}
+
 fn (mut p Parser) parse_value() ?ast.Expr {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
@@ -281,6 +291,9 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 		}
 		.l_bracket {
 			return p.parse_array_literal()
+		}
+		.l_paren {
+			return p.parse_paren_expr()
 		}
 		else {
 			found := p.consume()
