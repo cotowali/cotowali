@@ -32,7 +32,17 @@ pub fn (mut lex Lexer) read() Token {
 		} else if lex.is_eol() {
 			return lex.read_newline()
 		}
-		cc := '${lex.char(0)}${lex.char(1)}'
+
+		mut kind := k(.unknown)
+
+		ccc := '${lex.char(0)}${lex.char(1)}${lex.char(2)}'
+
+		kind = table_for_three_chars_symbols[ccc] or { k(.unknown) }
+		if kind != .unknown {
+			return lex.new_token_with_consume_n(3, kind)
+		}
+
+		cc := ccc[..2]
 
 		if cc == '//' {
 			// comment
@@ -40,7 +50,6 @@ pub fn (mut lex Lexer) read() Token {
 			continue
 		}
 
-		mut kind := k(.unknown)
 		kind = table_for_two_chars_symbols[cc] or { k(.unknown) }
 		if kind != .unknown {
 			return lex.new_token_with_consume_n(2, kind)
