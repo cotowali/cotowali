@@ -1,7 +1,5 @@
 module lexer
 
-import cotowari.token
-
 const (
 	table_for_one_char_symbols = map{
 		`(`: k(.l_paren)
@@ -35,7 +33,9 @@ const (
 		'!=': k(.op_ne)
 	}
 
-	table_for_three_chars_symbols = map[string]token.TokenKind{}
+	table_for_three_chars_symbols = map{
+		'...': k(.dotdotdot)
+	}
 
 	table_for_keywords = map{
 		'as':     k(.key_as)

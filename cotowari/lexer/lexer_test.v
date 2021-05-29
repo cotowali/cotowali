@@ -63,6 +63,7 @@ fn test_lexer() {
 	ktest('struct f { }', [.key_struct, .ident, .l_brace, .r_brace])
 	ktest('"0" as int', [.string_lit, .key_as, .ident])
 	ktest('#[attr]', [.hash, .l_bracket, .ident, .r_bracket])
+	ktest('.....', [.dotdotdot, .dot, .dot])
 
 	test('if i == 0 { } else if i != 1 {} else {}', [
 		t(.key_if, 'if'),
