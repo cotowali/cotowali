@@ -64,7 +64,7 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op := expr.op
-	if !op.kind.@is(.binary_op) {
+	if !op.kind.@is(.infix_op) {
 		panic(unreachable)
 	}
 
