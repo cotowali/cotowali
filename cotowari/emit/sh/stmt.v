@@ -51,7 +51,7 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 	e.write('if falsy ')
 	e.expr(stmt.expr, as_command: false, writeln: true)
 
-	e.write_block('then', 'fi', fn (mut e Emitter, stmt ast.AssertStmt) {
+	e.write_block({ open: 'then', close: 'fi' }, fn (mut e Emitter, stmt ast.AssertStmt) {
 		e.writeln("echo 'LINE $stmt.key_pos.line: assertion failed' >&2")
 		e.writeln('exit 1')
 	}, stmt)
@@ -82,7 +82,7 @@ fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
 fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
 	e.write('for $stmt.val.out_name() in ')
 	e.expr(stmt.expr, writeln: true)
-	e.write_block('do', 'done', fn (mut e Emitter, stmt ast.ForInStmt) {
+	e.write_block({ open: 'do', close: 'done' }, fn (mut e Emitter, stmt ast.ForInStmt) {
 		e.block(stmt.body)
 	}, stmt)
 }

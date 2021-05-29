@@ -59,12 +59,28 @@ fn (mut e Emitter) unindent() {
 	e.code[e.cur_kind].unindent()
 }
 
-fn (mut e Emitter) write_block<T>(begin string, end string, f fn (mut Emitter, T), v T) {
-	e.code[e.cur_kind].writeln(begin)
-	e.indent()
+struct WriteBlockOpt {
+	open   string [required]
+	close  string [required]
+	inline bool
+}
+
+fn (mut e Emitter) write_block<T>(opt WriteBlockOpt, f fn (mut Emitter, T), v T) {
+	if opt.inline {
+		e.code[e.cur_kind].write(opt.open)
+		defer {
+			e.code[e.cur_kind].write(opt.close)
+		}
+	} else {
+		e.code[e.cur_kind].writeln(opt.open)
+		e.indent()
+		defer {
+			e.unindent()
+			e.code[e.cur_kind].writeln(opt.close)
+		}
+	}
+
 	f(mut e, v)
-	e.unindent()
-	e.code[e.cur_kind].writeln(end)
 }
 
 [inline]

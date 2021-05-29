@@ -36,7 +36,7 @@ fn (mut e Emitter) fn_decl(node ast.FnDecl) {
 		e.cur_fn = old_cur_fn
 	}
 
-	e.write_block('${node.name}() {', '}', fn (mut e Emitter, node ast.FnDecl) {
+	e.write_block({ open: '${node.name}() {', close: '}' }, fn (mut e Emitter, node ast.FnDecl) {
 		for i, param in node.params {
 			e.assign(param.out_name(), '\$${i + 1}', param.type_symbol())
 		}
