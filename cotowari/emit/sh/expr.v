@@ -141,20 +141,14 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 	}
 }
 
-fn (mut e Emitter) pipeline(stmt ast.Pipeline, opt ExprOpt) {
-	if !opt.as_command {
-		e.write('\$(')
-	}
-
-	for i, expr in stmt.exprs {
-		if i > 0 {
-			e.write(' | ')
+fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
+	open, close := if opt.as_command { '', '' } else { '\$(', ')' }
+	e.write_block({ open: open, close: close, inline: true }, fn (mut e Emitter, pipeline ast.Pipeline) {
+		for i, expr in pipeline.exprs {
+			if i > 0 {
+				e.write(' | ')
+			}
+			e.expr(expr, as_command: true)
 		}
-		e.expr(expr, as_command: true)
-	}
-	e.writeln('')
-
-	if !opt.as_command {
-		e.write(')')
-	}
+	}, expr)
 }
