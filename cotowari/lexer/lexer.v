@@ -24,7 +24,7 @@ pub fn (mut lex Lexer) read() Token {
 			return Token{.eof, '', lex.pos}
 		}
 
-		c := lex.char()
+		c := lex.char(0)
 		if is_ident_first_char(c) {
 			return lex.read_ident_or_keyword()
 		} else if is_digit(c) {
@@ -32,7 +32,7 @@ pub fn (mut lex Lexer) read() Token {
 		} else if lex.is_eol() {
 			return lex.read_newline()
 		}
-		cc := '$lex.char()$lex.next_char()'
+		cc := '${lex.char(0)}${lex.char(1)}'
 
 		if cc == '//' {
 			// comment
@@ -62,11 +62,11 @@ pub fn (mut lex Lexer) read() Token {
 }
 
 fn (lex Lexer) is_eol() bool {
-	return lex.char()[0] in [`\n`, `\r`]
+	return lex.char(0)[0] in [`\n`, `\r`]
 }
 
 fn (mut lex Lexer) read_newline() Token {
-	if lex.char()[0] == `\r` && lex.next_char() == '\n' {
+	if lex.char(0)[0] == `\r` && lex.char(1) == '\n' {
 		lex.consume()
 	}
 	return lex.new_token_with_consume(.eol)
@@ -75,7 +75,7 @@ fn (mut lex Lexer) read_newline() Token {
 fn (mut lex Lexer) read_string_lit(quote byte) Token {
 	lex.assert_by_match_byte(quote)
 	lex.consume()
-	for lex.char()[0] != quote {
+	for lex.char(0)[0] != quote {
 		lex.consume()
 		if lex.is_eof() || lex.is_eol() {
 			panic('unterminated string literal') // TODO: error handling
@@ -92,7 +92,7 @@ fn (mut lex Lexer) read_string_lit(quote byte) Token {
 }
 
 fn (mut lex Lexer) read_unknown() Token {
-	for !(lex.is_eof() || lex.char().@is(.whitespace) || lex.char() == '\n') {
+	for !(lex.is_eof() || lex.char(0).@is(.whitespace) || lex.char(0) == '\n') {
 		lex.consume()
 	}
 	return lex.new_token(.unknown)
@@ -149,9 +149,9 @@ fn (mut lex Lexer) read_dollar_directive() Token {
 	lex.skip_with_assert(fn (c Char) bool {
 		return c[0] == `\$`
 	})
-	if lex.char()[0] == `{` {
+	if lex.char(0)[0] == `{` {
 		lex.skip()
-		for lex.char()[0] != `}` {
+		for lex.char(0)[0] != `}` {
 			if lex.is_eof() {
 				panic('unterminated inline shell')
 			}

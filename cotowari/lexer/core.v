@@ -104,17 +104,29 @@ fn (mut lex Lexer) new_token_with_consume_not_for(cond CharCond, kind TokenKind)
 // --
 
 [inline]
-fn (lex &Lexer) char() Char {
+fn (lex &Lexer) char(n int) Char {
 	if lex.is_eof() {
 		return Char('\uFFFF')
 	}
-	return lex.source.at(lex.idx())
-}
-
-[inline]
-fn (lex &Lexer) next_char() Char {
-	idx := lex.idx() + utf8_char_len(lex.char()[0])
-	return if idx < lex.source.code.len { lex.source.at(idx) } else { Char('\uFFFF') }
+	mut idx := lex.idx()
+	mut c := lex.source.at(idx)
+	match n {
+		0 {}
+		1 {
+			idx += utf8_char_len(c[0])
+			c = if idx < lex.source.code.len { lex.source.at(idx) } else { Char('\uFFFF') }
+		}
+		else {
+			for _ in 0 .. n {
+				idx += utf8_char_len(c[0])
+				if idx >= lex.source.code.len {
+					return Char('\uFFFF')
+				}
+				c = lex.source.at(idx)
+			}
+		}
+	}
+	return c
 }
 
 [inline]
@@ -137,10 +149,11 @@ fn (mut lex Lexer) skip() {
 
 [inline]
 fn (mut lex Lexer) consume() {
-	lex.prev_char = lex.char()
-	lex.pos.len += lex.char().len
+	lex.prev_char = lex.char(0)
+	lex.pos.len += lex.prev_char.len
+	c := lex.char(0)
 	lex.pos.last_col++
-	if lex.char()[0] == `\n` || (lex.char()[0] == `\r` && lex.next_char()[0] != `\n`) {
+	if c[0] == `\n` || (c[0] == `\r` && lex.char(1)[0] != `\n`) {
 		lex.pos.last_col = 1
 		lex.pos.last_line++
 	}
@@ -149,9 +162,9 @@ fn (mut lex Lexer) consume() {
 [inline]
 fn (lex Lexer) @assert(cond CharCond) {
 	$if debug {
-		if !cond(lex.char()) {
-			dump(lex.char())
-			assert cond(lex.char())
+		if !cond(lex.char(0)) {
+			dump(lex.char(0))
+			assert cond(lex.char(0))
 		}
 	}
 }
@@ -159,9 +172,9 @@ fn (lex Lexer) @assert(cond CharCond) {
 [inline]
 fn (lex Lexer) assert_by_match_byte(c byte) {
 	$if debug {
-		if c != lex.char()[0] {
-			dump(lex.char())
-			assert c != lex.char()[0]
+		if c != lex.char(0)[0] {
+			dump(lex.char(0))
+			assert c != lex.char(0)[0]
 		}
 	}
 }
@@ -183,13 +196,13 @@ fn (mut lex Lexer) skip_with_assert(cond CharCond) {
 type CharCond = fn (Char) bool
 
 fn (mut lex Lexer) consume_for(cond CharCond) {
-	for !lex.is_eof() && cond(lex.char()) {
+	for !lex.is_eof() && cond(lex.char(0)) {
 		lex.consume()
 	}
 }
 
 fn (mut lex Lexer) consume_not_for(cond CharCond) {
-	for !lex.is_eof() && !cond(lex.char()) {
+	for !lex.is_eof() && !cond(lex.char(0)) {
 		lex.consume()
 	}
 }
