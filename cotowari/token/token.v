@@ -20,6 +20,7 @@ pub enum TokenKind {
 	comma
 	hash
 	dot
+	dotdotdot
 	amp
 	question
 	int_lit
