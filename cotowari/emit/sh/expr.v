@@ -21,7 +21,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 			e.call_fn(expr, opt)
 		}
 		ast.ParenExpr {
-			panic('unimplemented')
+			e.paren_expr(expr, opt)
 		}
 		ast.Pipeline {
 			e.pipeline(expr, opt)
@@ -107,6 +107,17 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 		else {
 			panic('unimplemented')
 		}
+	}
+}
+
+fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
+	e.write_echo_if_command(opt)
+	if opt.inside_arithmetic {
+		e.write('(')
+	}
+	e.expr(expr.expr, { ...opt, as_command: false })
+	if opt.inside_arithmetic {
+		e.write(' ) ')
 	}
 }
 
