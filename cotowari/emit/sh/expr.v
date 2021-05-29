@@ -20,6 +20,9 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.CallFn {
 			e.call_fn(expr, opt)
 		}
+		ast.ParenExpr {
+			panic('unimplemented')
+		}
 		ast.Pipeline {
 			e.pipeline(expr, opt)
 		}
