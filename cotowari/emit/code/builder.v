@@ -30,10 +30,8 @@ pub fn (b Builder) bytes() []byte {
 }
 
 pub fn (mut b Builder) write(s string) {
-	$if !prod {
-		if s == '' {
-			panic('writing empty')
-		}
+	if s.len == 0 {
+		return
 	}
 	if b.newline {
 		b.write_indent()
