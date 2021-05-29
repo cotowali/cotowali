@@ -39,8 +39,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 			e.writeln(stmt.text)
 		}
 		ast.ReturnStmt {
-			e.expr(stmt.expr, as_command: true, writeln: true)
-			e.writeln('return 0')
+			e.return_stmt(stmt)
 		}
 	}
 }
@@ -132,4 +131,9 @@ fn (mut e Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
 
 fn (mut e Emitter) assign_stmt(node ast.AssignStmt) {
 	e.assign(node.left.out_name(), node.right, node.left.type_symbol())
+}
+
+fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {
+	e.expr(stmt.expr, as_command: true, writeln: true)
+	e.writeln('return 0')
 }
