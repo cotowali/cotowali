@@ -17,7 +17,7 @@ const (
 		`/`: k(.op_div)
 		`%`: k(.op_mod)
 		`&`: k(.amp)
-		`|`: k(.pipe)
+		`|`: k(.op_pipe)
 		`=`: k(.op_assign)
 		`!`: k(.op_not)
 		`,`: k(.comma)

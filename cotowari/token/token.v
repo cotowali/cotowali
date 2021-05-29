@@ -21,7 +21,6 @@ pub enum TokenKind {
 	hash
 	dot
 	amp
-	pipe
 	question
 	int_lit
 	bool_lit
@@ -32,6 +31,7 @@ pub enum TokenKind {
 	r_brace
 	l_bracket
 	r_bracket
+	op_pipe
 	op_plus
 	op_minus
 	op_div
@@ -54,6 +54,7 @@ pub enum TokenKind {
 [inline]
 fn (k TokenKind) is_op() bool {
 	return k in [
+		.op_pipe,
 		.op_plus,
 		.op_minus,
 		.op_div,
@@ -100,6 +101,7 @@ fn (k TokenKind) is_suffix_op() bool {
 [inline]
 fn (k TokenKind) is_binary_op() bool {
 	return k in [
+		.op_pipe,
 		.op_eq,
 		.op_ne,
 		.op_gt,
