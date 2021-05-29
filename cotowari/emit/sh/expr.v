@@ -96,7 +96,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 	if opt.inside_arithmetic {
-		e.write('(')
+		e.write(' ( ')
 	}
 	e.expr(expr.expr, { ...opt, as_command: false })
 	if opt.inside_arithmetic {
