@@ -11,36 +11,16 @@ fn (mut e Emitter) stmts(stmts []Stmt) {
 
 fn (mut e Emitter) stmt(stmt Stmt) {
 	match stmt {
-		ast.AssertStmt {
-			e.assert_stmt(stmt)
-		}
-		ast.FnDecl {
-			e.fn_decl(stmt)
-		}
-		ast.Block {
-			e.block(stmt)
-		}
-		ast.Expr {
-			e.expr_stmt(stmt)
-		}
-		ast.AssignStmt {
-			e.assign_stmt(stmt)
-		}
-		ast.EmptyStmt {
-			e.writeln('')
-		}
-		ast.ForInStmt {
-			e.for_in_stmt(stmt)
-		}
-		ast.IfStmt {
-			e.if_stmt(stmt)
-		}
-		ast.InlineShell {
-			e.writeln(stmt.text)
-		}
-		ast.ReturnStmt {
-			e.return_stmt(stmt)
-		}
+		ast.AssertStmt { e.assert_stmt(stmt) }
+		ast.FnDecl { e.fn_decl(stmt) }
+		ast.Block { e.block(stmt) }
+		ast.Expr { e.expr_stmt(stmt) }
+		ast.AssignStmt { e.assign_stmt(stmt) }
+		ast.EmptyStmt { e.writeln('') }
+		ast.ForInStmt { e.for_in_stmt(stmt) }
+		ast.IfStmt { e.if_stmt(stmt) }
+		ast.InlineShell { e.writeln(stmt.text) }
+		ast.ReturnStmt { e.return_stmt(stmt) }
 	}
 }
 
