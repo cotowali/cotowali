@@ -2,6 +2,9 @@
 
 A statically typed script language that transpile into POSIX sh
 
+> This project is a prototyping stage right now.
+> It means that only a few small snippets in `tests` will work.
+> First release is planned for later this yer.
 
 ## Concepts of Cotowari
 
