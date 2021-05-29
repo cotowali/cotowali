@@ -29,9 +29,12 @@ sudo z symlink
 
 ```
 # compile
-ri examples/add.ri
+ric examples/add.ri
+
 # execution
-ri examples/add.ri | sh
+ric examples/add.ri | sh
+# or
+ric run examples/add.ri
 ```
 
 ## Development
