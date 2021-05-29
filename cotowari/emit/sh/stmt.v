@@ -21,9 +21,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 			e.block(stmt)
 		}
 		ast.Expr {
-			discard_stdout := e.inside_fn
-				&& if stmt is ast.CallFn { e.cur_fn.type_symbol().fn_info().ret != builtin_type(.void) } else { true }
-			e.expr(stmt, as_command: true, discard_stdout: discard_stdout, writeln: true)
+			e.expr_stmt(stmt)
 		}
 		ast.AssignStmt {
 			e.assign_stmt(stmt)
@@ -45,6 +43,12 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 			e.writeln('return 0')
 		}
 	}
+}
+
+fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
+	discard_stdout := e.inside_fn
+		&& if stmt is ast.CallFn { e.cur_fn.type_symbol().fn_info().ret != builtin_type(.void) } else { true }
+	e.expr(stmt, as_command: true, discard_stdout: discard_stdout, writeln: true)
 }
 
 fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
