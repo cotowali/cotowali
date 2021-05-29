@@ -32,6 +32,8 @@ ric run examples/add.ri
 
 ## Example
 
+Commented out part is not working right now.
+
 ```
 fn fib(n int) int {
   if n < 2 {
@@ -40,13 +42,13 @@ fn fib(n int) int {
   return fib(n - 1) + fib(n - 2)
 }
 
-fn twice() int {
-    let n = read() as int
-    return n * 2
-}
+# fn twice() int {
+#    let n = read() as int
+#    return n * 2
+# }
 
 assert fib(6) == 8
-assert (fib(6) | twice()) == 16
+# assert (fib(6) | twice()) == 16
 ```
 
 [There is more examples](./examples)
