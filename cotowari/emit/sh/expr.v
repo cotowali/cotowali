@@ -14,38 +14,16 @@ struct ExprOpt {
 
 fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 	match expr {
-		ast.AsExpr {
-			e.expr(expr.expr, opt)
-		}
-		ast.CallFn {
-			e.call_fn(expr, opt)
-		}
-		ast.ParenExpr {
-			e.paren_expr(expr, opt)
-		}
-		ast.Pipeline {
-			e.pipeline(expr, opt)
-		}
-		ast.InfixExpr {
-			e.infix_expr(expr, opt)
-		}
-		ast.PrefixExpr {
-			e.prefix_expr(expr, opt)
-		}
-		ast.IntLiteral {
-			e.write_echo_if_command(opt)
-			e.write(expr.token.text)
-		}
-		ast.ArrayLiteral {
-			e.array_literal(expr, opt)
-		}
-		ast.StringLiteral {
-			e.write_echo_if_command(opt)
-			e.write("'$expr.token.text'")
-		}
-		ast.Var {
-			e.var_(expr, opt)
-		}
+		ast.AsExpr { e.expr(expr.expr, opt) }
+		ast.CallFn { e.call_fn(expr, opt) }
+		ast.ParenExpr { e.paren_expr(expr, opt) }
+		ast.Pipeline { e.pipeline(expr, opt) }
+		ast.InfixExpr { e.infix_expr(expr, opt) }
+		ast.PrefixExpr { e.prefix_expr(expr, opt) }
+		ast.IntLiteral { e.write_echo_if_command_then_write(expr.token.text, opt) }
+		ast.ArrayLiteral { e.array_literal(expr, opt) }
+		ast.StringLiteral { e.write_echo_if_command_then_write("'$expr.token.text'", opt) }
+		ast.Var { e.var_(expr, opt) }
 	}
 	if opt.as_command && opt.discard_stdout {
 		e.write(' > /dev/null')
@@ -61,15 +39,20 @@ fn (mut e Emitter) write_echo_if_command(opt ExprOpt) {
 	}
 }
 
+fn (mut e Emitter) write_echo_if_command_then_write(s string, opt ExprOpt) {
+	e.write_echo_if_command(opt)
+	e.write(s)
+}
+
 fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 	match v.type_symbol().kind() {
 		.array {
 			e.array(v.out_name(), opt)
 		}
 		else {
-			e.write_echo_if_command(opt)
 			// '$(( n == 0 ))' or 'echo "$n"'
-			e.write(if opt.inside_arithmetic { '$v.out_name()' } else { '"\$$v.out_name()"' })
+			s := if opt.inside_arithmetic { '$v.out_name()' } else { '"\$$v.out_name()"' }
+			e.write_echo_if_command_then_write(s, opt)
 		}
 	}
 }
