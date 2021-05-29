@@ -1,6 +1,6 @@
 # Cotowari
 
-A script language that transpile into POSIX sh
+A statically typed script language that transpile into POSIX sh
 
 ## Installation
 
