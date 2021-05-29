@@ -77,15 +77,12 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 	match expr.op.kind {
 		.op_plus, .op_minus, .op_div, .op_mul, .op_mod, .op_eq, .op_ne, .op_gt, .op_lt {
-			if !opt.inside_arithmetic {
-				e.write('\$(( ( ')
-			}
-			e.expr(expr.left, inside_arithmetic: true)
-			e.write(' $expr.op.text ')
-			e.expr(expr.right, inside_arithmetic: true)
-			if !opt.inside_arithmetic {
-				e.write(' ) ))')
-			}
+			open, close := if opt.inside_arithmetic { '', '' } else { '\$(( ( ', ' ) ))' }
+			e.write_block({ open: open, close: close, inline: true }, fn (mut e Emitter, expr ast.InfixExpr) {
+				e.expr(expr.left, inside_arithmetic: true)
+				e.write(' $expr.op.text ')
+				e.expr(expr.right, inside_arithmetic: true)
+			}, expr)
 		}
 		else {
 			panic('unimplemented')
