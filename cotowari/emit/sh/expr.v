@@ -12,6 +12,11 @@ struct ExprOpt {
 	inside_arithmetic bool
 }
 
+struct ExprWithOpt {
+	expr ast.Expr [required]
+	opt  ExprOpt  [required]
+}
+
 fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 	match expr {
 		ast.AsExpr { e.expr(expr.expr, opt) }
@@ -92,13 +97,10 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
-	if opt.inside_arithmetic {
-		e.write(' ( ')
-	}
-	e.expr(expr.expr, { ...opt, as_command: false })
-	if opt.inside_arithmetic {
-		e.write(' ) ')
-	}
+	open, close := if opt.inside_arithmetic { ' ( ', ' ) ' } else { '', '' }
+	e.write_block({ open: open, close: close, inline: true }, fn (mut e Emitter, v ExprWithOpt) {
+		e.expr((v.expr as ast.ParenExpr).expr, { ...v.opt, as_command: false })
+	}, ExprWithOpt{expr, opt})
 }
 
 fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
