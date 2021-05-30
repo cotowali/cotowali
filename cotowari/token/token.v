@@ -173,6 +173,8 @@ pub:
 	pos  Pos
 }
 
+pub type TokenCond = fn (Token) bool
+
 pub fn (lhs Token) == (rhs Token) bool {
 	return if lhs.pos.is_none() || rhs.pos.is_none() {
 		lhs.kind == rhs.kind && lhs.text == rhs.text

@@ -1,7 +1,7 @@
 module parser
 
 import cotowari.lexer { Lexer }
-import cotowari.token { Token, TokenKind, TokenKindClass }
+import cotowari.token { Token, TokenCond, TokenKind, TokenKindClass }
 import cotowari.config { Config }
 import cotowari.ast
 import cotowari.symbols { Scope, new_global_scope }
@@ -70,8 +70,6 @@ pub fn (mut p Parser) consume() Token {
 	p.token_idx++
 	return t
 }
-
-type TokenCond = fn (Token) bool
 
 fn (mut p Parser) consume_for(cond TokenCond) []Token {
 	mut tokens := []Token{}
