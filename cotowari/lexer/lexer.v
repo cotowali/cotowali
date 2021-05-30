@@ -82,7 +82,6 @@ fn (mut lex Lexer) read_newline() Token {
 }
 
 fn (mut lex Lexer) read_string_lit(quote byte) Token {
-	lex.assert_by_match_byte(quote)
 	lex.consume()
 	for lex.char(0)[0] != quote {
 		lex.consume()
@@ -90,7 +89,6 @@ fn (mut lex Lexer) read_string_lit(quote byte) Token {
 			panic('unterminated string literal') // TODO: error handling
 		}
 	}
-	lex.assert_by_match_byte(quote)
 	lex.consume()
 	text := lex.text()
 	return Token{

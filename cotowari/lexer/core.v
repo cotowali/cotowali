@@ -169,16 +169,6 @@ fn (lex Lexer) @assert(cond CharCond) {
 	}
 }
 
-[inline]
-fn (lex Lexer) assert_by_match_byte(c byte) {
-	$if debug {
-		if c != lex.char(0)[0] {
-			dump(lex.char(0))
-			assert c != lex.char(0)[0]
-		}
-	}
-}
-
 fn (mut lex Lexer) consume_with_assert(cond CharCond) {
 	$if debug {
 		lex.@assert(cond)
