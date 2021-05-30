@@ -4,6 +4,7 @@ import cotowari.source { Char, Pos, Source, pos }
 import cotowari.token { Token, TokenKind }
 import cotowari.config { Config }
 import cotowari.util { min }
+import cotowari.errors { unreachable }
 
 pub struct Lexer {
 pub:
@@ -164,7 +165,7 @@ fn (lex Lexer) @assert(cond CharCond) {
 	$if debug {
 		if !cond(lex.char(0)) {
 			dump(lex.char(0))
-			assert cond(lex.char(0))
+			panic(unreachable)
 		}
 	}
 }
