@@ -4,6 +4,7 @@ import cotowari.ast
 import cotowari.source { Pos }
 import cotowari.token { Token }
 import cotowari.symbols { Type, builtin_type }
+import cotowari.errors { unreachable }
 
 struct FnParamParsingInfo {
 mut:
@@ -20,24 +21,29 @@ mut:
 }
 
 fn (mut p Parser) parse_fn_params() ?[]FnParamParsingInfo {
+	p.consume_with_check(.l_paren) ?
+	if _ := p.consume_if_kind_eq(.r_paren) {
+		return []
+	}
+
 	mut params := []FnParamParsingInfo{}
-	if p.kind(0) == .ident {
-		for {
-			name_tok := p.consume_with_check(.ident) ?
-			typ := p.parse_type() ?
-			params << FnParamParsingInfo{
-				name: name_tok.text
-				pos: name_tok.pos
-				typ: typ
-			}
-			if p.kind(0) == .r_paren {
-				break
-			} else {
-				p.consume_with_check(.comma) ?
-			}
+	for {
+		name_tok := p.consume_with_check(.ident) ?
+		typ := p.parse_type() ?
+		params << FnParamParsingInfo{
+			name: name_tok.text
+			pos: name_tok.pos
+			typ: typ
+		}
+
+		tail_tok := p.consume_with_check(.comma, .r_paren) ?
+		match tail_tok.kind {
+			.comma {}
+			.r_paren { return params }
+			else { panic(unreachable) }
 		}
 	}
-	return params
+	panic(unreachable)
 }
 
 fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
@@ -46,9 +52,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 		name: p.consume_with_check(.ident) ?
 	}
 
-	p.consume_with_check(.l_paren) ?
 	info.params = p.parse_fn_params() ?
-	p.consume_with_check(.r_paren) ?
 	if p.kind(0) != .l_brace {
 		info.ret_typ = p.parse_type() ?
 	}
