@@ -4,6 +4,8 @@ import cotowari.util { @in, in2 }
 
 pub type Char = string // utf-8 char
 
+pub type CharCond = fn (c Char) bool
+
 pub fn (c Char) rune() rune {
 	return rune(c.utf32_code())
 }

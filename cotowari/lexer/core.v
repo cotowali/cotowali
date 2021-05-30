@@ -1,6 +1,6 @@
 module lexer
 
-import cotowari.source { Char, Pos, Source, pos }
+import cotowari.source { Char, CharCond, Pos, Source, pos }
 import cotowari.token { Token, TokenKind }
 import cotowari.config { Config }
 import cotowari.util { min }
@@ -183,8 +183,6 @@ fn (mut lex Lexer) skip_with_assert(cond CharCond) {
 	}
 	lex.skip()
 }
-
-type CharCond = fn (Char) bool
 
 fn (mut lex Lexer) consume_for(cond CharCond) {
 	for !lex.is_eof() && cond(lex.char(0)) {
