@@ -203,7 +203,15 @@ fn run(paths []string) bool {
 		bin: os.join_path(ric_dir, 'ric')
 	}
 
-	ric.compile() or { return false }
+	ric.compile() or {
+		eprintln([
+			'${term.fail_message('ERROR')} Faild to compile ric',
+			'    exit_code: $err.code',
+			'    output:',
+			err.msg.split_into_lines().map(' '.repeat(8) + it).join('\n'),
+		].join('\n'))
+		return false
+	}
 
 	mut ok := true
 	for path in sources {
