@@ -3,6 +3,14 @@ import rand
 import term
 import v.util { color_compare_strings, find_working_diff_command }
 
+fn indent(n int) string {
+	return '  '.repeat(n)
+}
+
+fn indent_each_lines(n int, s string) string {
+	return s.split_into_lines().map(indent(n) + it).join('\n')
+}
+
 enum FileSuffix {
 	ri
 	err
@@ -154,29 +162,24 @@ fn (mut t TestCase) run() {
 }
 
 fn (t TestCase) failed_result(file string) string {
-	indent := ' '.repeat(2)
 	format_output := fn (text string) string {
 		indent := ' '.repeat(4)
-		return if text.len == 0 {
-			'${indent}__EMPTY__'
-		} else {
-			text.split_into_lines().map('$indent$it').join('\n')
-		}
+		return if text.len == 0 { '${indent}__EMPTY__' } else { indent_each_lines(1, text) }
 	}
 
 	mut lines := [
 		'${term.fail_message('[FAIL]')} $file',
-		'${indent}exit_code: $t.exit_code',
-		'${indent}output:',
+		'${indent(1)}exit_code: $t.exit_code',
+		'${indent(1)}output:',
 		format_output(t.output),
-		'${indent}expected:',
+		'${indent(1)}expected:',
 		format_output(t.expected),
 	]
 	if diff_cmd := find_working_diff_command() {
 		diff := color_compare_strings(diff_cmd, rand.ulid(), t.expected, t.output)
 		lines << [
 			'${indent}diff:',
-			diff.split_into_lines().map(indent.repeat(2) + it).join('\n'),
+			indent_each_lines(2, diff),
 		]
 	}
 
@@ -208,7 +211,7 @@ fn run(paths []string) bool {
 			'${term.fail_message('ERROR')} Faild to compile ric',
 			'    exit_code: $err.code',
 			'    output:',
-			err.msg.split_into_lines().map(' '.repeat(8) + it).join('\n'),
+			indent_each_lines(2, err.msg),
 		].join('\n'))
 		return false
 	}
