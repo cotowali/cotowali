@@ -10,23 +10,23 @@ mut:
 	indent    int
 	newline   bool = true
 	tmp_count int
-	out       strings.Builder
+	buf       strings.Builder
 }
 
 [inline]
 pub fn new_builder(n int, config &Config) Builder {
 	return Builder{
-		out: strings.new_builder(n)
+		buf: strings.new_builder(n)
 		config: config
 	}
 }
 
 pub fn (mut b Builder) str() string {
-	return b.out.str()
+	return b.buf.str()
 }
 
 pub fn (b Builder) bytes() []byte {
-	return b.out.buf
+	return b.buf
 }
 
 pub fn (mut b Builder) write(s string) {
@@ -36,7 +36,7 @@ pub fn (mut b Builder) write(s string) {
 	if b.newline {
 		b.write_indent()
 	}
-	must_write(b.out, s)
+	must_write(b.buf, s)
 	b.newline = s[s.len - 1] == `\n`
 }
 
@@ -45,7 +45,7 @@ pub fn (mut b Builder) writeln(s string) {
 }
 
 pub fn (mut b Builder) write_indent() {
-	must_write(b.out, '  '.repeat(b.indent))
+	must_write(b.buf, '  '.repeat(b.indent))
 }
 
 pub fn (mut b Builder) indent() {
