@@ -65,8 +65,12 @@ enum RicCommand {
 	run
 }
 
-fn (ric Ric) compile() os.Result {
-	return os.execute('v -cg $ric.source -o $ric.bin')
+fn (ric Ric) compile() ? {
+	res := os.execute('v -cg $ric.source -o $ric.bin')
+	if res.exit_code != 0 {
+		return error_with_code(res.output, res.exit_code)
+	}
+	return
 }
 
 fn (ric Ric) execute(c RicCommand, file string) os.Result {
@@ -199,7 +203,7 @@ fn run(paths []string) bool {
 		bin: os.join_path(ric_dir, 'ric')
 	}
 
-	assert ric.compile().exit_code == 0
+	ric.compile() or { return false }
 
 	mut ok := true
 	for path in sources {
