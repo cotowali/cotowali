@@ -49,6 +49,13 @@ fn (mut p Parser) unexpected_token_error(found Token, expects ...TokenKind) IErr
 }
 
 fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
+	$if trace_parser ? {
+		p.trace_begin(@FN, msg, '$pos')
+		defer {
+			p.trace_end()
+		}
+	}
+
 	defer {
 		p.file.has_syntax_error = true
 		p.restore_from_syntax_error()
