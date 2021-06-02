@@ -62,6 +62,10 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	}
 	check_compile_error(f) ?
 
+	if c.config.no_emit {
+		return
+	}
+
 	mut e := sh.new_emitter(w, c.config)
 	e.emit(f)
 }

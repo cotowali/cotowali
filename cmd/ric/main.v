@@ -9,13 +9,21 @@ import cotowari.source { Source }
 import cotowari.errors { unreachable }
 import cmd.tools
 
-const backend_flag = Flag{
-	flag: .string
-	name: 'backend'
-	abbrev: 'b'
-	default_value: ['sh']
-	global: true
-}
+const (
+	backend_flag = Flag{
+		flag: .string
+		name: 'backend'
+		abbrev: 'b'
+		default_value: ['sh']
+		global: true
+	}
+	no_emit_flag = Flag{
+		flag: .bool
+		name: 'no-emit'
+		global: true
+	}
+	flags = [backend_flag, no_emit_flag]
+)
 
 fn new_source_to_run(args []string) ?Source {
 	if args.len == 0 {
@@ -30,6 +38,7 @@ fn new_source_to_run(args []string) ?Source {
 
 fn new_config_from_cmd(cmd Command) &Config {
 	mut config := new_config()
+	config.no_emit = cmd.flags.get_bool(no_emit_flag.name) or { panic(unreachable) }
 	backend_str := cmd.flags.get_string(backend_flag.name) or { panic(unreachable) }
 	config.backend = backend_from_str(backend_str) or {
 		eprintln(err)
@@ -78,7 +87,7 @@ fn main() {
 		description: mod.description
 		version: mod.version
 		execute: execute_compile
-		flags: [backend_flag]
+		flags: flags
 		commands: [
 			Command{
 				name: 'run'

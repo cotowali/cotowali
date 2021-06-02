@@ -12,6 +12,7 @@ pub enum Backend {
 pub struct Config {
 pub mut:
 	backend Backend = .sh
+	no_emit bool
 }
 
 pub fn new_config() &Config {
