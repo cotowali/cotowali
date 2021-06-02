@@ -12,7 +12,8 @@ pub fn new_tracer() Tracer {
 
 [inline]
 pub fn (t Tracer) write_indent() {
-	eprint('  '.repeat(t.indent))
+	eprint('.   '.repeat(t.indent / 2))
+	eprint('. '.repeat(t.indent % 2))
 }
 
 pub fn (mut t Tracer) write(msg string) {
