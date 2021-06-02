@@ -4,7 +4,7 @@ import cotowari.source { Char, CharCond, Pos, Source, pos }
 import cotowari.token { Token, TokenKind }
 import cotowari.config { Config }
 import cotowari.util { min }
-import cotowari.errors { unreachable }
+import cotowari.errors { ErrWithToken, unreachable }
 
 pub struct Lexer {
 pub:
@@ -49,6 +49,16 @@ fn (mut lex Lexer) start_pos() {
 		col: lex.pos.last_col
 		line: lex.pos.last_line
 	)
+}
+
+// --
+
+fn (lex &Lexer) error(token Token, msg string) IError {
+	return &ErrWithToken{
+		source: lex.source
+		token: token
+		msg: msg
+	}
 }
 
 // --

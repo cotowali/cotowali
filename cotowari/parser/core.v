@@ -6,6 +6,7 @@ import cotowari.config { Config }
 import cotowari.ast
 import cotowari.symbols { Scope, new_global_scope }
 import cotowari.tracer { Tracer }
+import cotowari.errors { unreachable }
 
 pub struct Parser {
 pub:
@@ -57,6 +58,17 @@ pub fn (p &Parser) kind(i int) TokenKind {
 	return p.token(i).kind
 }
 
+fn (mut p Parser) read_token() Token {
+	tok := p.lexer.read() or {
+		if err is errors.ErrWithToken {
+			p.syntax_error(err.msg, err.token.pos)
+			return err.token
+		}
+		panic(unreachable)
+	}
+	return tok
+}
+
 pub fn (mut p Parser) consume() Token {
 	t := p.token(0)
 	match t.kind {
@@ -66,7 +78,7 @@ pub fn (mut p Parser) consume() Token {
 	}
 	last_idx := p.token_idx % p.buf.len
 	p.prev_tok = p.buf[last_idx]
-	p.buf[last_idx] = p.lexer.read()
+	p.buf[last_idx] = p.read_token()
 	p.token_idx++
 	return t
 }

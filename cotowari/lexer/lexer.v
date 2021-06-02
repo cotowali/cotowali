@@ -2,13 +2,18 @@ module lexer
 
 import cotowari.token { Token }
 import cotowari.source { Char }
-import cotowari.errors { unreachable }
+import cotowari.errors { ErrWithToken, unreachable }
 
 pub fn (mut lex Lexer) next() ?Token {
 	if lex.closed {
 		return none
 	}
-	return lex.read()
+	return lex.read() or {
+		if err is ErrWithToken {
+			return err.token
+		}
+		panic(unreachable)
+	}
 }
 
 fn (mut lex Lexer) prepare_to_read() {
@@ -16,7 +21,7 @@ fn (mut lex Lexer) prepare_to_read() {
 	lex.start_pos()
 }
 
-pub fn (mut lex Lexer) read() Token {
+pub fn (mut lex Lexer) read() ?Token {
 	for {
 		lex.prepare_to_read()
 		if lex.is_eof() {
