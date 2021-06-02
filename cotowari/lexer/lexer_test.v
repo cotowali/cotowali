@@ -3,6 +3,7 @@ module lexer
 import cotowari.config { new_config }
 import cotowari.token { Token, TokenKind }
 import cotowari.source { Pos, none_pos }
+import cotowari.errors
 
 fn test(code string, tokens []Token) {
 	config := new_config()
@@ -30,6 +31,51 @@ fn ktest(code string, kinds []TokenKind) {
 		}
 		k2 := kinds[i]
 		assert t1.kind == k2
+		i++
+	}
+}
+
+enum ErrOrOk {
+	err
+	ok
+}
+
+struct EkTestValue {
+	kind   TokenKind
+	status ErrOrOk
+}
+
+fn ek(k TokenKind, s ErrOrOk) EkTestValue {
+	return {
+		kind: k
+		status: s
+	}
+}
+
+fn (mut lex Lexer) e_read() (Token, ErrOrOk) {
+	tok := lex.read() or {
+		if err is errors.ErrWithToken {
+			return err.token, ErrOrOk.err
+		}
+		panic(err)
+	}
+	return tok, ErrOrOk.ok
+}
+
+fn ektest(code string, values []EkTestValue) {
+	config := new_config()
+	mut lexer := new_lexer({ path: '', code: code }, config)
+	mut i := 0
+	for {
+		t1, status := lexer.e_read()
+		if !(i < values.len) {
+			assert status == .ok
+			assert t1.kind == .eof
+			return
+		}
+		got := ek(t1.kind, status)
+		want := values[i]
+		assert got == want
 		i++
 	}
 }
