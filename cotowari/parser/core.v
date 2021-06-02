@@ -42,7 +42,6 @@ fn (mut p Parser) debug() {
 fn (mut p Parser) trace_begin(f string, args ...string) {
 	$if trace_parser ? {
 		p.tracer.begin_fn(f, ...args)
-		p.tracer.write_field('token', p.token(0).short_str())
 	}
 }
 
@@ -84,6 +83,13 @@ fn (mut p Parser) read_token() Token {
 
 pub fn (mut p Parser) consume() Token {
 	t := p.token(0)
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.tracer.write_field('token', t.short_str())
+			p.trace_end()
+		}
+	}
 	match t.kind {
 		.l_brace { p.brace_depth++ }
 		.r_brace { p.brace_depth-- }
