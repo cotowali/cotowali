@@ -23,6 +23,14 @@ fn test_eq() {
 	}
 }
 
+fn test_token_str() {
+	assert Token{.ident, 'a', none_pos}.str() == "Token{ .ident, 'a', none }"
+
+	p := pos(i: 0)
+	text, text_want := '\n\r\\', r'\n\r\\'
+	assert Token{.ident, text, p}.str() == "Token{ .ident, '$text_want', $p }"
+}
+
 fn test_is() {
 	assert TokenKind.op_plus.@is(.op)
 	assert !TokenKind.ident.@is(.op)
