@@ -63,6 +63,3 @@ See [docs/development.md](./docs/development.md)
 docker compose run dev
 ```
 
-## Acknowledgements
-
-Cotowari is supported by 2021 Exploratory IT Human Resources Project ([The MITOU Program](https://www.ipa.go.jp/english/humandev/third.html) by IPA: Information-technology Promotion Agency, Japan.
