@@ -65,11 +65,11 @@ pub fn (mut lex Lexer) read() ?Token {
 			return lex.new_token_with_consume(kind)
 		}
 
-		return match c[0] {
-			`@` { lex.read_at_ident() }
-			`\$` { lex.read_dollar_directive() }
-			`\'`, `"` { lex.read_string_lit(c[0]) }
-			else { lex.read_unknown() }
+		match c[0] {
+			`@` { return lex.read_at_ident() }
+			`\$` { return lex.read_dollar_directive() }
+			`\'`, `"` { return lex.read_string_lit(c[0]) }
+			else { return lex.read_unknown() }
 		}
 	}
 	panic(unreachable)
@@ -86,21 +86,32 @@ fn (mut lex Lexer) read_newline() Token {
 	return lex.new_token_with_consume(.eol)
 }
 
-fn (mut lex Lexer) read_string_lit(quote byte) Token {
+fn (mut lex Lexer) read_string_lit(quote byte) ?Token {
 	lex.consume()
+	begin := lex.idx()
+	mut unterminated := false
 	for lex.char(0)[0] != quote {
 		lex.consume()
-		if lex.is_eof() || lex.is_eol() {
-			panic('unterminated string literal') // TODO: error handling
+		if lex.is_eof() || is_eol(lex.char(0)) {
+			unterminated = true
+			break
 		}
 	}
-	lex.consume()
-	text := lex.text()
-	return Token{
+
+	end := lex.idx()
+	if !unterminated {
+		lex.consume() // consume quote.
+	}
+
+	tok := Token{
 		kind: .string_lit
 		pos: lex.pos_for_new_token()
-		text: text[1..text.len - 1]
+		text: lex.source.slice(begin, end)
 	}
+	if unterminated {
+		return lex.error(tok, 'unterminated string literal')
+	}
+	return tok
 }
 
 fn (mut lex Lexer) read_unknown() Token {

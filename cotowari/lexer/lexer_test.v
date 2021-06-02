@@ -179,6 +179,10 @@ fn test_string() {
 	sq, dq := "'", '"'
 	test("$dq'abc'$dq", [t(.string_lit, "'abc'")])
 	test('$sq"abc"$sq', [t(.string_lit, '"abc"')])
+	ektest('"a', [ek(.string_lit, .err), ek(.eof, .ok)])
+	ektest('"a\na', [ek(.string_lit, .err), ek(.eol, .ok), ek(.ident, .ok)])
+	ektest("'a", [ek(.string_lit, .err), ek(.eof, .ok)])
+	ektest("'a\na", [ek(.string_lit, .err), ek(.eol, .ok), ek(.ident, .ok)])
 }
 
 fn test_inline_shell() {
