@@ -32,8 +32,7 @@ fn print_files_tokens(paths []string) {
 			continue
 		}
 		for token in new_lexer(s, config) {
-			text := token.text.replace_each(['\r', r'\r', '\n', r'\n'])
-			sb.writeln('    .$token.kind $text')
+			sb.writeln('    $token.short_str()')
 		}
 	}
 	sb.writeln(']')
