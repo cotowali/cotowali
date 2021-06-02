@@ -37,5 +37,5 @@ fn print_files_tokens(paths []string) {
 		}
 	}
 	sb.writeln(']')
-	println(sb)
+	println(sb.str())
 }
