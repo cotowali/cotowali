@@ -34,8 +34,9 @@ fn (mut p Parser) restore_from_syntax_error() {
 }
 
 fn (mut p Parser) unexpected_token_error(found Token, expects ...TokenKind) IError {
+	found_str := if found.text.len > 0 { found.text } else { found.kind.str() }
 	if expects.len == 0 {
-		return p.syntax_error('unexpected token `$found.text`', found.pos)
+		return p.syntax_error('unexpected token `$found_str`', found.pos)
 	}
 	mut expect := 'expect '
 	if expects.len == 1 {
@@ -44,7 +45,7 @@ fn (mut p Parser) unexpected_token_error(found Token, expects ...TokenKind) IErr
 		last := expects.last().str()
 		expect = expects[..expects.len - 1].map(it.str()).join(', ') + ', or `$last`'
 	}
-	return p.syntax_error(expect + ', but found `$found.text`', found.pos)
+	return p.syntax_error(expect + ', but found `$found_str`', found.pos)
 }
 
 fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
