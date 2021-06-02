@@ -184,5 +184,6 @@ pub fn (lhs Token) == (rhs Token) bool {
 }
 
 pub fn (t Token) str() string {
-	return "Token{ .$t.kind, '$t.text', $t.pos }"
+	text := t.text.replace_each(['\\', '\\\\', '\n', r'\n', '\r', r'\r'])
+	return "Token{ .$t.kind, '$text', $t.pos }"
 }
