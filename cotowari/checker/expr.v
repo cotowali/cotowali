@@ -1,6 +1,7 @@
 module checker
 
 import cotowari.ast { Expr }
+import cotowari.symbols { TypeSymbol }
 
 fn (mut c Checker) expr(expr Expr) {
 	match mut expr {
@@ -33,7 +34,8 @@ fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 	name := expr.func.name()
 	pos := Expr(expr).pos()
 
-	func := expr.scope.lookup_var(name) or {
+	mut scope := expr.scope
+	func := scope.lookup_var(name) or {
 		c.error('function `$name` is not defined', pos)
 		return
 	}
@@ -44,17 +46,38 @@ fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 		return
 	}
 
-	params, args := ts.fn_info().params, expr.args
-	if params.len != args.len {
+	fn_info := ts.fn_info()
+	params := fn_info.params
+	expr.args
+
+	args := expr.args
+	if fn_info.is_varargs {
+		min_len := params.len - 1
+		if args.len < min_len {
+			c.error('expected $min_len or more arguments, but got $args.len', pos)
+			return
+		}
+	} else if args.len != params.len {
 		c.error('expected $params.len arguments, but got $args.len', pos)
 		return
 	}
 
 	mut call_args_types_ok := true
+	varargs_elem_ts := if fn_info.is_varargs {
+		scope.must_lookup_type(fn_info.varargs_elem)
+	} else {
+		// ?TypeSymbol(none)
+		TypeSymbol{}
+	}
 	for i, arg in args {
 		c.expr(arg)
 		arg_ts := arg.type_symbol()
-		param_ts := expr.scope.must_lookup_type(params[i])
+		param_ts := if fn_info.is_varargs && i >= params.len - 1 {
+			varargs_elem_ts
+		} else {
+			scope.must_lookup_type(params[i])
+		}
+
 		c.check_types(want: param_ts, got: arg_ts, pos: arg.pos()) or { call_args_types_ok = false }
 	}
 	if !call_args_types_ok {

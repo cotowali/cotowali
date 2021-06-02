@@ -4,8 +4,10 @@ import cotowari.errors { unreachable }
 
 pub struct FunctionTypeInfo {
 pub:
-	params []Type
-	ret    Type = builtin_type(.void)
+	params       []Type
+	ret          Type = builtin_type(.void)
+	is_varargs   bool
+	varargs_elem Type
 }
 
 pub fn (t TypeSymbol) fn_info() FunctionTypeInfo {
@@ -17,7 +19,12 @@ pub fn (t TypeSymbol) fn_info() FunctionTypeInfo {
 }
 
 fn (f FunctionTypeInfo) signature(s &Scope) string {
-	params_str := f.params.map(s.must_lookup_type(it).name).join(', ')
+	mut param_strs := []string{len: f.params.len}
+	for i, param in f.params {
+		name := s.must_lookup_type(param).name
+		param_strs[i] = if f.is_varargs && i == f.params.len - 1 { '...$name' } else { name }
+	}
+	params_str := param_strs.join(', ')
 	return 'fn ($params_str) ${s.must_lookup_type(f.ret).name}'
 }
 
