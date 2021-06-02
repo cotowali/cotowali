@@ -2,7 +2,7 @@ module ast
 
 import cotowari.source { Pos }
 import cotowari.token { Token }
-import cotowari.symbols { Scope, Type, TypeSymbol, builtin_type }
+import cotowari.symbols { FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_type }
 
 pub type Expr = ArrayLiteral | AsExpr | CallFn | InfixExpr | IntLiteral | ParenExpr |
 	Pipeline | PrefixExpr | StringLiteral | Var
@@ -73,6 +73,10 @@ pub:
 pub mut:
 	func Var
 	args []Expr
+}
+
+pub fn (e CallFn) fn_info() FunctionTypeInfo {
+	return e.func.type_symbol().fn_info()
 }
 
 pub struct InfixExpr {
