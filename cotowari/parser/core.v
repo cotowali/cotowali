@@ -18,7 +18,7 @@ mut:
 	prev_tok    Token
 	buf         []Token
 	token_idx   int
-	file        ast.File
+	file        &ast.File
 	scope       &Scope
 
 	restore_strategy RestoreStrategy
@@ -129,11 +129,16 @@ fn (mut p Parser) consume_with_assert(kinds ...TokenKind) Token {
 
 [inline]
 pub fn new_parser(lexer Lexer) Parser {
+	scope := new_global_scope()
 	mut p := Parser{
 		lexer: lexer
 		config: lexer.config
 		buf: []Token{len: 3}
-		scope: new_global_scope()
+		scope: scope
+		file: &ast.File{
+			source: lexer.source
+			scope: scope
+		}
 	}
 	for _ in 0 .. p.buf.len {
 		p.consume()
