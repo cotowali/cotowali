@@ -76,7 +76,7 @@ pub fn (mut lex Lexer) read() ?Token {
 }
 
 fn (lex Lexer) is_eol() bool {
-	return lex.char(0)[0] in [`\n`, `\r`]
+	return is_eol(lex.char(0))
 }
 
 fn (mut lex Lexer) read_newline() Token {
