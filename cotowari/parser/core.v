@@ -26,15 +26,15 @@ mut:
 }
 
 [inline]
-pub fn (mut p Parser) trace_begin(f string, args ...string) {
+fn (mut p Parser) trace_begin(f string, args ...string) {
 	$if trace_parser ? {
 		p.tracer.begin_fn(f, ...args)
-		p.tracer.writeln('token: ${p.kind(0).str()}')
+		p.tracer.writeln('token: ${p.token(0)}')
 	}
 }
 
 [inline]
-pub fn (mut p Parser) trace_end() {
+fn (mut p Parser) trace_end() {
 	$if trace_parser ? {
 		p.tracer.end_fn()
 	}
