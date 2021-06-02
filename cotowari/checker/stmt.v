@@ -25,6 +25,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 }
 
 fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
+	c.expr(stmt.right)
 	stmt.left.set_typ(stmt.right.typ())
 }
 

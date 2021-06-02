@@ -3,4 +3,4 @@ fn f(a int) int {
 }
 
 f("a") + "a"
-"a" + f("a")
+let x = "a" + f("a")
