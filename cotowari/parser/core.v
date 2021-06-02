@@ -42,7 +42,7 @@ fn (mut p Parser) debug() {
 fn (mut p Parser) trace_begin(f string, args ...string) {
 	$if trace_parser ? {
 		p.tracer.begin_fn(f, ...args)
-		p.tracer.writeln('token: ${p.token(0)}')
+		p.tracer.writeln('token: ${p.token(0).short_str()}')
 	}
 }
 
