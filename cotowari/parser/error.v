@@ -34,6 +34,13 @@ fn (mut p Parser) restore_from_syntax_error() {
 }
 
 fn (mut p Parser) unexpected_token_error(found Token, expects ...TokenKind) IError {
+	$if trace_parser ? {
+		p.trace_begin(@FN, '$found', ...expects.map(it.str()))
+		defer {
+			p.trace_end()
+		}
+	}
+
 	found_str := if found.text.len > 0 { found.text } else { found.kind.str() }
 	if expects.len == 0 {
 		return p.syntax_error('unexpected token `$found_str`', found.pos)
