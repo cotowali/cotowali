@@ -22,6 +22,13 @@ fn (mut lex Lexer) prepare_to_read() {
 }
 
 pub fn (mut lex Lexer) read() ?Token {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN)
+		defer {
+			lex.trace_end()
+		}
+	}
+
 	for {
 		lex.prepare_to_read()
 		if lex.is_eof() {
@@ -80,6 +87,13 @@ fn (lex Lexer) is_eol() bool {
 }
 
 fn (mut lex Lexer) read_newline() Token {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN)
+		defer {
+			lex.trace_end()
+		}
+	}
+
 	if lex.char(0)[0] == `\r` && lex.char(1) == '\n' {
 		lex.consume()
 	}
@@ -87,6 +101,13 @@ fn (mut lex Lexer) read_newline() Token {
 }
 
 fn (mut lex Lexer) read_string_lit(quote byte) ?Token {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN, '$quote')
+		defer {
+			lex.trace_end()
+		}
+	}
+
 	lex.consume()
 	begin := lex.idx()
 	mut unterminated := false
@@ -115,6 +136,13 @@ fn (mut lex Lexer) read_string_lit(quote byte) ?Token {
 }
 
 fn (mut lex Lexer) read_unknown() Token {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN)
+		defer {
+			lex.trace_end()
+		}
+	}
+
 	for !(lex.is_eof() || lex.char(0).@is(.whitespace) || lex.char(0) == '\n') {
 		lex.consume()
 	}
@@ -146,6 +174,13 @@ fn (mut lex Lexer) skip_whitespaces() {
 }
 
 fn (mut lex Lexer) read_ident_or_keyword() Token {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN)
+		defer {
+			lex.trace_end()
+		}
+	}
+
 	lex.consume_for(is_ident_char)
 	text := lex.text()
 	pos := lex.pos_for_new_token()
@@ -158,10 +193,24 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 }
 
 fn (mut lex Lexer) read_number() Token {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN)
+		defer {
+			lex.trace_end()
+		}
+	}
+
 	return lex.new_token_with_consume_for(is_digit, .int_lit)
 }
 
 fn (mut lex Lexer) read_at_ident() Token {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN)
+		defer {
+			lex.trace_end()
+		}
+	}
+
 	lex.skip_with_assert(fn (c Char) bool {
 		return c == '@'
 	})
@@ -169,6 +218,13 @@ fn (mut lex Lexer) read_at_ident() Token {
 }
 
 fn (mut lex Lexer) read_dollar_directive() Token {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN)
+		defer {
+			lex.trace_end()
+		}
+	}
+
 	lex.skip_with_assert(fn (c Char) bool {
 		return c[0] == `\$`
 	})

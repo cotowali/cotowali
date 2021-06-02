@@ -5,6 +5,7 @@ import cotowari.token { Token, TokenKind }
 import cotowari.config { Config }
 import cotowari.util { min }
 import cotowari.errors { ErrWithToken, unreachable }
+import cotowari.tracer { Tracer }
 
 pub struct Lexer {
 pub:
@@ -14,6 +15,7 @@ mut:
 	prev_char Char
 	pos       Pos
 	closed    bool // for iter
+	tracer    Tracer
 }
 
 pub fn new_lexer(source Source, config &Config) &Lexer {
@@ -53,7 +55,28 @@ fn (mut lex Lexer) start_pos() {
 
 // --
 
-fn (lex &Lexer) error(token Token, msg string) IError {
+fn (mut lex Lexer) trace_begin(f string, args ...string) {
+	$if trace_lexer ? {
+		lex.tracer.begin_fn(f, ...args)
+		lex.tracer.write_field('char', lex.char(0).replace_each(['\n', r'\n', '\r', r'\r']))
+	}
+}
+
+fn (mut lex Lexer) trace_end() {
+	$if trace_lexer ? {
+		lex.tracer.end_fn()
+	}
+}
+
+// --
+
+fn (mut lex Lexer) error(token Token, msg string) IError {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN, '$token', msg)
+		defer {
+			lex.trace_end()
+		}
+	}
 	return &ErrWithToken{
 		source: lex.source
 		token: token
