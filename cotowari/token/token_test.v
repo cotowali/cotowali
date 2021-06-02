@@ -24,11 +24,15 @@ fn test_eq() {
 }
 
 fn test_token_str() {
-	assert Token{.ident, 'a', none_pos}.str() == "Token{ .ident, 'a', none }"
+	t1 := Token{.ident, 'a', none_pos}
+	assert t1.str() == "Token{ .ident, 'a', none }"
+	assert t1.short_str() == "{ .ident, 'a' }"
 
 	p := pos(i: 0)
 	text, text_want := '\n\r\\', r'\n\r\\'
-	assert Token{.ident, text, p}.str() == "Token{ .ident, '$text_want', $p }"
+	t2 := Token{.ident, text, p}
+	assert t2.str() == "Token{ .ident, '$text_want', $p }"
+	assert t2.short_str() == "{ .ident, '$text_want' }"
 }
 
 fn test_is() {

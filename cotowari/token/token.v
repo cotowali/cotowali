@@ -183,7 +183,15 @@ pub fn (lhs Token) == (rhs Token) bool {
 	}
 }
 
+[inline]
+fn (t Token) text_for_str() string {
+	return t.text.replace_each(['\\', '\\\\', '\n', r'\n', '\r', r'\r'])
+}
+
 pub fn (t Token) str() string {
-	text := t.text.replace_each(['\\', '\\\\', '\n', r'\n', '\r', r'\r'])
-	return "Token{ .$t.kind, '$text', $t.pos }"
+	return "Token{ .$t.kind, '$t.text_for_str()', $t.pos }"
+}
+
+pub fn (t Token) short_str() string {
+	return "{ .$t.kind, '$t.text_for_str()' }"
 }
