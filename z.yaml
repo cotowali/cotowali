@@ -1,10 +1,10 @@
 default: run
 disable_help: true
 tasks:
-  run.debug: v -cg run cmd/ric/main.v $@
   run: v run cmd/ric/main.v $@
-  run.trace.parser: v -d trace_parser run cmd/ric/main.v $@
-  run.trace.lexer: v -d trace_lexer run cmd/ric/main.v $@
+  debug: v -cg run cmd/ric/main.v $@
+  trace.parser: v -d trace_parser run cmd/ric/main.v $@
+  trace.lexer: v -d trace_lexer run cmd/ric/main.v $@
   run.bin: ./.bin/ric $@
   fib: z run examples/fib.ri
   build: mkdir -p .bin && v cmd/ric/main.v -o .bin/ric
