@@ -5,7 +5,7 @@ import cotowari.token { Token, TokenKind }
 import cotowari.config { Config }
 import cotowari.util { min }
 import cotowari.errors { ErrWithToken, unreachable }
-import cotowari.tracer { Tracer }
+import cotowari.debug { Tracer }
 
 pub struct Lexer {
 pub:

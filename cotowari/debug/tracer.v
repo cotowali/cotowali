@@ -1,4 +1,4 @@
-module tracer
+module debug
 
 pub struct Tracer {
 mut:

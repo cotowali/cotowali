@@ -5,7 +5,7 @@ import cotowari.token { Token, TokenCond, TokenKind, TokenKindClass }
 import cotowari.config { Config }
 import cotowari.ast
 import cotowari.symbols { Scope, new_global_scope }
-import cotowari.tracer { Tracer }
+import cotowari.debug { Tracer }
 import cotowari.errors { unreachable }
 
 pub struct Parser {
