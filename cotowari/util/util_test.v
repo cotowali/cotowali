@@ -13,12 +13,6 @@ fn test_in() {
 	assert !in2('z', '0', '2', 'a', 'c')
 }
 
-fn test_escape() {
-	bs := '\\'
-	assert escape(bs, []) == bs + bs
-	assert escape('abc', ['a', 'b', 'd']) == '${bs}a${bs}bc'
-}
-
 struct Ref {
 mut:
 	ref &string = 0
