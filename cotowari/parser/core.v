@@ -25,6 +25,19 @@ mut:
 	restore_strategy RestoreStrategy
 }
 
+fn (mut p Parser) debug() {
+	mut tokens := []Token{len: p.buf.len}
+	for i, _ in tokens {
+		tokens[i] = p.token(i)
+	}
+	p.tracer.write_object('Parser', map{
+		'brace_depth':      p.brace_depth.str()
+		'prev_tok':         p.prev_tok.str()
+		'tokens':           tokens.str()
+		'restore_strategy': p.restore_strategy.str()
+	})
+}
+
 [inline]
 fn (mut p Parser) trace_begin(f string, args ...string) {
 	$if trace_parser ? {
