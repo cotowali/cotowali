@@ -4,38 +4,47 @@ tasks:
   run: v run cmd/ric/main.v $@
   run.no_emit: v run cmd/ric/main.v --no-emit $@
   debug: v -cg run cmd/ric/main.v $@
-  trace.parser: v -d trace_parser run cmd/ric/main.v --no-emit $@
-  trace.lexer: v -d trace_lexer run cmd/ric/main.v --no-emit $@
-  run.bin: ./.bin/ric $@
-  build: mkdir -p .bin && v cmd/ric/main.v -o .bin/ric
+
+  trace:
+    tasks:
+      parser: v -d trace_parser run cmd/ric/main.v --no-emit $@
+      lexer: v -d trace_lexer run cmd/ric/main.v --no-emit $@
+
   build.c: v cmd/ric/main.v -o main.c
+
+  build: mkdir -p .bin && v cmd/ric/main.v -o .bin/ric
   symlink: ln -fs $(pwd)/.bin/ric /usr/local/bin/ric
   install: cp $(pwd)/.bin/ric /usr/local/bin/ric
-  test: |
-    if [ "$#" -eq "0" ]
-    then
-      z test.unit
-      z test.integration
-    else
-      for f in "$@"
-      do
-        if [ "$(dirname "$f")" = 'tests' ] || [ "$(basename "$f")" = 'tests' ]
-        then
-          z test.integration $f
-        else
-          z test.unit $f
-        fi
-      done
-    fi
-  test.unit: v test ${@:-./cotowari}
-  test.integration: v run tests/run.v $@
-  test.fix: v -d fix run tests/run.v $@
-  test.hello: z run examples/hello.ri
-  fmt: v fmt -w .
-  fmt.c: z fmt && z test && git add . && git commit -m 'fmt'
+
   ast: z run tools ast $@
   tokens: z run tools tokens $@
   scope: z run tools scope $@
+
+  test:
+    run: |
+      if [ "$#" -eq "0" ]
+      then
+        z test.unit
+        z test.integration
+      else
+        for f in "$@"
+        do
+          if [ "$(dirname "$f")" = 'tests' ] || [ "$(basename "$f")" = 'tests' ]
+          then
+            z test.integration $f
+          else
+            z test.unit $f
+          fi
+        done
+      fi
+    tasks:
+      unit: v test ${@:-./cotowari}
+      integration: v run tests/run.v $@
+      fix: v -d fix run tests/run.v $@
+      hello: z run examples/hello.ri
+
+  fmt: v fmt -w .
+  fmt.c: z fmt && z test && git add . && git commit -m 'fmt'
 
   publish:
     run: z publish.docker
