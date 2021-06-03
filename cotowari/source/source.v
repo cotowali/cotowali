@@ -26,6 +26,10 @@ pub fn (s &Source) slice(begin int, end int) string {
 	return s.code.substr(begin, end)
 }
 
+pub fn (s &Source) file_name() string {
+	return os.file_name(s.path)
+}
+
 pub fn read_file(path string) ?&Source {
 	code := os.read_file(path) ?
 	return new_source(path, code)
