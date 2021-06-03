@@ -28,9 +28,16 @@ pub fn (p PrettyFormatter) format(err Err) string {
 	return '$l1\n$l2\n$l3\n'
 }
 
+pub fn (errors []Err) sorted() []Err {
+	mut res := errors.clone()
+	res.sort(a.pos.line < b.pos.line)
+	return res
+}
+
 pub fn (errors []Err) format(f Formatter) string {
 	mut sb := strings.new_builder(10)
-	for e in errors {
+
+	for e in errors.sorted() {
 		sb.write_string(f.format(e))
 	}
 	return sb.str()
