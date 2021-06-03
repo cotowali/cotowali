@@ -115,22 +115,22 @@ fn (mut s Scope) must_register_type(ts TypeSymbol) TypeSymbol {
 
 type TypeOrName = Type | string
 
+fn (s &Scope) name_to_type(name string) ?Type {
+	if name in s.name_to_type {
+		return s.name_to_type[name]
+	} else if p := s.parent() {
+		return p.name_to_type(name)
+	} else {
+		return error('unknown type `$name`')
+	}
+}
+
 pub fn (s &Scope) lookup_type(key TypeOrName) ?TypeSymbol {
 	// dont use `int_typ := if ...` to avoid compiler bug
 	mut typ := 0
 	match key {
-		string {
-			if key in s.name_to_type {
-				typ = s.name_to_type[key]
-			} else if p := s.parent() {
-				return p.lookup_type(key)
-			} else {
-				return error('unknown type `$key`')
-			}
-		}
-		Type {
-			typ = key
-		}
+		string { typ = s.name_to_type(key) ? }
+		Type { typ = key }
 	}
 
 	if typ in s.type_symbols {
