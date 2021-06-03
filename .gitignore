@@ -1,3 +1,5 @@
 *.c
 /cmd/ric/ric
 /ric
+
+profile.txt

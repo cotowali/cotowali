@@ -4,6 +4,7 @@ tasks:
   run: v run cmd/ric/main.v $@
   no-emit: v run cmd/ric/main.v --no-emit $@
   debug: v -cg run cmd/ric/main.v $@
+  profile: v -profile profile.txt run cmd/ric/main.v $@
   trace:
     tasks:
       parser: v -d trace_parser run cmd/ric/main.v --no-emit $@
