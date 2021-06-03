@@ -9,7 +9,7 @@ import cotowari.debug { Tracer }
 
 pub struct Lexer {
 pub:
-	source Source
+	source &Source
 	config &Config
 mut:
 	prev_char Char
@@ -18,7 +18,7 @@ mut:
 	tracer    Tracer
 }
 
-pub fn new_lexer(source Source, config &Config) &Lexer {
+pub fn new_lexer(source &Source, config &Config) &Lexer {
 	return &Lexer{
 		source: source
 		config: config

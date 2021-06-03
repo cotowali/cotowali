@@ -10,7 +10,7 @@ pub const (
 // Err represents cotowari compile error
 pub struct Err {
 pub:
-	source Source
+	source &Source
 	pos    Pos
 	// Implements IError
 	msg  string
@@ -19,7 +19,7 @@ pub:
 
 pub struct ErrWithToken {
 pub:
-	source Source
+	source &Source
 	token  Token
 	// Implements IError
 	msg  string

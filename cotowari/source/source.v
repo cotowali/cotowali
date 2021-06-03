@@ -2,6 +2,7 @@ module source
 
 import os
 
+[heap]
 pub struct Source {
 pub:
 	path string
@@ -18,9 +19,9 @@ pub fn (s &Source) slice(begin int, end int) string {
 	return s.code.substr(begin, end)
 }
 
-pub fn read_file(path string) ?Source {
+pub fn read_file(path string) ?&Source {
 	code_text := os.read_file(path) ?
-	return Source{
+	return &Source{
 		path: path
 		code: code_text
 	}

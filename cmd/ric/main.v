@@ -25,9 +25,9 @@ const (
 	flags = [backend_flag, no_emit_flag]
 )
 
-fn new_source_to_run(args []string) ?Source {
+fn new_source_to_run(args []string) ?&Source {
 	if args.len == 0 {
-		return Source{
+		return &Source{
 			path: 'stdin'
 			code: os.get_raw_lines_joined()
 		}
