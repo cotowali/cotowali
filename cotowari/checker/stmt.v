@@ -26,7 +26,15 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 
 fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 	c.expr(stmt.right)
-	stmt.left.set_typ(stmt.right.typ())
+	if ast.Expr(stmt.left).typ() == builtin_type(.placeholder) {
+		stmt.left.set_typ(stmt.right.typ())
+	} else {
+		c.check_types(
+			want: stmt.left.type_symbol()
+			got: stmt.right.type_symbol()
+			pos: stmt.right.pos()
+		) or {}
+	}
 }
 
 fn (mut c Checker) block(block ast.Block) {
