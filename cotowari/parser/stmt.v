@@ -139,6 +139,7 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 			scope: p.scope
 			pos: ident.pos
 			sym: p.scope.lookup_var(name) or {
+				p.scope.must_register_var(name: name, pos: ident.pos)
 				return p.error('undefined variable `$name`', ident.pos)
 			}
 		}
