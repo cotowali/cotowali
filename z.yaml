@@ -9,8 +9,8 @@ tasks:
   profile: v -profile profile.txt run {{ric_path}} $@
   trace:
     tasks:
-      parser: v -d trace_parser run {{ric_path}} --no-emit $@
-      lexer: v -d trace_lexer run {{ric_path}} --no-emit $@
+      parser: v -cg -d trace_parser run {{ric_path}} --no-emit $@
+      lexer: v -cg -d trace_lexer run {{ric_path}} --no-emit $@
 
   build.c: v {{ric_path}} -o main.c
 
