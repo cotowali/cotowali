@@ -6,6 +6,7 @@ tasks:
   run: v run {{ric_path}} $@
   no-emit: v run {{ric_path}} --no-emit $@
   debug: v -cg run {{ric_path}} $@
+  watch: v watch --add $@ run {{ric_path}} $@
   profile: v -profile profile.txt run {{ric_path}} $@
   trace:
     tasks:
