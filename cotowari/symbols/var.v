@@ -69,7 +69,7 @@ pub fn new_placeholder_var(name string) &Var {
 	}
 }
 
-fn (mut s Scope) must_register_var(v Var) &Var {
+pub fn (mut s Scope) must_register_var(v Var) &Var {
 	return s.register_var(v) or { panic(unreachable) }
 }
 
