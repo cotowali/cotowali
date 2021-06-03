@@ -1,3 +1,6 @@
+expr_err.ri 8,2: undefined variable `y`
+  > y
+    ^
 expr_err.ri 5,4: mismatched types: `int` (expected) and `string` (found)
   > "a"
     ^^^

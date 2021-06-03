@@ -4,3 +4,5 @@ fn f(a int) int {
 
 f("a") + "a"
 let x = "a" + f("a")
+
+y = 10
