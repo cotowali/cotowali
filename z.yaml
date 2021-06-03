@@ -25,6 +25,10 @@ tasks:
   tokens: z run tools tokens $@
   scope: z run tools scope $@
 
+  fix:
+    - z fmt
+    - z test.fix
+
   test:
     run: |
       if [ "$#" -eq "0" ]
