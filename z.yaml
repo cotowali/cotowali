@@ -1,18 +1,20 @@
 default: run
 disable_help: true
+var:
+  ric_path: cmd/ric
 tasks:
-  run: v run cmd/ric/main.v $@
-  no-emit: v run cmd/ric/main.v --no-emit $@
-  debug: v -cg run cmd/ric/main.v $@
-  profile: v -profile profile.txt run cmd/ric/main.v $@
+  run: v run {{ric_path}} $@
+  no-emit: v run {{ric_path}} --no-emit $@
+  debug: v -cg run {{ric_path}} $@
+  profile: v -profile profile.txt run {{ric_path}} $@
   trace:
     tasks:
-      parser: v -d trace_parser run cmd/ric/main.v --no-emit $@
-      lexer: v -d trace_lexer run cmd/ric/main.v --no-emit $@
+      parser: v -d trace_parser run {{ric_path}} --no-emit $@
+      lexer: v -d trace_lexer run {{ric_path}} --no-emit $@
 
-  build.c: v cmd/ric/main.v -o main.c
+  build.c: v {{ric_path}} -o main.c
 
-  build: mkdir -p .bin && v cmd/ric/main.v -o .bin/ric
+  build: mkdir -p .bin && v {{ric_path}} -o .bin/ric
   symlink: ln -fs $(pwd)/.bin/ric /usr/local/bin/ric
   install: z build && cp $(pwd)/.bin/ric /usr/local/bin/ric
 
