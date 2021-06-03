@@ -40,12 +40,5 @@ pub fn run(s Source, config &Config) ?int {
 }
 
 pub fn format_error(err IError, f errors.Formatter) string {
-	if err is compiler.CompileError {
-		mut sb := strings.new_builder(10)
-		for e in err.errors {
-			sb.write_string(f.format(e))
-		}
-		return sb.str()
-	}
-	return err.msg + '\n'
+	return if err is compiler.CompileError { err.errors.format(f) } else { err.msg + '\n' }
 }

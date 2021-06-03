@@ -1,5 +1,7 @@
 module errors
 
+import strings
+
 pub interface Formatter {
 	format(Err) string
 }
@@ -24,4 +26,12 @@ pub fn (p PrettyFormatter) format(err Err) string {
 	l2 := '  > ' + code
 	l3 := '    ' + '^'.repeat(underline_len)
 	return '$l1\n$l2\n$l3\n'
+}
+
+pub fn (errors []Err) format(f Formatter) string {
+	mut sb := strings.new_builder(10)
+	for e in errors {
+		sb.write_string(f.format(e))
+	}
+	return sb.str()
 }
