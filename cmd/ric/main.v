@@ -58,7 +58,7 @@ fn execute_run(cmd Command) ? {
 	}
 	config := new_config_from_cmd(cmd)
 	cotowari.run(s, config) or {
-		eprintln(err)
+		eprint(format_error(err, errors.PrettyFormatter{}))
 		exit(1)
 	}
 }
