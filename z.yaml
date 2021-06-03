@@ -13,7 +13,7 @@ tasks:
 
   build: mkdir -p .bin && v cmd/ric/main.v -o .bin/ric
   symlink: ln -fs $(pwd)/.bin/ric /usr/local/bin/ric
-  install: cp $(pwd)/.bin/ric /usr/local/bin/ric
+  install: z build && cp $(pwd)/.bin/ric /usr/local/bin/ric
 
   ast: z run tools ast $@
   tokens: z run tools tokens $@
