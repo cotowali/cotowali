@@ -12,7 +12,7 @@ fn (mut c Checker) stmts(stmts []ast.Stmt) {
 fn (mut c Checker) stmt(stmt ast.Stmt) {
 	match mut stmt {
 		ast.AssignStmt { c.assign_stmt(mut stmt) }
-		ast.AssertStmt {}
+		ast.AssertStmt { c.assert_stmt(stmt) }
 		ast.Block { c.block(stmt) }
 		ast.Expr { c.expr(stmt) }
 		ast.EmptyStmt {}
@@ -34,6 +34,13 @@ fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 			got: stmt.right.type_symbol()
 			pos: stmt.right.pos()
 		) or {}
+	}
+}
+
+fn (mut c Checker) assert_stmt(stmt ast.AssertStmt) {
+	c.expr(stmt.expr)
+	if stmt.expr.typ() != builtin_type(.bool) {
+		c.error('non-bool type used as assert condition', stmt.expr.pos())
 	}
 }
 
