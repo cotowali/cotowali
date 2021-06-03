@@ -30,7 +30,7 @@ pub fn (p PrettyFormatter) format(err Err) string {
 
 pub fn (errors []Err) sorted() []Err {
 	mut res := errors.clone()
-	res.sort(a.pos.line < b.pos.line)
+	res.sort(a.pos.i < b.pos.i)
 	return res
 }
 
