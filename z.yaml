@@ -2,9 +2,8 @@ default: run
 disable_help: true
 tasks:
   run: v run cmd/ric/main.v $@
-  run.no_emit: v run cmd/ric/main.v --no-emit $@
+  no-emit: v run cmd/ric/main.v --no-emit $@
   debug: v -cg run cmd/ric/main.v $@
-
   trace:
     tasks:
       parser: v -d trace_parser run cmd/ric/main.v --no-emit $@
