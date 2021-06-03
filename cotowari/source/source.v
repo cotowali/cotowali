@@ -9,6 +9,13 @@ pub:
 	code string
 }
 
+pub fn new_source(path string, code string) &Source {
+	return &Source{
+		path: path
+		code: code
+	}
+}
+
 // at returns one Char at code[i]
 pub fn (s &Source) at(i int) Char {
 	end := i + utf8_char_len(s.code[i])
@@ -20,9 +27,6 @@ pub fn (s &Source) slice(begin int, end int) string {
 }
 
 pub fn read_file(path string) ?&Source {
-	code_text := os.read_file(path) ?
-	return &Source{
-		path: path
-		code: code_text
-	}
+	code := os.read_file(path) ?
+	return new_source(path, code)
 }
