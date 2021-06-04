@@ -62,3 +62,31 @@ pub fn (mut b Builder) new_tmp_var() string {
 	}
 	return '_cotowari_tmp_$b.tmp_count'
 }
+
+pub struct WriteBlockOpt {
+pub:
+	open   string [required]
+	close  string [required]
+	inline bool
+}
+
+/*
+TODO: wait to fix v bug
+pub fn (mut b Builder) write_block<R, V>(opt WriteBlockOpt, f fn (mut R, V), mut receiver R, v V) {
+	if opt.inline {
+		b.write(opt.open)
+		defer {
+			b.write(opt.close)
+		}
+	} else {
+		b.writeln(opt.open)
+		b.indent()
+		defer {
+			b.unindent()
+			b.writeln(opt.close)
+		}
+	}
+
+	f(mut receiver, v)
+}
+*/
