@@ -1,6 +1,5 @@
 module symbols
 
-import cotowari.util { auto_id }
 import cotowari.source { Pos }
 import cotowari.errors { unreachable }
 

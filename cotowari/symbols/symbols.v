@@ -3,6 +3,14 @@ module symbols
 import cotowari.source { Pos }
 import cotowari.util { nil_to_none }
 
+const (
+	reserved_id_max = 1000
+)
+
+fn auto_id() u64 {
+	return util.rand_more_than<u64>(symbols.reserved_id_max)
+}
+
 type Symbol = TypeSymbol | Var
 
 [inline]

@@ -1,6 +1,6 @@
 module symbols
 
-import cotowari.util { auto_id, nil_to_none }
+import cotowari.util { nil_to_none }
 
 [heap]
 pub struct Scope {
