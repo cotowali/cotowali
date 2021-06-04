@@ -4,7 +4,7 @@ import cotowari.util { auto_id }
 import cotowari.source { Pos }
 import cotowari.errors { unreachable }
 
-pub type Type = int
+pub type Type = u64
 
 pub struct UnknownTypeInfo {}
 
@@ -85,7 +85,7 @@ pub fn (v TypeSymbol) str() string {
 // -- register / lookup --
 
 fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
-	if int(ts.typ) in s.type_symbols {
+	if ts.typ in s.type_symbols {
 		return error('$ts.typ is exists')
 	}
 	if ts.name.len > 0 && ts.name in s.name_to_type {
@@ -95,13 +95,13 @@ fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
 
 pub fn (mut s Scope) register_type(ts TypeSymbol) ?TypeSymbol {
 	s.check_before_register_type(ts) ?
-	typ := if ts.typ == 0 { Type(int(auto_id())) } else { ts.typ }
+	typ := if ts.typ == 0 { Type(auto_id()) } else { ts.typ }
 	new_ts := TypeSymbol{
 		...ts
 		typ: typ
 		scope: s
 	}
-	s.type_symbols[int(typ)] = new_ts
+	s.type_symbols[typ] = new_ts
 	if new_ts.name.len > 0 {
 		s.name_to_type[new_ts.name] = new_ts.typ
 	}
@@ -127,7 +127,7 @@ fn (s &Scope) name_to_type(name string) ?Type {
 
 pub fn (s &Scope) lookup_type(key TypeOrName) ?TypeSymbol {
 	// dont use `int_typ := if ...` to avoid compiler bug
-	mut typ := 0
+	mut typ := u64(0)
 	match key {
 		string { typ = s.name_to_type(key) ? }
 		Type { typ = key }

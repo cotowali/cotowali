@@ -12,7 +12,7 @@ pub enum BuiltinTypeKey {
 }
 
 pub fn builtin_type(key BuiltinTypeKey) Type {
-	return Type(int(key))
+	return Type(u64(key))
 }
 
 pub fn (mut s Scope) register_builtin() {
