@@ -11,7 +11,7 @@ fn (mut c Checker) expr(expr Expr) {
 		ast.ArrayLiteral {}
 		ast.IntLiteral {}
 		ast.StringLiteral {}
-		ast.Pipeline {}
+		ast.Pipeline { c.pipeline(expr) }
 		ast.PrefixExpr {}
 		ast.Var {}
 	}
@@ -83,4 +83,11 @@ fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 	if !call_args_types_ok {
 		return
 	}
+}
+
+fn (mut c Checker) pipeline(expr ast.Pipeline) {
+	for e in expr.exprs {
+		c.expr(e)
+	}
+	// TODO: check stdin/stout type
 }
