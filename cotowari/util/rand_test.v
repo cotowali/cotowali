@@ -46,4 +46,21 @@ fn test_rand() {
 		assert typeof(v_int).name == 'int'
 		assert typeof(v_i64).name == 'i64'
 	}
+
+	for i in 0 .. 10 {
+		v_u32 := rand_more_than<u32>(10)
+		v_u64 := rand_more_than<u64>(10)
+		v_int := rand_more_than<int>(10)
+		v_i64 := rand_more_than<i64>(10)
+
+		assert typeof(v_u32).name == 'u32'
+		assert typeof(v_u64).name == 'u64'
+		assert typeof(v_int).name == 'int'
+		assert typeof(v_i64).name == 'i64'
+
+		assert v_u32 > 10
+		assert v_u64 > 10
+		assert v_int > 0
+		assert v_i64 > 0
+	}
 }

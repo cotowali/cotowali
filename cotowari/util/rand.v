@@ -40,3 +40,7 @@ pub fn rand_n<T>(n T) T {
 	}
 	panic('invalid type')
 }
+
+pub fn rand_more_than<T>(n T) T {
+	return rand_in_range<T>(n + 1, const_max<T>())
+}
