@@ -35,7 +35,7 @@ pub fn (e Expr) typ() Type {
 		Pipeline { e.exprs.last().typ() }
 		PrefixExpr { e.expr.typ() }
 		InfixExpr { e.typ() }
-		CallFn { e.func.sym.type_symbol().fn_info().ret }
+		CallFn { e.func.type_symbol().fn_info().ret }
 		Var { e.sym.typ }
 	}
 }
