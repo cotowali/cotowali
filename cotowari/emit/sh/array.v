@@ -18,5 +18,9 @@ fn (mut e Emitter) array(name string, opt ExprOpt) {
 		e.writeln('echo \$(eval echo \$(array_elements $name) )')
 		return
 	}
-	e.write(name)
+	if opt.expand_array {
+		e.write('\$(eval echo \$(array_elements $name) )')
+	} else {
+		e.write(name)
+	}
 }

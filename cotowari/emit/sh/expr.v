@@ -7,6 +7,7 @@ import cotowari.errors { unreachable }
 
 struct ExprOpt {
 	as_command        bool
+	expand_array      bool
 	writeln           bool
 	discard_stdout    bool
 	inside_arithmetic bool
