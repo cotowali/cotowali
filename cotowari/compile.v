@@ -2,7 +2,6 @@ module cotowari
 
 import os
 import io
-import strings
 import rand { ulid }
 import cotowari.config { Config }
 import cotowari.source { Source }
