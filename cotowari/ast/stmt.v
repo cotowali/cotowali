@@ -1,7 +1,7 @@
 module ast
 
 import cotowari.source { Pos }
-import cotowari.symbols { Scope, Type, TypeSymbol }
+import cotowari.symbols { FunctionTypeInfo, Scope, Type, TypeSymbol }
 import cotowari.token { Token }
 
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
@@ -39,6 +39,10 @@ pub:
 pub mut:
 	params []Var
 	body   Block
+}
+
+pub fn (f FnDecl) fn_info() FunctionTypeInfo {
+	return f.type_symbol().fn_info()
 }
 
 pub fn (f FnDecl) type_symbol() TypeSymbol {
