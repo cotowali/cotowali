@@ -40,3 +40,15 @@ jobs:
       - uses: actions/checkout@v2
       - run: z ci setup-v
       - run: z ci test
+  slack-notify:
+    if: always()
+    needs: [format, test, sanitize]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Gamesight/slack-workflow-status@master
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          channel: ${{ secrets.SLACK_WEBHOOK_CHANNELL }}
+          name: 'GitHub Actions'
+          icon_url: 'https://raw.githubusercontent/cotowari/logo/main/cotowari.png'
