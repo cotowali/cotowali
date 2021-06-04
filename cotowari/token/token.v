@@ -33,6 +33,7 @@ pub enum TokenKind {
 	l_bracket
 	r_bracket
 	op_pipe
+	op_redirect
 	op_plus
 	op_minus
 	op_div
@@ -56,6 +57,7 @@ pub enum TokenKind {
 fn (k TokenKind) is_op() bool {
 	return k in [
 		.op_pipe,
+		.op_redirect,
 		.op_plus,
 		.op_minus,
 		.op_div,
