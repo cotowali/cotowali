@@ -41,7 +41,7 @@ jobs:
       - run: z ci setup-v
       - run: z ci test
   slack-notify:
-    if: always()
+    if: failure()
     needs: [format, test, sanitize]
     runs-on: ubuntu-latest
     steps:
