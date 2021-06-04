@@ -21,3 +21,8 @@ echo_arr([0, 1, 2])
 raw_arr(arr)
 new_arr()
 // assert raw_arr(arr) == arr
+
+echo('for')
+for i in [0, 1, 2] {
+  echo(i)
+}
