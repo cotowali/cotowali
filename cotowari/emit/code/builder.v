@@ -4,6 +4,10 @@ import strings
 import cotowari.util { must_write }
 import cotowari.config { Config }
 
+const (
+	default_line_terminator = '\n'
+)
+
 pub struct Builder {
 	config &Config
 mut:
@@ -11,6 +15,8 @@ mut:
 	newline   bool = true
 	tmp_count int
 	buf       strings.Builder
+pub mut:
+	line_terminator string = code.default_line_terminator
 }
 
 [inline]
@@ -40,8 +46,12 @@ pub fn (mut b Builder) write(s string) {
 	b.newline = s[s.len - 1] == `\n`
 }
 
+pub fn (mut b Builder) reset_line_terminator() {
+	b.line_terminator = code.default_line_terminator
+}
+
 pub fn (mut b Builder) writeln(s string) {
-	b.write(s + '\n')
+	b.write(s + b.line_terminator)
 }
 
 pub fn (mut b Builder) write_indent() {
@@ -88,5 +98,14 @@ pub fn (mut b Builder) write_block<R, V>(opt WriteBlockOpt, f fn (mut R, V), mut
 	}
 
 	f(mut receiver, v)
+}
+
+fn (mut e Emitter) with_line_terminator<T>(s string, f fn (mut R, T), mut receiver R, v T) {
+	old := e.line_terminator
+	defer {
+		e.line_treminator = old
+	}
+	e.line_terminator = s
+	f(mut e, v)
 }
 */
