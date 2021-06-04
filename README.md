@@ -1,9 +1,9 @@
 <div align="center">
-  <img width="200" src="https://raw.githubusercontent.com/cotowari/logo/master/cotowari.svg?sanitize=true">
+  <img width="200" src="https://raw.githubusercontent.com/cotowari/logo/main/cotowari.svg?sanitize=true">
   <h1>Cotowari</h1>
   <p>A statically typed script language that transpile into POSIX sh</p>
 </div>
-  
+
 > This project is a prototyping stage right now.
 > It means that only a few small snippets in `tests` will work.
 > First release is planned for later this yer.
