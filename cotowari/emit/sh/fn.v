@@ -7,10 +7,23 @@ fn (mut e Emitter) call_fn(expr CallFn, opt ExprOpt) {
 		e.write('\$(')
 	}
 
+	fn_info := expr.fn_info()
 	e.write(expr.func.out_name())
-	for arg in expr.args {
+	mut args := expr.args
+	if fn_info.is_varargs {
+		args = expr.args[..fn_info.params.len - 1]
+	}
+	for arg in args {
 		e.write(' ')
 		e.expr(arg, {})
+	}
+	if fn_info.is_varargs {
+		e.write(' ')
+		e.array_literal({
+			scope: expr.scope
+			elem_typ: fn_info.varargs_elem
+			elements: expr.args[fn_info.params.len - 1..]
+		}, {})
 	}
 
 	if !opt.as_command {
