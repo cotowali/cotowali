@@ -15,6 +15,26 @@ pub fn builtin_type(key BuiltinTypeKey) Type {
 	return Type(u64(key))
 }
 
+pub enum BuiltinFnKey {
+	echo = 0
+	cat
+	seq
+}
+
+pub fn builtin_fn_id(key BuiltinFnKey) u64 {
+	return u64(key)
+}
+
+struct BuiltinFnInfo {
+	key     BuiltinFnKey
+	fn_info FunctionTypeInfo
+}
+
+fn (mut s Scope) must_register_builtin_fn(key BuiltinFnKey, info FunctionTypeInfo) &Var {
+	typ := s.lookup_or_register_fn_type(info).typ
+	return s.must_register_var(id: builtin_fn_id(key), name: key.str(), typ: typ)
+}
+
 pub fn (mut s Scope) register_builtin() {
 	ts := fn (k BuiltinTypeKey, info TypeInfo) TypeSymbol {
 		return TypeSymbol{
@@ -53,7 +73,16 @@ pub fn (mut s Scope) register_builtin() {
 		}
 	}
 
-	s.must_register_fn('echo', params: [t(.any)], ret: t(.string))
-	s.must_register_fn('cat', params: [], ret: t(.string))
-	s.must_register_fn('seq', params: [t(.int)], ret: array_types[t(.int)])
+	f := fn (k BuiltinFnKey, fn_info FunctionTypeInfo) BuiltinFnInfo {
+		return BuiltinFnInfo{k, fn_info}
+	}
+
+	fns := [
+		f(.echo, params: [t(.any)], ret: t(.string)),
+		f(.cat, params: [], ret: t(.string)),
+		f(.seq, params: [t(.int)], ret: array_types[t(.int)]),
+	]
+	for f_ in fns {
+		s.must_register_builtin_fn(f_.key, f_.fn_info)
+	}
 }
