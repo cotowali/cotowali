@@ -50,9 +50,7 @@ pub fn (mut s Scope) register_builtin() {
 		}
 	}
 
-	t_ := fn (k BuiltinTypeKey) Type {
-		return builtin_type(k)
-	}
+	t_ := builtin_type
 
 	type_symbols := [
 		placeholder_ts(.placeholder, {}),
