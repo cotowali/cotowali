@@ -36,7 +36,7 @@ fn (mut s Scope) must_register_builtin_fn(key BuiltinFnKey, info FunctionTypeInf
 }
 
 pub fn (mut s Scope) register_builtin() {
-	ts := fn (k BuiltinTypeKey, info TypeInfo) TypeSymbol {
+	ts_ := fn (k BuiltinTypeKey, info TypeInfo) TypeSymbol {
 		return TypeSymbol{
 			typ: builtin_type(k)
 			name: k.str()
@@ -50,39 +50,39 @@ pub fn (mut s Scope) register_builtin() {
 		}
 	}
 
-	t := fn (k BuiltinTypeKey) Type {
+	t_ := fn (k BuiltinTypeKey) Type {
 		return builtin_type(k)
 	}
 
 	type_symbols := [
 		placeholder_ts(.placeholder, {}),
 		placeholder_ts(.placeholder_fn, is_function: true),
-		ts(.void, PrimitiveTypeInfo{}),
-		ts(.unknown, UnknownTypeInfo{}),
-		ts(.any, PrimitiveTypeInfo{}),
-		ts(.int, PrimitiveTypeInfo{}),
-		ts(.string, PrimitiveTypeInfo{}),
-		ts(.bool, PrimitiveTypeInfo{}),
+		ts_(.void, PrimitiveTypeInfo{}),
+		ts_(.unknown, UnknownTypeInfo{}),
+		ts_(.any, PrimitiveTypeInfo{}),
+		ts_(.int, PrimitiveTypeInfo{}),
+		ts_(.string, PrimitiveTypeInfo{}),
+		ts_(.bool, PrimitiveTypeInfo{}),
 	]
 	mut array_types := map[int]Type{}
-	for ts_ in type_symbols {
-		s.must_register_type(ts_)
-		typ := ts_.typ
-		if typ !in [t(.placeholder), t(.void), t(.unknown)] {
+	for ts in type_symbols {
+		s.must_register_type(ts)
+		typ := ts.typ
+		if typ !in [t_(.placeholder), t_(.void), t_(.unknown)] {
 			array_types[typ] = s.lookup_or_register_array_type(elem: typ).typ
 		}
 	}
 
-	f := fn (k BuiltinFnKey, fn_info FunctionTypeInfo) BuiltinFnInfo {
+	f_ := fn (k BuiltinFnKey, fn_info FunctionTypeInfo) BuiltinFnInfo {
 		return BuiltinFnInfo{k, fn_info}
 	}
 
 	fns := [
-		f(.echo, params: [t(.any)], ret: t(.string)),
-		f(.cat, params: [], ret: t(.string)),
-		f(.seq, params: [t(.int)], ret: array_types[t(.int)]),
+		f_(.echo, params: [t_(.any)], ret: t_(.string)),
+		f_(.cat, params: [], ret: t_(.string)),
+		f_(.seq, params: [t_(.int)], ret: array_types[t_(.int)]),
 	]
-	for f_ in fns {
-		s.must_register_builtin_fn(f_.key, f_.fn_info)
+	for f in fns {
+		s.must_register_builtin_fn(f.key, f.fn_info)
 	}
 }
