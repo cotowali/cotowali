@@ -93,9 +93,5 @@ fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
 }
 
 fn (mut c Checker) source_stmt(mut stmt ast.SourceStmt) {
-	f := c.cur_file
-	defer {
-		c.cur_file = f
-	}
 	c.check_file(mut stmt.file)
 }
