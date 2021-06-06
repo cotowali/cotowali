@@ -1,13 +1,13 @@
 module lexer
 
-import cotowari.config { new_config }
+import cotowari.context { new_default_context }
 import cotowari.token { Token, TokenKind }
 import cotowari.source { Pos, none_pos }
 import cotowari.errors
 
 fn test(code string, tokens []Token) {
-	config := new_config()
-	lexer := new_lexer({ path: '', code: code }, config)
+	ctx := new_default_context()
+	lexer := new_lexer({ path: '', code: code }, ctx)
 	mut i := 0
 	for t1 in lexer {
 		if !(i < tokens.len) {
@@ -21,8 +21,8 @@ fn test(code string, tokens []Token) {
 }
 
 fn ktest(code string, kinds []TokenKind) {
-	config := new_config()
-	lexer := new_lexer({ path: '', code: code }, config)
+	ctx := new_default_context()
+	lexer := new_lexer({ path: '', code: code }, ctx)
 	mut i := 0
 	for t1 in lexer {
 		if !(i < kinds.len) {
@@ -63,8 +63,8 @@ fn (mut lex Lexer) e_read() (Token, ErrOrOk) {
 }
 
 fn ektest(code string, values []EkTestValue) {
-	config := new_config()
-	mut lexer := new_lexer({ path: '', code: code }, config)
+	ctx := new_default_context()
+	mut lexer := new_lexer({ path: '', code: code }, ctx)
 	mut i := 0
 	for {
 		t1, status := lexer.e_read()

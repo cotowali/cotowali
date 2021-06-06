@@ -1,6 +1,6 @@
 module parser
 
-import cotowari.config { Config }
+import cotowari.context { Context }
 import cotowari.source
 import cotowari.lexer { new_lexer }
 import cotowari.ast
@@ -12,8 +12,8 @@ pub fn (mut p Parser) parse() &ast.File {
 	return p.file
 }
 
-pub fn parse_file(path string, config &Config) ?&ast.File {
+pub fn parse_file(path string, ctx &Context) ?&ast.File {
 	s := source.read_file(path) ?
-	mut p := new_parser(new_lexer(s, config))
+	mut p := new_parser(new_lexer(s, ctx))
 	return p.parse()
 }

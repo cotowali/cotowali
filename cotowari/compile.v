@@ -3,23 +3,23 @@ module cotowari
 import os
 import io
 import rand { ulid }
-import cotowari.config { Config }
+import cotowari.context { Context }
 import cotowari.source { Source }
 import cotowari.compiler { new_compiler }
 import cotowari.errors
 
-pub fn compile(s Source, config &Config) ?string {
-	c := new_compiler(s, config)
+pub fn compile(s Source, ctx &Context) ?string {
+	c := new_compiler(s, ctx)
 	return c.compile()
 }
 
-pub fn compile_to(w io.Writer, s Source, config &Config) ? {
-	c := new_compiler(s, config)
+pub fn compile_to(w io.Writer, s Source, ctx &Context) ? {
+	c := new_compiler(s, ctx)
 	return c.compile_to(w)
 }
 
-fn compile_to_temp_file(s Source, config &Config) ?string {
-	c := new_compiler(s, config)
+fn compile_to_temp_file(s Source, ctx &Context) ?string {
+	c := new_compiler(s, ctx)
 	temp_path := os.join_path(os.temp_dir(), '${os.file_name(s.path)}_${ulid()}.sh')
 	mut f := os.create(temp_path) or { panic(err) }
 	c.compile_to(f) ?
@@ -29,8 +29,8 @@ fn compile_to_temp_file(s Source, config &Config) ?string {
 	return temp_path
 }
 
-pub fn run(s Source, config &Config) ?int {
-	temp_file := compile_to_temp_file(s, config) ?
+pub fn run(s Source, ctx &Context) ?int {
+	temp_file := compile_to_temp_file(s, ctx) ?
 	defer {
 		os.rm(temp_file) or { panic(err) }
 	}

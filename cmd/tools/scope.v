@@ -1,7 +1,7 @@
 module tools
 
 import cli { Command }
-import cotowari.config { new_config }
+import cotowari.context { new_default_context }
 import cotowari.parser
 
 const (
@@ -13,8 +13,7 @@ const (
 				cmd.execute_help()
 				return
 			}
-			config := new_config()
-			if f := parser.parse_file(cmd.args[0], config) {
+			if f := parser.parse_file(cmd.args[0], new_default_context()) {
 				println(f.scope.debug_str())
 			} else {
 				println('ERROR')

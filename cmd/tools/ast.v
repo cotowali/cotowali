@@ -1,7 +1,7 @@
 module tools
 
 import cli { Command, Flag }
-import cotowari.config { new_config }
+import cotowari.context { new_default_context }
 import cotowari.parser
 import cotowari.checker { new_checker }
 
@@ -25,9 +25,8 @@ fn execute_ast(cmd Command) ? {
 		cmd.execute_help()
 		return
 	}
-	config := new_config()
 	use_checker := cmd.flags.get_bool(tools.use_checker_flag.name) or { panic(err) }
-	mut f := parser.parse_file(cmd.args[0], config) or {
+	mut f := parser.parse_file(cmd.args[0], new_default_context()) or {
 		eprintln('ERROR')
 		return
 	}

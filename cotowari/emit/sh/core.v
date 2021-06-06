@@ -1,7 +1,7 @@
 module sh
 
 import io
-import cotowari.config { Config }
+import cotowari.context { Context }
 import cotowari.emit.code
 import cotowari.ast { File, FnDecl }
 
@@ -28,13 +28,13 @@ mut:
 }
 
 [inline]
-pub fn new_emitter(out io.Writer, config &Config) Emitter {
+pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 	return Emitter{
 		out: out
 		code: map{
-			CodeKind.builtin: code.new_builder(100, config)
-			CodeKind.literal: code.new_builder(100, config)
-			CodeKind.main:    code.new_builder(100, config)
+			CodeKind.builtin: code.new_builder(100, ctx)
+			CodeKind.literal: code.new_builder(100, ctx)
+			CodeKind.main:    code.new_builder(100, ctx)
 		}
 	}
 }

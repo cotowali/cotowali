@@ -2,7 +2,7 @@ module parser
 
 import cotowari.lexer { Lexer }
 import cotowari.token { Token, TokenCond, TokenKind, TokenKindClass }
-import cotowari.config { Config }
+import cotowari.context { Context }
 import cotowari.ast
 import cotowari.symbols { Scope, new_global_scope }
 import cotowari.debug { Tracer }
@@ -10,7 +10,7 @@ import cotowari.errors { unreachable }
 
 pub struct Parser {
 pub:
-	config &Config
+	ctx &Context
 mut:
 	count       int // counter to avoid some duplication (tmp name, etc...)
 	tracer      Tracer
@@ -163,7 +163,7 @@ pub fn new_parser(lexer Lexer) Parser {
 	scope := new_global_scope()
 	mut p := Parser{
 		lexer: lexer
-		config: lexer.config
+		ctx: lexer.ctx
 		buf: []Token{len: 3}
 		scope: scope
 		file: &ast.File{

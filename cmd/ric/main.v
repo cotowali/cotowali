@@ -4,7 +4,8 @@ import os
 import cli { Command, Flag }
 import v.vmod
 import cotowari { compile, format_error }
-import cotowari.config { Config, backend_from_str, new_config }
+import cotowari.config { backend_from_str }
+import cotowari.context { Context, new_context }
 import cotowari.source { Source }
 import cotowari.errors { unreachable }
 import cmd.tools
@@ -36,15 +37,14 @@ fn new_source_to_run(args []string) ?&Source {
 	}
 }
 
-fn new_config_from_cmd(cmd Command) &Config {
-	mut config := new_config()
-	config.no_emit = cmd.flags.get_bool(no_emit_flag.name) or { panic(unreachable) }
+fn new_ctx_from_cmd(cmd Command) &Context {
+	no_emit := cmd.flags.get_bool(no_emit_flag.name) or { panic(unreachable) }
 	backend_str := cmd.flags.get_string(backend_flag.name) or { panic(unreachable) }
-	config.backend = backend_from_str(backend_str) or {
+	backend := backend_from_str(backend_str) or {
 		eprintln(err)
 		exit(1)
 	}
-	return config
+	return new_context(no_emit: no_emit, backend: backend)
 }
 
 fn execute_run(cmd Command) ? {
@@ -56,8 +56,8 @@ fn execute_run(cmd Command) ? {
 		eprintln(err)
 		exit(1)
 	}
-	config := new_config_from_cmd(cmd)
-	cotowari.run(s, config) or {
+	ctx := new_ctx_from_cmd(cmd)
+	cotowari.run(s, ctx) or {
 		eprint(format_error(err, errors.PrettyFormatter{}))
 		exit(1)
 	}
@@ -72,8 +72,8 @@ fn execute_compile(cmd Command) ? {
 		exit(1)
 	}
 	s := source.read_file(cmd.args[0]) ?
-	config := new_config_from_cmd(cmd)
-	out := compile(s, config) or {
+	ctx := new_ctx_from_cmd(cmd)
+	out := compile(s, ctx) or {
 		eprint(format_error(err, errors.PrettyFormatter{}))
 		exit(1)
 	}

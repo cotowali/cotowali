@@ -2,14 +2,14 @@ module code
 
 import strings
 import cotowari.util { must_write }
-import cotowari.config { Config }
+import cotowari.context { Context }
 
 const (
 	default_line_terminator = '\n'
 )
 
 pub struct Builder {
-	config &Config
+	ctx &Context
 mut:
 	indent    int
 	newline   bool = true
@@ -20,10 +20,10 @@ pub mut:
 }
 
 [inline]
-pub fn new_builder(n int, config &Config) Builder {
+pub fn new_builder(n int, ctx &Context) Builder {
 	return {
 		buf: strings.new_builder(n)
-		config: config
+		ctx: ctx
 	}
 }
 

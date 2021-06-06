@@ -2,7 +2,7 @@ module compiler
 
 import io
 import strings
-import cotowari.config { Config }
+import cotowari.context { Context }
 import cotowari.source { Source }
 import cotowari.lexer { new_lexer }
 import cotowari.parser { new_parser }
@@ -13,7 +13,7 @@ import cotowari.errors { Err }
 
 pub struct Compiler {
 pub:
-	config &Config
+	ctx &Context
 mut:
 	source Source
 }
@@ -36,10 +36,10 @@ fn check_compile_error(file ast.File) ? {
 }
 
 [inline]
-pub fn new_compiler(source Source, config &Config) Compiler {
+pub fn new_compiler(source Source, ctx &Context) Compiler {
 	return Compiler{
 		source: source
-		config: config
+		ctx: ctx
 	}
 }
 
@@ -50,10 +50,11 @@ pub fn (c &Compiler) compile() ?string {
 }
 
 pub fn (c &Compiler) compile_to(w io.Writer) ? {
-	if c.config.backend != .sh {
-		return error('$c.config.backend backend is not yet implemented.')
+	config := c.ctx.config
+	if config.backend != .sh {
+		return error('$config.backend backend is not yet implemented.')
 	}
-	mut p := new_parser(new_lexer(c.source, c.config))
+	mut p := new_parser(new_lexer(c.source, c.ctx))
 	mut f := p.parse()
 
 	if !f.has_syntax_error {
@@ -62,10 +63,10 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	}
 	check_compile_error(f) ?
 
-	if c.config.no_emit {
+	if config.no_emit {
 		return
 	}
 
-	mut e := sh.new_emitter(w, c.config)
+	mut e := sh.new_emitter(w, c.ctx)
 	e.emit(f)
 }

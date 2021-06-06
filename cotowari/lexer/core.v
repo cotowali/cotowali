@@ -2,7 +2,7 @@ module lexer
 
 import cotowari.source { Char, CharCond, Pos, Source, pos }
 import cotowari.token { Token, TokenKind }
-import cotowari.config { Config }
+import cotowari.context { Context }
 import cotowari.util { min }
 import cotowari.errors { ErrWithToken, unreachable }
 import cotowari.debug { Tracer }
@@ -10,7 +10,7 @@ import cotowari.debug { Tracer }
 pub struct Lexer {
 pub:
 	source &Source
-	config &Config
+	ctx &Context
 mut:
 	prev_char Char
 	pos       Pos
@@ -18,10 +18,10 @@ mut:
 	tracer    Tracer
 }
 
-pub fn new_lexer(source &Source, config &Config) &Lexer {
+pub fn new_lexer(source &Source, ctx &Context) &Lexer {
 	return &Lexer{
 		source: source
-		config: config
+		ctx: ctx
 	}
 }
 
