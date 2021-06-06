@@ -21,6 +21,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 		ast.IfStmt { e.if_stmt(stmt) }
 		ast.InlineShell { e.writeln(stmt.text) }
 		ast.ReturnStmt { e.return_stmt(stmt) }
+		ast.SourceStmt { e.source_stmt(stmt) }
 	}
 }
 
@@ -116,4 +117,12 @@ fn (mut e Emitter) assign_stmt(node ast.AssignStmt) {
 fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {
 	e.expr(stmt.expr, as_command: true, writeln: true)
 	e.writeln('return 0')
+}
+
+fn (mut e Emitter) source_stmt(stmt ast.SourceStmt) {
+	f := e.cur_file
+	defer {
+		e.cur_file = f
+	}
+	e.file(stmt.file)
 }
