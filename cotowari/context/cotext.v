@@ -3,6 +3,7 @@ module context
 import cotowari.config { Config }
 import cotowari.symbols { Scope, new_global_scope }
 
+[heap]
 pub struct Context {
 pub:
 	config       Config
