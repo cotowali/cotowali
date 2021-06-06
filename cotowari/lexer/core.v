@@ -10,7 +10,7 @@ import cotowari.debug { Tracer }
 pub struct Lexer {
 pub:
 	source &Source
-	ctx &Context
+	ctx    &Context
 mut:
 	prev_char Char
 	pos       Pos
