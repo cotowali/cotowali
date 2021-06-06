@@ -7,6 +7,7 @@ import cotowari.ast
 import cotowari.symbols { Scope }
 import cotowari.debug { Tracer }
 import cotowari.errors { unreachable }
+import cotowari.source { Source }
 
 pub struct Parser {
 pub:
@@ -23,6 +24,11 @@ mut:
 	scope       &Scope
 
 	restore_strategy RestoreStrategy
+}
+
+[inline]
+fn (mut p Parser) source() &Source {
+	return p.lexer.source
 }
 
 fn (mut p Parser) debug() {
