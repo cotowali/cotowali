@@ -2,6 +2,7 @@ module parser
 
 import cotowari.ast
 import cotowari.errors { unreachable }
+import os
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
 	$if trace_parser ? {
@@ -46,6 +47,9 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		}
 		.key_return {
 			return ast.Stmt(p.parse_return_stmt() ?)
+		}
+		.key_source {
+			return ast.Stmt(p.parse_source_stmt() ?)
 		}
 		.inline_shell {
 			tok := p.consume()
@@ -242,5 +246,16 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 	return ast.ReturnStmt{
 		token: tok
 		expr: p.parse_expr({}) ?
+	}
+}
+
+fn (mut p Parser) parse_source_stmt() ?ast.SourceStmt {
+	source_tok := p.consume_with_assert(.key_source)
+	path_tok := p.consume_with_check(.string_lit) ?
+	pos := source_tok.pos.merge(path_tok.pos)
+	path := os.real_path(os.join_path(os.dir(p.source().path), path_tok.text))
+	f := parse_file(path, p.ctx) or { return p.error(err.msg, pos) }
+	return ast.SourceStmt{
+		file: f
 	}
 }
