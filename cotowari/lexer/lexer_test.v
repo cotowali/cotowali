@@ -110,6 +110,7 @@ fn test_lexer() {
 	ktest('"0" as int', [.string_lit, .key_as, .ident])
 	ktest('#[attr]', [.hash, .l_bracket, .ident, .r_bracket])
 	ktest('.....', [.dotdotdot, .dot, .dot])
+	ktest('source "file.ri"', [.key_source, .string_lit])
 
 	test('if i == 0 { } else if i != 1 {} else {}', [
 		t(.key_if, 'if'),

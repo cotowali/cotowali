@@ -48,6 +48,7 @@ const (
 		'fn':     k(.key_fn)
 		'return': k(.key_return)
 		'decl':   k(.key_decl)
+		'source': k(.key_source)
 		'struct': k(.key_struct)
 		'true':   k(.bool_lit)
 		'false':  k(.bool_lit)
