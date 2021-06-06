@@ -38,11 +38,11 @@ tasks:
       else
         for f in "$@"
         do
-          if [ "$(dirname "$f")" = 'tests' ] || [ "$(basename "$f")" = 'tests' ]
+          if echo $f | grep '_test.v$' > /dev/null
           then
-            z test.integration $f
-          else
             z test.unit $f
+          else
+            z test.integration $f
           fi
         done
       fi
