@@ -1,0 +1,2 @@
+source "./f.ri"
+f_echo('hello f')
