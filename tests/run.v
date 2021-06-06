@@ -55,7 +55,8 @@ fn get_sources(paths []string) []string {
 	mut res := []string{}
 	for path in paths {
 		if os.is_dir(path) {
-			res << (os.ls(path) or { panic(err) }).map(os.join_path(path, it)).filter(is_target_file)
+			sub_paths := os.ls(path) or { panic(err) }
+			res << get_sources(sub_paths.map(os.join_path(path, it)))
 		} else if is_target_file(path) {
 			res << path
 		}
