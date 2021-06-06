@@ -21,7 +21,7 @@ pub mut:
 
 [inline]
 pub fn new_builder(n int, config &Config) Builder {
-	return Builder{
+	return {
 		buf: strings.new_builder(n)
 		config: config
 	}
