@@ -21,6 +21,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 		ast.IfStmt { c.if_stmt(stmt) }
 		ast.InlineShell {}
 		ast.ReturnStmt { c.return_stmt(stmt) }
+		ast.SourceStmt { c.source_stmt(mut stmt) }
 	}
 }
 
@@ -89,4 +90,12 @@ fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
 		got: stmt.expr.type_symbol()
 		pos: stmt.expr.pos()
 	) or {}
+}
+
+fn (mut c Checker) source_stmt(mut stmt ast.SourceStmt) {
+	f := c.cur_file
+	defer {
+		c.cur_file = f
+	}
+	c.check_file(mut stmt.file)
 }
