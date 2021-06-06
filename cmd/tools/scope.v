@@ -13,8 +13,9 @@ const (
 				cmd.execute_help()
 				return
 			}
-			if f := parser.parse_file(cmd.args[0], new_default_context()) {
-				println(f.scope.debug_str())
+			ctx := new_default_context()
+			if _ := parser.parse_file(cmd.args[0], ctx) {
+				println(ctx.global_scope.debug_str())
 			} else {
 				println('ERROR')
 			}

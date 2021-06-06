@@ -4,7 +4,7 @@ import cotowari.lexer { Lexer }
 import cotowari.token { Token, TokenCond, TokenKind, TokenKindClass }
 import cotowari.context { Context }
 import cotowari.ast
-import cotowari.symbols { Scope, new_global_scope }
+import cotowari.symbols { Scope }
 import cotowari.debug { Tracer }
 import cotowari.errors { unreachable }
 
@@ -160,15 +160,14 @@ fn (mut p Parser) consume_with_assert(kinds ...TokenKind) Token {
 
 [inline]
 pub fn new_parser(lexer Lexer) Parser {
-	scope := new_global_scope()
+	ctx := lexer.ctx
 	mut p := Parser{
 		lexer: lexer
-		ctx: lexer.ctx
+		ctx: ctx
 		buf: []Token{len: 3}
-		scope: scope
+		scope: ctx.global_scope
 		file: &ast.File{
 			source: lexer.source
-			scope: scope
 		}
 	}
 	for _ in 0 .. p.buf.len {
