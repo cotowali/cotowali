@@ -8,15 +8,10 @@ pub enum Backend {
 	powershell
 }
 
-[heap]
 pub struct Config {
 pub mut:
 	backend Backend = .sh
 	no_emit bool
-}
-
-pub fn new_config() &Config {
-	return &Config{}
 }
 
 pub fn backend_from_str(s string) ?Backend {
