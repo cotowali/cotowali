@@ -67,15 +67,15 @@ pub fn (mut lex Lexer) read() ?Token {
 			return lex.new_token_with_consume_n(2, kind)
 		}
 
-		kind = table_for_one_char_symbols[c[0]] or { k(.unknown) }
+		kind = table_for_one_char_symbols[c.byte()] or { k(.unknown) }
 		if kind != .unknown {
 			return lex.new_token_with_consume(kind)
 		}
 
-		match c[0] {
+		match c.byte() {
 			`@` { return lex.read_at_ident() }
 			`\$` { return lex.read_dollar_directive() }
-			`\'`, `"` { return lex.read_string_lit(c[0]) }
+			`\'`, `"` { return lex.read_string_lit(c.byte()) }
 			else { return lex.read_unknown() }
 		}
 	}
@@ -94,7 +94,7 @@ fn (mut lex Lexer) read_newline() Token {
 		}
 	}
 
-	if lex.char(0)[0] == `\r` && lex.char(1) == '\n' {
+	if lex.char(0).byte() == `\r` && lex.char(1).byte() == `\n` {
 		lex.consume()
 	}
 	return lex.new_token_with_consume(.eol)
@@ -111,7 +111,7 @@ fn (mut lex Lexer) read_string_lit(quote byte) ?Token {
 	lex.consume()
 	begin := lex.idx()
 	mut unterminated := false
-	for lex.char(0)[0] != quote {
+	for lex.char(0).byte() != quote {
 		lex.consume()
 		if lex.is_eof() || is_eol(lex.char(0)) {
 			unterminated = true
@@ -150,11 +150,11 @@ fn (mut lex Lexer) read_unknown() Token {
 }
 
 fn is_ident_first_char(c Char) bool {
-	return c.@is(.alphabet) || c[0] == `_`
+	return c.@is(.alphabet) || c.byte() == `_`
 }
 
 fn is_ident_char(c Char) bool {
-	return is_ident_first_char(c) || is_digit(c) || c[0] == `-`
+	return is_ident_first_char(c) || is_digit(c) || c.byte() == `-`
 }
 
 fn is_digit(c Char) bool {
@@ -226,11 +226,11 @@ fn (mut lex Lexer) read_dollar_directive() Token {
 	}
 
 	lex.skip_with_assert(fn (c Char) bool {
-		return c[0] == `\$`
+		return c.byte() == `\$`
 	})
-	if lex.char(0)[0] == `{` {
+	if lex.char(0).byte() == `{` {
 		lex.skip()
-		for lex.char(0)[0] != `}` {
+		for lex.char(0).byte() != `}` {
 			if lex.is_eof() {
 				panic('unterminated inline shell')
 			}

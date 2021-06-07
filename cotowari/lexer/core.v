@@ -94,7 +94,7 @@ fn (lex &Lexer) pos_for_new_token() Pos {
 	pos := lex.pos
 	last_col := pos.last_col - 1
 	last_line := pos.last_line +
-		(if last_col == 0 || lex.prev_char()[0] in [`\n`, `\r`] { -1 } else { 0 })
+		(if last_col == 0 || lex.prev_char().byte() in [`\n`, `\r`] { -1 } else { 0 })
 	return Pos{
 		...pos
 		len: pos.len - 1
@@ -147,12 +147,12 @@ fn (lex &Lexer) char(n int) Char {
 	match n {
 		0 {}
 		1 {
-			idx += utf8_char_len(c[0])
+			idx += utf8_char_len(c.byte())
 			c = if idx < lex.source.code.len { lex.source.at(idx) } else { Char('\uFFFF') }
 		}
 		else {
 			for _ in 0 .. n {
-				idx += utf8_char_len(c[0])
+				idx += utf8_char_len(c.byte())
 				if idx >= lex.source.code.len {
 					return Char('\uFFFF')
 				}
@@ -187,7 +187,7 @@ fn (mut lex Lexer) consume() {
 	lex.pos.len += lex.prev_char.len
 	c := lex.char(0)
 	lex.pos.last_col++
-	if c[0] == `\n` || (c[0] == `\r` && lex.char(1)[0] != `\n`) {
+	if c.byte() == `\n` || (c.byte() == `\r` && lex.char(1).byte() != `\n`) {
 		lex.pos.last_col = 1
 		lex.pos.last_line++
 	}
