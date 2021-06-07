@@ -10,7 +10,7 @@ import cotowari.errors { unreachable }
 import cotowari.source { Source }
 
 pub struct Parser {
-pub:
+pub mut:
 	ctx &Context
 mut:
 	count       int // counter to avoid some duplication (tmp name, etc...)

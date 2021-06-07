@@ -6,6 +6,7 @@ import cotowari.lexer { new_lexer }
 import cotowari.ast
 
 pub fn (mut p Parser) parse() &ast.File {
+	p.ctx.sources[p.source().path] = p.source()
 	for p.kind(0) != .eof {
 		p.file.stmts << p.parse_stmt()
 	}

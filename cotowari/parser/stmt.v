@@ -254,6 +254,11 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 	path_tok := p.consume_with_check(.string_lit) ?
 	pos := key_tok.pos.merge(path_tok.pos)
 	path := os.real_path(os.join_path(os.dir(p.source().path), path_tok.text))
+
+	if path in p.ctx.sources {
+		return none
+	}
+
 	f := parse_file(path, p.ctx) or { return p.error(err.msg, pos) }
 	return ast.RequireStmt{
 		file: f

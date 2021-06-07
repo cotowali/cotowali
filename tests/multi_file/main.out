@@ -1,3 +1,6 @@
 file: f
+file: f2
 echo_f
 hello f
+echo_f2
+hello f2

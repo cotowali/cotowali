@@ -3,3 +3,5 @@ fn f_echo(msg string) {
   echo('echo_f')
   echo(msg)
 }
+
+require "./f2.ri"
