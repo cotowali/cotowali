@@ -120,9 +120,5 @@ fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {
 }
 
 fn (mut e Emitter) source_stmt(stmt ast.SourceStmt) {
-	f := e.cur_file
-	defer {
-		e.cur_file = f
-	}
 	e.file(stmt.file)
 }
