@@ -21,7 +21,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 		ast.IfStmt { c.if_stmt(stmt) }
 		ast.InlineShell {}
 		ast.ReturnStmt { c.return_stmt(stmt) }
-		ast.SourceStmt { c.source_stmt(mut stmt) }
+		ast.RequireStmt { c.require_stmt(mut stmt) }
 	}
 }
 
@@ -92,6 +92,6 @@ fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
 	) or {}
 }
 
-fn (mut c Checker) source_stmt(mut stmt ast.SourceStmt) {
+fn (mut c Checker) require_stmt(mut stmt ast.RequireStmt) {
 	c.check_file(mut stmt.file)
 }

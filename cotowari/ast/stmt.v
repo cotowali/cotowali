@@ -5,7 +5,7 @@ import cotowari.symbols { FunctionTypeInfo, Scope, Type, TypeSymbol }
 import cotowari.token { Token }
 
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
-	IfStmt | InlineShell | ReturnStmt | SourceStmt
+	IfStmt | InlineShell | RequireStmt | ReturnStmt
 
 pub struct AssignStmt {
 pub mut:
@@ -92,7 +92,7 @@ pub fn (stmt ReturnStmt) pos() Pos {
 	return stmt.token.pos.merge(stmt.expr.pos())
 }
 
-pub struct SourceStmt {
+pub struct RequireStmt {
 pub mut:
 	file File
 }

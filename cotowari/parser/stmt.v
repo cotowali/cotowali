@@ -48,8 +48,8 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_return {
 			return ast.Stmt(p.parse_return_stmt() ?)
 		}
-		.key_source {
-			return ast.Stmt(p.parse_source_stmt() ?)
+		.key_require {
+			return ast.Stmt(p.parse_require_stmt() ?)
 		}
 		.inline_shell {
 			tok := p.consume()
@@ -249,13 +249,13 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 	}
 }
 
-fn (mut p Parser) parse_source_stmt() ?ast.SourceStmt {
-	source_tok := p.consume_with_assert(.key_source)
+fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
+	key_tok := p.consume_with_assert(.key_require)
 	path_tok := p.consume_with_check(.string_lit) ?
-	pos := source_tok.pos.merge(path_tok.pos)
+	pos := key_tok.pos.merge(path_tok.pos)
 	path := os.real_path(os.join_path(os.dir(p.source().path), path_tok.text))
 	f := parse_file(path, p.ctx) or { return p.error(err.msg, pos) }
-	return ast.SourceStmt{
+	return ast.RequireStmt{
 		file: f
 	}
 }

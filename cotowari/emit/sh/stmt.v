@@ -21,7 +21,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 		ast.IfStmt { e.if_stmt(stmt) }
 		ast.InlineShell { e.writeln(stmt.text) }
 		ast.ReturnStmt { e.return_stmt(stmt) }
-		ast.SourceStmt { e.source_stmt(stmt) }
+		ast.RequireStmt { e.require_stmt(stmt) }
 	}
 }
 
@@ -119,6 +119,6 @@ fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {
 	e.writeln('return 0')
 }
 
-fn (mut e Emitter) source_stmt(stmt ast.SourceStmt) {
+fn (mut e Emitter) require_stmt(stmt ast.RequireStmt) {
 	e.file(stmt.file)
 }

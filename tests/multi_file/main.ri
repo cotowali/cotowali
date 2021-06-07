@@ -1,2 +1,2 @@
-source "./f.ri"
+require "./f.ri"
 f_echo('hello f')
