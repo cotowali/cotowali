@@ -10,6 +10,10 @@ pub fn (c Char) rune() rune {
 	return rune(c.utf32_code())
 }
 
+pub fn (c Char) byte() byte {
+	return c[0]
+}
+
 pub enum CharClass {
 	whitespace
 	eol
