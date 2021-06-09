@@ -187,7 +187,7 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 			scope: p.scope
 			pos: ident.pos
 			sym: p.scope.lookup_var(name) or {
-				return p.error('undefined variable $name', ident.pos)
+				return p.error('undefined variable `$name`', ident.pos)
 			}
 		}
 	}

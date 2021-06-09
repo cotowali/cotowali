@@ -1,4 +1,4 @@
-expr_err.ri 5,7: undefined variable x
+expr_err.ri 5,7: undefined variable `x`
   > x
     ^
 expr_err.ri 7,2: mismatched types: `int` (left) and `string` (right)
