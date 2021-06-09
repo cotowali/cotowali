@@ -2,6 +2,8 @@ fn f(a int) int {
   return a
 }
 
+echo(x)
+
 f("a") + "a"
 let x = "a" + f("a")
 
