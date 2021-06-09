@@ -135,18 +135,12 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 		}
 	}
 
-	ident := p.consume_with_check(.ident) ?
-	name := ident.text
+	left := p.parse_expr({}) ?
 	p.consume_with_check(.op_assign) ?
+	right := p.parse_expr({}) ?
 	return ast.AssignStmt{
-		left: ast.Var{
-			scope: p.scope
-			pos: ident.pos
-			sym: p.scope.lookup_var(name) or {
-				return p.error('undefined variable `$name`', ident.pos)
-			}
-		}
-		right: p.parse_expr({}) ?
+		left: left
+		right: right
 	}
 }
 
