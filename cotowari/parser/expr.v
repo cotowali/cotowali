@@ -192,7 +192,7 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	mut args := []ast.Expr{}
 	if p.kind(0) != .r_paren {
 		for {
-			args << p.parse_expr({}) ?
+			args << p.parse_expr(.toplevel) ?
 			if p.kind(0) == .r_paren {
 				break
 			}
@@ -233,7 +233,7 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 	}
 	mut elements := []ast.Expr{}
 	for {
-		elements << (p.parse_expr({}) ?)
+		elements << (p.parse_expr(.toplevel) ?)
 		last_tok = p.consume_with_check(.r_bracket, .comma) ?
 		if last_tok.kind == .r_bracket {
 			break

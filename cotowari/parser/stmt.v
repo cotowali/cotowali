@@ -31,7 +31,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 	match p.kind(0) {
 		.key_assert {
 			tok := p.consume()
-			return ast.AssertStmt{tok.pos, p.parse_expr({}) ?}
+			return ast.AssertStmt{tok.pos, p.parse_expr(.toplevel) ?}
 		}
 		.key_fn {
 			return ast.Stmt(p.parse_fn_decl() ?)
@@ -60,7 +60,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		}
 		else {}
 	}
-	expr := p.parse_expr({}) ?
+	expr := p.parse_expr(.toplevel) ?
 	if p.kind(0) == .op_assign {
 		return ast.Stmt(p.parse_assign_stmt(expr) ?)
 	}
@@ -123,7 +123,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 	}
 	return ast.AssignStmt{
 		left: v
-		right: p.parse_expr({}) ?
+		right: p.parse_expr(.toplevel) ?
 	}
 }
 
@@ -136,7 +136,7 @@ fn (mut p Parser) parse_assign_stmt(left ast.Expr) ?ast.AssignStmt {
 	}
 
 	p.consume_with_check(.op_assign) ?
-	right := p.parse_expr({}) ?
+	right := p.parse_expr(.toplevel) ?
 	return ast.AssignStmt{
 		left: left
 		right: right
@@ -151,7 +151,7 @@ fn (mut p Parser) parse_if_branch(name string) ?ast.IfBranch {
 		}
 	}
 
-	cond := p.parse_expr({}) ?
+	cond := p.parse_expr(.toplevel) ?
 	block := p.parse_block(name, []) ?
 	return ast.IfBranch{
 		cond: cond
@@ -169,7 +169,7 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 
 	p.consume_with_assert(.key_if)
 
-	cond := p.parse_expr({}) ?
+	cond := p.parse_expr(.toplevel) ?
 	mut branches := [ast.IfBranch{
 		cond: cond
 		body: p.parse_block('if_$p.count', []) ?
@@ -180,7 +180,7 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 		p.consume_if_kind_eq(.key_else) or { break }
 
 		if _ := p.consume_if_kind_eq(.key_if) {
-			elif_cond := p.parse_expr({}) ?
+			elif_cond := p.parse_expr(.toplevel) ?
 			branches << ast.IfBranch{
 				cond: elif_cond
 				body: p.parse_block('elif_${p.count}_$elif_count', []) ?
@@ -212,7 +212,7 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 	p.consume_with_assert(.key_for)
 	ident := p.consume_with_check(.ident) ?
 	p.consume_with_check(.key_in) ?
-	expr := p.parse_expr({}) ?
+	expr := p.parse_expr(.toplevel) ?
 	body := p.parse_block('for_$p.count', [ident.text]) ?
 	p.count++
 	return ast.ForInStmt{
@@ -237,7 +237,7 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 	tok := p.consume_with_assert(.key_return)
 	return ast.ReturnStmt{
 		token: tok
-		expr: p.parse_expr({}) ?
+		expr: p.parse_expr(.toplevel) ?
 	}
 }
 
