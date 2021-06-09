@@ -2,10 +2,10 @@ module ast
 
 import cotowari.source { Pos }
 import cotowari.token { Token }
-import cotowari.symbols { FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_type }
+import cotowari.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_type }
 
-pub type Expr = ArrayLiteral | AsExpr | CallFn | InfixExpr | IntLiteral | ParenExpr |
-	Pipeline | PrefixExpr | StringLiteral | Var
+pub type Expr = ArrayLiteral | AsExpr | CallFn | IndexExpr | InfixExpr | IntLiteral |
+	ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
 
 pub fn (e InfixExpr) pos() Pos {
 	return e.left.pos().merge(e.right.pos())
@@ -13,7 +13,7 @@ pub fn (e InfixExpr) pos() Pos {
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
-		ArrayLiteral, AsExpr, CallFn, Var, ParenExpr { expr.pos }
+		ArrayLiteral, AsExpr, CallFn, Var, ParenExpr, IndexExpr { expr.pos }
 		InfixExpr { expr.pos() }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
 		PrefixExpr { expr.op.pos.merge(expr.expr.pos()) }
@@ -23,6 +23,14 @@ pub fn (expr Expr) pos() Pos {
 
 pub fn (e InfixExpr) typ() Type {
 	return if e.op.kind.@is(.comparsion_op) { builtin_type(.bool) } else { e.right.typ() }
+}
+
+pub fn (e IndexExpr) typ() Type {
+	left_info := e.left.type_symbol().info
+	return match left_info {
+		ArrayTypeInfo { left_info.elem }
+		else { builtin_type(.unknown) }
+	}
 }
 
 pub fn (e Expr) typ() Type {
@@ -35,6 +43,7 @@ pub fn (e Expr) typ() Type {
 		Pipeline { e.exprs.last().typ() }
 		PrefixExpr { e.expr.typ() }
 		InfixExpr { e.typ() }
+		IndexExpr { e.typ() }
 		CallFn { e.fn_info().ret }
 		Var { e.sym.typ }
 	}
@@ -55,6 +64,7 @@ pub fn (e Expr) type_symbol() TypeSymbol {
 pub fn (e Expr) scope() &Scope {
 	return match e {
 		AsExpr, ParenExpr { e.expr.scope() }
+		IndexExpr { e.left.scope() }
 		ArrayLiteral, CallFn, InfixExpr, IntLiteral, Pipeline, PrefixExpr, StringLiteral, Var { e.scope }
 	}
 }
@@ -86,6 +96,13 @@ pub:
 pub mut:
 	left  Expr
 	right Expr
+}
+
+pub struct IndexExpr {
+pub:
+	pos   Pos
+	left  Expr
+	index Expr
 }
 
 pub struct ParenExpr {
