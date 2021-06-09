@@ -5,15 +5,13 @@ import cotowari.ast
 import cotowari.symbols { new_placeholder_var }
 import cotowari.errors { unreachable }
 
-fn (mut p Parser) parse_expr_stmt() ?ast.Stmt {
+fn (mut p Parser) parse_expr_stmt(expr ast.Expr) ?ast.Stmt {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
 			p.trace_end()
 		}
 	}
-
-	expr := p.parse_expr({}) ?
 
 	// eol or close blace
 	if !(p.brace_depth > 0 && p.kind(0) == .r_brace) {

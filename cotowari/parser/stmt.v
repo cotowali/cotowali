@@ -58,13 +58,13 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 				text: tok.text
 			}
 		}
-		else {
-			if p.kind(0) == .ident && p.kind(1) == .op_assign {
-				return ast.Stmt(p.parse_assign_stmt() ?)
-			}
-			return p.parse_expr_stmt()
-		}
+		else {}
 	}
+	expr := p.parse_expr({}) ?
+	if p.kind(0) == .op_assign {
+		return ast.Stmt(p.parse_assign_stmt(expr) ?)
+	}
+	return expr
 }
 
 fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
@@ -127,7 +127,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 	}
 }
 
-fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
+fn (mut p Parser) parse_assign_stmt(left ast.Expr) ?ast.AssignStmt {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
@@ -135,7 +135,6 @@ fn (mut p Parser) parse_assign_stmt() ?ast.AssignStmt {
 		}
 	}
 
-	left := p.parse_expr({}) ?
 	p.consume_with_check(.op_assign) ?
 	right := p.parse_expr({}) ?
 	return ast.AssignStmt{
