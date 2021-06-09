@@ -2,6 +2,7 @@ module sh
 
 import cotowari.ast { Stmt }
 import cotowari.symbols { TypeSymbol, builtin_type }
+import cotowari.errors { unreachable }
 
 fn (mut e Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {
@@ -111,7 +112,16 @@ fn (mut e Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
 }
 
 fn (mut e Emitter) assign_stmt(node ast.AssignStmt) {
-	e.assign(node.left.out_name(), node.right, node.left.type_symbol())
+	out_name := match node.left {
+		ast.Var {
+			node.left.out_name()
+		}
+		else {
+			panic(unreachable)
+			''
+		}
+	}
+	e.assign(out_name, node.right, node.left.type_symbol())
 }
 
 fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {

@@ -9,7 +9,7 @@ pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | Fo
 
 pub struct AssignStmt {
 pub mut:
-	left  Var
+	left  Expr
 	right Expr
 }
 

@@ -27,9 +27,22 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 
 fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 	c.expr(stmt.right)
-	if ast.Expr(stmt.left).typ() == builtin_type(.placeholder) {
-		stmt.left.set_typ(stmt.right.typ())
-	} else {
+	mut skip_type_check := false
+	match stmt.left {
+		ast.Var {
+			if stmt.left.typ() == builtin_type(.placeholder) {
+				mut left_var := stmt.left as ast.Var
+				left_var.set_typ(stmt.right.typ())
+				skip_type_check = true
+			}
+		}
+		else {
+			c.error('invalid left-hand side of assignment', stmt.left.pos())
+			return
+		}
+	}
+
+	if !skip_type_check {
 		c.check_types(
 			want: stmt.left.type_symbol()
 			got: stmt.right.type_symbol()
