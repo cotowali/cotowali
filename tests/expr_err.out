@@ -19,9 +19,12 @@ expr_err.ri 10,2: undefined variable `y`
 expr_err.ri 11,2: undefined variable `y`
   > y
     ^
-expr_err.ri 13,4: mismatched types: `int` (expected) and `string` (found)
+expr_err.ri 12,2: invalid left-hand side of assignment
+  > 0
+    ^
+expr_err.ri 14,4: mismatched types: `int` (expected) and `string` (found)
   > "a"
     ^^^
-expr_err.ri 13,13: mismatched types: `int` (expected) and `string` (found)
+expr_err.ri 14,13: mismatched types: `int` (expected) and `string` (found)
   > "a"
     ^^^
