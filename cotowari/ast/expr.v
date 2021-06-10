@@ -81,21 +81,29 @@ pub:
 	scope &Scope
 	pos   Pos
 pub mut:
-	func Var
+	func Expr
 	args []Expr
 }
 
 pub fn (mut e CallFn) resolve_func() ?&symbols.Var {
-	name := e.func.name()
-	sym := e.scope.lookup_var(name) or { return error('function `$name` is not defined') }
-	e.func.sym = sym
+	match e.func {
+		Var {
+			mut func := &(e.func as Var)
+			name := func.name()
+			sym := e.scope.lookup_var(name) or { return error('function `$name` is not defined') }
+			func.sym = sym
 
-	ts := sym.type_symbol()
-	if !sym.is_function() {
-		return error('`$sym.name` is not function (`$ts.name`)')
+			ts := sym.type_symbol()
+			if !sym.is_function() {
+				return error('`$sym.name` is not function (`$ts.name`)')
+			}
+
+			return sym
+		}
+		else {
+			return error('cannot call `$e.func.type_symbol().name`')
+		}
 	}
-
-	return sym
 }
 
 pub fn (e CallFn) fn_info() FunctionTypeInfo {
