@@ -10,8 +10,9 @@ pub const (
 // Err represents cotowari compile error
 pub struct Err {
 pub:
-	source &Source
-	pos    Pos
+	source          &Source
+	pos             Pos
+	is_syntax_error bool
 	// Implements IError
 	msg  string
 	code int

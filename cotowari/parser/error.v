@@ -63,11 +63,16 @@ fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
 		}
 	}
 
-	defer {
-		p.file.has_syntax_error = true
-		p.restore_from_syntax_error()
+	err := Err{
+		source: p.file.source
+		msg: msg
+		pos: pos
+		is_syntax_error: true
 	}
-	return p.error(msg, pos)
+	p.file.errors << err
+	p.file.has_syntax_error = true
+	p.restore_from_syntax_error()
+	return err
 }
 
 fn (mut p Parser) duplicated_error(name string, pos Pos) IError {
