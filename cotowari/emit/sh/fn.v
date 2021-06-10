@@ -5,6 +5,9 @@ import cotowari.ast { CallFn, FnDecl }
 fn (mut e Emitter) call_fn(expr CallFn, opt ExprOpt) {
 	if !opt.as_command {
 		e.write('\$(')
+		defer {
+			e.write(')')
+		}
 	}
 
 	fn_info := expr.fn_info()
@@ -24,10 +27,6 @@ fn (mut e Emitter) call_fn(expr CallFn, opt ExprOpt) {
 			elem_typ: fn_info.varargs_elem
 			elements: expr.args[fn_info.params.len - 1..]
 		}, {})
-	}
-
-	if !opt.as_command {
-		e.write(')')
 	}
 }
 
