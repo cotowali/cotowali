@@ -37,6 +37,7 @@ pub fn (e Expr) typ() Type {
 	return match e {
 		ArrayLiteral { e.scope.must_lookup_array_type(elem: e.elem_typ).typ }
 		AsExpr { e.typ }
+		CallFn { e.typ }
 		StringLiteral { builtin_type(.string) }
 		IntLiteral { builtin_type(.int) }
 		ParenExpr { e.expr.typ() }
@@ -44,7 +45,6 @@ pub fn (e Expr) typ() Type {
 		PrefixExpr { e.expr.typ() }
 		InfixExpr { e.typ() }
 		IndexExpr { e.typ() }
-		CallFn { e.fn_info().ret }
 		Var { e.sym.typ }
 	}
 }
@@ -77,6 +77,8 @@ pub:
 }
 
 pub struct CallFn {
+mut:
+	typ Type
 pub:
 	scope &Scope
 	pos   Pos
@@ -98,6 +100,8 @@ pub fn (mut e CallFn) resolve_func() ?&symbols.Var {
 				return error('`$sym.name` is not function (`$ts.name`)')
 			}
 
+			fn_info := ts.fn_info()
+			e.typ = fn_info.ret
 			return sym
 		}
 		else {
