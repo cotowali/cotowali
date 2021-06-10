@@ -26,6 +26,26 @@ fn (mut p Parser) error(msg string, pos Pos) IError {
 	return err
 }
 
+fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
+	$if trace_parser ? {
+		p.trace_begin(@FN, msg, '$pos')
+		defer {
+			p.trace_end()
+		}
+	}
+
+	err := Err{
+		source: p.file.source
+		msg: msg
+		pos: pos
+		is_syntax_error: true
+	}
+	p.file.errors << err
+	p.file.has_syntax_error = true
+	p.restore_from_syntax_error()
+	return err
+}
+
 fn (mut p Parser) restore_from_syntax_error() {
 	match p.restore_strategy {
 		.@none {}
@@ -53,26 +73,6 @@ fn (mut p Parser) unexpected_token_error(found Token, expects ...TokenKind) IErr
 		expect = expects[..expects.len - 1].map(it.str()).join(', ') + ', or `$last`'
 	}
 	return p.syntax_error(expect + ', but found `$found_str`', found.pos)
-}
-
-fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
-	$if trace_parser ? {
-		p.trace_begin(@FN, msg, '$pos')
-		defer {
-			p.trace_end()
-		}
-	}
-
-	err := Err{
-		source: p.file.source
-		msg: msg
-		pos: pos
-		is_syntax_error: true
-	}
-	p.file.errors << err
-	p.file.has_syntax_error = true
-	p.restore_from_syntax_error()
-	return err
 }
 
 fn (mut p Parser) duplicated_error(name string, pos Pos) IError {
