@@ -11,12 +11,13 @@ fn test_fn_signature() ? {
 	f2 := s.register_type(
 		name: 'f2'
 		info: FunctionTypeInfo{
+			pipe_in: builtin_type(.int)
 			params: [builtin_type(.int), builtin_type(.bool)]
 			ret: builtin_type(.int)
 		}
 	) ?
-	assert f1.fn_signature() ? == 'fn (int, bool) void'
-	assert f2.fn_signature() ? == 'fn (int, bool) int'
+	assert f1.fn_signature() ? == 'fn void | (int, bool) void'
+	assert f2.fn_signature() ? == 'fn int | (int, bool) int'
 	if _ := s.must_lookup_type(builtin_type(.int)).fn_signature() {
 		assert false
 	}
