@@ -62,7 +62,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 	}
 	expr := p.parse_expr(.toplevel) ?
 	if p.kind(0) == .op_assign {
-		return ast.Stmt(p.parse_assign_stmt(expr) ?)
+		return ast.Stmt(p.parse_assign_stmt_with_left(expr) ?)
 	}
 	return expr
 }
@@ -127,7 +127,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 	}
 }
 
-fn (mut p Parser) parse_assign_stmt(left ast.Expr) ?ast.AssignStmt {
+fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
