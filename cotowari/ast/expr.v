@@ -85,6 +85,13 @@ pub mut:
 	args []Expr
 }
 
+pub fn (mut e CallFn) resolve_func() ?&symbols.Var {
+	name := e.func.name()
+	sym := e.scope.lookup_var(name) or { return error('function `$name` is not defined') }
+	e.func.sym = sym
+	return sym
+}
+
 pub fn (e CallFn) fn_info() FunctionTypeInfo {
 	return e.func.type_symbol().fn_info()
 }

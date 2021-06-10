@@ -32,18 +32,15 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 }
 
 fn (mut c Checker) call_expr(mut expr ast.CallFn) {
-	name := expr.func.name()
 	pos := Expr(expr).pos()
 
-	mut scope := expr.scope
-	func := scope.lookup_var(name) or {
-		c.error('function `$name` is not defined', pos)
+	func := expr.resolve_func() or {
+		c.error(err.msg, pos)
 		return
 	}
-	expr.func.sym = func
 	ts := func.type_symbol()
 	if !func.is_function() {
-		c.error('`$name` is not function (`$ts.name`)', pos)
+		c.error('`$func.name` is not function (`$ts.name`)', pos)
 		return
 	}
 
@@ -63,6 +60,7 @@ fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 		return
 	}
 
+	scope := expr.scope
 	mut call_args_types_ok := true
 	varargs_elem_ts := if fn_info.is_varargs {
 		scope.must_lookup_type(fn_info.varargs_elem)
