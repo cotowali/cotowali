@@ -34,17 +34,12 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 fn (mut c Checker) call_expr(mut expr ast.CallFn) {
 	pos := Expr(expr).pos()
 
-	func := expr.resolve_func() or {
+	expr.resolve_func() or {
 		c.error(err.msg, pos)
 		return
 	}
-	ts := func.type_symbol()
-	if !func.is_function() {
-		c.error('`$func.name` is not function (`$ts.name`)', pos)
-		return
-	}
 
-	fn_info := ts.fn_info()
+	fn_info := expr.fn_info()
 	params := fn_info.params
 	expr.args
 

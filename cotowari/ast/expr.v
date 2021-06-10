@@ -89,6 +89,12 @@ pub fn (mut e CallFn) resolve_func() ?&symbols.Var {
 	name := e.func.name()
 	sym := e.scope.lookup_var(name) or { return error('function `$name` is not defined') }
 	e.func.sym = sym
+
+	ts := sym.type_symbol()
+	if !sym.is_function() {
+		return error('`$sym.name` is not function (`$ts.name`)')
+	}
+
 	return sym
 }
 
