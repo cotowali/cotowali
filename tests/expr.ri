@@ -1,11 +1,11 @@
-6 / 2 + 3 * 3
-1 + 1 - 1
-6 / 2 % 2
-(1 + 2) * (4 - 2)
+assert 6 / 2 + 3 * 3 == 12
+assert 1 + 1 - 1 == 1
+assert 6 / 2 % 2 == 1
+assert (1 + 2) * (4 - 2) == 6
 let v = 1
 v = 10
--v
-+v
+assert -v == -10
+assert +v == 10
 
 fn zero() int {
   let v = 0
@@ -26,12 +26,12 @@ fn as_int(v any) int {
   return v as int
 }
 
-zero()
-add(3, 4)
-add(as_int("1"), 2)
+assert zero() == 0
+assert add(3, 4) == 7
+assert add(as_int("1"), 2) == 3
 
 fn int | inc() int {
   return read() + 1
 }
 
-10 | inc()
+assert (10 | inc()) == 11
