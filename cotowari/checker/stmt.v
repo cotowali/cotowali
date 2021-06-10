@@ -68,7 +68,9 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 	defer {
 		c.cur_fn = old_fn
 	}
-
+	for param in stmt.params {
+		c.expr(param)
+	}
 	c.block(stmt.body)
 }
 
