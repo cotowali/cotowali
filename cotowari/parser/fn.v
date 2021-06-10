@@ -16,7 +16,7 @@ mut:
 struct FnSignatureParsingInfo {
 mut:
 	name             Token
-	pipe_in          Type
+	pipe_in          Type = builtin_type(.void)
 	is_varargs       bool
 	varargs_elem_typ Type
 	params           []FnParamParsingInfo
@@ -116,6 +116,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	typ := outer_scope.lookup_or_register_fn_type(
 		params: params.map(it.sym.typ)
+		pipe_in: info.pipe_in
 		ret: info.ret_typ
 		is_varargs: info.is_varargs
 		varargs_elem: info.varargs_elem_typ
