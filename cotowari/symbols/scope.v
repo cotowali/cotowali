@@ -7,12 +7,24 @@ pub struct Scope {
 pub:
 	id   u64
 	name string
+pub mut:
+	owner &Var = 0
 mut:
 	parent       &Scope
 	children     []&Scope
 	vars         map[string]&Var
 	type_symbols map[u64]TypeSymbol // map[Type]TypeSymbol
 	name_to_type map[string]Type
+}
+
+pub fn (s &Scope) owner() ?&Var {
+	if f := nil_to_none(s.owner) {
+		return f
+	}
+	if p := s.parent() {
+		return p.owner()
+	}
+	return none
 }
 
 pub fn (s &Scope) str() string {

@@ -120,11 +120,13 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		is_varargs: info.is_varargs
 		varargs_elem: info.varargs_elem_typ
 	).typ
-	outer_scope.register_var(
+	func := outer_scope.register_var(
 		name: info.name.text
 		pos: info.name.pos
 		typ: typ
 	) or { return p.duplicated_error(info.name.text, info.name.pos) }
+
+	p.scope.owner = func
 
 	has_body := p.kind(0) == .l_brace
 	mut node := ast.FnDecl{
