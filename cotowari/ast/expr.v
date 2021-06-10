@@ -83,8 +83,9 @@ pub:
 	scope &Scope
 	pos   Pos
 pub mut:
-	func Expr
-	args []Expr
+	func_id u64
+	func    Expr
+	args    []Expr
 }
 
 pub fn (mut e CallFn) resolve_func() ?&symbols.Var {
@@ -102,6 +103,7 @@ pub fn (mut e CallFn) resolve_func() ?&symbols.Var {
 
 			fn_info := ts.fn_info()
 			e.typ = fn_info.ret
+			e.func_id = sym.id
 			return sym
 		}
 		else {
