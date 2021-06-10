@@ -13,3 +13,5 @@ pub mut:
 
 	has_syntax_error bool
 }
+
+pub type Node = Expr | File | Stmt
