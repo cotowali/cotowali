@@ -19,7 +19,7 @@ pub fn (v Var) is_function() bool {
 }
 
 pub fn (v Var) str() string {
-	return 'Var{ name: $v.name, scope: $v.scope_str(), typ: $v.typ }'
+	return 'Var{ id: $v.id, name: $v.name, scope: $v.scope_str(), typ: $v.typ }'
 }
 
 pub fn (v Var) scope() ?&Scope {
