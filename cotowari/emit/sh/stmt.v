@@ -1,8 +1,8 @@
 module sh
 
 import cotowari.ast { Stmt }
-import cotowari.symbols { TypeSymbol, builtin_type }
-import cotowari.errors { unreachable }
+import cotowari.symbols { builtin_type }
+import cotowari.errors
 
 fn (mut e Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {
@@ -70,58 +70,6 @@ fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
 	e.write_block({ open: 'do', close: 'done' }, fn (mut e Emitter, stmt ast.ForInStmt) {
 		e.block(stmt.body)
 	}, stmt)
-}
-
-type AssignValue = ast.Expr | string
-
-fn (mut e Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
-	if ts.kind() == .array {
-		match value {
-			ast.Expr {
-				match value {
-					ast.ArrayLiteral {
-						e.write('array_assign "$name"')
-						for elem in value.elements {
-							e.write(' ')
-							e.expr(elem, as_command: false)
-						}
-						e.writeln('')
-					}
-					ast.Var {
-						e.assign(name, value.out_name(), ts)
-					}
-					else {}
-				}
-			}
-			string {
-				e.writeln('array_assign "$name" \$(array_elements "$value")')
-			}
-		}
-		return
-	}
-	match value {
-		string {
-			e.writeln('$name="$value"')
-		}
-		ast.Expr {
-			e.write('$name=')
-			e.expr(value, {})
-			e.writeln('')
-		}
-	}
-}
-
-fn (mut e Emitter) assign_stmt(node ast.AssignStmt) {
-	out_name := match node.left {
-		ast.Var {
-			node.left.out_name()
-		}
-		else {
-			panic(unreachable)
-			''
-		}
-	}
-	e.assign(out_name, node.right, node.left.type_symbol())
 }
 
 fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {
