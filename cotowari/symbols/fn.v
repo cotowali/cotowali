@@ -25,7 +25,8 @@ fn (f FunctionTypeInfo) signature(s &Scope) string {
 		param_strs[i] = if f.is_varargs && i == f.params.len - 1 { '...$name' } else { name }
 	}
 	params_str := param_strs.join(', ')
-	return 'fn ($params_str) ${s.must_lookup_type(f.ret).name}'
+	ret_str := s.must_lookup_type(f.ret).name
+	return 'fn ($params_str) $ret_str'
 }
 
 pub fn (t TypeSymbol) fn_signature() ?string {
