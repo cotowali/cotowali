@@ -29,3 +29,10 @@ fn as_int(v any) int {
 zero()
 add(3, 4)
 add(as_int("1"), 2)
+
+fn int | inc() int {
+  // return read() + 1
+  return 11
+}
+
+10 | inc()

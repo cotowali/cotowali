@@ -14,8 +14,9 @@ mut:
 }
 
 struct FnSignatureParsingInfo {
-	name Token
 mut:
+	name             Token
+	pipe_in          Type
 	is_varargs       bool
 	varargs_elem_typ Type
 	params           []FnParamParsingInfo
@@ -60,9 +61,25 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 
 fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	p.consume_with_assert(.key_fn)
-	mut info := FnSignatureParsingInfo{
-		name: p.consume_with_check(.ident) ?
+	mut info := FnSignatureParsingInfo{}
+
+	if p.kind(1) != .l_paren {
+		// kind(1) is:
+		//
+		//      v
+		// fn f ( )
+		//      ^
+		//        v
+		// fn int | f()
+		//        ^
+		//      v
+		// fn [ ] int | f()
+		//      ^
+		info.pipe_in = p.parse_type() ?
+		p.consume_with_check(.op_pipe) ?
 	}
+
+	info.name = p.consume_with_check(.ident) ?
 
 	p.parse_fn_params(mut info) ?
 	if p.kind(0) != .l_brace {
