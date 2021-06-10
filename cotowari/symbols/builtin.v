@@ -17,6 +17,7 @@ pub fn builtin_type(key BuiltinTypeKey) Type {
 
 pub enum BuiltinFnKey {
 	echo = 0
+	read
 	cat
 	seq
 }
@@ -79,6 +80,7 @@ pub fn (mut s Scope) register_builtin() {
 		f_(.echo, params: [t_(.any)], ret: t_(.string)),
 		f_(.cat, params: [], ret: t_(.string)),
 		f_(.seq, params: [t_(.int)], ret: array_types[t_(.int)]),
+		f_(.read, params: []),
 	]
 	for f in fns {
 		s.must_register_builtin_fn(f.key, f.fn_info)

@@ -1,6 +1,7 @@
 module sh
 
 import cotowari.ast { CallFn, FnDecl }
+import cotowari.symbols { builtin_fn_id }
 
 fn (mut e Emitter) call_fn(expr CallFn, opt ExprOpt) {
 	if !opt.as_command {
@@ -8,6 +9,12 @@ fn (mut e Emitter) call_fn(expr CallFn, opt ExprOpt) {
 		defer {
 			e.write(')')
 		}
+	}
+
+	if expr.func_id == builtin_fn_id(.read) {
+		tmp_var := e.new_tmp_var()
+		e.write('read $tmp_var; echo \$$tmp_var')
+		return
 	}
 
 	fn_info := expr.fn_info()

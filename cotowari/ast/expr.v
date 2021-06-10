@@ -2,7 +2,7 @@ module ast
 
 import cotowari.source { Pos }
 import cotowari.token { Token }
-import cotowari.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_type }
+import cotowari.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id, builtin_type }
 
 pub type Expr = ArrayLiteral | AsExpr | CallFn | IndexExpr | InfixExpr | IntLiteral |
 	ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
@@ -104,6 +104,11 @@ pub fn (mut e CallFn) resolve_func() ?&symbols.Var {
 			fn_info := ts.fn_info()
 			e.typ = fn_info.ret
 			e.func_id = sym.id
+			if owner := e.scope.owner() {
+				if sym.id == builtin_fn_id(.read) {
+					e.typ = owner.type_symbol().fn_info().pipe_in
+				}
+			}
 			return sym
 		}
 		else {
