@@ -12,3 +12,8 @@ pub fn in2<T>(v T, low1 T, high1 T, low2 T, high2 T) bool {
 pub fn nil_to_none<T>(ref &T) ?&T {
 	return if isnil(ref) { none } else { ref }
 }
+
+pub fn panic_and_value<T>(msg string, v T) T {
+	panic(msg)
+	return v
+}
