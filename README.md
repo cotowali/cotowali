@@ -34,8 +34,6 @@ ric run examples/add.ri
 
 ## Example
 
-Commented out part is not working right now.
-
 ```
 fn fib(n int) int {
   if n < 2 {
