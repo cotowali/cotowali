@@ -90,6 +90,7 @@ fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 			c.block(branch.body)
 			break
 		}
+		c.expr(branch.cond)
 		cond_type := branch.cond.typ()
 		if cond_type != builtin_type(.bool) {
 			c.error('non-bool type used as if condition', branch.cond.pos())
