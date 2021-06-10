@@ -6,30 +6,34 @@ import cotowari.errors
 
 type AssignValue = ast.Expr | string
 
-fn (mut e Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
-	if ts.kind() == .array {
-		match value {
-			ast.Expr {
-				ident := e.ident_for(value)
-				match value {
-					ast.ArrayLiteral {
-						e.write('array_assign "$name"')
-						for elem in value.elements {
-							e.write(' ')
-							e.expr(elem, as_command: false)
-						}
-						e.writeln('')
+fn (mut e Emitter) array_assign(name string, value AssignValue) {
+	match value {
+		ast.Expr {
+			ident := e.ident_for(value)
+			match value {
+				ast.ArrayLiteral {
+					e.write('array_assign "$name"')
+					for elem in value.elements {
+						e.write(' ')
+						e.expr(elem, as_command: false)
 					}
-					ast.Var {
-						e.assign(name, ident, ts)
-					}
-					else {}
+					e.writeln('')
 				}
-			}
-			string {
-				e.writeln('array_assign "$name" \$(array_elements "$value")')
+				ast.Var {
+					e.array_assign(name, ident)
+				}
+				else {}
 			}
 		}
+		string {
+			e.writeln('array_assign "$name" \$(array_elements "$value")')
+		}
+	}
+}
+
+fn (mut e Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
+	if ts.kind() == .array {
+		e.array_assign(name, value)
 		return
 	}
 	match value {
