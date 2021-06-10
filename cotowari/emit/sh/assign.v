@@ -2,7 +2,7 @@ module sh
 
 import cotowari.ast
 import cotowari.symbols { TypeSymbol }
-import cotowari.errors { unreachable }
+import cotowari.errors
 
 type AssignValue = ast.Expr | string
 
@@ -10,6 +10,7 @@ fn (mut e Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
 	if ts.kind() == .array {
 		match value {
 			ast.Expr {
+				ident := e.ident_for(value)
 				match value {
 					ast.ArrayLiteral {
 						e.write('array_assign "$name"')
@@ -20,7 +21,7 @@ fn (mut e Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
 						e.writeln('')
 					}
 					ast.Var {
-						e.assign(name, value.out_name(), ts)
+						e.assign(name, ident, ts)
 					}
 					else {}
 				}
@@ -44,14 +45,5 @@ fn (mut e Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
 }
 
 fn (mut e Emitter) assign_stmt(node ast.AssignStmt) {
-	out_name := match node.left {
-		ast.Var {
-			node.left.out_name()
-		}
-		else {
-			panic(unreachable)
-			''
-		}
-	}
-	e.assign(out_name, node.right, node.left.type_symbol())
+	e.assign(e.ident_for(node.left), node.right, node.left.type_symbol())
 }

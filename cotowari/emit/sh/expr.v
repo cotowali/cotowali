@@ -52,13 +52,14 @@ fn (mut e Emitter) write_echo_if_command_then_write(s string, opt ExprOpt) {
 }
 
 fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
+	ident := e.ident_for(v)
 	match v.type_symbol().kind() {
 		.array {
-			e.array(v.out_name(), opt)
+			e.array(ident, opt)
 		}
 		else {
 			// '$(( n == 0 ))' or 'echo "$n"'
-			s := if opt.inside_arithmetic { '$v.out_name()' } else { '"\$$v.out_name()"' }
+			s := if opt.inside_arithmetic { '$ident' } else { '"\$$ident"' }
 			e.write_echo_if_command_then_write(s, opt)
 		}
 	}

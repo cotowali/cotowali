@@ -164,7 +164,3 @@ pub fn (mut v Var) set_typ(typ Type) {
 pub fn (v Var) name() string {
 	return v.sym.name
 }
-
-pub fn (v Var) out_name() string {
-	return v.sym.full_name()
-}

@@ -8,7 +8,7 @@ fn (mut e Emitter) call_fn(expr CallFn, opt ExprOpt) {
 	}
 
 	fn_info := expr.fn_info()
-	e.write(expr.func.out_name())
+	e.write(e.ident_for(expr.func))
 	mut args := expr.args
 	if fn_info.is_varargs {
 		args = expr.args[..fn_info.params.len - 1]
@@ -51,7 +51,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 
 	e.write_block({ open: '${node.name}() {', close: '}' }, fn (mut e Emitter, node FnDecl) {
 		for i, param in node.params {
-			e.assign(param.out_name(), '\$${i + 1}', param.type_symbol())
+			e.assign(e.ident_for(param), '\$${i + 1}', param.type_symbol())
 		}
 		e.block(node.body)
 	}, node)

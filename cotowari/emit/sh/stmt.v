@@ -65,7 +65,7 @@ fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
 }
 
 fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
-	e.write('for $stmt.val.out_name() in ')
+	e.write('for ${e.ident_for(stmt.val)} in ')
 	e.expr(stmt.expr, expand_array: true, writeln: true)
 	e.write_block({ open: 'do', close: 'done' }, fn (mut e Emitter, stmt ast.ForInStmt) {
 		e.block(stmt.body)
