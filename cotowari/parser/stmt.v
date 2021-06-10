@@ -122,6 +122,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 		}
 	}
 	return ast.AssignStmt{
+		is_decl: true
 		left: v
 		right: p.parse_expr(.toplevel) ?
 	}

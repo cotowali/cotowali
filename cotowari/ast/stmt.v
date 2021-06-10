@@ -9,8 +9,9 @@ pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | Fo
 
 pub struct AssignStmt {
 pub mut:
-	left  Expr
-	right Expr
+	is_decl bool
+	left    Expr
+	right   Expr
 }
 
 pub struct AssertStmt {
