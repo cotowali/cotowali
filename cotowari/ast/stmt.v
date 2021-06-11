@@ -7,13 +7,30 @@ import cotowari.token { Token }
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
 	IfStmt | InlineShell | RequireStmt | ReturnStmt
 
-fn (mut r Resolver) stmt(stmt Stmt) {}
+fn (mut r Resolver) stmt(stmt Stmt) {
+	match stmt {
+		AssertStmt { r.assert_stmt(stmt) }
+		AssignStmt { r.assign_stmt(stmt) }
+		Block { r.block(stmt) }
+		EmptyStmt { r.empty_stmt(stmt) }
+		Expr { r.expr(stmt) }
+		FnDecl { r.fn_decl(stmt) }
+		ForInStmt { r.for_in_stmt(stmt) }
+		IfStmt { r.if_stmt(stmt) }
+		InlineShell { r.inline_shell(stmt) }
+		RequireStmt { r.require_stmt(stmt) }
+		ReturnStmt { r.return_stmt(stmt) }
+	}
+}
 
 pub struct AssignStmt {
 pub mut:
 	is_decl bool
 	left    Expr
 	right   Expr
+}
+
+fn (mut r Resolver) assign_stmt(stmt AssignStmt) {
 }
 
 pub struct AssertStmt {
@@ -23,6 +40,9 @@ pub mut:
 	expr Expr
 }
 
+fn (mut r Resolver) assert_stmt(stmt AssertStmt) {
+}
+
 pub struct Block {
 pub:
 	scope &Scope
@@ -30,7 +50,13 @@ pub mut:
 	stmts []Stmt
 }
 
+fn (mut r Resolver) block(stmt Block) {
+}
+
 pub struct EmptyStmt {}
+
+fn (mut r Resolver) empty_stmt(stmt EmptyStmt) {
+}
 
 pub struct FnDecl {
 pub:
@@ -57,12 +83,18 @@ pub fn (f FnDecl) ret_type_symbol() TypeSymbol {
 	return f.parent_scope.must_lookup_type(ret)
 }
 
+fn (mut r Resolver) fn_decl(decl FnDecl) {
+}
+
 pub struct ForInStmt {
 pub mut:
 	// for var in expr
 	val  Var
 	expr Expr
 	body Block
+}
+
+fn (mut r Resolver) for_in_stmt(stmt ForInStmt) {
 }
 
 pub struct IfBranch {
@@ -79,16 +111,25 @@ pub:
 	has_else bool
 }
 
+fn (mut r Resolver) if_stmt(stmt IfStmt) {
+}
+
 pub struct InlineShell {
 pub:
 	pos  Pos
 	text string
 }
 
+fn (mut r Resolver) inline_shell(stmt InlineShell) {
+}
+
 pub struct ReturnStmt {
 pub:
 	token Token // key_return token
 	expr  Expr
+}
+
+fn (mut r Resolver) return_stmt(stmt ReturnStmt) {
 }
 
 pub fn (stmt ReturnStmt) pos() Pos {
@@ -98,4 +139,7 @@ pub fn (stmt ReturnStmt) pos() Pos {
 pub struct RequireStmt {
 pub mut:
 	file File
+}
+
+fn (mut r Resolver) require_stmt(stmt RequireStmt) {
 }

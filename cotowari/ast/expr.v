@@ -7,7 +7,21 @@ import cotowari.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymb
 pub type Expr = ArrayLiteral | AsExpr | CallFn | IndexExpr | InfixExpr | IntLiteral |
 	ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
 
-fn (mut r Resolver) expr(expr Expr) {}
+fn (mut r Resolver) expr(expr Expr) {
+	match expr {
+		ArrayLiteral { r.array_literal(expr) }
+		AsExpr { r.as_expr(expr) }
+		CallFn { r.call_fn(expr) }
+		IndexExpr { r.index_expr(expr) }
+		InfixExpr { r.infix_expr(expr) }
+		IntLiteral { r.int_literal(expr) }
+		ParenExpr { r.paren_expr(expr) }
+		Pipeline { r.pipeline(expr) }
+		PrefixExpr { r.prefix_expr(expr) }
+		StringLiteral { r.string_literal(expr) }
+		Var { r.var_(expr) }
+	}
+}
 
 pub fn (e InfixExpr) pos() Pos {
 	return e.left.pos().merge(e.right.pos())
@@ -78,6 +92,9 @@ pub:
 	typ  Type
 }
 
+fn (mut r Resolver) as_expr(expr AsExpr) {
+}
+
 pub struct CallFn {
 mut:
 	typ Type
@@ -123,6 +140,9 @@ pub fn (e CallFn) fn_info() FunctionTypeInfo {
 	return e.func.type_symbol().fn_info()
 }
 
+fn (mut r Resolver) call_fn(expr CallFn) {
+}
+
 pub struct InfixExpr {
 pub:
 	scope &Scope
@@ -132,11 +152,17 @@ pub mut:
 	right Expr
 }
 
+fn (mut r Resolver) infix_expr(expr InfixExpr) {
+}
+
 pub struct IndexExpr {
 pub:
 	pos   Pos
 	left  Expr
 	index Expr
+}
+
+fn (mut r Resolver) index_expr(expr IndexExpr) {
 }
 
 pub struct ParenExpr {
@@ -146,16 +172,25 @@ pub mut:
 	expr Expr
 }
 
+fn (mut r Resolver) paren_expr(expr ParenExpr) {
+}
+
 pub struct StringLiteral {
 pub:
 	scope &Scope
 	token Token
 }
 
+fn (mut r Resolver) string_literal(expr StringLiteral) {
+}
+
 pub struct IntLiteral {
 pub:
 	scope &Scope
 	token Token
+}
+
+fn (mut r Resolver) int_literal(expr IntLiteral) {
 }
 
 pub struct ArrayLiteral {
@@ -167,6 +202,9 @@ pub mut:
 	elements []Expr
 }
 
+fn (mut r Resolver) array_literal(expr ArrayLiteral) {
+}
+
 // expr | expr | expr
 pub struct Pipeline {
 pub:
@@ -175,12 +213,18 @@ pub mut:
 	exprs []Expr
 }
 
+fn (mut r Resolver) pipeline(expr Pipeline) {
+}
+
 pub struct PrefixExpr {
 pub:
 	scope &Scope
 	op    Token
 pub mut:
 	expr Expr
+}
+
+fn (mut r Resolver) prefix_expr(expr PrefixExpr) {
 }
 
 pub struct Var {
@@ -197,4 +241,7 @@ pub fn (mut v Var) set_typ(typ Type) {
 
 pub fn (v Var) name() string {
 	return v.sym.name
+}
+
+fn (mut r Resolver) var_(expr Var) {
 }
