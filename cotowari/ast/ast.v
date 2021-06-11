@@ -13,4 +13,5 @@ pub mut:
 }
 
 fn (mut r Resolver) file(f &File) {
+	r.stmts(f.stmts)
 }
