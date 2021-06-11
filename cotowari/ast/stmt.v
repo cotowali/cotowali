@@ -7,6 +7,12 @@ import cotowari.token { Token }
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
 	IfStmt | InlineShell | RequireStmt | ReturnStmt
 
+fn (mut r Resolver) stmts(stmts []Stmt) {
+	for stmt in stmts {
+		r.stmt(stmt)
+	}
+}
+
 fn (mut r Resolver) stmt(stmt Stmt) {
 	match stmt {
 		AssertStmt { r.assert_stmt(stmt) }
