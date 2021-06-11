@@ -18,6 +18,7 @@ pub mut:
 pub fn new_context(config Config) &Context {
 	return &Context{
 		global_scope: new_global_scope()
+		config: config
 	}
 }
 
