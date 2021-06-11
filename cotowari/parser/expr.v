@@ -200,7 +200,7 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 		}
 	}
 	r_paren := p.consume_with_check(.r_paren) ?
-	f := ast.CallFn{
+	f := ast.CallExpr{
 		scope: p.scope
 		pos: ident.pos.merge(r_paren.pos)
 		func: ast.Var{p.scope, ident.pos, new_placeholder_var(name)}

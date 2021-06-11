@@ -6,7 +6,7 @@ import cotowari.symbols { TypeSymbol }
 fn (mut c Checker) expr(expr Expr) {
 	match mut expr {
 		ast.AsExpr, ast.ParenExpr { c.expr(expr.expr) }
-		ast.CallFn { c.call_expr(mut expr) }
+		ast.CallExpr { c.call_expr(mut expr) }
 		ast.InfixExpr { c.infix_expr(expr) }
 		ast.ArrayLiteral {}
 		ast.IndexExpr {}
@@ -31,7 +31,7 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 	) or { return }
 }
 
-fn (mut c Checker) call_expr(mut expr ast.CallFn) {
+fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 	pos := Expr(expr).pos()
 
 	expr.resolve_func() or {

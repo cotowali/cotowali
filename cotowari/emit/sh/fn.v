@@ -1,9 +1,9 @@
 module sh
 
-import cotowari.ast { CallFn, FnDecl }
+import cotowari.ast { CallExpr, FnDecl }
 import cotowari.symbols { builtin_fn_id }
 
-fn (mut e Emitter) call_fn(expr CallFn, opt ExprOpt) {
+fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 	if !opt.as_command {
 		e.write('\$(')
 		defer {

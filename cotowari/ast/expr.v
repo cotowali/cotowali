@@ -4,14 +4,14 @@ import cotowari.source { Pos }
 import cotowari.token { Token }
 import cotowari.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id, builtin_type }
 
-pub type Expr = ArrayLiteral | AsExpr | CallFn | IndexExpr | InfixExpr | IntLiteral |
+pub type Expr = ArrayLiteral | AsExpr | CallExpr | IndexExpr | InfixExpr | IntLiteral |
 	ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
 
 fn (mut r Resolver) expr(expr Expr) {
 	match expr {
 		ArrayLiteral { r.array_literal(expr) }
 		AsExpr { r.as_expr(expr) }
-		CallFn { r.call_fn(expr) }
+		CallExpr { r.call_expr(expr) }
 		IndexExpr { r.index_expr(expr) }
 		InfixExpr { r.infix_expr(expr) }
 		IntLiteral { r.int_literal(expr) }
@@ -29,7 +29,7 @@ pub fn (e InfixExpr) pos() Pos {
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
-		ArrayLiteral, AsExpr, CallFn, Var, ParenExpr, IndexExpr { expr.pos }
+		ArrayLiteral, AsExpr, CallExpr, Var, ParenExpr, IndexExpr { expr.pos }
 		InfixExpr { expr.pos() }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
 		PrefixExpr { expr.op.pos.merge(expr.expr.pos()) }
@@ -53,7 +53,7 @@ pub fn (e Expr) typ() Type {
 	return match e {
 		ArrayLiteral { e.scope.must_lookup_array_type(elem: e.elem_typ).typ }
 		AsExpr { e.typ }
-		CallFn { e.typ }
+		CallExpr { e.typ }
 		StringLiteral { builtin_type(.string) }
 		IntLiteral { builtin_type(.int) }
 		ParenExpr { e.expr.typ() }
@@ -81,7 +81,7 @@ pub fn (e Expr) scope() &Scope {
 	return match e {
 		AsExpr, ParenExpr { e.expr.scope() }
 		IndexExpr { e.left.scope() }
-		ArrayLiteral, CallFn, InfixExpr, IntLiteral, Pipeline, PrefixExpr, StringLiteral, Var { e.scope }
+		ArrayLiteral, CallExpr, InfixExpr, IntLiteral, Pipeline, PrefixExpr, StringLiteral, Var { e.scope }
 	}
 }
 
@@ -95,7 +95,7 @@ pub:
 fn (mut r Resolver) as_expr(expr AsExpr) {
 }
 
-pub struct CallFn {
+pub struct CallExpr {
 mut:
 	typ Type
 pub:
@@ -107,7 +107,7 @@ pub mut:
 	args    []Expr
 }
 
-pub fn (mut e CallFn) resolve_func() ?&symbols.Var {
+pub fn (mut e CallExpr) resolve_func() ?&symbols.Var {
 	match e.func {
 		Var {
 			mut func := &(e.func as Var)
@@ -136,11 +136,11 @@ pub fn (mut e CallFn) resolve_func() ?&symbols.Var {
 	}
 }
 
-pub fn (e CallFn) fn_info() FunctionTypeInfo {
+pub fn (e CallExpr) fn_info() FunctionTypeInfo {
 	return e.func.type_symbol().fn_info()
 }
 
-fn (mut r Resolver) call_fn(expr CallFn) {
+fn (mut r Resolver) call_expr(expr CallExpr) {
 }
 
 pub struct InfixExpr {
