@@ -99,6 +99,12 @@ pub:
 }
 
 fn (mut r Resolver) as_expr(expr AsExpr) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct CallExpr {
@@ -147,6 +153,12 @@ pub fn (e CallExpr) fn_info() FunctionTypeInfo {
 }
 
 fn (mut r Resolver) call_expr(expr CallExpr) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct InfixExpr {
@@ -159,6 +171,12 @@ pub mut:
 }
 
 fn (mut r Resolver) infix_expr(expr InfixExpr) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct IndexExpr {
@@ -169,6 +187,12 @@ pub:
 }
 
 fn (mut r Resolver) index_expr(expr IndexExpr) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct ParenExpr {
@@ -179,6 +203,12 @@ pub mut:
 }
 
 fn (mut r Resolver) paren_expr(expr ParenExpr) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct StringLiteral {
@@ -188,6 +218,12 @@ pub:
 }
 
 fn (mut r Resolver) string_literal(expr StringLiteral) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct IntLiteral {
@@ -197,6 +233,12 @@ pub:
 }
 
 fn (mut r Resolver) int_literal(expr IntLiteral) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct ArrayLiteral {
@@ -209,6 +251,12 @@ pub mut:
 }
 
 fn (mut r Resolver) array_literal(expr ArrayLiteral) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 // expr | expr | expr
@@ -220,6 +268,12 @@ pub mut:
 }
 
 fn (mut r Resolver) pipeline(expr Pipeline) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct PrefixExpr {
@@ -231,6 +285,12 @@ pub mut:
 }
 
 fn (mut r Resolver) prefix_expr(expr PrefixExpr) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct Var {
@@ -250,4 +310,10 @@ pub fn (v Var) name() string {
 }
 
 fn (mut r Resolver) var_(expr Var) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }

@@ -37,6 +37,12 @@ pub mut:
 }
 
 fn (mut r Resolver) assign_stmt(stmt AssignStmt) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct AssertStmt {
@@ -47,6 +53,12 @@ pub mut:
 }
 
 fn (mut r Resolver) assert_stmt(stmt AssertStmt) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct Block {
@@ -57,11 +69,23 @@ pub mut:
 }
 
 fn (mut r Resolver) block(stmt Block) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct EmptyStmt {}
 
 fn (mut r Resolver) empty_stmt(stmt EmptyStmt) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct FnDecl {
@@ -90,6 +114,12 @@ pub fn (f FnDecl) ret_type_symbol() TypeSymbol {
 }
 
 fn (mut r Resolver) fn_decl(decl FnDecl) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct ForInStmt {
@@ -101,6 +131,12 @@ pub mut:
 }
 
 fn (mut r Resolver) for_in_stmt(stmt ForInStmt) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct IfBranch {
@@ -118,6 +154,12 @@ pub:
 }
 
 fn (mut r Resolver) if_stmt(stmt IfStmt) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct InlineShell {
@@ -127,6 +169,12 @@ pub:
 }
 
 fn (mut r Resolver) inline_shell(stmt InlineShell) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct ReturnStmt {
@@ -136,6 +184,12 @@ pub:
 }
 
 fn (mut r Resolver) return_stmt(stmt ReturnStmt) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub fn (stmt ReturnStmt) pos() Pos {
@@ -148,4 +202,10 @@ pub mut:
 }
 
 fn (mut r Resolver) require_stmt(stmt RequireStmt) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }

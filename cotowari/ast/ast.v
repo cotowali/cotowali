@@ -13,5 +13,10 @@ pub mut:
 }
 
 fn (mut r Resolver) file(f &File) {
-	r.stmts(f.stmts)
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
