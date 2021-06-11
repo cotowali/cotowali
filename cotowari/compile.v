@@ -6,7 +6,6 @@ import rand { ulid }
 import cotowari.context { Context }
 import cotowari.source { Source }
 import cotowari.compiler { new_compiler }
-import cotowari.errors
 
 pub fn compile(s Source, ctx &Context) ?string {
 	c := new_compiler(s, ctx)

@@ -2,7 +2,6 @@ module sh
 
 import cotowari.ast
 import cotowari.symbols { TypeSymbol }
-import cotowari.errors
 
 type AssignValue = ast.Expr | string
 

@@ -1,6 +1,5 @@
 module ast
 
-import cotowari.errors
 import cotowari.source { Source }
 
 pub type Node = Expr | File | Stmt

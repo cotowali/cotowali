@@ -2,7 +2,6 @@ module sh
 
 import cotowari.ast { Stmt }
 import cotowari.symbols { builtin_type }
-import cotowari.errors
 
 fn (mut e Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {

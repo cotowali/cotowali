@@ -8,8 +8,6 @@ import cotowari.lexer { new_lexer }
 import cotowari.parser { new_parser }
 import cotowari.checker { new_checker }
 import cotowari.emit.sh
-import cotowari.ast
-import cotowari.errors
 
 pub struct Compiler {
 pub:
