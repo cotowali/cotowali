@@ -7,6 +7,7 @@ import cotowari.source { Source }
 import cotowari.lexer { new_lexer }
 import cotowari.parser { new_parser }
 import cotowari.checker { new_checker }
+import cotowari.ast { new_resolver }
 import cotowari.emit.sh
 
 pub struct Compiler {
@@ -39,6 +40,8 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	mut f := p.parse()
 
 	if !c.ctx.errors.has_syntax_error() {
+		mut resolver := new_resolver(c.ctx)
+		resolver.resolve(f)
 		mut checker := new_checker(c.ctx)
 		checker.check_file(mut f)
 	}
