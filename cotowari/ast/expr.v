@@ -7,6 +7,8 @@ import cotowari.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymb
 pub type Expr = ArrayLiteral | AsExpr | CallFn | IndexExpr | InfixExpr | IntLiteral |
 	ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
 
+fn (mut r Resolver) expr(expr Expr) {}
+
 pub fn (e InfixExpr) pos() Pos {
 	return e.left.pos().merge(e.right.pos())
 }

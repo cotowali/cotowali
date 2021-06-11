@@ -12,3 +12,6 @@ pub:
 pub mut:
 	stmts []Stmt
 }
+
+fn (mut r Resolver) file(f &File) {
+}

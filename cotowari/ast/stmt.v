@@ -7,6 +7,8 @@ import cotowari.token { Token }
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
 	IfStmt | InlineShell | RequireStmt | ReturnStmt
 
+fn (mut r Resolver) stmt(stmt Stmt) {}
+
 pub struct AssignStmt {
 pub mut:
 	is_decl bool
