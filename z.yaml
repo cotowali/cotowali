@@ -12,6 +12,7 @@ tasks:
     tasks:
       lexer: v -cg -d trace_lexer run {{ric_path}} --no-emit $@
       parser: v -cg -d trace_parser run {{ric_path}} --no-emit $@
+      resolver: v -cg -d trace_resolver run {{ric_path}} --no-emit $@
   time: |
     /usr/bin/time -f 'Time: %es, Memory: %M: KB ' v run {{ric_path}}
 
