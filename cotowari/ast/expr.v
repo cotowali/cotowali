@@ -7,6 +7,12 @@ import cotowari.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymb
 pub type Expr = ArrayLiteral | AsExpr | CallExpr | IndexExpr | InfixExpr | IntLiteral |
 	ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
 
+fn (mut r Resolver) exprs(exprs []Expr) {
+	for expr in exprs {
+		r.expr(expr)
+	}
+}
+
 fn (mut r Resolver) expr(expr Expr) {
 	match expr {
 		ArrayLiteral { r.array_literal(expr) }
