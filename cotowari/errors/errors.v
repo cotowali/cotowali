@@ -78,6 +78,11 @@ pub fn (mut e Errors) list() []Err {
 	return e.list
 }
 
+[inline]
+pub fn (e Errors) len() int {
+	return e.list.len
+}
+
 pub fn (mut e Errors) next() ?Err {
 	if e.i == 0 {
 		e.sort()
