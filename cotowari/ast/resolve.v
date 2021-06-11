@@ -2,16 +2,20 @@ module ast
 
 import cotowari.context { Context }
 
-struct Resolver {
+pub struct Resolver {
 	ctx &Context
 }
 
+pub fn new_resolver(ctx &Context) Resolver {
+	return Resolver{ctx}
+}
+
 pub fn resolve(ctx &Context, node Node) {
-	mut r := Resolver{ctx}
+	mut r := new_resolver(ctx)
 	r.resolve(node)
 }
 
-fn (mut r Resolver) resolve(node Node) {
+pub fn (mut r Resolver) resolve(node Node) {
 	match node {
 		File { r.file(node) }
 		Stmt { r.stmt(node) }
