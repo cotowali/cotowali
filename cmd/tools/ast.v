@@ -26,12 +26,13 @@ fn execute_ast(cmd Command) ? {
 		return
 	}
 	use_checker := cmd.flags.get_bool(tools.use_checker_flag.name) or { panic(err) }
-	mut f := parser.parse_file(cmd.args[0], new_default_context()) or {
+	ctx := new_default_context()
+	mut f := parser.parse_file(cmd.args[0], ctx) or {
 		eprintln('ERROR')
 		return
 	}
 	if use_checker {
-		mut checker := new_checker()
+		mut checker := new_checker(ctx)
 		checker.check_file(mut f)
 		println(f)
 		if f.errors.len > 0 {

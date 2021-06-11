@@ -58,7 +58,7 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	mut f := p.parse()
 
 	if !f.has_syntax_error {
-		mut checker := new_checker()
+		mut checker := new_checker(c.ctx)
 		checker.check_file(mut f)
 	}
 	check_compile_error(f) ?
