@@ -35,7 +35,7 @@ fn execute_ast(cmd Command) ? {
 		mut checker := new_checker(ctx)
 		checker.check_file(mut f)
 		println(f)
-		if f.errors.len > 0 {
+		if ctx.errors.len() > 0 {
 			eprintln('checker error')
 		}
 	}

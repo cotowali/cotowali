@@ -37,7 +37,3 @@ pub fn run(s Source, ctx &Context) ?int {
 	code := os.system('sh "$temp_file"')
 	return code
 }
-
-pub fn format_error(err IError, f errors.Formatter) string {
-	return if err is compiler.CompileError { err.errors.format(f) } else { err.msg + '\n' }
-}

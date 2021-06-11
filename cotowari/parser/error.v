@@ -1,6 +1,6 @@
 module parser
 
-import cotowari.errors { Err }
+import cotowari.errors
 import cotowari.source { Pos }
 import cotowari.token { Token, TokenKind }
 
@@ -17,13 +17,7 @@ fn (mut p Parser) error(msg string, pos Pos) IError {
 		}
 	}
 
-	err := Err{
-		source: p.file.source
-		msg: msg
-		pos: pos
-	}
-	p.file.errors << err
-	return err
+	return p.ctx.errors.push(source: p.source(), msg: msg, pos: pos)
 }
 
 fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
@@ -34,16 +28,8 @@ fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
 		}
 	}
 
-	err := Err{
-		source: p.file.source
-		msg: msg
-		pos: pos
-		is_syntax_error: true
-	}
-	p.file.errors << err
-	p.file.has_syntax_error = true
 	p.restore_from_syntax_error()
-	return err
+	return p.ctx.errors.push(source: p.source(), msg: msg, pos: pos, is_syntax_error: true)
 }
 
 fn (mut p Parser) restore_from_syntax_error() {

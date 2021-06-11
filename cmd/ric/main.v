@@ -3,7 +3,7 @@ module main
 import os
 import cli { Command, Flag }
 import v.vmod
-import cotowari { compile, format_error }
+import cotowari { compile }
 import cotowari.config { backend_from_str }
 import cotowari.context { Context, new_context }
 import cotowari.source { Source }
@@ -58,7 +58,7 @@ fn execute_run(cmd Command) ? {
 	}
 	ctx := new_ctx_from_cmd(cmd)
 	cotowari.run(s, ctx) or {
-		eprint(format_error(err, errors.PrettyFormatter{}))
+		eprint(ctx.errors.format(errors.PrettyFormatter{}))
 		exit(1)
 	}
 }
@@ -74,7 +74,7 @@ fn execute_compile(cmd Command) ? {
 	s := source.read_file(cmd.args[0]) ?
 	ctx := new_ctx_from_cmd(cmd)
 	out := compile(s, ctx) or {
-		eprint(format_error(err, errors.PrettyFormatter{}))
+		eprint(ctx.errors.format(errors.PrettyFormatter{}))
 		exit(1)
 	}
 	println(out)

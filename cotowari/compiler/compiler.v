@@ -9,30 +9,13 @@ import cotowari.parser { new_parser }
 import cotowari.checker { new_checker }
 import cotowari.emit.sh
 import cotowari.ast
-import cotowari.errors { Err }
+import cotowari.errors
 
 pub struct Compiler {
 pub:
 	ctx &Context
 mut:
 	source Source
-}
-
-pub struct CompileError {
-pub:
-	errors []Err
-	code   int
-	msg    string
-}
-
-fn check_compile_error(file ast.File) ? {
-	if file.errors.len > 0 {
-		return IError(&CompileError{
-			errors: file.errors
-			code: file.errors.len
-			msg: 'compile error: $file.errors.len errors'
-		})
-	}
 }
 
 [inline]
@@ -57,11 +40,13 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	mut p := new_parser(new_lexer(c.source, c.ctx))
 	mut f := p.parse()
 
-	if !f.has_syntax_error {
+	if !c.ctx.errors.has_syntax_error() {
 		mut checker := new_checker(c.ctx)
 		checker.check_file(mut f)
 	}
-	check_compile_error(f) ?
+	if c.ctx.errors.len() > 0 {
+		return error('compile error')
+	}
 
 	if config.no_emit {
 		return
