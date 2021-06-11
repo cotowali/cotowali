@@ -1,13 +1,18 @@
 module ast
 
 import cotowari.context { Context }
+import cotowari.debug { Tracer }
 
 pub struct Resolver {
-	ctx &Context
+mut:
+	ctx    &Context
+	tracer Tracer
 }
 
 pub fn new_resolver(ctx &Context) Resolver {
-	return Resolver{ctx}
+	return {
+		ctx: ctx
+	}
 }
 
 pub fn resolve(ctx &Context, node Node) {
@@ -20,5 +25,19 @@ pub fn (mut r Resolver) resolve(node Node) {
 		File { r.file(node) }
 		Stmt { r.stmt(node) }
 		Expr { r.expr(node) }
+	}
+}
+
+[inline]
+fn (mut r Resolver) trace_begin(f string, args ...string) {
+	$if trace_resolver ? {
+		r.tracer.begin_fn(f, ...args)
+	}
+}
+
+[inline]
+fn (mut r Resolver) trace_end() {
+	$if trace_resolver ? {
+		r.tracer.end_fn()
 	}
 }
