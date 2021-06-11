@@ -3,6 +3,8 @@ module ast
 import cotowari.errors
 import cotowari.source { Source }
 
+pub type Node = Expr | File | Stmt
+
 [heap]
 pub struct File {
 pub:
@@ -10,5 +12,3 @@ pub:
 pub mut:
 	stmts []Stmt
 }
-
-pub type Node = Expr | File | Stmt
