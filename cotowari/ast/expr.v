@@ -105,6 +105,8 @@ fn (mut r Resolver) as_expr(expr AsExpr) {
 			r.trace_end()
 		}
 	}
+
+	r.expr(expr.expr)
 }
 
 pub struct CallExpr {
@@ -159,6 +161,8 @@ fn (mut r Resolver) call_expr(expr CallExpr) {
 			r.trace_end()
 		}
 	}
+
+	r.exprs(expr.args)
 }
 
 pub struct InfixExpr {
@@ -177,6 +181,9 @@ fn (mut r Resolver) infix_expr(expr InfixExpr) {
 			r.trace_end()
 		}
 	}
+
+	r.expr(expr.left)
+	r.expr(expr.right)
 }
 
 pub struct IndexExpr {
@@ -193,6 +200,9 @@ fn (mut r Resolver) index_expr(expr IndexExpr) {
 			r.trace_end()
 		}
 	}
+
+	r.expr(expr.left)
+	r.expr(expr.index)
 }
 
 pub struct ParenExpr {
@@ -209,6 +219,8 @@ fn (mut r Resolver) paren_expr(expr ParenExpr) {
 			r.trace_end()
 		}
 	}
+
+	r.expr(expr.expr)
 }
 
 pub struct StringLiteral {
@@ -257,6 +269,8 @@ fn (mut r Resolver) array_literal(expr ArrayLiteral) {
 			r.trace_end()
 		}
 	}
+
+	r.exprs(expr.elements)
 }
 
 // expr | expr | expr
@@ -274,6 +288,8 @@ fn (mut r Resolver) pipeline(expr Pipeline) {
 			r.trace_end()
 		}
 	}
+
+	r.exprs(expr.exprs)
 }
 
 pub struct PrefixExpr {
@@ -291,6 +307,8 @@ fn (mut r Resolver) prefix_expr(expr PrefixExpr) {
 			r.trace_end()
 		}
 	}
+
+	r.expr(expr.expr)
 }
 
 pub struct Var {

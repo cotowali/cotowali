@@ -43,6 +43,9 @@ fn (mut r Resolver) assign_stmt(stmt AssignStmt) {
 			r.trace_end()
 		}
 	}
+
+	r.expr(stmt.left)
+	r.expr(stmt.right)
 }
 
 pub struct AssertStmt {
@@ -59,6 +62,8 @@ fn (mut r Resolver) assert_stmt(stmt AssertStmt) {
 			r.trace_end()
 		}
 	}
+
+	r.expr(stmt.expr)
 }
 
 pub struct Block {
@@ -75,6 +80,8 @@ fn (mut r Resolver) block(stmt Block) {
 			r.trace_end()
 		}
 	}
+
+	r.stmts(stmt.stmts)
 }
 
 pub struct EmptyStmt {}
@@ -120,6 +127,8 @@ fn (mut r Resolver) fn_decl(decl FnDecl) {
 			r.trace_end()
 		}
 	}
+
+	r.block(decl.body)
 }
 
 pub struct ForInStmt {
@@ -137,6 +146,8 @@ fn (mut r Resolver) for_in_stmt(stmt ForInStmt) {
 			r.trace_end()
 		}
 	}
+
+	r.block(stmt.body)
 }
 
 pub struct IfBranch {
@@ -159,6 +170,11 @@ fn (mut r Resolver) if_stmt(stmt IfStmt) {
 		defer {
 			r.trace_end()
 		}
+	}
+
+	for b in stmt.branches {
+		r.expr(b.cond)
+		r.block(b.body)
 	}
 }
 
@@ -190,6 +206,7 @@ fn (mut r Resolver) return_stmt(stmt ReturnStmt) {
 			r.trace_end()
 		}
 	}
+	r.expr(stmt.expr)
 }
 
 pub fn (stmt ReturnStmt) pos() Pos {
@@ -208,4 +225,6 @@ fn (mut r Resolver) require_stmt(stmt RequireStmt) {
 			r.trace_end()
 		}
 	}
+
+	r.file(stmt.file)
 }

@@ -19,4 +19,6 @@ fn (mut r Resolver) file(f &File) {
 			r.trace_end()
 		}
 	}
+
+	r.stmts(f.stmts)
 }
