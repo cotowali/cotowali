@@ -5,16 +5,16 @@ import cotowari.symbols { TypeSymbol }
 
 fn (mut c Checker) expr(expr Expr) {
 	match mut expr {
-		ast.AsExpr { c.as_expr(expr) }
-		ast.ParenExpr { c.paren_expr(expr) }
-		ast.CallExpr { c.call_expr(mut expr) }
-		ast.InfixExpr { c.infix_expr(expr) }
 		ast.ArrayLiteral { c.array_literal(expr) }
+		ast.AsExpr { c.as_expr(expr) }
+		ast.CallExpr { c.call_expr(mut expr) }
 		ast.IndexExpr { c.index_expr(expr) }
+		ast.InfixExpr { c.infix_expr(expr) }
 		ast.IntLiteral {}
-		ast.StringLiteral {}
+		ast.ParenExpr { c.paren_expr(expr) }
 		ast.Pipeline { c.pipeline(expr) }
 		ast.PrefixExpr { c.prefix_expr(expr) }
+		ast.StringLiteral {}
 		ast.Var { c.var_(expr) }
 	}
 }
@@ -27,24 +27,6 @@ fn (mut c Checker) array_literal(expr ast.ArrayLiteral) {
 
 fn (mut c Checker) as_expr(expr ast.AsExpr) {
 	c.expr(expr.expr)
-}
-
-fn (mut c Checker) index_expr(expr ast.IndexExpr) {
-	c.expr(expr.left)
-	c.expr(expr.index)
-}
-
-fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
-	c.expr(expr.left)
-	c.expr(expr.right)
-	c.check_types(
-		want: expr.left.type_symbol()
-		want_label: 'left'
-		got: expr.right.type_symbol()
-		got_label: 'right'
-		pos: expr.pos()
-		synmetric: true
-	) or { return }
 }
 
 fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
@@ -93,6 +75,24 @@ fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 	if !call_args_types_ok {
 		return
 	}
+}
+
+fn (mut c Checker) index_expr(expr ast.IndexExpr) {
+	c.expr(expr.left)
+	c.expr(expr.index)
+}
+
+fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
+	c.expr(expr.left)
+	c.expr(expr.right)
+	c.check_types(
+		want: expr.left.type_symbol()
+		want_label: 'left'
+		got: expr.right.type_symbol()
+		got_label: 'right'
+		pos: expr.pos()
+		synmetric: true
+	) or { return }
 }
 
 fn (mut c Checker) paren_expr(expr ast.ParenExpr) {
