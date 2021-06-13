@@ -5,7 +5,8 @@ import cotowari.symbols { TypeSymbol }
 
 fn (mut c Checker) expr(expr Expr) {
 	match mut expr {
-		ast.AsExpr, ast.ParenExpr { c.expr(expr.expr) }
+		ast.AsExpr { c.as_expr(expr) }
+		ast.ParenExpr { c.paren_expr(expr) }
 		ast.CallExpr { c.call_expr(mut expr) }
 		ast.InfixExpr { c.infix_expr(expr) }
 		ast.ArrayLiteral { c.array_literal(expr) }
@@ -22,6 +23,10 @@ fn (mut c Checker) array_literal(expr ast.ArrayLiteral) {
 	for e in expr.elements {
 		c.expr(e)
 	}
+}
+
+fn (mut c Checker) as_expr(expr ast.AsExpr) {
+	c.expr(expr.expr)
 }
 
 fn (mut c Checker) index_expr(expr ast.IndexExpr) {
@@ -88,6 +93,10 @@ fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 	if !call_args_types_ok {
 		return
 	}
+}
+
+fn (mut c Checker) paren_expr(expr ast.ParenExpr) {
+	c.expr(expr.expr)
 }
 
 fn (mut c Checker) pipeline(expr ast.Pipeline) {
