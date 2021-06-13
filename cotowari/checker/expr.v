@@ -1,7 +1,7 @@
 module checker
 
 import cotowari.ast { Expr }
-import cotowari.symbols { TypeSymbol }
+import cotowari.symbols { TypeSymbol, builtin_type }
 
 fn (mut c Checker) expr(expr Expr) {
 	match mut expr {
@@ -80,6 +80,11 @@ fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 	c.expr(expr.left)
 	c.expr(expr.index)
+	c.check_types(
+		want: Expr(expr).scope().must_lookup_type(builtin_type(.int))
+		got: expr.index.type_symbol()
+		pos: expr.index.pos()
+	) or {}
 }
 
 fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
