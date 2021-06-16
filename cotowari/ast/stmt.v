@@ -147,6 +147,7 @@ fn (mut r Resolver) for_in_stmt(stmt ForInStmt) {
 		}
 	}
 
+	r.expr(stmt.expr)
 	r.block(stmt.body)
 }
 
