@@ -30,13 +30,11 @@ fn (mut c Checker) as_expr(expr ast.AsExpr) {
 }
 
 fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
-	pos := Expr(expr).pos()
-
-	expr.resolve_func() or {
-		c.error(err.msg, pos)
+	if Expr(expr).typ() == builtin_type(.placeholder) {
 		return
 	}
 
+	pos := Expr(expr).pos()
 	fn_info := expr.fn_info()
 	params := fn_info.params
 	expr.args

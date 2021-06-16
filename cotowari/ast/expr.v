@@ -14,10 +14,10 @@ fn (mut r Resolver) exprs(exprs []Expr) {
 }
 
 fn (mut r Resolver) expr(expr Expr) {
-	match expr {
+	match mut expr {
 		ArrayLiteral { r.array_literal(expr) }
 		AsExpr { r.as_expr(expr) }
-		CallExpr { r.call_expr(expr) }
+		CallExpr { r.call_expr(mut expr) }
 		IndexExpr { r.index_expr(expr) }
 		InfixExpr { r.infix_expr(expr) }
 		IntLiteral { r.int_literal(expr) }
@@ -121,15 +121,36 @@ pub mut:
 	args    []Expr
 }
 
-pub fn (mut e CallExpr) resolve_func() ?&symbols.Var {
+pub fn (e CallExpr) fn_info() FunctionTypeInfo {
+	return e.func.type_symbol().fn_info()
+}
+
+fn (mut r Resolver) call_expr(mut expr CallExpr) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+
+	r.call_expr_func(mut expr)
+	r.exprs(expr.args)
+}
+
+fn (mut r Resolver) call_expr_func(mut e CallExpr) {
 	if mut e.func is Var {
 		name := e.func.name()
-		sym := e.scope.lookup_var(name) or { return error('function `$name` is not defined') }
+		sym := e.scope.lookup_var(name) or {
+			r.error('function `$name` is not defined', e.pos)
+			return
+		}
+
 		e.func.sym = sym
 
 		ts := sym.type_symbol()
 		if !sym.is_function() {
-			return error('`$sym.name` is not function (`$ts.name`)')
+			r.error('`$sym.name` is not function (`$ts.name`)', e.pos)
+			return
 		}
 
 		fn_info := ts.fn_info()
@@ -140,25 +161,9 @@ pub fn (mut e CallExpr) resolve_func() ?&symbols.Var {
 				e.typ = owner.type_symbol().fn_info().pipe_in
 			}
 		}
-		return sym
 	} else {
-		return error('cannot call `$e.func.type_symbol().name`')
+		r.error('cannot call `$e.func.type_symbol().name`', e.pos)
 	}
-}
-
-pub fn (e CallExpr) fn_info() FunctionTypeInfo {
-	return e.func.type_symbol().fn_info()
-}
-
-fn (mut r Resolver) call_expr(expr CallExpr) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
-	r.exprs(expr.args)
 }
 
 pub struct InfixExpr {
