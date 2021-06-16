@@ -12,8 +12,7 @@
 
 - Outputs shell script that is fully compliant with POSIX standards.
 - Simple syntax.
-- Super simple statically type system.
-- Inline shell integration.
+- Simple statically type system.
 - Syntax for shell specific feature like pipe and redirection.
 
 ## Installation
