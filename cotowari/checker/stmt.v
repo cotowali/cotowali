@@ -63,10 +63,10 @@ fn (mut c Checker) block(block ast.Block) {
 }
 
 fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
-	old_fn := c.cur_fn
-	c.cur_fn = stmt
+	old_fn := c.current_fn
+	c.current_fn = stmt
 	defer {
-		c.cur_fn = old_fn
+		c.current_fn = old_fn
 	}
 	for param in stmt.params {
 		c.expr(param)
@@ -102,7 +102,7 @@ fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
 	c.expr(stmt.expr)
 	c.check_types(
-		want: c.cur_fn.ret_type_symbol()
+		want: c.current_fn.ret_type_symbol()
 		got: stmt.expr.type_symbol()
 		pos: stmt.expr.pos()
 	) or {}

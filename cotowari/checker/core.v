@@ -7,9 +7,9 @@ import cotowari.context { Context }
 
 pub struct Checker {
 mut:
-	source &Source = 0
-	cur_fn ast.FnDecl
-	ctx    &Context
+	source     &Source = 0
+	current_fn ast.FnDecl
+	ctx        &Context
 }
 
 pub fn new_checker(ctx &Context) Checker {
