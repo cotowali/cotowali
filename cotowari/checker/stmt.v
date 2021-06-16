@@ -66,7 +66,6 @@ fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {
 	if ts.kind() != .array {
 		c.error('non-array type `$ts.name` is not iterable', stmt.expr.pos())
 	}
-	stmt.val.set_typ((ts.info as symbols.ArrayTypeInfo).elem)
 	c.block(stmt.body)
 }
 

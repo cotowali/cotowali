@@ -1,7 +1,7 @@
 module ast
 
 import cotowari.source { Pos }
-import cotowari.symbols { FunctionTypeInfo, Scope, Type, TypeSymbol }
+import cotowari.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol }
 import cotowari.token { Token }
 
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
@@ -21,7 +21,7 @@ fn (mut r Resolver) stmt(stmt Stmt) {
 		EmptyStmt { r.empty_stmt(stmt) }
 		Expr { r.expr(stmt) }
 		FnDecl { r.fn_decl(stmt) }
-		ForInStmt { r.for_in_stmt(stmt) }
+		ForInStmt { r.for_in_stmt(mut stmt) }
 		IfStmt { r.if_stmt(stmt) }
 		InlineShell { r.inline_shell(stmt) }
 		RequireStmt { r.require_stmt(stmt) }
@@ -150,7 +150,7 @@ pub mut:
 	body Block
 }
 
-fn (mut r Resolver) for_in_stmt(stmt ForInStmt) {
+fn (mut r Resolver) for_in_stmt(mut stmt ForInStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -159,6 +159,12 @@ fn (mut r Resolver) for_in_stmt(stmt ForInStmt) {
 	}
 
 	r.expr(stmt.expr)
+
+	expr_ts := stmt.expr.type_symbol()
+	if expr_ts.info is ArrayTypeInfo {
+		stmt.val.set_typ(expr_ts.info.elem)
+	}
+
 	r.block(stmt.body)
 }
 
