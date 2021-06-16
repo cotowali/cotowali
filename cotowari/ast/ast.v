@@ -20,5 +20,11 @@ fn (mut r Resolver) file(f &File) {
 		}
 	}
 
+	old_source := r.source
+	r.source = f.source
+	defer {
+		r.source = old_source
+	}
+
 	r.stmts(f.stmts)
 }

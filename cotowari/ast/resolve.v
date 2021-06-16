@@ -1,5 +1,6 @@
 module ast
 
+import cotowari.source { Source }
 import cotowari.context { Context }
 import cotowari.debug { Tracer }
 
@@ -7,6 +8,7 @@ pub struct Resolver {
 mut:
 	ctx    &Context
 	tracer Tracer
+	source &Source = 0
 }
 
 pub fn new_resolver(ctx &Context) Resolver {
