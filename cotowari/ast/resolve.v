@@ -1,6 +1,6 @@
 module ast
 
-import cotowari.source { Source }
+import cotowari.source { Pos, Source }
 import cotowari.context { Context }
 import cotowari.debug { Tracer }
 
@@ -42,4 +42,19 @@ fn (mut r Resolver) trace_end() {
 	$if trace_resolver ? {
 		r.tracer.end_fn()
 	}
+}
+
+fn (mut r Resolver) error(msg string, pos Pos) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN, msg, '$pos')
+		defer {
+			r.trace_end()
+		}
+	}
+
+	r.ctx.errors.push(
+		source: r.source
+		msg: msg
+		pos: pos
+	)
 }
