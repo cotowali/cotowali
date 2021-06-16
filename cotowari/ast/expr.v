@@ -3,6 +3,7 @@ module ast
 import cotowari.source { Pos }
 import cotowari.token { Token }
 import cotowari.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id, builtin_type }
+import cotowari.errors { unreachable }
 
 pub type Expr = ArrayLiteral | AsExpr | CallExpr | IndexExpr | InfixExpr | IntLiteral |
 	ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
@@ -26,6 +27,13 @@ fn (mut r Resolver) expr(expr Expr) {
 		PrefixExpr { r.prefix_expr(expr) }
 		StringLiteral { r.string_literal(expr) }
 		Var { r.var_(expr) }
+	}
+}
+
+fn (mut r Resolver) set_typ(e Expr, typ Type) {
+	match mut e {
+		Var { e.sym.typ = typ }
+		else { panic(unreachable) }
 	}
 }
 
@@ -318,10 +326,6 @@ pub:
 	pos   Pos
 pub mut:
 	sym &symbols.Var
-}
-
-pub fn (mut v Var) set_typ(typ Type) {
-	v.sym.typ = typ
 }
 
 pub fn (v Var) name() string {

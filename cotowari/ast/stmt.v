@@ -50,7 +50,7 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 	match mut stmt.left {
 		Var {
 			if stmt.is_decl {
-				stmt.left.set_typ(stmt.right.typ())
+				r.set_typ(stmt.left, stmt.right.typ())
 			}
 		}
 		else {
@@ -162,7 +162,7 @@ fn (mut r Resolver) for_in_stmt(mut stmt ForInStmt) {
 
 	expr_ts := stmt.expr.type_symbol()
 	if expr_ts.info is ArrayTypeInfo {
-		stmt.val.set_typ(expr_ts.info.elem)
+		r.set_typ(stmt.val, expr_ts.info.elem)
 	}
 
 	r.block(stmt.body)
