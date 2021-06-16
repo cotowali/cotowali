@@ -122,12 +122,11 @@ pub mut:
 }
 
 pub fn (mut e CallExpr) resolve_func() ?&symbols.Var {
-	match e.func {
+	match mut e.func {
 		Var {
-			mut func := &(e.func as Var)
-			name := func.name()
+			name := e.func.name()
 			sym := e.scope.lookup_var(name) or { return error('function `$name` is not defined') }
-			func.sym = sym
+			e.func.sym = sym
 
 			ts := sym.type_symbol()
 			if !sym.is_function() {
