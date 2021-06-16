@@ -12,7 +12,7 @@
 
 - Outputs shell script that is fully compliant with POSIX standards.
 - Simple syntax.
-- Simple statically type system.
+- Simple static type system.
 - Syntax for shell specific feature like pipe and redirection.
 
 ## Installation
