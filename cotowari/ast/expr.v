@@ -122,30 +122,27 @@ pub mut:
 }
 
 pub fn (mut e CallExpr) resolve_func() ?&symbols.Var {
-	match mut e.func {
-		Var {
-			name := e.func.name()
-			sym := e.scope.lookup_var(name) or { return error('function `$name` is not defined') }
-			e.func.sym = sym
+	if mut e.func is Var {
+		name := e.func.name()
+		sym := e.scope.lookup_var(name) or { return error('function `$name` is not defined') }
+		e.func.sym = sym
 
-			ts := sym.type_symbol()
-			if !sym.is_function() {
-				return error('`$sym.name` is not function (`$ts.name`)')
-			}
+		ts := sym.type_symbol()
+		if !sym.is_function() {
+			return error('`$sym.name` is not function (`$ts.name`)')
+		}
 
-			fn_info := ts.fn_info()
-			e.typ = fn_info.ret
-			e.func_id = sym.id
-			if owner := e.scope.owner() {
-				if sym.id == builtin_fn_id(.read) {
-					e.typ = owner.type_symbol().fn_info().pipe_in
-				}
+		fn_info := ts.fn_info()
+		e.typ = fn_info.ret
+		e.func_id = sym.id
+		if owner := e.scope.owner() {
+			if sym.id == builtin_fn_id(.read) {
+				e.typ = owner.type_symbol().fn_info().pipe_in
 			}
-			return sym
 		}
-		else {
-			return error('cannot call `$e.func.type_symbol().name`')
-		}
+		return sym
+	} else {
+		return error('cannot call `$e.func.type_symbol().name`')
 	}
 }
 
