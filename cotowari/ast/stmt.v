@@ -14,9 +14,9 @@ fn (mut r Resolver) stmts(stmts []Stmt) {
 }
 
 fn (mut r Resolver) stmt(stmt Stmt) {
-	match stmt {
+	match mut stmt {
 		AssertStmt { r.assert_stmt(stmt) }
-		AssignStmt { r.assign_stmt(stmt) }
+		AssignStmt { r.assign_stmt(mut stmt) }
 		Block { r.block(stmt) }
 		EmptyStmt { r.empty_stmt(stmt) }
 		Expr { r.expr(stmt) }
@@ -36,7 +36,7 @@ pub mut:
 	right   Expr
 }
 
-fn (mut r Resolver) assign_stmt(stmt AssignStmt) {
+fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -46,6 +46,17 @@ fn (mut r Resolver) assign_stmt(stmt AssignStmt) {
 
 	r.expr(stmt.left)
 	r.expr(stmt.right)
+
+	match mut stmt.left {
+		Var {
+			if stmt.is_decl {
+				stmt.left.set_typ(stmt.right.typ())
+			}
+		}
+		else {
+			r.error('invalid left-hand side of assignment', stmt.left.pos())
+		}
+	}
 }
 
 pub struct AssertStmt {
