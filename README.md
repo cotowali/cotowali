@@ -15,6 +15,27 @@
 - Simple static type system.
 - Syntax for shell specific feature like pipe and redirection.
 
+## Example
+
+```
+fn fib(n int) int {
+  if n < 2 {
+    return n
+  }
+  return fib(n - 1) + fib(n - 2)
+}
+
+fn int | twice() int {
+   let n = read()
+   return n * 2
+}
+
+assert fib(6) == 8
+assert (fib(6) | twice()) == 16
+```
+
+[There is more examples](./examples)
+
 ## Installation
 
 ### Use binary
@@ -64,27 +85,6 @@ ric examples/add.ri | sh
 # or
 ric run examples/add.ri
 ```
-
-## Example
-
-```
-fn fib(n int) int {
-  if n < 2 {
-    return n
-  }
-  return fib(n - 1) + fib(n - 2)
-}
-
-fn int | twice() int {
-   let n = read()
-   return n * 2
-}
-
-assert fib(6) == 8
-assert (fib(6) | twice()) == 16
-```
-
-[There is more examples](./examples)
 
 ## Development
 
