@@ -6,7 +6,7 @@
 
 > This project is a prototyping stage right now.
 > It means that only a few small snippets in `tests` will work.
-> First release is planned for later this yer.
+> First release is planned for later this year.
 
 ## Concepts of Cotowari
 
