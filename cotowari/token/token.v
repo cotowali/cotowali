@@ -92,6 +92,11 @@ fn (k TokenKind) is_comparsion_op() bool {
 }
 
 [inline]
+fn (k TokenKind) is_logical_infix_op() bool {
+	return k in [.op_and, .op_or]
+}
+
+[inline]
 fn (k TokenKind) is_prefix_op() bool {
 	return k in [
 		.op_plus,
@@ -110,8 +115,8 @@ fn (k TokenKind) is_postfix_op() bool {
 
 [inline]
 fn (k TokenKind) is_infix_op() bool {
-	return k.is_comparsion_op()
-		|| k in [.op_pipe, .op_plus, .op_minus, .op_mul, .op_div, .op_mod, .op_and, .op_or]
+	return k.is_comparsion_op() || k.is_logical_infix_op()
+		|| k in [.op_pipe, .op_plus, .op_minus, .op_mul, .op_div, .op_mod]
 }
 
 [inline]
@@ -145,6 +150,7 @@ pub enum TokenKindClass {
 	op
 	comparsion_op
 	infix_op
+	logical_infix_op
 	prefix_op
 	postfix_op
 	literal
@@ -156,6 +162,7 @@ pub fn (k TokenKind) @is(class TokenKindClass) bool {
 	return match class {
 		.op { k.is_op() }
 		.comparsion_op { k.is_comparsion_op() }
+		.logical_infix_op { k.is_logical_infix_op() }
 		.infix_op { k.is_infix_op() }
 		.prefix_op { k.is_prefix_op() }
 		.postfix_op { k.is_postfix_op() }
