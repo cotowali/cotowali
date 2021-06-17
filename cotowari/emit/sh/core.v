@@ -77,15 +77,6 @@ fn (mut e Emitter) write_block<T>(opt code.WriteBlockOpt, f fn (mut Emitter, T),
 	f(mut e, v)
 }
 
-fn (mut e Emitter) with_line_terminator<T>(s string, f fn (mut Emitter, T), v T) {
-	old := e.code[e.cur_kind].line_terminator
-	defer {
-		e.code[e.cur_kind].line_terminator = old
-	}
-	e.code[e.cur_kind].line_terminator = s
-	f(mut e, v)
-}
-
 [inline]
 fn (mut e Emitter) new_tmp_var() string {
 	return e.code[e.cur_kind].new_tmp_var()
