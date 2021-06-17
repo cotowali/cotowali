@@ -3,6 +3,7 @@ module sh
 import cotowari.ast
 import cotowari.token { Token }
 import cotowari.symbols { builtin_type }
+import cotowari.util { panic_and_value }
 import cotowari.errors { unreachable }
 
 struct ExprOpt {
@@ -83,8 +84,25 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 		panic(unreachable)
 	}
 	e.write_echo_if_command(opt)
+
+	if expr.op.kind.@is(.comparsion_op) {
+		op_flag := match expr.op.kind {
+			.op_eq { '-eq' }
+			.op_ne { '-ne' }
+			.op_gt { '-gt' }
+			.op_lt { '-lt' }
+			else { panic_and_value(unreachable, '') }
+		}
+		e.write('[ ')
+		e.expr(expr.left, {})
+		e.write(' $op_flag ')
+		e.expr(expr.right, {})
+		e.write(' ]')
+		return
+	}
+
 	match expr.op.kind {
-		.op_plus, .op_minus, .op_div, .op_mul, .op_mod, .op_eq, .op_ne, .op_gt, .op_lt {
+		.op_plus, .op_minus, .op_div, .op_mul, .op_mod {
 			open, close := if opt.inside_arithmetic { '', '' } else { '\$(( ( ', ' ) ))' }
 			e.write_block({ open: open, close: close, inline: true }, fn (mut e Emitter, expr ast.InfixExpr) {
 				e.expr(expr.left, inside_arithmetic: true)
@@ -110,19 +128,11 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 
 	match expr.op.kind {
 		.op_eq, .op_ne {
-			e.write_block({ open: '\$( ', close: ' )', inline: true }, fn (mut e Emitter, expr ast.InfixExpr) {
-				e.write('[ ')
-				e.expr(expr.left, {})
-				e.write(' = ')
-				e.expr(expr.right, {})
-				e.write(' ]')
-
-				e.write(if expr.op.kind == .op_eq {
-					' && echo 1 || echo 0'
-				} else {
-					' && echo 0 || echo 1'
-				})
-			}, expr)
+			e.write('[ ')
+			e.expr(expr.left, {})
+			e.write(if expr.op.kind == .op_eq { ' = ' } else { ' != ' })
+			e.expr(expr.right, {})
+			e.write(' ]')
 		}
 		.op_plus {
 			e.write_block({ open: '\$( ', close: ' )', inline: true }, fn (mut e Emitter, expr ast.InfixExpr) {
