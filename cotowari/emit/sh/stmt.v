@@ -32,10 +32,12 @@ fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
 }
 
 fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
-	e.write('if ! ')
+	e.write('if ')
 	e.expr(stmt.expr, as_command: false, writeln: true)
+	e.writeln('then')
+	e.writeln(':')
 
-	e.write_block({ open: 'then', close: 'fi' }, fn (mut e Emitter, stmt ast.AssertStmt) {
+	e.write_block({ open: 'else', close: 'fi' }, fn (mut e Emitter, stmt ast.AssertStmt) {
 		e.writeln("echo 'LINE $stmt.key_pos.line: assertion failed' >&2")
 		e.writeln('exit 1')
 	}, stmt)
