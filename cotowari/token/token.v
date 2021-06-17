@@ -110,20 +110,8 @@ fn (k TokenKind) is_postfix_op() bool {
 
 [inline]
 fn (k TokenKind) is_infix_op() bool {
-	return k in [
-		.op_pipe,
-		.op_eq,
-		.op_ne,
-		.op_gt,
-		.op_lt,
-		.op_plus,
-		.op_minus,
-		.op_mul,
-		.op_div,
-		.op_mod,
-		.op_and,
-		.op_or,
-	]
+	return k.is_comparsion_op()
+		|| k in [.op_pipe, .op_plus, .op_minus, .op_mul, .op_div, .op_mod, .op_and, .op_or]
 }
 
 [inline]
