@@ -71,10 +71,10 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 		panic(unreachable)
 	}
 
-	if expr.left.typ() == builtin_type(.int) {
-		e.infix_expr_for_int(expr, opt)
-	} else {
-		panic('infix_expr for `$expr.left.type_symbol().name` is unimplemented')
+	match expr.left.typ() {
+		builtin_type(.int) { e.infix_expr_for_int(expr, opt) }
+		builtin_type(.string) { e.infix_expr_for_string(expr, opt) }
+		else { panic('infix_expr for `$expr.left.type_symbol().name` is unimplemented') }
 	}
 }
 
@@ -90,6 +90,38 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 				e.expr(expr.left, inside_arithmetic: true)
 				e.write(' $expr.op.text ')
 				e.expr(expr.right, inside_arithmetic: true)
+			}, expr)
+		}
+		else {
+			panic('unimplemented')
+		}
+	}
+}
+
+fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
+	if expr.left.typ() != builtin_type(.string) {
+		panic(unreachable)
+	}
+	if opt.inside_arithmetic {
+		panic(unreachable)
+	}
+
+	e.write_echo_if_command(opt)
+
+	match expr.op.kind {
+		.op_eq, .op_ne {
+			e.write_block({ open: '\$( ', close: ' )', inline: true }, fn (mut e Emitter, expr ast.InfixExpr) {
+				e.write('[ ')
+				e.expr(expr.left, {})
+				e.write(' = ')
+				e.expr(expr.right, {})
+				e.write(' ]')
+
+				e.write(if expr.op.kind == .op_eq {
+					' && echo 1 || echo 0'
+				} else {
+					' && echo 0 || echo 1'
+				})
 			}, expr)
 		}
 		else {
