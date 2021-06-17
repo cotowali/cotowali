@@ -90,7 +90,9 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 			.op_eq { '-eq' }
 			.op_ne { '-ne' }
 			.op_gt { '-gt' }
+			.op_ge { '-ge' }
 			.op_lt { '-lt' }
+			.op_le { '-le' }
 			else { panic_and_value(unreachable, '') }
 		}
 		e.write('[ ')
