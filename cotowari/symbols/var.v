@@ -7,7 +7,7 @@ pub struct Var {
 mut:
 	scope &Scope = 0
 pub:
-	name string
+	name string [required]
 	id   u64
 	pos  Pos
 pub mut:
