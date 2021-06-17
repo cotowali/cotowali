@@ -86,6 +86,23 @@ pub fn (s &Scope) must_lookup_var(name string) &Var {
 	return s.lookup_var(name) or { panic(unreachable) }
 }
 
+pub fn (s &Scope) lookup_var_with_pos(name string, pos Pos) ?&Var {
+	if name in s.vars {
+		v := s.vars[name]
+		if v.pos.i <= pos.i || v.pos.is_none() || pos.is_none() {
+			return v
+		}
+	}
+	if p := s.parent() {
+		return p.lookup_var_with_pos(name, pos)
+	}
+	return none
+}
+
+pub fn (s &Scope) must_lookup_var_with_pos(name string, pos Pos) &Var {
+	return s.lookup_var_with_pos(name, pos) or { panic(unreachable) }
+}
+
 pub fn (mut s Scope) lookup_or_register_var(v Var) &Var {
 	return s.lookup_var(v.name) or { s.register_var(v) or { panic(unreachable) } }
 }
