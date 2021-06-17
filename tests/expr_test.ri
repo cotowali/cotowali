@@ -9,6 +9,7 @@ assert +v == 10
 
 assert '10' == '10'
 assert '10' != '11'
+assert '10' + '10' == '1010'
 
 fn zero() int {
   let v = 0

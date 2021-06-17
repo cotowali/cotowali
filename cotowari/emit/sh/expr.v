@@ -124,6 +124,14 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 				})
 			}, expr)
 		}
+		.op_plus {
+			e.write_block({ open: '\$( ', close: ' )', inline: true }, fn (mut e Emitter, expr ast.InfixExpr) {
+				e.write("printf '%s%s' ")
+				e.expr(expr.left, {})
+				e.write(' ')
+				e.expr(expr.right, {})
+			}, expr)
+		}
 		else {
 			panic('unimplemented')
 		}
