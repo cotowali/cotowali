@@ -1,6 +1,6 @@
 module symbols
 
-import cotowari.source { Pos }
+import cotowari.source { Pos, none_pos }
 import cotowari.errors { unreachable }
 
 pub struct Var {
@@ -9,7 +9,7 @@ mut:
 pub:
 	name string [required]
 	id   u64
-	pos  Pos
+	pos  Pos = none_pos
 pub mut:
 	typ Type = builtin_type(.placeholder)
 }
