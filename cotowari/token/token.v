@@ -47,7 +47,9 @@ pub enum TokenKind {
 	op_eq
 	op_ne
 	op_gt
+	op_ge
 	op_lt
+	op_le
 	op_plus_plus
 	op_minus_minus
 	eol
@@ -71,7 +73,9 @@ fn (k TokenKind) is_op() bool {
 		.op_eq,
 		.op_ne,
 		.op_gt,
+		.op_ge,
 		.op_lt,
+		.op_le,
 	]
 }
 
@@ -81,7 +85,9 @@ fn (k TokenKind) is_comparsion_op() bool {
 		.op_eq,
 		.op_ne,
 		.op_gt,
+		.op_ge,
 		.op_lt,
+		.op_le,
 	]
 }
 
