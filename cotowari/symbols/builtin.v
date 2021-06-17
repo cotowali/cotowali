@@ -16,7 +16,7 @@ pub fn builtin_type(key BuiltinTypeKey) Type {
 }
 
 pub enum BuiltinFnKey {
-	echo = 0
+	echo = 1
 	read
 	cat
 	seq
