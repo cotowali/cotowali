@@ -52,7 +52,11 @@ pub fn (expr Expr) pos() Pos {
 }
 
 pub fn (e InfixExpr) typ() Type {
-	return if e.op.kind.@is(.comparsion_op) { builtin_type(.bool) } else { e.right.typ() }
+	return if e.op.kind.@is(.comparsion_op) || e.op.kind.@is(.logical_infix_op) {
+		builtin_type(.bool)
+	} else {
+		e.right.typ()
+	}
 }
 
 pub fn (e IndexExpr) typ() Type {
