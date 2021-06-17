@@ -75,8 +75,32 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	match expr.left.typ() {
 		builtin_type(.int) { e.infix_expr_for_int(expr, opt) }
 		builtin_type(.string) { e.infix_expr_for_string(expr, opt) }
+		builtin_type(.bool) { e.infix_expr_for_bool(expr, opt) }
 		else { panic('infix_expr for `$expr.left.type_symbol().name` is unimplemented') }
 	}
+}
+
+fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
+	if expr.left.typ() != builtin_type(.bool) {
+		panic(unreachable)
+	}
+	if opt.inside_arithmetic {
+		panic(unreachable)
+	}
+
+	if opt.as_command {
+		panic('unimplemented')
+	}
+
+	op := match expr.op.kind {
+		.op_and { '&&' }
+		.op_or { '||' }
+		else { panic_and_value(unreachable, '') }
+	}
+
+	e.expr(expr.left, {})
+	e.write(' $op ')
+	e.expr(expr.right, {})
 }
 
 fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
