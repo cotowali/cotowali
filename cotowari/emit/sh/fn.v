@@ -17,6 +17,15 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 		return
 	}
 
+	if expr.func_id == builtin_fn_id(.call) {
+		e.expr(expr.args[0], {})
+		for arg in expr.args[1..] {
+			e.write(' ')
+			e.expr(arg, {})
+		}
+		return
+	}
+
 	fn_info := expr.fn_info()
 	e.write(e.ident_for(expr.func))
 	mut args := expr.args
