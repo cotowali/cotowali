@@ -41,7 +41,7 @@ const expr_kind_to_op_table = (fn () map[ExprKind][]TokenKind {
 	}
 	return map{
 		k(.pipeline):   v(.op_pipe)
-		k(.comparsion): v(.op_eq, .op_ne, .op_gt, .op_lt)
+		k(.comparsion): v(.op_eq, .op_ne, .op_gt, .op_ge, .op_lt, .op_le)
 		k(.term):       v(.op_plus, .op_minus)
 		k(.factor):     v(.op_mul, .op_div, .op_mod)
 	}
