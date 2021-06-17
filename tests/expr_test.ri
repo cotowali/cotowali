@@ -14,6 +14,10 @@ assert 1 >= 0
 assert 0 <= 0
 assert 0 >= 0
 
+assert 0 == 0 && 1 != 0
+assert 0 == 0 || 1 == 0
+assert 1 == 0 || 0 == 0
+
 assert '10' == '10'
 assert '10' != '11'
 assert '10' + '10' == '1010'
