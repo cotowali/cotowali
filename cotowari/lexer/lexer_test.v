@@ -102,6 +102,7 @@ fn test_lexer() {
 	ktest('return 0', [.key_return, .int_lit])
 	ktest('assert a == b', [.key_assert, .ident, .op_eq, .ident])
 	ktest('a < b || c > d', [.ident, .op_lt, .ident, .op_or, .ident, .op_gt, .ident])
+	ktest('a <= b || c >= d', [.ident, .op_le, .ident, .op_or, .ident, .op_ge, .ident])
 	ktest('!cond', [.op_not, .ident])
 	ktest('a+++++', [.ident, .op_plus_plus, .op_plus_plus, .op_plus])
 	ktest('a-----', [.ident]) // TODO

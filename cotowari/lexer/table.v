@@ -31,6 +31,8 @@ const (
 		'||': k(.op_or)
 		'==': k(.op_eq)
 		'!=': k(.op_ne)
+		'<=': k(.op_le)
+		'>=': k(.op_ge)
 	}
 
 	table_for_three_chars_symbols = map{
