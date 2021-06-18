@@ -2,6 +2,7 @@ default: run
 disable_help: true
 var:
   ric_path: cmd/ric
+  hello_world: examples/hello_world.ri
 tasks:
   run: v run {{ric_path}} $@
   no-emit: v run {{ric_path}} --no-emit $@
@@ -68,8 +69,8 @@ tasks:
       format: v fmt -verify .
       test: z test
       all-conditions-ok:
-        - z hello_world.ri
-        - z trace lexer hello_world.ri
-        - z trace parser hello_world.ri
-        - z trace resolver hello_world.ri
+        - z {{hello_world}}
+        - z trace lexer {{hello_world}}
+        - z trace parser {{hello_world}}
+        - z trace resolver {{hello_world}}
         - z fix
