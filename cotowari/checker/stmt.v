@@ -28,7 +28,10 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 	c.expr(stmt.right)
 
-	if !stmt.is_decl {
+	// 1. if is_decl, left type is set to right type
+	// 2. if left type is placeholder, left is undefined variable.
+	//    So error has been reported by resolver.
+	if !stmt.is_decl && stmt.left.typ() != builtin_type(.placeholder) {
 		c.check_types(
 			want: stmt.left.type_symbol()
 			got: stmt.right.type_symbol()
