@@ -271,6 +271,24 @@ fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
 	}
 }
 
+fn (mut p Parser) parse_index_expr_with_left(left ast.Expr) ?ast.Expr {
+	$if trace_parser ? {
+		p.trace_begin(@FN, '${struct_name(left)}{...}')
+		defer {
+			p.trace_end()
+		}
+	}
+
+	p.consume_with_assert(.l_bracket)
+	index := p.parse_expr(.toplevel) ?
+	r_bracket := p.consume_with_check(.r_bracket) ?
+	return ast.IndexExpr{
+		left: left
+		index: index
+		pos: left.pos().merge(r_bracket.pos)
+	}
+}
+
 fn (mut p Parser) parse_value_left() ?ast.Expr {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
@@ -321,10 +339,10 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 
 	mut expr := p.parse_value_left() ?
 	for {
-		if p.kind(0) == .l_paren {
-			expr = p.parse_call_expr_with_left(expr) ?
-		} else {
-			break
+		match p.kind(0) {
+			.l_paren { expr = p.parse_call_expr_with_left(expr) ? }
+			.l_bracket { expr = p.parse_index_expr_with_left(expr) ? }
+			else { break }
 		}
 	}
 	return expr
