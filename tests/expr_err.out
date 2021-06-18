@@ -32,5 +32,8 @@ expr_err.ri 17,6: mismatched types: `int` (expected) and `string` (found)
   > '10'
     ^^^^
 expr_err.ri 18,2: `int` does not support indexing
+  > arr[0][0]
+    ^^^^^^^^^
+expr_err.ri 19,2: `int` does not support indexing
   > x[0]
     ^^^^
