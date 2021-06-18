@@ -1,22 +1,15 @@
 module tools
 
-import cli { Command, Flag }
+import cli { Command }
 import cotowari.context { new_default_context }
 import cotowari.parser
 import cotowari.checker { new_checker }
 import cotowari.ast { new_resolver }
 
 const (
-	use_checker_flag = Flag{
-		flag: .bool
-		name: 'use-checker'
-		abbrev: 'c'
-		default_value: ['true']
-	}
 	ast_command = Command{
 		name: 'ast'
 		description: 'print ast'
-		flags: [use_checker_flag]
 		execute: execute_ast
 	}
 )
@@ -26,20 +19,22 @@ fn execute_ast(cmd Command) ? {
 		cmd.execute_help()
 		return
 	}
-	use_checker := cmd.flags.get_bool(tools.use_checker_flag.name) or { panic(err) }
 	ctx := new_default_context()
 	mut f := parser.parse_file(cmd.args[0], ctx) or {
 		eprintln('ERROR')
 		return
 	}
-	if use_checker {
+	if ctx.errors.has_syntax_error() {
+		println(f)
+		eprintln('syntax error')
+	} else {
 		mut resolver := new_resolver(ctx)
 		resolver.resolve(f)
 		mut checker := new_checker(ctx)
 		checker.check_file(mut f)
 		println(f)
 		if ctx.errors.len() > 0 {
-			eprintln('checker error')
+			eprintln('checker or resolver error')
 		}
 	}
 	return
