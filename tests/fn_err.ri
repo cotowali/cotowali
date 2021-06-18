@@ -8,3 +8,5 @@ fn g(i int) {}
 
 let v = 0
 v()
+
+0()

@@ -13,3 +13,6 @@ fn_err.ri 7,5: `g` is duplicated
 fn_err.ri 10,2: `v` is not function (`int`)
   > v()
     ^^^
+fn_err.ri 12,2: cannot call `int`
+  > 0()
+    ^^^
