@@ -3,6 +3,7 @@ disable_help: true
 var:
   ric_path: cmd/ric
   hello_world: examples/hello_world.ri
+  err_source: tests/expr_err.ri
 tasks:
   run: v run {{ric_path}} $@
   no-emit: v run {{ric_path}} --no-emit $@
@@ -70,6 +71,12 @@ tasks:
       test: z test
       run-on-all-conditions:
         - z {{hello_world}}
+        - z ast {{hello_world}}
+        - z ast {{err_source}}
+        - z tokens {{hello_world}}
+        - z tokens {{err_source}}
+        - z scope {{hello_world}}
+        - z scope {{err_source}}
         - z trace lexer {{hello_world}}
         - z trace parser {{hello_world}}
         - z trace resolver {{hello_world}}
