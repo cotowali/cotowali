@@ -67,7 +67,7 @@ tasks:
       setup-v: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
       format: v fmt -verify .
       test: z test
-      all-condition-ok:
+      all-conditions-ok:
         - z hello_world.ri
         - z trace lexer hello_world.ri
         - z trace parser hello_world.ri
