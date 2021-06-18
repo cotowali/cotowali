@@ -226,7 +226,7 @@ fn (mut lex Lexer) read_dollar_directive() Token {
 	}
 
 	lex.skip_with_assert(fn (c Char) bool {
-		return c.byte() == `\$`
+		return c.byte() == `$`
 	})
 	if lex.char(0).byte() == `{` {
 		lex.skip()
