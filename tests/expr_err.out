@@ -28,3 +28,9 @@ expr_err.ri 14,4: mismatched types: `int` (expected) and `string` (found)
 expr_err.ri 14,13: mismatched types: `int` (expected) and `string` (found)
   > "a"
     ^^^
+expr_err.ri 17,6: mismatched types: `int` (expected) and `string` (found)
+  > '10'
+    ^^^^
+expr_err.ri 18,2: `int` does not support indexing
+  > x[0]
+    ^^^^
