@@ -16,14 +16,14 @@ array_to_str() {
   len="$(eval echo "${name}_len")"
   for i in $(seq 0 $(( len - 1 )) )
   do
-    eval echo "${name}_$i"
+    eval echo "\$${name}_$i"
   done
 }
 
 array_get() {
   name=$1
   i=$2
-  eval echo "${name}_$i"
+  eval echo "\$${name}_$i"
 }
 
 array_set() {
