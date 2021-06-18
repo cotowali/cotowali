@@ -183,31 +183,11 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 
 	ident := p.consume()
 	name := ident.text
-	p.consume_if_kind_eq(.l_paren) or {
-		return ast.Var{
-			scope: p.scope
-			pos: ident.pos
-			sym: new_placeholder_var(name)
-		}
-	}
-	mut args := []ast.Expr{}
-	if p.kind(0) != .r_paren {
-		for {
-			args << p.parse_expr(.toplevel) ?
-			if p.kind(0) == .r_paren {
-				break
-			}
-			p.consume_with_check(.comma) ?
-		}
-	}
-	r_paren := p.consume_with_check(.r_paren) ?
-	f := ast.CallExpr{
+	return ast.Var{
 		scope: p.scope
-		pos: ident.pos.merge(r_paren.pos)
-		func: ast.Var{p.scope, ident.pos, new_placeholder_var(name)}
-		args: args
+		pos: ident.pos
+		sym: new_placeholder_var(name)
 	}
-	return f
 }
 
 fn (mut p Parser) parse_array_literal() ?ast.Expr {
@@ -261,7 +241,36 @@ fn (mut p Parser) parse_paren_expr() ?ast.Expr {
 	}
 }
 
-fn (mut p Parser) parse_value() ?ast.Expr {
+fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
+	$if trace_parser ? {
+		p.trace_begin(@FN, left.str.split_into_lines()[0] + '...')
+		defer {
+			p.trace_end()
+		}
+	}
+
+	p.consume_with_assert(.l_paren)
+
+	mut args := []ast.Expr{}
+	if p.kind(0) != .r_paren {
+		for {
+			args << p.parse_expr(.toplevel) ?
+			if p.kind(0) == .r_paren {
+				break
+			}
+			p.consume_with_check(.comma) ?
+		}
+	}
+	r_paren := p.consume_with_check(.r_paren) ?
+	return ast.CallExpr{
+		scope: p.scope
+		pos: left.pos().merge(r_paren.pos)
+		func: left
+		args: args
+	}
+}
+
+fn (mut p Parser) parse_value_left() ?ast.Expr {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
@@ -299,4 +308,23 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 			return p.unexpected_token_error(found)
 		}
 	}
+}
+
+fn (mut p Parser) parse_value() ?ast.Expr {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
+	mut expr := p.parse_value_left() ?
+	for {
+		if p.kind(0) == .l_paren {
+			expr = p.parse_call_expr_with_left(expr) ?
+		} else {
+			break
+		}
+	}
+	return expr
 }
