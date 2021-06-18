@@ -40,9 +40,16 @@ jobs:
       - uses: actions/checkout@v2
       - run: z ci setup-v
       - run: z ci test
+  all-condition-ok:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: zakuro9715/setup-z@main
+      - uses: actions/checkout@v2
+      - run: z ci setup-v
+      - run: z ci all-condition-ok
   slack-notify:
     if: failure()
-    needs: [format, test, sanitize]
+    needs: [format, test, sanitize, all-conditions-ok]
     runs-on: ubuntu-latest
     steps:
       - uses: Gamesight/slack-workflow-status@master
