@@ -68,8 +68,8 @@ tasks:
       format: v fmt -verify .
       test: z test
       all-condition-ok:
-        - z
-        - z trace lexer
-        - z trace parser
-        - z trace resolver
+        - z hello_world.ri
+        - z trace lexer hello_world.ri
+        - z trace parser hello_world.ri
+        - z trace resolver hello_world.ri
         - z fix
