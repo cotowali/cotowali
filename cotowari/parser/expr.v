@@ -4,6 +4,7 @@ import cotowari.token { TokenKind }
 import cotowari.ast
 import cotowari.symbols { new_placeholder_var }
 import cotowari.errors { unreachable }
+import cotowari.util { struct_name }
 
 fn (mut p Parser) parse_expr_stmt(expr ast.Expr) ?ast.Stmt {
 	$if trace_parser ? {
@@ -243,7 +244,7 @@ fn (mut p Parser) parse_paren_expr() ?ast.Expr {
 
 fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
 	$if trace_parser ? {
-		p.trace_begin(@FN, left.str.split_into_lines()[0] + '...')
+		p.trace_begin(@FN, '${struct_name(left)}{...}')
 		defer {
 			p.trace_end()
 		}
