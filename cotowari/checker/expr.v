@@ -77,6 +77,10 @@ fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 
 fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 	c.expr(expr.left)
+	left_ts := expr.left.type_symbol()
+	if left_ts.kind() != .array {
+		c.error('`$left_ts.name` does not support indexing', expr.pos)
+	}
 	c.expr(expr.index)
 	c.check_types(
 		want: Expr(expr).scope().must_lookup_type(builtin_type(.int))
