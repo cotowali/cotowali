@@ -22,7 +22,11 @@ raw_arr(arr)
 new_arr()
 // assert raw_arr(arr) == arr
 
-echo('for')
-for i in [0, 1, 2] {
-  echo(i)
+fn for_in_test() {
+  echo('for')
+  for i in [0, 1, 2] {
+    echo(i)
+  }
 }
+
+for_in_test()
