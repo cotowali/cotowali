@@ -26,7 +26,7 @@ fn (mut r Resolver) expr(expr Expr) {
 		Pipeline { r.pipeline(expr) }
 		PrefixExpr { r.prefix_expr(expr) }
 		StringLiteral { r.string_literal(expr) }
-		Var { r.var_(expr) }
+		Var { r.var_(mut expr) }
 	}
 }
 
@@ -336,11 +336,20 @@ pub fn (v Var) name() string {
 	return v.sym.name
 }
 
-fn (mut r Resolver) var_(expr Var) {
+fn (mut r Resolver) var_(mut v Var) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
 			r.trace_end()
+		}
+	}
+
+	if v.sym.typ == builtin_type(.placeholder) {
+		name := v.sym.name
+		if sym := v.scope.lookup_var_with_pos(name, v.pos) {
+			v.sym = sym
+		} else {
+			r.error('undefined variable `$name`', v.pos)
 		}
 	}
 }

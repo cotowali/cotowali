@@ -184,13 +184,10 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	ident := p.consume()
 	name := ident.text
 	p.consume_if_kind_eq(.l_paren) or {
-		// TODO: Move to checker
 		return ast.Var{
 			scope: p.scope
 			pos: ident.pos
-			sym: p.scope.lookup_var(name) or {
-				return p.error('undefined variable `$name`', ident.pos)
-			}
+			sym: new_placeholder_var(name)
 		}
 	}
 	mut args := []ast.Expr{}
