@@ -28,5 +28,15 @@ fn for_in_test() {
     echo(i)
   }
 }
-
 for_in_test()
+
+fn index_test() {
+  let arr = [10, 11, 12]
+  assert arr[0] == 10
+  assert arr[1] == 11
+  let i = 0
+  assert arr[i] == 10
+  i = 2
+  assert arr[i] == 12
+}
+index_test()

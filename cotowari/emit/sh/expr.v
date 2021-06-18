@@ -26,7 +26,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.ParenExpr { e.paren_expr(expr, opt) }
 		ast.Pipeline { e.pipeline(expr, opt) }
 		ast.InfixExpr { e.infix_expr(expr, opt) }
-		ast.IndexExpr { panic('uninmplemented') }
+		ast.IndexExpr { e.index_expr(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
 		ast.IntLiteral { e.write_echo_if_command_then_write(expr.token.text, opt) }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
@@ -64,6 +64,18 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 			e.write_echo_if_command_then_write(s, opt)
 		}
 	}
+}
+
+fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
+	e.write_echo_if_command(opt)
+
+	e.write_block({ open: '\$( ', close: ' )', inline: true }, fn (mut e Emitter, v ExprWithOpt) {
+		expr := v.expr as ast.IndexExpr
+		name := e.ident_for(expr.left)
+
+		e.write('array_get $name ')
+		e.expr(expr.index, v.opt)
+	}, ExprWithOpt{expr, opt})
 }
 
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
