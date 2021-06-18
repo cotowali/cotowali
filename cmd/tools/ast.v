@@ -4,6 +4,7 @@ import cli { Command, Flag }
 import cotowari.context { new_default_context }
 import cotowari.parser
 import cotowari.checker { new_checker }
+import cotowari.ast { new_resolver }
 
 const (
 	use_checker_flag = Flag{
@@ -32,6 +33,8 @@ fn execute_ast(cmd Command) ? {
 		return
 	}
 	if use_checker {
+		mut resolver := new_resolver(ctx)
+		resolver.resolve(f)
 		mut checker := new_checker(ctx)
 		checker.check_file(mut f)
 		println(f)
