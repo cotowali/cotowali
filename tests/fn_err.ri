@@ -6,3 +6,5 @@ fn g(i int) string {
 }
 fn g(i int) {}
 
+let v = 0
+v()

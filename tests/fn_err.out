@@ -10,3 +10,6 @@ fn_err.ri 5,11: mismatched types: `string` (expected) and `int` (found)
 fn_err.ri 7,5: `g` is duplicated
   > g
     ^
+fn_err.ri 10,2: `v` is not function (`int`)
+  > v()
+    ^^^
