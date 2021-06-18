@@ -17,3 +17,15 @@ pub fn panic_and_value<T>(msg string, v T) T {
 	panic(msg)
 	return v
 }
+
+pub fn struct_name<T>(v T) string {
+	// SumTypeName(SumTypeName2(mod.Struct{
+	mut s := v.str().split_into_lines()[0]
+	s = s.split('(').last()
+	s = s.split('{').first()
+
+	// if struct has custom str, use typeof
+	s = if s.len > 0 { s } else { typeof(v).name }
+
+	return s.split('.').last()
+}

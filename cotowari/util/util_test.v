@@ -31,3 +31,19 @@ fn test_nil_to_none() {
 	v.ref = &s
 	assert v.opt() or { assert false } == &s
 }
+
+struct Foo {}
+
+struct Bar {}
+
+fn (b Bar) str() string {
+	return '{}'
+}
+
+type FooBar = Bar | Foo
+
+fn test_struct_name() {
+	assert struct_name(Foo{}) == 'Foo'
+	assert struct_name(Bar{}) == 'Bar'
+	assert struct_name(FooBar(Foo{})) == 'Foo'
+}
