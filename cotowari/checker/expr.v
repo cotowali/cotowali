@@ -7,6 +7,7 @@ fn (mut c Checker) expr(expr Expr) {
 	match mut expr {
 		ast.ArrayLiteral { c.array_literal(expr) }
 		ast.AsExpr { c.as_expr(expr) }
+		ast.BoolLiteral {}
 		ast.CallExpr { c.call_expr(mut expr) }
 		ast.IndexExpr { c.index_expr(expr) }
 		ast.InfixExpr { c.infix_expr(expr) }
