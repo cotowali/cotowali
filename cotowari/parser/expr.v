@@ -316,6 +316,13 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 				token: tok
 			}
 		}
+		.bool_lit {
+			p.consume()
+			return ast.BoolLiteral{
+				scope: p.scope
+				token: tok
+			}
+		}
 		.l_bracket {
 			return p.parse_array_literal()
 		}
