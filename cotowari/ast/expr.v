@@ -236,11 +236,14 @@ fn (mut r Resolver) paren_expr(expr ParenExpr) {
 	r.expr(expr.expr)
 }
 
-pub struct StringLiteral {
+pub struct PrimitiveLiteral {
 pub:
 	scope &Scope
 	token Token
 }
+
+pub type StringLiteral = PrimitiveLiteral
+pub type IntLiteral = PrimitiveLiteral
 
 fn (mut r Resolver) string_literal(expr StringLiteral) {
 	$if trace_resolver ? {
@@ -249,12 +252,6 @@ fn (mut r Resolver) string_literal(expr StringLiteral) {
 			r.trace_end()
 		}
 	}
-}
-
-pub struct IntLiteral {
-pub:
-	scope &Scope
-	token Token
 }
 
 fn (mut r Resolver) int_literal(expr IntLiteral) {
