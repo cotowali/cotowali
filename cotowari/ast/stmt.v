@@ -53,6 +53,7 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 				r.set_typ(stmt.left, stmt.right.typ())
 			}
 		}
+		IndexExpr {}
 		else {
 			r.error('invalid left-hand side of assignment', stmt.left.pos())
 		}

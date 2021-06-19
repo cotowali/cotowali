@@ -48,5 +48,13 @@ fn (mut e Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
 }
 
 fn (mut e Emitter) assign_stmt(node ast.AssignStmt) {
-	e.assign(e.ident_for(node.left), node.right, node.left.type_symbol())
+	if node.left is ast.IndexExpr {
+		name := e.ident_for(node.left.left)
+		e.write('array_set $name ')
+		e.expr(node.left.index, {})
+		e.write(' ')
+		e.expr(node.right, writeln: true)
+	} else {
+		e.assign(e.ident_for(node.left), node.right, node.left.type_symbol())
+	}
 }
