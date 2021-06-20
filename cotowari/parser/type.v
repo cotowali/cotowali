@@ -28,6 +28,19 @@ fn (mut p Parser) parse_ident_type() ?Type {
 	return (p.scope.lookup_type(tok.text) or { return p.error(err, tok.pos) }).typ
 }
 
+fn (mut p Parser) parse_reference_type() ?Type {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
+	p.consume_with_assert(.amp)
+	target := p.parse_type() ?
+	return p.scope.lookup_or_register_reference_type(target: target).typ
+}
+
 fn (mut p Parser) parse_type() ?Type {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
@@ -38,6 +51,7 @@ fn (mut p Parser) parse_type() ?Type {
 
 	match p.kind(0) {
 		.l_bracket { return p.parse_array_type() }
+		.amp { return p.parse_reference_type() }
 		else { return p.parse_ident_type() }
 	}
 }
