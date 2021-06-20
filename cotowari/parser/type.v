@@ -16,6 +16,11 @@ fn (mut p Parser) parse_array_type() ?Type {
 	return p.scope.lookup_or_register_array_type(elem: elem).typ
 }
 
+fn (mut p Parser) parse_ident_type() ?Type {
+	tok := p.consume_with_check(.ident) ?
+	return (p.scope.lookup_type(tok.text) or { return p.error(err, tok.pos) }).typ
+}
+
 fn (mut p Parser) parse_type() ?Type {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
@@ -25,12 +30,7 @@ fn (mut p Parser) parse_type() ?Type {
 	}
 
 	match p.kind(0) {
-		.l_bracket {
-			return p.parse_array_type()
-		}
-		else {
-			tok := p.consume_with_check(.ident) ?
-			return (p.scope.lookup_type(tok.text) or { return p.error(err, tok.pos) }).typ
-		}
+		.l_bracket { return p.parse_array_type() }
+		else { return p.parse_ident_type() }
 	}
 }
