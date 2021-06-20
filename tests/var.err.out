@@ -1,0 +1,3 @@
+var.err.ri 2,6: `i` is duplicated
+  > i
+    ^

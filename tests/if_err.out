@@ -1,6 +1,0 @@
-if_err.ri 1,4: non-bool type used as if condition
-  > 1 + 1
-    ^^^^^
-if_err.ri 2,12: non-bool type used as if condition
-  > 1 + 2
-    ^^^^^

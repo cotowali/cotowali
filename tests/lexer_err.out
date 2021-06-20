@@ -1,3 +1,0 @@
-lexer_err.ri 1,1: unterminated string literal
-  > 'abc
-    ^^^^

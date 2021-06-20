@@ -1,0 +1,39 @@
+expr.err.ri 5,7: undefined variable `x`
+  > x
+    ^
+expr.err.ri 7,2: mismatched types: `int` (left) and `string` (right)
+  > f("a") + "a"
+    ^^^^^^^^^^^^
+expr.err.ri 7,4: mismatched types: `int` (expected) and `string` (found)
+  > "a"
+    ^^^
+expr.err.ri 8,10: mismatched types: `string` (left) and `int` (right)
+  > "a" + f("a")
+    ^^^^^^^^^^^^
+expr.err.ri 8,18: mismatched types: `int` (expected) and `string` (found)
+  > "a"
+    ^^^
+expr.err.ri 10,2: undefined variable `y`
+  > y
+    ^
+expr.err.ri 11,2: undefined variable `y`
+  > y
+    ^
+expr.err.ri 12,2: invalid left-hand side of assignment
+  > 0
+    ^
+expr.err.ri 14,4: mismatched types: `int` (expected) and `string` (found)
+  > "a"
+    ^^^
+expr.err.ri 14,13: mismatched types: `int` (expected) and `string` (found)
+  > "a"
+    ^^^
+expr.err.ri 17,6: mismatched types: `int` (expected) and `string` (found)
+  > '10'
+    ^^^^
+expr.err.ri 18,2: `int` does not support indexing
+  > arr[0][0]
+    ^^^^^^^^^
+expr.err.ri 19,2: `int` does not support indexing
+  > x[0]
+    ^^^^

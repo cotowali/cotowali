@@ -21,7 +21,7 @@ enum FileSuffix {
 fn suffix(s FileSuffix) string {
 	return match s {
 		.ri { '.ri' }
-		.err { '_err' }
+		.err { '.err' }
 		.todo { '.todo' }
 		.out { '.out' }
 	}
