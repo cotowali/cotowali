@@ -17,6 +17,13 @@ fn (mut p Parser) parse_array_type() ?Type {
 }
 
 fn (mut p Parser) parse_ident_type() ?Type {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
 	tok := p.consume_with_check(.ident) ?
 	return (p.scope.lookup_type(tok.text) or { return p.error(err, tok.pos) }).typ
 }
