@@ -16,6 +16,7 @@ enum FileSuffix {
 	err
 	todo
 	out
+	noemit
 }
 
 fn suffix(s FileSuffix) string {
@@ -24,6 +25,7 @@ fn suffix(s FileSuffix) string {
 		.err { '.err' }
 		.todo { '.todo' }
 		.out { '.out' }
+		.noemit { '.noemit' }
 	}
 }
 
@@ -34,6 +36,10 @@ fn is_err_test_file(f string) bool {
 
 fn is_todo_test_file(f string) bool {
 	return f.trim_suffix(suffix(.ri)).ends_with(suffix(.todo))
+}
+
+fn is_noemit_test_file(f string) bool {
+	return f.trim_suffix(suffix(.ri)).trim_suffix(suffix(.todo)).ends_with(suffix(.noemit))
 }
 
 fn out_path(f string) string {
@@ -71,6 +77,7 @@ struct Ric {
 
 enum RicCommand {
 	compile
+	noemit
 	run
 }
 
@@ -85,6 +92,7 @@ fn (ric Ric) compile() ? {
 fn (ric Ric) execute(c RicCommand, file string) os.Result {
 	return match c {
 		.compile { os.execute('$ric.bin $file') }
+		.noemit { os.execute('$ric.bin --no-emit $file') }
 		.run { os.execute('$ric.bin run $file') }
 	}
 }
@@ -97,6 +105,7 @@ fn (ric Ric) new_test_case(path string) TestCase {
 		out_path: out
 		is_err_test: is_err_test_file(path)
 		is_todo_test: is_todo_test_file(path)
+		is_noemit_test: is_noemit_test_file(path)
 		expected: os.read_file(out) or { '' }
 	}
 }
@@ -111,11 +120,12 @@ enum TestResult {
 struct TestCase {
 	ric Ric
 mut:
-	path         string     [required]
-	out_path     string     [required]
-	is_err_test  bool       [required]
-	is_todo_test bool       [required]
-	result       TestResult
+	path           string     [required]
+	out_path       string     [required]
+	is_err_test    bool       [required]
+	is_todo_test   bool       [required]
+	is_noemit_test bool       [required]
+	result         TestResult
 
 	exit_code int
 	expected  string [required]
