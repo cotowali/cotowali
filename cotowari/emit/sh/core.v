@@ -46,7 +46,7 @@ fn (mut e Emitter) writeln(s string) {
 
 [inline]
 fn (mut e Emitter) write(s string) {
-	e.code[e.cur_kind].write(s)
+	e.code[e.cur_kind].write_string(s)
 }
 
 [inline]

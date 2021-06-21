@@ -33,7 +33,22 @@ pub fn (b Builder) bytes() []byte {
 	return b.buf
 }
 
-pub fn (mut b Builder) write(s string) {
+pub fn (mut b Builder) write(data []byte) ?int {
+	if data.len == 0 {
+		return 0
+	}
+	orig_len := data.len
+	if b.newline {
+		b.write_indent()
+	}
+	defer {
+		b.newline = data[data.len - 1] == `\n`
+	}
+	b.buf.write(data) ?
+	return b.len() - orig_len
+}
+
+pub fn (mut b Builder) write_string(s string) {
 	if s.len == 0 {
 		return
 	}
@@ -45,7 +60,7 @@ pub fn (mut b Builder) write(s string) {
 }
 
 pub fn (mut b Builder) writeln(s string) {
-	b.write(s + '\n')
+	b.write_string(s + '\n')
 }
 
 pub fn (mut b Builder) write_indent() {
