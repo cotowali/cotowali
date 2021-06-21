@@ -21,6 +21,13 @@ struct ExprWithOpt {
 	opt  ExprOpt  [required]
 }
 
+fn (mut e Emitter) expr_or_string(expr ExprOrString, opt ExprOpt) {
+	match expr {
+		ast.Expr { e.expr(expr, opt) }
+		string { e.write_echo_if_command_then_write(expr, opt) }
+	}
+}
+
 fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 	match expr {
 		ast.AsExpr { e.expr(expr.expr, opt) }
