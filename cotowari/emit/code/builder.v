@@ -1,7 +1,6 @@
 module code
 
 import strings
-import cotowari.util { must_write }
 import cotowari.context { Context }
 
 pub struct Builder {
@@ -37,34 +36,32 @@ pub fn (mut b Builder) write(data []byte) ?int {
 	if data.len == 0 {
 		return 0
 	}
-	orig_len := b.len()
+
+	mut n := 0
 	if b.newline {
-		b.write_indent()
+		n += b.write_indent() ?
 	}
 	defer {
 		b.newline = data[data.len - 1] == `\n`
 	}
-	b.buf.write(data) ?
-	return b.len() - orig_len
+	n += b.buf.write(data) ?
+	return n
 }
 
-pub fn (mut b Builder) write_string(s string) {
-	if s.len == 0 {
-		return
-	}
-	if b.newline {
-		b.write_indent()
-	}
-	must_write(b.buf, s)
-	b.newline = s[s.len - 1] == `\n`
+pub fn (mut b Builder) write_string(s string) ?int {
+	return b.write(s.bytes())
 }
 
-pub fn (mut b Builder) writeln(s string) {
-	b.write_string(s + '\n')
+pub fn (mut b Builder) writeln(s string) ?int {
+	n := b.write_string(s) ?
+	b.buf << `\n`
+	return n + 1
 }
 
-pub fn (mut b Builder) write_indent() {
-	must_write(b.buf, b.ctx.config.indent.repeat(b.indent_n))
+pub fn (mut b Builder) write_indent() ?int {
+	s := b.ctx.config.indent.repeat(b.indent_n)
+	b.buf.write_string(s)
+	return s.len
 }
 
 pub fn (mut b Builder) indent() {

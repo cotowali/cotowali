@@ -41,12 +41,12 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 
 [inline]
 fn (mut e Emitter) writeln(s string) {
-	e.code[e.cur_kind].writeln(s)
+	e.code[e.cur_kind].writeln(s) or { panic(err) }
 }
 
 [inline]
 fn (mut e Emitter) write(s string) {
-	e.code[e.cur_kind].write_string(s)
+	e.code[e.cur_kind].write_string(s) or { panic(err) }
 }
 
 [inline]
