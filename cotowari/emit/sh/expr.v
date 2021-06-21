@@ -6,6 +6,8 @@ import cotowari.symbols { builtin_type }
 import cotowari.util { panic_and_value }
 import cotowari.errors { unreachable }
 
+type ExprOrString = ast.Expr | string
+
 struct ExprOpt {
 	as_command        bool
 	expand_array      bool

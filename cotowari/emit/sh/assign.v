@@ -3,9 +3,7 @@ module sh
 import cotowari.ast
 import cotowari.symbols { TypeSymbol }
 
-type AssignValue = ast.Expr | string
-
-fn (mut e Emitter) array_assign(name string, value AssignValue) {
+fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 	match value {
 		ast.Expr {
 			ident := e.ident_for(value)
@@ -30,7 +28,7 @@ fn (mut e Emitter) array_assign(name string, value AssignValue) {
 	}
 }
 
-fn (mut e Emitter) assign(name string, value AssignValue, ts TypeSymbol) {
+fn (mut e Emitter) assign(name string, value ExprOrString, ts TypeSymbol) {
 	if ts.kind() == .array {
 		e.array_assign(name, value)
 		return
