@@ -25,8 +25,8 @@ fn (mut p Parser) parse_expr_stmt(expr ast.Expr) ?ast.Stmt {
 enum ExprKind {
 	toplevel = 0
 	pipeline
-	or_
-	and
+	logical_or
+	logical_and
 	comparsion
 	term
 	factor
@@ -43,12 +43,12 @@ const expr_kind_to_op_table = (fn () map[ExprKind][]TokenKind {
 		return ops
 	}
 	return map{
-		k(.pipeline):   v(.op_pipe)
-		k(.or_):        v(.op_or)
-		k(.and):        v(.op_and)
-		k(.comparsion): v(.op_eq, .op_ne, .op_gt, .op_ge, .op_lt, .op_le)
-		k(.term):       v(.op_plus, .op_minus)
-		k(.factor):     v(.op_mul, .op_div, .op_mod)
+		k(.pipeline):    v(.op_pipe)
+		k(.logical_or):  v(.op_logical_or)
+		k(.logical_and): v(.op_logical_and)
+		k(.comparsion):  v(.op_eq, .op_ne, .op_gt, .op_ge, .op_lt, .op_le)
+		k(.term):        v(.op_plus, .op_minus)
+		k(.factor):      v(.op_mul, .op_div, .op_mod)
 	}
 }())
 
@@ -122,7 +122,7 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 	match kind {
 		.toplevel { return p.parse_expr(kind.inner()) }
 		.pipeline { return p.parse_pipeline() }
-		.or_, .and, .comparsion, .term, .factor { return p.parse_infix_expr(kind) }
+		.logical_or, .logical_and, .comparsion, .term, .factor { return p.parse_infix_expr(kind) }
 		.as_cast { return p.parse_as_expr() }
 		.prefix { return p.parse_prefix_expr() }
 		.value { return p.parse_value() }

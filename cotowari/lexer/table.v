@@ -27,8 +27,8 @@ const (
 	table_for_two_chars_symbols = map{
 		'++': k(.op_plus_plus)
 		'--': k(.op_minus_minus)
-		'&&': k(.op_and)
-		'||': k(.op_or)
+		'&&': k(.op_logical_and)
+		'||': k(.op_logical_or)
 		'==': k(.op_eq)
 		'!=': k(.op_ne)
 		'<=': k(.op_le)

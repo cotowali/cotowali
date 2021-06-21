@@ -106,8 +106,8 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 	}
 
 	op := match expr.op.kind {
-		.op_and { '&&' }
-		.op_or { '||' }
+		.op_logical_and { '&&' }
+		.op_logical_or { '||' }
 		else { panic_and_value(unreachable, '') }
 	}
 

@@ -40,8 +40,8 @@ pub enum TokenKind {
 	op_div
 	op_mul
 	op_mod
-	op_and
-	op_or
+	op_logical_and
+	op_logical_or
 	op_assign
 	op_not
 	op_eq
@@ -66,8 +66,8 @@ fn (k TokenKind) is_op() bool {
 		.op_div,
 		.op_mul,
 		.op_mod,
-		.op_and,
-		.op_or,
+		.op_logical_and,
+		.op_logical_and,
 		.op_assign,
 		.op_not,
 		.op_eq,
@@ -93,7 +93,7 @@ fn (k TokenKind) is_comparsion_op() bool {
 
 [inline]
 fn (k TokenKind) is_logical_infix_op() bool {
-	return k in [.op_and, .op_or]
+	return k in [.op_logical_and, .op_logical_or]
 }
 
 [inline]
