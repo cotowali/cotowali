@@ -130,11 +130,11 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 
 		// '(' $left = 'true' ')' -a '(' $right = 'true' )
 		e.write(" '(' ")
-		e.sh_test_cond_infix(expr.left, '=', "'true'")
+		e.sh_test_cond_is_true(expr.left)
 		e.write(" ')' ")
 		e.write(' $op_flag ')
 		e.write(" '(' ")
-		e.sh_test_cond_infix(expr.right, '=', "'true'")
+		e.sh_test_cond_is_true(expr.right)
 		e.write(" ')' ")
 	}, expr)
 }
