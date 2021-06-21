@@ -20,7 +20,7 @@ pub fn new_builder(n int, ctx &Context) Builder {
 	}
 }
 
-pub fn (mut b Builder) len() int {
+pub fn (b &Builder) len() int {
 	return b.buf.len
 }
 
