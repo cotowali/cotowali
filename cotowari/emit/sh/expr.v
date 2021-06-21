@@ -118,6 +118,8 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 			.op_logical_or { '-o' }
 			else { panic_and_value(unreachable, '') }
 		}
+
+		// '(' $left = 'true' ')' -a '(' $right = 'true' )
 		e.write(" '(' ")
 		e.expr(expr.left, {})
 		e.write(" = 'true'")
