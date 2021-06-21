@@ -55,6 +55,7 @@ pub fn (mut b Builder) write_string(s string) ?int {
 pub fn (mut b Builder) writeln(s string) ?int {
 	n := b.write_string(s) ?
 	b.buf << `\n`
+	b.newline = true
 	return n + 1
 }
 
