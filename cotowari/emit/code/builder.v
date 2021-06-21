@@ -7,7 +7,7 @@ import cotowari.context { Context }
 pub struct Builder {
 	ctx &Context
 mut:
-	indent    int
+	indent_n  int
 	newline   bool = true
 	tmp_count int
 	buf       strings.Builder
@@ -45,15 +45,15 @@ pub fn (mut b Builder) writeln(s string) {
 }
 
 pub fn (mut b Builder) write_indent() {
-	must_write(b.buf, '  '.repeat(b.indent))
+	must_write(b.buf, '  '.repeat(b.indent_n))
 }
 
 pub fn (mut b Builder) indent() {
-	b.indent++
+	b.indent_n++
 }
 
 pub fn (mut b Builder) unindent() {
-	b.indent--
+	b.indent_n--
 }
 
 pub fn (mut b Builder) new_tmp_var() string {
