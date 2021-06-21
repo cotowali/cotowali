@@ -130,13 +130,11 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 
 		// '(' $left = 'true' ')' -a '(' $right = 'true' )
 		e.write(" '(' ")
-		e.expr(expr.left, {})
-		e.write(" = 'true'")
+		e.sh_test_cond_infix(expr.left, '=', "'true'")
 		e.write(" ')' ")
 		e.write(' $op_flag ')
 		e.write(" '(' ")
-		e.expr(expr.right, {})
-		e.write(" = 'true'")
+		e.sh_test_cond_infix(expr.right, '=', "'true'")
 		e.write(" ')' ")
 	}, expr)
 }
@@ -158,9 +156,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 				.op_le { '-le' }
 				else { panic_and_value(unreachable, '') }
 			}
-			e.expr(expr.left, {})
-			e.write(' $op ')
-			e.expr(expr.right, {})
+			e.sh_test_cond_infix(expr.left, op, expr.right)
 		}, expr)
 		return
 	}
@@ -193,9 +189,8 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 	match expr.op.kind {
 		.op_eq, .op_ne {
 			e.write_test_to_bool_str_block(fn (mut e Emitter, expr ast.InfixExpr) {
-				e.expr(expr.left, {})
-				e.write(if expr.op.kind == .op_eq { ' = ' } else { ' != ' })
-				e.expr(expr.right, {})
+				op := if expr.op.kind == .op_eq { ' = ' } else { ' != ' }
+				e.sh_test_cond_infix(expr.left, op, expr.right)
 			}, expr)
 		}
 		.op_plus {
