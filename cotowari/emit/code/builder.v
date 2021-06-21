@@ -64,7 +64,7 @@ pub fn (mut b Builder) writeln(s string) {
 }
 
 pub fn (mut b Builder) write_indent() {
-	must_write(b.buf, '  '.repeat(b.indent_n))
+	must_write(b.buf, b.ctx.config.indent.repeat(b.indent_n))
 }
 
 pub fn (mut b Builder) indent() {
