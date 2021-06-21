@@ -7,7 +7,6 @@ pub struct Builder {
 	ctx &Context
 mut:
 	indent_n  int
-	newline   bool = true
 	tmp_count int
 	buf       strings.Builder
 }
@@ -18,6 +17,13 @@ pub fn new_builder(n int, ctx &Context) Builder {
 		buf: strings.new_builder(n)
 		ctx: ctx
 	}
+}
+
+pub fn (b &Builder) newline() bool {
+	if b.len() > 0 {
+		println(b.buf[b.len() - 1])
+	}
+	return b.len() == 0 || b.buf.byte_at(b.len() - 1) == `\n`
 }
 
 pub fn (b &Builder) len() int {
@@ -38,11 +44,8 @@ pub fn (mut b Builder) write(data []byte) ?int {
 	}
 
 	mut n := 0
-	if b.newline {
+	if b.newline() {
 		n += b.write_indent() ?
-	}
-	defer {
-		b.newline = data[data.len - 1] == `\n`
 	}
 	n += b.buf.write(data) ?
 	return n
@@ -55,7 +58,6 @@ pub fn (mut b Builder) write_string(s string) ?int {
 pub fn (mut b Builder) writeln(s string) ?int {
 	n := b.write_string(s) ?
 	b.buf << `\n`
-	b.newline = true
 	return n + 1
 }
 
