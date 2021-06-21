@@ -33,7 +33,10 @@ fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
 
 fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 	e.write('if ')
-	e.expr(stmt.expr, as_command: false, writeln: true)
+	e.write_block({ open: '[ ', close: " = 'true' ]", inline: true }, fn (mut e Emitter, cond ast.Expr) {
+		e.expr(cond, {})
+	}, stmt.expr)
+	e.writeln('')
 	e.writeln('then')
 	e.writeln(':')
 
@@ -54,7 +57,10 @@ fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
 			e.writeln('else')
 		} else {
 			e.write(if i == 0 { 'if ' } else { 'elif ' })
-			e.expr(branch.cond, as_command: false, writeln: true)
+			e.write_block({ open: '[ ', close: " = 'true' ]", inline: true }, fn (mut e Emitter, cond ast.Expr) {
+				e.expr(cond, {})
+			}, branch.cond)
+			e.writeln('')
 			e.writeln('then')
 		}
 		e.indent()

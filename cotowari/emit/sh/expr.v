@@ -93,6 +93,13 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	}
 }
 
+fn (mut e Emitter) write_test_to_bool_str_block<T>(f fn (mut Emitter, T), v T) {
+	open, close := '\$( [ ', " ] && echo 'true' || echo 'false' )"
+	e.write('"')
+	e.write_block({ open: open, close: close, inline: true }, f, v)
+	e.write('"')
+}
+
 fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 	if expr.left.typ() != builtin_type(.bool) {
 		panic(unreachable)
@@ -105,15 +112,22 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 		panic('unimplemented')
 	}
 
-	op := match expr.op.kind {
-		.op_logical_and { '&&' }
-		.op_logical_or { '||' }
-		else { panic_and_value(unreachable, '') }
-	}
-
-	e.expr(expr.left, {})
-	e.write(' $op ')
-	e.expr(expr.right, {})
+	e.write_test_to_bool_str_block(fn (mut e Emitter, expr ast.InfixExpr) {
+		op_flag := match expr.op.kind {
+			.op_logical_and { '-a' }
+			.op_logical_or { '-o' }
+			else { panic_and_value(unreachable, '') }
+		}
+		e.write(" '(' ")
+		e.expr(expr.left, {})
+		e.write(" = 'true'")
+		e.write(" ')' ")
+		e.write(' $op_flag ')
+		e.write(" '(' ")
+		e.expr(expr.right, {})
+		e.write(" = 'true'")
+		e.write(" ')' ")
+	}, expr)
 }
 
 fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
@@ -123,20 +137,20 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	if expr.op.kind.@is(.comparsion_op) {
-		op_flag := match expr.op.kind {
-			.op_eq { '-eq' }
-			.op_ne { '-ne' }
-			.op_gt { '-gt' }
-			.op_ge { '-ge' }
-			.op_lt { '-lt' }
-			.op_le { '-le' }
-			else { panic_and_value(unreachable, '') }
-		}
-		e.write('[ ')
-		e.expr(expr.left, {})
-		e.write(' $op_flag ')
-		e.expr(expr.right, {})
-		e.write(' ]')
+		e.write_test_to_bool_str_block(fn (mut e Emitter, expr ast.InfixExpr) {
+			op := match expr.op.kind {
+				.op_eq { '-eq' }
+				.op_ne { '-ne' }
+				.op_gt { '-gt' }
+				.op_ge { '-ge' }
+				.op_lt { '-lt' }
+				.op_le { '-le' }
+				else { panic_and_value(unreachable, '') }
+			}
+			e.expr(expr.left, {})
+			e.write(' $op ')
+			e.expr(expr.right, {})
+		}, expr)
 		return
 	}
 
@@ -167,11 +181,11 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 
 	match expr.op.kind {
 		.op_eq, .op_ne {
-			e.write('[ ')
-			e.expr(expr.left, {})
-			e.write(if expr.op.kind == .op_eq { ' = ' } else { ' != ' })
-			e.expr(expr.right, {})
-			e.write(' ]')
+			e.write_test_to_bool_str_block(fn (mut e Emitter, expr ast.InfixExpr) {
+				e.expr(expr.left, {})
+				e.write(if expr.op.kind == .op_eq { ' = ' } else { ' != ' })
+				e.expr(expr.right, {})
+			}, expr)
 		}
 		.op_plus {
 			e.write_block({ open: '\$( ', close: ' )', inline: true }, fn (mut e Emitter, expr ast.InfixExpr) {
