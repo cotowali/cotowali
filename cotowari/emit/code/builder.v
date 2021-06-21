@@ -37,7 +37,7 @@ pub fn (mut b Builder) write(data []byte) ?int {
 	if data.len == 0 {
 		return 0
 	}
-	orig_len := data.len
+	orig_len := b.len()
 	if b.newline {
 		b.write_indent()
 	}
