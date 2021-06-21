@@ -21,6 +21,10 @@ pub fn new_builder(n int, ctx &Context) Builder {
 	}
 }
 
+pub fn (mut b Builder) len() int {
+	return b.buf.len
+}
+
 pub fn (mut b Builder) str() string {
 	return b.buf.str()
 }
