@@ -60,17 +60,22 @@ fn (mut e Emitter) unindent() {
 }
 
 fn (mut e Emitter) write_block<T>(opt code.WriteBlockOpt, f fn (mut Emitter, T), v T) {
-	if opt.inline {
-		e.code[e.cur_kind].write(opt.open)
-		defer {
-			e.code[e.cur_kind].write(opt.close)
-		}
-	} else {
-		e.code[e.cur_kind].writeln(opt.open)
-		e.indent()
-		defer {
-			e.unindent()
-			e.code[e.cur_kind].writeln(opt.close)
+	e.code[e.cur_kind].writeln(opt.open)
+	e.indent()
+	defer {
+		e.unindent()
+		e.code[e.cur_kind].writeln(opt.close)
+	}
+
+	f(mut e, v)
+}
+
+fn (mut e Emitter) write_inline_block<T>(opt code.WriteInlineBlockOpt, f fn (mut Emitter, T), v T) {
+	e.code[e.cur_kind].write(opt.open)
+	defer {
+		e.code[e.cur_kind].write(opt.close)
+		if opt.writeln {
+			e.code[e.cur_kind].writeln('')
 		}
 	}
 

@@ -65,9 +65,15 @@ pub fn (mut b Builder) new_tmp_var() string {
 
 pub struct WriteBlockOpt {
 pub:
-	open   string [required]
-	close  string [required]
-	inline bool
+	open  string [required]
+	close string [required]
+}
+
+pub struct WriteInlineBlockOpt {
+pub:
+	open    string [required]
+	close   string [required]
+	writeln bool
 }
 
 /*

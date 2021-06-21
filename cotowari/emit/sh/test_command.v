@@ -11,5 +11,5 @@ fn (mut e Emitter) sh_test_cond_is_true(expr ExprOrString) {
 }
 
 fn (mut e Emitter) sh_test_command<T>(f fn (mut e Emitter), v T) {
-	e.write_block({ open: '[ ', close: ' ]', inline: true }, f, v)
+	e.write_inline_block({ open: '[ ', close: ' ]' }, f, v)
 }

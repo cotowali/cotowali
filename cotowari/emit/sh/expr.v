@@ -79,7 +79,7 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
-	e.write_block({ open: '\$( ', close: ' )', inline: true }, fn (mut e Emitter, v ExprWithOpt) {
+	e.write_inline_block({ open: '\$( ', close: ' )' }, fn (mut e Emitter, v ExprWithOpt) {
 		expr := v.expr as ast.IndexExpr
 		name := e.ident_for(expr.left)
 
@@ -105,7 +105,7 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 fn (mut e Emitter) write_test_to_bool_str_block<T>(f fn (mut Emitter, T), v T) {
 	open, close := '\$( [ ', " ] && echo 'true' || echo 'false' )"
 	e.write('"')
-	e.write_block({ open: open, close: close, inline: true }, f, v)
+	e.write_inline_block({ open: open, close: close }, f, v)
 	e.write('"')
 }
 
@@ -164,7 +164,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 	match expr.op.kind {
 		.op_plus, .op_minus, .op_div, .op_mul, .op_mod {
 			open, close := if opt.inside_arithmetic { '', '' } else { '\$(( ( ', ' ) ))' }
-			e.write_block({ open: open, close: close, inline: true }, fn (mut e Emitter, expr ast.InfixExpr) {
+			e.write_inline_block({ open: open, close: close }, fn (mut e Emitter, expr ast.InfixExpr) {
 				e.expr(expr.left, inside_arithmetic: true)
 				e.write(' $expr.op.text ')
 				e.expr(expr.right, inside_arithmetic: true)
@@ -194,7 +194,7 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 			}, expr)
 		}
 		.op_plus {
-			e.write_block({ open: '\$( ', close: ' )', inline: true }, fn (mut e Emitter, expr ast.InfixExpr) {
+			e.write_inline_block({ open: '\$( ', close: ' )' }, fn (mut e Emitter, expr ast.InfixExpr) {
 				e.write("printf '%s%s' ")
 				e.expr(expr.left, {})
 				e.write(' ')
@@ -210,7 +210,7 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 	open, close := if opt.inside_arithmetic { ' ( ', ' ) ' } else { '', '' }
-	e.write_block({ open: open, close: close, inline: true }, fn (mut e Emitter, v ExprWithOpt) {
+	e.write_inline_block({ open: open, close: close }, fn (mut e Emitter, v ExprWithOpt) {
 		e.expr((v.expr as ast.ParenExpr).expr, { ...v.opt, as_command: false })
 	}, ExprWithOpt{expr, opt})
 }
@@ -255,7 +255,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 
 fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
 	open, close := if opt.as_command { '', '' } else { '\$(', ')' }
-	e.write_block({ open: open, close: close, inline: true }, fn (mut e Emitter, pipeline ast.Pipeline) {
+	e.write_inline_block({ open: open, close: close }, fn (mut e Emitter, pipeline ast.Pipeline) {
 		for i, expr in pipeline.exprs {
 			if i > 0 {
 				e.write(' | ')
