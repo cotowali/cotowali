@@ -23,8 +23,8 @@ pub fn (b Builder) clone() Builder {
 }
 
 [inline]
-pub fn new_builder(n int, ctx &Context) Builder {
-	return {
+pub fn new_builder(n int, ctx &Context) &Builder {
+	return &Builder{
 		buf: strings.new_builder(n)
 		ctx: ctx
 	}

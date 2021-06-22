@@ -23,7 +23,7 @@ mut:
 	cur_fn    FnDecl
 	inside_fn bool
 	out       io.Writer
-	code      map[CodeKind]code.Builder
+	code      map[CodeKind]&code.Builder
 	cur_kind  CodeKind = .main
 }
 
