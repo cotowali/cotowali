@@ -14,14 +14,16 @@ fn test_builder_simple() ? {
 	assert n == s3.len + 1
 
 	s := s1 + s2 + s3 + '\n'
-	assert b.len() == s.len
 
 	mut b1, mut b2 := b.clone(), b.clone()
 
 	assert b1.bytes() == s.bytes()
+	assert b1.len() == 0
 
 	assert b2.str() == s
 	assert b2.len() == 0
+
+	assert b.len() == s.len
 }
 
 fn test_builder_indent() ? {

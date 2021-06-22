@@ -41,8 +41,8 @@ pub fn (mut b Builder) str() string {
 	return b.buf.str()
 }
 
-pub fn (b Builder) bytes() []byte {
-	return b.buf
+pub fn (mut b Builder) bytes() []byte {
+	return b.str().bytes()
 }
 
 pub fn (mut b Builder) write(data []byte) ?int {
