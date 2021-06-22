@@ -11,6 +11,13 @@ mut:
 	buf       strings.Builder
 }
 
+pub fn (b Builder) clone() Builder {
+	return Builder{
+		...b
+		buf: b.buf.clone()
+	}
+}
+
 [inline]
 pub fn new_builder(n int, ctx &Context) Builder {
 	return {

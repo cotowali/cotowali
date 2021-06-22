@@ -15,10 +15,13 @@ fn test_builder_simple() ? {
 
 	s := s1 + s2 + s3 + '\n'
 	assert b.len() == s.len
-	assert b.bytes() == s.bytes()
-	assert b.str() == s
 
-	assert b.len() == 0
+	mut b1, mut b2 := b.clone(), b.clone()
+
+	assert b1.bytes() == s.bytes()
+
+	assert b2.str() == s
+	assert b2.len() == 0
 }
 
 fn test_builder_indent() ? {
