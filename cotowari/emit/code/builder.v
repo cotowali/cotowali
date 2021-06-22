@@ -31,9 +31,6 @@ pub fn new_builder(n int, ctx &Context) Builder {
 }
 
 pub fn (b &Builder) newline() bool {
-	if b.buf.len > 0 {
-		println(b.buf[b.buf.len - 1])
-	}
 	return b.buf.len == 0 || b.buf.byte_at(b.buf.len - 1) == `\n`
 }
 
