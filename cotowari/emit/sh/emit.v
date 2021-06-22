@@ -6,7 +6,7 @@ import cotowari.util { must_write }
 pub fn (mut e Emitter) emit(f &ast.File) {
 	e.file(f)
 	for k in ordered_code_kinds {
-		must_write(e.out, e.code[k].bytes())
+		must_write(e.out, e.codes[k].bytes())
 	}
 }
 

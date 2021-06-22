@@ -23,7 +23,7 @@ mut:
 	cur_fn    FnDecl
 	inside_fn bool
 	out       io.Writer
-	code      map[CodeKind]&code.Builder
+	codes     map[CodeKind]&code.Builder
 	cur_kind  CodeKind = .main
 }
 
@@ -31,7 +31,7 @@ mut:
 pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 	return Emitter{
 		out: out
-		code: map{
+		codes: map{
 			CodeKind.builtin: code.new_builder(100, ctx)
 			CodeKind.literal: code.new_builder(100, ctx)
 			CodeKind.main:    code.new_builder(100, ctx)
@@ -40,23 +40,28 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 }
 
 [inline]
+fn (mut e Emitter) code() &code.Builder {
+	return e.codes[e.cur_kind]
+}
+
+[inline]
 fn (mut e Emitter) writeln(s string) {
-	e.code[e.cur_kind].writeln(s) or { panic(err) }
+	e.code().writeln(s) or { panic(err) }
 }
 
 [inline]
 fn (mut e Emitter) write(s string) {
-	e.code[e.cur_kind].write_string(s) or { panic(err) }
+	e.code().write_string(s) or { panic(err) }
 }
 
 [inline]
 fn (mut e Emitter) indent() {
-	e.code[e.cur_kind].indent()
+	e.code().indent()
 }
 
 [inline]
 fn (mut e Emitter) unindent() {
-	e.code[e.cur_kind].unindent()
+	e.code().unindent()
 }
 
 fn (mut e Emitter) write_block<T>(opt code.WriteBlockOpt, f fn (mut Emitter, T), v T) {
@@ -84,5 +89,5 @@ fn (mut e Emitter) write_inline_block<T>(opt code.WriteInlineBlockOpt, f fn (mut
 
 [inline]
 fn (mut e Emitter) new_tmp_var() string {
-	return e.code[e.cur_kind].new_tmp_var()
+	return e.code().new_tmp_var()
 }
