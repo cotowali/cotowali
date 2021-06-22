@@ -1,6 +1,6 @@
 module code
 
-import cotowari.context { new_context }
+import cotowari.context { new_context, new_default_context }
 
 fn test_builder_simple() ? {
 	mut b := new_builder(10, new_context(indent: ' '))
@@ -99,4 +99,29 @@ fn test_builder_indent() ? {
 	b.writeln('') ?
 
 	assert b.str() == out1
+}
+
+fn test_builder_seek() ? {
+	mut b := new_builder(10, new_default_context())
+	s1, s2, s3, s4 := 'ab', 'cd\n', 'ef', 'gh'
+
+	b.write_string(s1) ?
+	b.write_string(s3) ?
+	b.seek(s1.len) ?
+	assert b.len() == s1.len + s3.len
+	b.write_string(s2) ?
+	assert b.len() == s1.len + s2.len + s3.len
+
+	b.seek(tail) ?
+	b.write_string(s4) ?
+	assert b.len() == s1.len + s2.len + s3.len + s4.len
+
+	if _ := b.seek(-1) {
+		assert false
+	}
+	if _ := b.seek(b.len() + 1) {
+		assert false
+	}
+
+	assert b.str() == '$s1$s2$s3$s4'
 }

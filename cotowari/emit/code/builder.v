@@ -3,12 +3,16 @@ module code
 import strings
 import cotowari.context { Context }
 
+// magic number to represen tail of file
+pub const tail = -0xffff
+
 pub struct Builder {
 	ctx &Context
 mut:
 	indent_n  int
 	tmp_count int
 	buf       strings.Builder
+	tail_str  string
 }
 
 pub fn (b Builder) clone() Builder {
@@ -27,22 +31,48 @@ pub fn new_builder(n int, ctx &Context) Builder {
 }
 
 pub fn (b &Builder) newline() bool {
-	if b.len() > 0 {
-		println(b.buf[b.len() - 1])
+	if b.buf.len > 0 {
+		println(b.buf[b.buf.len - 1])
 	}
-	return b.len() == 0 || b.buf.byte_at(b.len() - 1) == `\n`
+	return b.buf.len == 0 || b.buf.byte_at(b.buf.len - 1) == `\n`
 }
 
 pub fn (b &Builder) len() int {
-	return b.buf.len
+	return b.buf.len + b.tail_str.len
 }
 
 pub fn (mut b Builder) str() string {
-	return b.buf.str()
+	if b.tail_str.len == 0 {
+		return b.buf.str()
+	}
+	defer {
+		b.tail_str = ''
+	}
+	return b.buf.str() + b.tail_str
 }
 
 pub fn (mut b Builder) bytes() []byte {
 	return b.str().bytes()
+}
+
+pub fn (mut b Builder) seek(pos int) ? {
+	if pos == code.tail {
+		b.buf.write_string(b.tail_str)
+		b.tail_str = ''
+		return
+	}
+
+	if pos < 0 || pos > b.len() {
+		return error('seek: out of range')
+	}
+
+	if pos < b.buf.len {
+		b.tail_str = b.buf.cut_to(pos) + b.tail_str
+	} else {
+		tail_i := pos - b.buf.len
+		b.buf.write_string(b.tail_str[..tail_i])
+		b.tail_str = b.tail_str[tail_i..]
+	}
 }
 
 pub fn (mut b Builder) write(data []byte) ?int {
