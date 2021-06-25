@@ -29,20 +29,9 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 	fn_info := expr.fn_info()
 	e.write(e.ident_for(expr.func))
 	mut args := expr.args
-	if fn_info.is_varargs {
-		args = expr.args[..fn_info.params.len - 1]
-	}
 	for arg in args {
 		e.write(' ')
 		e.expr(arg, {})
-	}
-	if fn_info.is_varargs {
-		e.write(' ')
-		e.array_literal({
-			scope: expr.scope
-			elem_typ: fn_info.varargs_elem
-			elements: expr.args[fn_info.params.len - 1..]
-		}, {})
 	}
 }
 
@@ -65,8 +54,17 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 	}
 
 	e.write_block({ open: '${node.name}() {', close: '}' }, fn (mut e Emitter, node FnDecl) {
+		fn_info := node.fn_info()
 		for i, param in node.params {
-			e.assign(e.ident_for(param), '\$${i + 1}', param.type_symbol())
+			value := if i == node.params.len - 1 && fn_info.is_varargs {
+				name := e.new_tmp_var()
+				e.writeln('array_assign "$name" "\$@"')
+				name
+			} else {
+				'\$1'
+			}
+			e.assign(e.ident_for(param), value, param.type_symbol())
+			e.writeln('shift')
 		}
 		e.block(node.body)
 	}, node)
