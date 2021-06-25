@@ -2,6 +2,10 @@ module source
 
 import os
 
+const std_file = $embed_file('../../builtin/std.ri')
+
+pub const std = new_source('std.ri', std_file.to_string())
+
 [heap]
 pub struct Source {
 pub:
