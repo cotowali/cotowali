@@ -1,1 +1,3 @@
 // std
+
+fn cat(files ...string) string

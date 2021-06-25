@@ -85,7 +85,6 @@ pub fn (mut s Scope) register_builtin() {
 			varargs_elem: t_(.string)
 			ret: t_(.string)
 		),
-		f_(.cat, params: [], ret: t_(.string)),
 		f_(.seq, params: [t_(.int)], ret: array_types[t_(.int)]),
 		f_(.read, params: []),
 	]
