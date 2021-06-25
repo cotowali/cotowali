@@ -6,6 +6,12 @@ import cotowari.lexer { new_lexer }
 import cotowari.ast
 
 pub fn (mut p Parser) parse() &ast.File {
+	if !p.ctx.std_loaded() {
+		p.ctx.std_source = source.std
+		mut std_parser := new_parser(new_lexer(p.ctx.std_source, p.ctx))
+		p.file.stmts << ast.RequireStmt{std_parser.parse()}
+	}
+
 	p.ctx.sources[p.source().path] = p.source()
 
 	p.skip_eol()

@@ -11,8 +11,9 @@ pub:
 	config       Config
 	global_scope &Scope
 pub mut:
-	sources map[string]&Source
-	errors  Errors
+	std_source &Source = 0
+	sources    map[string]&Source
+	errors     Errors
 }
 
 pub fn new_context(config Config) &Context {
@@ -24,4 +25,9 @@ pub fn new_context(config Config) &Context {
 
 pub fn new_default_context() &Context {
 	return new_context({})
+}
+
+[inline]
+pub fn (ctx &Context) std_loaded() bool {
+	return !isnil(ctx.std_source)
 }
