@@ -96,17 +96,17 @@ fn test_lexer() {
 	ktest('fn f(a, b){}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren, .l_brace,
 		.r_brace, .eof])
 	ktest('decl fn f()', [.key_decl, .key_fn, .ident, .l_paren, .r_paren])
-	ktest('let i = 0', [.key_let, .ident, .op_assign, .int_lit, .eof])
-	ktest('&a.b | c', [.amp, .ident, .dot, .ident, .op_pipe, .ident, .eof])
-	ktest('a && b || c &', [.ident, .op_logical_and, .ident, .op_logical_or, .ident, .amp, .eof])
+	ktest('let i = 0', [.key_let, .ident, .assign, .int_lit, .eof])
+	ktest('&a.b | c', [.amp, .ident, .dot, .ident, .pipe, .ident, .eof])
+	ktest('a && b || c &', [.ident, .logical_and, .ident, .logical_or, .ident, .amp, .eof])
 	ktest('return 0', [.key_return, .int_lit])
-	ktest('assert a == b', [.key_assert, .ident, .op_eq, .ident])
-	ktest('a < b || c > d', [.ident, .op_lt, .ident, .op_logical_or, .ident, .op_gt, .ident])
-	ktest('a <= b || c >= d', [.ident, .op_le, .ident, .op_logical_or, .ident, .op_ge, .ident])
-	ktest('!cond', [.op_not, .ident])
-	ktest('a+++++', [.ident, .op_plus_plus, .op_plus_plus, .op_plus])
+	ktest('assert a == b', [.key_assert, .ident, .eq, .ident])
+	ktest('a < b || c > d', [.ident, .lt, .ident, .logical_or, .ident, .gt, .ident])
+	ktest('a <= b || c >= d', [.ident, .le, .ident, .logical_or, .ident, .ge, .ident])
+	ktest('!cond', [.not, .ident])
+	ktest('a+++++', [.ident, .plus_plus, .plus_plus, .plus])
 	ktest('a-----', [.ident]) // TODO
-	ktest('a -----', [.ident, .op_minus_minus, .op_minus_minus, .op_minus])
+	ktest('a -----', [.ident, .minus_minus, .minus_minus, .minus])
 	ktest('struct f { }', [.key_struct, .ident, .l_brace, .r_brace])
 	ktest('"0" as int', [.string_lit, .key_as, .ident])
 	ktest('#[attr]', [.hash, .l_bracket, .ident, .r_bracket])
@@ -116,14 +116,14 @@ fn test_lexer() {
 	test('if i == 0 { } else if i != 1 {} else {}', [
 		t(.key_if, 'if'),
 		t(.ident, 'i'),
-		t(.op_eq, '=='),
+		t(.eq, '=='),
 		t(.int_lit, '0'),
 		t(.l_brace, '{'),
 		t(.r_brace, '}'),
 		t(.key_else, 'else'),
 		t(.key_if, 'if'),
 		t(.ident, 'i'),
-		t(.op_ne, '!='),
+		t(.ne, '!='),
 		t(.int_lit, '1'),
 		t(.l_brace, '{'),
 		t(.r_brace, '}'),
@@ -145,16 +145,16 @@ fn test_lexer() {
 		t(.l_brace, '{'),
 		t(.l_paren, '('),
 		t(.bool_lit, 'true'),
-		t(.op_plus, '+'),
+		t(.plus, '+'),
 		t(.bool_lit, 'false'),
-		t(.op_minus, '-'),
+		t(.minus, '-'),
 		t(.int_lit, '2'),
-		t(.op_mul, '*'),
+		t(.mul, '*'),
 		t(.int_lit, '3'),
-		t(.op_div, '/'),
+		t(.div, '/'),
 		t(.ident, 'x'),
 		t(.r_paren, ')'),
-		t(.op_eq, '=='),
+		t(.eq, '=='),
 		t(.int_lit, '0'),
 		t(.r_brace, '}'),
 		t(.eof, ''),
