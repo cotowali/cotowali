@@ -25,7 +25,7 @@ fn (mut r Resolver) expr(expr Expr) {
 		IntLiteral { r.int_literal(expr) }
 		ParenExpr { r.paren_expr(expr) }
 		Pipeline { r.pipeline(expr) }
-		PrefixExpr { r.prefix_expr(expr) }
+		PrefixExpr { r.prefix_expr(mut expr) }
 		StringLiteral { r.string_literal(expr) }
 		Var { r.var_(mut expr) }
 	}
@@ -337,13 +337,13 @@ fn (mut r Resolver) pipeline(expr Pipeline) {
 
 pub struct PrefixExpr {
 pub:
-	scope &Scope
-	op    Token
+	op Token
 pub mut:
-	expr Expr
+	scope &Scope
+	expr  Expr
 }
 
-fn (mut r Resolver) prefix_expr(expr PrefixExpr) {
+fn (mut r Resolver) prefix_expr(mut expr PrefixExpr) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -352,6 +352,9 @@ fn (mut r Resolver) prefix_expr(expr PrefixExpr) {
 	}
 
 	r.expr(expr.expr)
+	if expr.op.kind == .amp {
+		expr.scope.lookup_or_register_reference_type(target: expr.expr.typ())
+	}
 }
 
 pub struct Var {
