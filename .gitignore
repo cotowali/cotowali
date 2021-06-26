@@ -1,4 +1,5 @@
 *.c
+/*.sh
 /cmd/ric/ric
 /ric
 
