@@ -99,6 +99,7 @@ fn (k TokenKind) is_logical_infix_op() bool {
 [inline]
 fn (k TokenKind) is_prefix_op() bool {
 	return k in [
+		.amp,
 		.op_plus,
 		.op_minus,
 		.op_not,
