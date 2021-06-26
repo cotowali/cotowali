@@ -186,7 +186,14 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr) {
 		e.func_id = sym.id
 		if owner := e.scope.owner() {
 			if sym.id == builtin_fn_id(.read) {
-				e.typ = owner.type_symbol().fn_info().pipe_in
+				pipe_in := owner.type_symbol().fn_info().pipe_in
+				new_fn_params := [e.scope.lookup_or_register_reference_type(target: pipe_in).typ]
+				e.func.sym = if new_fn := e.scope.register_fn(sym.name, params: new_fn_params) {
+					new_fn
+				} else {
+					// already registered
+					e.scope.must_lookup_var(sym.name)
+				}
 			}
 		}
 	} else {

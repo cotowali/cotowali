@@ -88,7 +88,7 @@ pub fn (mut s Scope) register_builtin() {
 			ret: t_(.string)
 		),
 		f_(.seq, params: [t_(.int)], ret: array_types[t_(.int)]),
-		f_(.read, params: []),
+		f_(.read, params: [t_(.any)], ret: t_(.bool)),
 	]
 	for f in fns {
 		s.must_register_builtin_fn(f.key, f.fn_info)

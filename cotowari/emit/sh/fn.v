@@ -12,8 +12,8 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 	}
 
 	if expr.func_id == builtin_fn_id(.read) {
-		tmp_var := e.new_tmp_var()
-		e.write('read $tmp_var; echo \$$tmp_var')
+		e.write('read ')
+		e.reference(expr.args[0])
 		return
 	}
 
