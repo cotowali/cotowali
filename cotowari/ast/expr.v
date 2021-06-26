@@ -68,6 +68,13 @@ pub fn (e IndexExpr) typ() Type {
 	}
 }
 
+pub fn (e PrefixExpr) typ() Type {
+	return match e.op.kind {
+		.amp { e.scope.must_lookup_reference_type(target: e.expr.typ()).typ }
+		else { e.expr.typ() }
+	}
+}
+
 pub fn (e Expr) typ() Type {
 	return match e {
 		ArrayLiteral { e.scope.must_lookup_array_type(elem: e.elem_typ).typ }
@@ -78,7 +85,7 @@ pub fn (e Expr) typ() Type {
 		IntLiteral { builtin_type(.int) }
 		ParenExpr { e.expr.typ() }
 		Pipeline { e.exprs.last().typ() }
-		PrefixExpr { e.expr.typ() }
+		PrefixExpr { e.typ() }
 		InfixExpr { e.typ() }
 		IndexExpr { e.typ() }
 		Var { e.sym.typ }
@@ -134,9 +141,9 @@ pub struct CallExpr {
 mut:
 	typ Type
 pub:
-	scope &Scope
-	pos   Pos
+	pos Pos
 pub mut:
+	scope   &Scope
 	func_id u64
 	func    Expr
 	args    []Expr

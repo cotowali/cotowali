@@ -247,6 +247,9 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 				}
 			}, opt_for_expr)
 		}
+		.amp {
+			e.reference(expr.expr)
+		}
 		else {
 			panic('unimplemented')
 		}
