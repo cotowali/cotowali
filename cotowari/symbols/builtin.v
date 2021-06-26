@@ -65,11 +65,13 @@ pub fn (mut s Scope) register_builtin() {
 		ts_(.bool, PrimitiveTypeInfo{}),
 	]
 	mut array_types := map[int]Type{}
+	mut reference_types := map[int]Type{}
 	for ts in type_symbols {
 		s.must_register_type(ts)
 		typ := ts.typ
 		if typ !in [t_(.placeholder), t_(.void), t_(.unknown)] {
 			array_types[typ] = s.lookup_or_register_array_type(elem: typ).typ
+			reference_types[typ] = s.lookup_or_register_reference_type(target: typ).typ
 		}
 	}
 
