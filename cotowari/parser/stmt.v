@@ -61,7 +61,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		else {}
 	}
 	expr := p.parse_expr(.toplevel) ?
-	if p.kind(0) == .op_assign {
+	if p.kind(0) == .assign {
 		return ast.Stmt(p.parse_assign_stmt_with_left(expr) ?)
 	}
 	return expr
@@ -112,7 +112,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 	p.consume_with_assert(.key_let)
 	ident := p.consume_with_check(.ident) ?
 	name := ident.text
-	p.consume_with_check(.op_assign) ?
+	p.consume_with_check(.assign) ?
 
 	v := ast.Var{
 		scope: p.scope
@@ -136,7 +136,7 @@ fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
 		}
 	}
 
-	p.consume_with_check(.op_assign) ?
+	p.consume_with_check(.assign) ?
 	right := p.parse_expr(.toplevel) ?
 	return ast.AssignStmt{
 		left: left

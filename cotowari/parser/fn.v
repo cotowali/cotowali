@@ -76,7 +76,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 		// fn [ ] int | f()
 		//      ^
 		info.pipe_in = p.parse_type() ?
-		p.consume_with_check(.op_pipe) ?
+		p.consume_with_check(.pipe) ?
 	}
 
 	info.name = p.consume_with_check(.ident) ?

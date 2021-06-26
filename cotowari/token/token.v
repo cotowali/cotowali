@@ -33,25 +33,25 @@ pub enum TokenKind {
 	r_brace
 	l_bracket
 	r_bracket
-	op_pipe
-	op_redirect
-	op_plus
-	op_minus
-	op_div
-	op_mul
-	op_mod
-	op_logical_and
-	op_logical_or
-	op_assign
-	op_not
-	op_eq
-	op_ne
-	op_gt
-	op_ge
-	op_lt
-	op_le
-	op_plus_plus
-	op_minus_minus
+	pipe
+	redirect
+	plus
+	minus
+	div
+	mul
+	mod
+	logical_and
+	logical_or
+	assign
+	not
+	eq
+	ne
+	gt
+	ge
+	lt
+	le
+	plus_plus
+	minus_minus
 	eol
 	eof
 }
@@ -59,65 +59,65 @@ pub enum TokenKind {
 [inline]
 fn (k TokenKind) is_op() bool {
 	return k in [
-		.op_pipe,
-		.op_redirect,
-		.op_plus,
-		.op_minus,
-		.op_div,
-		.op_mul,
-		.op_mod,
-		.op_logical_and,
-		.op_logical_and,
-		.op_assign,
-		.op_not,
-		.op_eq,
-		.op_ne,
-		.op_gt,
-		.op_ge,
-		.op_lt,
-		.op_le,
+		.pipe,
+		.redirect,
+		.plus,
+		.minus,
+		.div,
+		.mul,
+		.mod,
+		.logical_and,
+		.logical_and,
+		.assign,
+		.not,
+		.eq,
+		.ne,
+		.gt,
+		.ge,
+		.lt,
+		.le,
 	]
 }
 
 [inline]
 fn (k TokenKind) is_comparsion_op() bool {
 	return k in [
-		.op_eq,
-		.op_ne,
-		.op_gt,
-		.op_ge,
-		.op_lt,
-		.op_le,
+		.eq,
+		.ne,
+		.gt,
+		.ge,
+		.lt,
+		.le,
 	]
 }
 
 [inline]
 fn (k TokenKind) is_logical_infix_op() bool {
-	return k in [.op_logical_and, .op_logical_or]
+	return k in [.logical_and, .logical_or]
 }
 
 [inline]
 fn (k TokenKind) is_prefix_op() bool {
 	return k in [
 		.amp,
-		.op_plus,
-		.op_minus,
-		.op_not,
+		.plus,
+		.minus,
+		.not,
 	]
 }
 
 [inline]
 fn (k TokenKind) is_postfix_op() bool {
 	return k in [
-		.op_plus_plus,
-		.op_minus_minus,
+		.plus_plus,
+		.minus_minus,
 	]
 }
 
 [inline]
 fn (k TokenKind) is_infix_op() bool {
 	return k.is_comparsion_op() || k.is_logical_infix_op()
-		|| k in [.op_pipe, .op_plus, .op_minus, .op_mul, .op_div, .op_mod]
+		|| k in [.pipe, .plus, .minus, .mul, .div, .mod]
 }
 
 [inline]

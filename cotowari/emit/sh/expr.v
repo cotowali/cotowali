@@ -123,8 +123,8 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 
 	e.write_test_to_bool_str_block(fn (mut e Emitter, expr ast.InfixExpr) {
 		op_flag := match expr.op.kind {
-			.op_logical_and { '-a' }
-			.op_logical_or { '-o' }
+			.logical_and { '-a' }
+			.logical_or { '-o' }
 			else { panic_and_value(unreachable, '') }
 		}
 
@@ -148,12 +148,12 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 	if expr.op.kind.@is(.comparsion_op) {
 		e.write_test_to_bool_str_block(fn (mut e Emitter, expr ast.InfixExpr) {
 			op := match expr.op.kind {
-				.op_eq { '-eq' }
-				.op_ne { '-ne' }
-				.op_gt { '-gt' }
-				.op_ge { '-ge' }
-				.op_lt { '-lt' }
-				.op_le { '-le' }
+				.eq { '-eq' }
+				.ne { '-ne' }
+				.gt { '-gt' }
+				.ge { '-ge' }
+				.lt { '-lt' }
+				.le { '-le' }
 				else { panic_and_value(unreachable, '') }
 			}
 			e.sh_test_cond_infix(expr.left, op, expr.right)
@@ -162,7 +162,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 	}
 
 	match expr.op.kind {
-		.op_plus, .op_minus, .op_div, .op_mul, .op_mod {
+		.plus, .minus, .div, .mul, .mod {
 			open, close := if opt.inside_arithmetic { '', '' } else { '\$(( ( ', ' ) ))' }
 			e.write_inline_block({ open: open, close: close }, fn (mut e Emitter, expr ast.InfixExpr) {
 				e.expr(expr.left, inside_arithmetic: true)
@@ -187,13 +187,13 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	match expr.op.kind {
-		.op_eq, .op_ne {
+		.eq, .ne {
 			e.write_test_to_bool_str_block(fn (mut e Emitter, expr ast.InfixExpr) {
-				op := if expr.op.kind == .op_eq { ' = ' } else { ' != ' }
+				op := if expr.op.kind == .eq { ' = ' } else { ' != ' }
 				e.sh_test_cond_infix(expr.left, op, expr.right)
 			}, expr)
 		}
-		.op_plus {
+		.plus {
 			e.write_inline_block({ open: '\$( ', close: ' )' }, fn (mut e Emitter, expr ast.InfixExpr) {
 				e.write("printf '%s%s' ")
 				e.expr(expr.left, {})
@@ -227,10 +227,10 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		as_command: false
 	}
 	match op.kind {
-		.op_plus {
+		.plus {
 			e.expr(expr.expr, opt_for_expr)
 		}
-		.op_minus {
+		.minus {
 			e.expr(ast.InfixExpr{
 				scope: expr.scope
 				left: ast.IntLiteral{
@@ -242,7 +242,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 				}
 				right: expr.expr
 				op: Token{
-					kind: .op_mul
+					kind: .mul
 					text: '*'
 				}
 			}, opt_for_expr)

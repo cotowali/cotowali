@@ -43,12 +43,12 @@ const expr_kind_to_op_table = (fn () map[ExprKind][]TokenKind {
 		return ops
 	}
 	return map{
-		k(.pipeline):    v(.op_pipe)
-		k(.logical_or):  v(.op_logical_or)
-		k(.logical_and): v(.op_logical_and)
-		k(.comparsion):  v(.op_eq, .op_ne, .op_gt, .op_ge, .op_lt, .op_le)
-		k(.term):        v(.op_plus, .op_minus)
-		k(.factor):      v(.op_mul, .op_div, .op_mod)
+		k(.pipeline):    v(.pipe)
+		k(.logical_or):  v(.logical_or)
+		k(.logical_and): v(.logical_and)
+		k(.comparsion):  v(.eq, .ne, .gt, .ge, .lt, .le)
+		k(.term):        v(.plus, .minus)
+		k(.factor):      v(.mul, .div, .mod)
 	}
 }())
 
@@ -160,12 +160,12 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 
 	inner := ExprKind.pipeline.inner()
 	expr := p.parse_expr(inner) ?
-	if p.kind(0) != .op_pipe {
+	if p.kind(0) != .pipe {
 		return expr
 	}
 	mut exprs := [expr]
-	for p.kind(0) == .op_pipe {
-		p.consume_with_assert(.op_pipe)
+	for p.kind(0) == .pipe {
+		p.consume_with_assert(.pipe)
 		exprs << p.parse_expr(inner) ?
 	}
 	return ast.Pipeline{
