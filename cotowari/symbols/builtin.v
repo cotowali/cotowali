@@ -65,12 +65,14 @@ pub fn (mut s Scope) register_builtin() {
 		ts_(.bool, PrimitiveTypeInfo{}),
 	]
 	mut array_types := map[int]Type{}
+	mut variadic_types := map[int]Type{}
 	mut reference_types := map[int]Type{}
 	for ts in type_symbols {
 		s.must_register_type(ts)
 		typ := ts.typ
 		if typ !in [t_(.placeholder), t_(.void), t_(.unknown)] {
 			array_types[typ] = s.lookup_or_register_array_type(elem: typ).typ
+			variadic_types[typ] = s.lookup_or_register_array_type(elem: typ, variadic: true).typ
 			reference_types[typ] = s.lookup_or_register_reference_type(target: typ).typ
 		}
 	}
@@ -81,12 +83,7 @@ pub fn (mut s Scope) register_builtin() {
 
 	fns := [
 		f_(.echo, params: [t_(.any)], ret: t_(.string)),
-		f_(.call,
-			params: [t_(.string), array_types[t_(.string)]]
-			is_varargs: true
-			varargs_elem: t_(.string)
-			ret: t_(.string)
-		),
+		f_(.call, params: [t_(.string), variadic_types[t_(.string)]], ret: t_(.string)),
 		f_(.seq, params: [t_(.int)], ret: array_types[t_(.int)]),
 		f_(.read, params: [t_(.any)], ret: t_(.bool)),
 	]

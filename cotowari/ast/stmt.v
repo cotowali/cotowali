@@ -119,6 +119,17 @@ pub mut:
 	body   Block
 }
 
+pub fn (f FnDecl) is_varargs() bool {
+	syms := f.fn_info().params.map(f.parent_scope.must_lookup_type(it))
+	if syms.len > 0 {
+		last := syms.last()
+		if last.info is ArrayTypeInfo {
+			return last.info.variadic
+		}
+	}
+	return false
+}
+
 pub fn (f FnDecl) fn_info() FunctionTypeInfo {
 	return f.type_symbol().fn_info()
 }

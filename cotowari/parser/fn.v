@@ -15,12 +15,10 @@ mut:
 
 struct FnSignatureParsingInfo {
 mut:
-	name             Token
-	pipe_in          Type = builtin_type(.void)
-	is_varargs       bool
-	varargs_elem_typ Type
-	params           []FnParamParsingInfo
-	ret_typ          Type = builtin_type(.void)
+	name    Token
+	pipe_in Type = builtin_type(.void)
+	params  []FnParamParsingInfo
+	ret_typ Type = builtin_type(.void)
 }
 
 fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
@@ -35,9 +33,7 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 
 		mut typ := p.parse_type() ?
 		if is_varargs {
-			info.is_varargs = true
-			info.varargs_elem_typ = typ
-			typ = p.scope.lookup_or_register_array_type(elem: typ).typ
+			typ = p.scope.lookup_or_register_array_type(elem: typ, variadic: true).typ
 		}
 
 		info.params << FnParamParsingInfo{
@@ -118,8 +114,6 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		params: params.map(it.sym.typ)
 		pipe_in: info.pipe_in
 		ret: info.ret_typ
-		is_varargs: info.is_varargs
-		varargs_elem: info.varargs_elem_typ
 	).typ
 	func := outer_scope.register_var(
 		name: info.name.text

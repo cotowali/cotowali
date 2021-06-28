@@ -1,7 +1,7 @@
 module checker
 
 import cotowari.ast { Expr }
-import cotowari.symbols { TypeSymbol, builtin_type }
+import cotowari.symbols { ArrayTypeInfo, TypeSymbol, builtin_type }
 
 fn (mut c Checker) expr(expr Expr) {
 	match mut expr {
@@ -36,12 +36,14 @@ fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 	}
 
 	pos := Expr(expr).pos()
+	scope := expr.scope
 	fn_info := expr.fn_info()
 	params := fn_info.params
-	expr.args
+	param_syms := params.map(scope.must_lookup_type(it))
+	is_varargs := expr.is_varargs()
 
 	args := expr.args
-	if fn_info.is_varargs {
+	if is_varargs {
 		min_len := params.len - 1
 		if args.len < min_len {
 			c.error('expected $min_len or more arguments, but got $args.len', pos)
@@ -52,10 +54,9 @@ fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 		return
 	}
 
-	scope := expr.scope
 	mut call_args_types_ok := true
-	varargs_elem_ts := if fn_info.is_varargs {
-		scope.must_lookup_type(fn_info.varargs_elem)
+	varargs_elem_ts := if is_varargs {
+		scope.must_lookup_type((param_syms.last().info as ArrayTypeInfo).elem)
 	} else {
 		// ?TypeSymbol(none)
 		TypeSymbol{}
@@ -63,7 +64,7 @@ fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 	for i, arg in args {
 		c.expr(arg)
 		arg_ts := arg.type_symbol()
-		param_ts := if fn_info.is_varargs && i >= params.len - 1 {
+		param_ts := if is_varargs && i >= params.len - 1 {
 			varargs_elem_ts
 		} else {
 			scope.must_lookup_type(params[i])

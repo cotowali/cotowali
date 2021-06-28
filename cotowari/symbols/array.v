@@ -4,12 +4,14 @@ import cotowari.errors { unreachable }
 
 pub struct ArrayTypeInfo {
 pub:
-	elem Type
+	elem     Type
+	variadic bool
 }
 
 fn (info ArrayTypeInfo) typename(s &Scope) string {
 	elem_ts := s.must_lookup_type(info.elem)
-	return '[]$elem_ts.name'
+	prefix := if info.variadic { '...' } else { '[]' }
+	return '$prefix$elem_ts.name'
 }
 
 pub fn (mut s Scope) lookup_or_register_array_type(info ArrayTypeInfo) TypeSymbol {

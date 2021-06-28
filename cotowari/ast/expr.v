@@ -149,6 +149,17 @@ pub mut:
 	args    []Expr
 }
 
+pub fn (e CallExpr) is_varargs() bool {
+	syms := e.fn_info().params.map(e.scope.must_lookup_type(it))
+	if syms.len > 0 {
+		last := syms.last()
+		if last.info is ArrayTypeInfo {
+			return last.info.variadic
+		}
+	}
+	return false
+}
+
 pub fn (e CallExpr) fn_info() FunctionTypeInfo {
 	return e.func.type_symbol().fn_info()
 }

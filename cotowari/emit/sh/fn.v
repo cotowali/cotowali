@@ -56,7 +56,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 	e.write_block({ open: '${node.name}() {', close: '}' }, fn (mut e Emitter, node FnDecl) {
 		fn_info := node.fn_info()
 		for i, param in node.params {
-			value := if i == node.params.len - 1 && fn_info.is_varargs {
+			value := if i == node.params.len - 1 && node.is_varargs() {
 				name := e.new_tmp_var()
 				e.writeln('array_assign "$name" "\$@"')
 				name
