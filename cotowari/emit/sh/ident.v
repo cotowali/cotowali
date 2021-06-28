@@ -8,6 +8,6 @@ fn (mut e Emitter) ident_for(expr Expr) string {
 	return match expr {
 		Var { expr.sym.full_name() }
 		ArrayLiteral { e.new_tmp_var() }
-		else { panic_and_value(unreachable, '') }
+		else { panic_and_value(unreachable(), '') }
 	}
 }

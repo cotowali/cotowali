@@ -21,5 +21,5 @@ pub fn (s Scope) lookup_array_type(info ArrayTypeInfo) ?TypeSymbol {
 }
 
 pub fn (s Scope) must_lookup_array_type(info ArrayTypeInfo) TypeSymbol {
-	return s.lookup_array_type(info) or { panic(unreachable) }
+	return s.lookup_array_type(info) or { panic(unreachable()) }
 }

@@ -53,7 +53,7 @@ const expr_kind_to_op_table = (fn () map[ExprKind][]TokenKind {
 }())
 
 fn (e ExprKind) op_kinds() []TokenKind {
-	return parser.expr_kind_to_op_table[e] or { panic(unreachable) }
+	return parser.expr_kind_to_op_table[e] or { panic(unreachable()) }
 }
 
 fn (k ExprKind) outer() ExprKind {

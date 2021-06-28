@@ -3,9 +3,10 @@ module errors
 import cotowari.source { Pos, Source }
 import cotowari.token { Token }
 
-pub const (
-	unreachable = 'unreachable - This is a compiler bug.'
-)
+[inline]
+pub fn unreachable() string {
+	return 'unreachable - This is a compiler bug.'
+}
 
 // Err represents cotowari compile error
 pub struct Err {

@@ -91,7 +91,7 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op := expr.op
 	if !op.kind.@is(.infix_op) {
-		panic(unreachable)
+		panic(unreachable())
 	}
 
 	match expr.left.typ() {
@@ -111,10 +111,10 @@ fn (mut e Emitter) write_test_to_bool_str_block<T>(f fn (mut Emitter, T), v T) {
 
 fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 	if expr.left.typ() != builtin_type(.bool) {
-		panic(unreachable)
+		panic(unreachable())
 	}
 	if opt.inside_arithmetic {
-		panic(unreachable)
+		panic(unreachable())
 	}
 
 	if opt.as_command {
@@ -125,7 +125,7 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 		op_flag := match expr.op.kind {
 			.logical_and { '-a' }
 			.logical_or { '-o' }
-			else { panic_and_value(unreachable, '') }
+			else { panic_and_value(unreachable(), '') }
 		}
 
 		// '(' $left = 'true' ')' -a '(' $right = 'true' )
@@ -141,7 +141,7 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 
 fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 	if expr.left.typ() != builtin_type(.int) {
-		panic(unreachable)
+		panic(unreachable())
 	}
 	e.write_echo_if_command(opt)
 
@@ -154,7 +154,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 				.ge { '-ge' }
 				.lt { '-lt' }
 				.le { '-le' }
-				else { panic_and_value(unreachable, '') }
+				else { panic_and_value(unreachable(), '') }
 			}
 			e.sh_test_cond_infix(expr.left, op, expr.right)
 		}, expr)
@@ -178,10 +178,10 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 
 fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 	if expr.left.typ() != builtin_type(.string) {
-		panic(unreachable)
+		panic(unreachable())
 	}
 	if opt.inside_arithmetic {
-		panic(unreachable)
+		panic(unreachable())
 	}
 
 	e.write_echo_if_command(opt)
@@ -218,7 +218,7 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 	op := expr.op
 	if !op.kind.@is(.prefix_op) {
-		panic(unreachable)
+		panic(unreachable())
 	}
 
 	e.write_echo_if_command(opt)

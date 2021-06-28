@@ -15,7 +15,7 @@ pub fn (t TypeSymbol) fn_info() FunctionTypeInfo {
 	if t.info is FunctionTypeInfo {
 		return t.info
 	} else {
-		panic(unreachable)
+		panic(unreachable())
 	}
 }
 
@@ -33,7 +33,7 @@ fn (f FunctionTypeInfo) signature(s &Scope) string {
 
 pub fn (t TypeSymbol) fn_signature() ?string {
 	return if t.info is FunctionTypeInfo {
-		t.info.signature(t.scope() or { panic(unreachable) })
+		t.info.signature(t.scope() or { panic(unreachable()) })
 	} else {
 		none
 	}
@@ -54,5 +54,5 @@ pub fn (mut s Scope) register_fn(name string, info FunctionTypeInfo) ?&Var {
 }
 
 fn (mut s Scope) must_register_fn(name string, info FunctionTypeInfo) &Var {
-	return s.register_fn(name, info) or { panic(unreachable) }
+	return s.register_fn(name, info) or { panic(unreachable()) }
 }

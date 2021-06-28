@@ -34,7 +34,7 @@ fn (mut r Resolver) expr(expr Expr) {
 fn (mut r Resolver) set_typ(e Expr, typ Type) {
 	match mut e {
 		Var { e.sym.typ = typ }
-		else { panic(unreachable) }
+		else { panic(unreachable()) }
 	}
 }
 

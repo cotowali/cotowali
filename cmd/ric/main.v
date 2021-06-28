@@ -38,8 +38,8 @@ fn new_source_to_run(args []string) ?&Source {
 }
 
 fn new_ctx_from_cmd(cmd Command) &Context {
-	no_emit := cmd.flags.get_bool(no_emit_flag.name) or { panic(unreachable) }
-	backend_str := cmd.flags.get_string(backend_flag.name) or { panic(unreachable) }
+	no_emit := cmd.flags.get_bool(no_emit_flag.name) or { panic(unreachable()) }
+	backend_str := cmd.flags.get_string(backend_flag.name) or { panic(unreachable()) }
 	backend := backend_from_str(backend_str) or {
 		eprintln(err)
 		exit(1)
