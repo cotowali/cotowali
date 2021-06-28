@@ -81,7 +81,7 @@ fn ektest(code string, values []EkTestValue) {
 }
 
 fn t(kind TokenKind, text string) Token {
-	return Token{kind, text, none_pos}
+	return Token{kind, text, none_pos()}
 }
 
 fn test_lexer() {

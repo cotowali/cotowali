@@ -7,7 +7,7 @@ fn test_eq() {
 
 	assert t == Token{
 		...t
-		pos: none_pos
+		pos: none_pos()
 	}
 	assert t != Token{
 		...t
@@ -24,7 +24,7 @@ fn test_eq() {
 }
 
 fn test_token_str() {
-	t1 := Token{.ident, 'a', none_pos}
+	t1 := Token{.ident, 'a', none_pos()}
 	assert t1.str() == "Token{ .ident, 'a', none }"
 	assert t1.short_str() == "{ .ident, 'a' }"
 
