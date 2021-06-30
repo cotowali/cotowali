@@ -242,16 +242,7 @@ fn (mut p Parser) parse_paren_expr() ?ast.Expr {
 	}
 }
 
-fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN, '${struct_name(left)}{...}')
-		defer {
-			p.trace_end()
-		}
-	}
-
-	p.consume_with_assert(.l_paren)
-
+fn (mut p Parser) parse_call_args() ?[]ast.Expr {
 	mut args := []ast.Expr{}
 	if p.kind(0) != .r_paren {
 		for {
@@ -262,6 +253,20 @@ fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
 			p.consume_with_check(.comma) ?
 		}
 	}
+	return args
+}
+
+fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
+	$if trace_parser ? {
+		p.trace_begin(@FN, '${struct_name(left)}{...}')
+		defer {
+			p.trace_end()
+		}
+	}
+
+	p.consume_with_assert(.l_paren)
+
+	mut args := p.parse_call_args() ?
 	r_paren := p.consume_with_check(.r_paren) ?
 	return ast.CallExpr{
 		scope: p.scope
