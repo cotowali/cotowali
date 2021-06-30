@@ -13,3 +13,5 @@ fn sum(vals ...int) int {
 
 add(1, 2)
 sum(1, 2, 3)
+
+assert @expr('1', '+', '1') == '2'

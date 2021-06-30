@@ -175,6 +175,8 @@ fn test_at_ident() {
 	for text in texts {
 		test(text, [t(.at_ident, text)])
 	}
+
+	ktest('@expr()', [.at_ident, .l_paren, .r_paren])
 }
 
 fn test_string() {

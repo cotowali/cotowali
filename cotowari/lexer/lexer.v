@@ -211,7 +211,9 @@ fn (mut lex Lexer) read_at_ident() Token {
 		}
 	}
 
-	return lex.new_token_with_consume_not_for(is_whitespace, .at_ident)
+	return lex.new_token_with_consume_not_for(fn (c Char) bool {
+		return is_whitespace(c) || c[0] in [`(`, `)`]
+	}, .at_ident)
 }
 
 fn (mut lex Lexer) read_dollar_directive() Token {

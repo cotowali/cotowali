@@ -5,8 +5,8 @@ import cotowari.token { Token }
 import cotowari.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id, builtin_type }
 import cotowari.errors { unreachable }
 
-pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallExpr | IndexExpr | InfixExpr |
-	IntLiteral | ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
+pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | IndexExpr |
+	InfixExpr | IntLiteral | ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
 
 fn (mut r Resolver) exprs(exprs []Expr) {
 	for expr in exprs {
@@ -19,6 +19,7 @@ fn (mut r Resolver) expr(expr Expr) {
 		ArrayLiteral { r.array_literal(expr) }
 		AsExpr { r.as_expr(expr) }
 		BoolLiteral { r.bool_literal(expr) }
+		CallCommandExpr { r.call_command_expr(expr) }
 		CallExpr { r.call_expr(mut expr) }
 		IndexExpr { r.index_expr(expr) }
 		InfixExpr { r.infix_expr(expr) }
@@ -44,7 +45,7 @@ pub fn (e InfixExpr) pos() Pos {
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
-		ArrayLiteral, AsExpr, CallExpr, Var, ParenExpr, IndexExpr { expr.pos }
+		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, Var, ParenExpr, IndexExpr { expr.pos }
 		InfixExpr { expr.pos() }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
 		PrefixExpr { expr.op.pos.merge(expr.expr.pos()) }
@@ -80,6 +81,7 @@ pub fn (e Expr) typ() Type {
 		ArrayLiteral { e.scope.must_lookup_array_type(elem: e.elem_typ).typ }
 		AsExpr { e.typ }
 		BoolLiteral { builtin_type(.bool) }
+		CallCommandExpr { builtin_type(.string) }
 		CallExpr { e.typ }
 		StringLiteral { builtin_type(.string) }
 		IntLiteral { builtin_type(.int) }
@@ -112,8 +114,8 @@ pub fn (e Expr) scope() &Scope {
 		IndexExpr {
 			e.left.scope()
 		}
-		ArrayLiteral, BoolLiteral, CallExpr, InfixExpr, IntLiteral, Pipeline, PrefixExpr,
-		StringLiteral, Var {
+		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, InfixExpr, IntLiteral, Pipeline,
+		PrefixExpr, StringLiteral, Var {
 			e.scope
 		}
 	}
@@ -135,6 +137,25 @@ fn (mut r Resolver) as_expr(expr AsExpr) {
 	}
 
 	r.expr(expr.expr)
+}
+
+pub struct CallCommandExpr {
+pub:
+	pos     Pos
+	command string
+	args    []Expr
+pub mut:
+	scope &Scope
+}
+
+fn (mut r Resolver) call_command_expr(expr CallCommandExpr) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+	r.exprs(expr.args)
 }
 
 pub struct CallExpr {

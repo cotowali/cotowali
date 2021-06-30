@@ -1,7 +1,22 @@
 module sh
 
-import cotowari.ast { CallExpr, FnDecl }
+import cotowari.ast { CallCommandExpr, CallExpr, FnDecl }
 import cotowari.symbols { builtin_fn_id }
+
+fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
+	if !opt.as_command {
+		e.write('\$(')
+		defer {
+			e.write(')')
+		}
+	}
+
+	e.write('$expr.command')
+	for arg in expr.args {
+		e.write(' ')
+		e.expr(arg, {})
+	}
+}
 
 fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 	if !opt.as_command {

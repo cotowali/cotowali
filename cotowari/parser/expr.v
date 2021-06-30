@@ -349,6 +349,19 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 		}
 	}
 
+	if ident := p.consume_if_kind_eq(.at_ident) {
+		command := ident.text[1..] // '@command' -> 'command'
+		p.consume_with_check(.l_paren) ?
+		args := p.parse_call_args() ?
+		r_paren := p.consume_with_assert(.r_paren)
+		return ast.CallCommandExpr{
+			scope: p.scope
+			pos: ident.pos.merge(r_paren.pos)
+			command: command
+			args: args
+		}
+	}
+
 	mut expr := p.parse_value_left() ?
 	for {
 		match p.kind(0) {

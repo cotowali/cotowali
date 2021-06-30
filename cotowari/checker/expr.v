@@ -8,6 +8,7 @@ fn (mut c Checker) expr(expr Expr) {
 		ast.ArrayLiteral { c.array_literal(expr) }
 		ast.AsExpr { c.as_expr(expr) }
 		ast.BoolLiteral {}
+		ast.CallCommandExpr { c.call_command_expr(expr) }
 		ast.CallExpr { c.call_expr(mut expr) }
 		ast.IndexExpr { c.index_expr(expr) }
 		ast.InfixExpr { c.infix_expr(expr) }
@@ -28,6 +29,12 @@ fn (mut c Checker) array_literal(expr ast.ArrayLiteral) {
 
 fn (mut c Checker) as_expr(expr ast.AsExpr) {
 	c.expr(expr.expr)
+}
+
+fn (mut c Checker) call_command_expr(expr ast.CallCommandExpr) {
+	for arg in expr.args {
+		c.expr(arg)
+	}
 }
 
 fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
