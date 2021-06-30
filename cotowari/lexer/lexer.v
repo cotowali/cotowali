@@ -211,10 +211,7 @@ fn (mut lex Lexer) read_at_ident() Token {
 		}
 	}
 
-	lex.skip_with_assert(fn (c Char) bool {
-		return c == '@'
-	})
-	return lex.new_token_with_consume_not_for(is_whitespace, .ident)
+	return lex.new_token_with_consume_not_for(is_whitespace, .at_ident)
 }
 
 fn (mut lex Lexer) read_dollar_directive() Token {
