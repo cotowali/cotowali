@@ -13,6 +13,7 @@ pub enum TokenKind {
 	key_if
 	key_else
 	key_for
+	key_while
 	key_in
 	key_return
 	key_decl
@@ -141,6 +142,7 @@ fn (k TokenKind) is_keyword() bool {
 		.key_if,
 		.key_else,
 		.key_for,
+		.key_while,
 		.key_in,
 		.key_return,
 		.key_decl,
