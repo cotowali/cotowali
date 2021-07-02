@@ -1,6 +1,6 @@
 *.c
 /*.sh
-/cmd/ric/ric
-/ric
+/cmd/lic/lic
+/lic
 
 profile.txt
