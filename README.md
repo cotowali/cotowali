@@ -79,12 +79,12 @@ TODO
 
 ```
 # compile
-ric examples/add.ri
+lic examples/add.ri
 
 # execution
-ric examples/add.ri | sh
+lic examples/add.ri | sh
 # or
-ric run examples/add.ri
+lic run examples/add.ri
 ```
 
 ## Development

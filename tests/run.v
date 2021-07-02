@@ -70,37 +70,37 @@ fn get_sources(paths []string) []string {
 	return res
 }
 
-struct Ric {
+struct Lic {
 	source string [required]
 	bin    string [required]
 }
 
-enum RicCommand {
+enum LicCommand {
 	compile
 	noemit
 	run
 }
 
-fn (ric Ric) compile() ? {
-	res := os.execute('v -cg $ric.source -o $ric.bin')
+fn (lic Lic) compile() ? {
+	res := os.execute('v -cg $lic.source -o $lic.bin')
 	if res.exit_code != 0 {
 		return error_with_code(res.output, res.exit_code)
 	}
 	return
 }
 
-fn (ric Ric) execute(c RicCommand, file string) os.Result {
+fn (lic Lic) execute(c LicCommand, file string) os.Result {
 	return match c {
-		.compile { os.execute('$ric.bin $file') }
-		.noemit { os.execute('$ric.bin --no-emit $file') }
-		.run { os.execute('$ric.bin run $file') }
+		.compile { os.execute('$lic.bin $file') }
+		.noemit { os.execute('$lic.bin --no-emit $file') }
+		.run { os.execute('$lic.bin run $file') }
 	}
 }
 
-fn (ric Ric) new_test_case(path string) TestCase {
+fn (lic Lic) new_test_case(path string) TestCase {
 	out := out_path(path)
 	return {
-		ric: ric
+		lic: lic
 		path: path
 		out_path: out
 		is_err_test: is_err_test_file(path)
@@ -118,7 +118,7 @@ enum TestResult {
 }
 
 struct TestCase {
-	ric Ric
+	lic Lic
 mut:
 	path           string     [required]
 	out_path       string     [required]
@@ -139,9 +139,9 @@ fn fix_todo(f string, s FileSuffix) {
 
 fn (mut t TestCase) run() {
 	result := if t.is_err_test {
-		t.ric.execute(.compile, t.path)
+		t.lic.execute(.compile, t.path)
 	} else {
-		t.ric.execute(.run, t.path)
+		t.lic.execute(.run, t.path)
 	}
 	t.output = result.output
 	t.exit_code = result.exit_code
@@ -209,17 +209,17 @@ fn (t TestCase) result() string {
 
 fn run(paths []string) bool {
 	dir := os.real_path(@VMODROOT)
-	ric_dir := os.join_path(dir, 'cmd/ric')
+	lic_dir := os.join_path(dir, 'cmd/lic')
 	sources := get_sources(paths)
 
-	ric := Ric{
-		source: ric_dir
-		bin: os.join_path(ric_dir, 'ric')
+	lic := Lic{
+		source: lic_dir
+		bin: os.join_path(lic_dir, 'lic')
 	}
 
-	ric.compile() or {
+	lic.compile() or {
 		eprintln([
-			'${term.fail_message('ERROR')} Faild to compile ric',
+			'${term.fail_message('ERROR')} Faild to compile lic',
 			'    exit_code: $err.code',
 			'    output:',
 			indent_each_lines(2, err.msg),
@@ -229,7 +229,7 @@ fn run(paths []string) bool {
 
 	mut ok := true
 	for path in sources {
-		mut t := ric.new_test_case(path)
+		mut t := lic.new_test_case(path)
 		t.run()
 		ok = ok && t.result != .failed
 		println(t.result())

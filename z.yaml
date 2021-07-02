@@ -1,28 +1,28 @@
 default: run
 disable_help: true
 var:
-  ric_path: cmd/ric
+  lic_path: cmd/lic
   hello_world: examples/hello_world.ri
   err_source: tests/expr_err.ri
 tasks:
-  run: v run {{ric_path}} $@
-  no-emit: v run {{ric_path}} --no-emit $@
-  debug: v -cg run {{ric_path}} $@
-  watch: v watch --add $@ run {{ric_path}} $@
-  profile: v -profile profile.txt run {{ric_path}} $@
+  run: v run {{lic_path}} $@
+  no-emit: v run {{lic_path}} --no-emit $@
+  debug: v -cg run {{lic_path}} $@
+  watch: v watch --add $@ run {{lic_path}} $@
+  profile: v -profile profile.txt run {{lic_path}} $@
   trace:
     tasks:
-      lexer: v -cg -d trace_lexer run {{ric_path}} --no-emit $@
-      parser: v -cg -d trace_parser run {{ric_path}} --no-emit $@
-      resolver: v -cg -d trace_resolver run {{ric_path}} --no-emit $@
+      lexer: v -cg -d trace_lexer run {{lic_path}} --no-emit $@
+      parser: v -cg -d trace_parser run {{lic_path}} --no-emit $@
+      resolver: v -cg -d trace_resolver run {{lic_path}} --no-emit $@
   time: |
-    /usr/bin/time -f 'Time: %es, Memory: %M: KB ' v run {{ric_path}}
+    /usr/bin/time -f 'Time: %es, Memory: %M: KB ' v run {{lic_path}}
 
-  build.c: v {{ric_path}} -o main.c
+  build.c: v {{lic_path}} -o main.c
 
-  build: mkdir -p .bin && v {{ric_path}} -o .bin/ric
-  symlink: ln -fs $(pwd)/.bin/ric /usr/local/bin/ric
-  install: z build && cp $(pwd)/.bin/ric /usr/local/bin/ric
+  build: mkdir -p .bin && v {{lic_path}} -o .bin/lic
+  symlink: ln -fs $(pwd)/.bin/lic /usr/local/bin/lic
+  install: z build && cp $(pwd)/.bin/lic /usr/local/bin/lic
 
   ast: z run tools ast $@
   tokens: z run tools tokens $@
