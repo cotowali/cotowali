@@ -22,7 +22,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 		ast.InlineShell {}
 		ast.ReturnStmt { c.return_stmt(stmt) }
 		ast.RequireStmt { c.require_stmt(mut stmt) }
-		ast.WhileStmt { panic('unimplemented') }
+		ast.WhileStmt { c.while_stmt(stmt) }
 	}
 }
 
@@ -94,4 +94,10 @@ fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
 
 fn (mut c Checker) require_stmt(mut stmt ast.RequireStmt) {
 	c.check_file(mut stmt.file)
+}
+
+fn (mut c Checker) while_stmt(stmt ast.WhileStmt) {
+	c.expr(stmt.cond)
+	c.expect_bool_expr(stmt.cond, 'while condition') or {}
+	c.block(stmt.body)
 }
