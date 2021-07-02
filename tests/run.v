@@ -140,6 +140,8 @@ fn fix_todo(f string, s FileSuffix) {
 fn (mut t TestCase) run() {
 	result := if t.is_err_test {
 		t.lic.execute(.compile, t.path)
+	} else if t.is_noemit_test {
+		t.lic.execute(.noemit, t.path)
 	} else {
 		t.lic.execute(.run, t.path)
 	}
