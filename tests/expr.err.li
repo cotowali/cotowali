@@ -1,0 +1,19 @@
+fn f(a int) int {
+  return a
+}
+
+echo(x)
+
+f("a") + "a"
+let x = "a" + f("a")
+
+y = 10
+y = "10"
+0 = 10
+
+f("a") | f("a")
+
+let arr = [0]
+arr['10']
+arr[0][0]
+x[0]

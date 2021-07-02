@@ -4,4 +4,4 @@ fn f_echo(msg string) {
   echo(msg)
 }
 
-require "./f2.ri"
+require "./f2.li"

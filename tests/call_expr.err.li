@@ -1,0 +1,13 @@
+fn f(a int) {
+
+}
+
+unknown_fn()
+
+let v = 0
+v()
+
+f(0)
+f("a")
+f()
+f(0, 1)

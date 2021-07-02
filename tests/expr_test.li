@@ -1,0 +1,56 @@
+assert 6 / 2 + 3 * 3 == 12
+assert 1 + 1 - 1 == 1
+assert 6 / 2 % 2 == 1
+assert (1 + 2) * (4 - 2) == 6
+let v = 1
+v = 10
+assert -v == -10
+assert +v == 10
+
+assert 0 < 1
+assert 1 > 0
+assert 0 <= 1
+assert 1 >= 0
+assert 0 <= 0
+assert 0 >= 0
+
+assert 0 == 0 && 1 != 0
+assert 0 == 0 || 1 == 0
+assert 1 == 0 || 0 == 0
+
+assert '10' == '10'
+assert '10' != '11'
+assert '10' + '10' == '1010'
+
+fn zero() int {
+  let v = 0
+
+  // evaluated but not used. this is valid but no output
+  0
+  v
+  add(1, 2)
+
+  return v
+}
+
+fn add(a int, b int) int {
+  return a + b
+}
+
+fn as_int(v any) int {
+  return v as int
+}
+
+assert zero() == 0
+assert add(3, 4) == 7
+assert add(as_int("1"), 2) == 3
+
+fn int | inc() int {
+  let n = 0
+  read(&n)
+  return n + 1
+}
+
+assert (10 | inc()) == 11
+
+assert call('add', '3', '4') == '7'

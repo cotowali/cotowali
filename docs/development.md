@@ -13,7 +13,7 @@
 
 **Cotowali doesn't have to be fast.**
 
-- Cotowali target small (~10k LoC) `.ri` source code.
+- Cotowali target small (~10k LoC) `.li` source code.
 - Of course it's better to be fast. But it is not important.
 - This doesn't mean the code has to be super slow.
 
@@ -22,7 +22,7 @@
 ### Run
 
 - `z test`: run all tests
-- `z test test.ri|some_test.v`: run specified test. Test runner is automaticaly selected
+- `z test test.li|some_test.v`: run specified test. Test runner is automaticaly selected
 - `z test unit`: run all unit tests
 - `z test integration`: run all integration tests
 
@@ -32,7 +32,7 @@ See `z test integration --help`
 
 #### Success Test
 
-`xxx.ri`
+`xxx.li`
 
 - It can be compiled with no error.
 - It runs successfully (exit with zero).
@@ -40,14 +40,14 @@ See `z test integration --help`
 
 #### Error Test
 
-`xxx_err.ri` or `error.ri`
+`xxx_err.li` or `error.li`
 
 - It fail to compile (compiler exit with non-zero status).
 - Compiler output matches `xxx_err.out` or `error.out`
 
 #### TODO Test
 
-`xxx.todo.ri` or `xxx_err.todo.ri`
+`xxx.todo.li` or `xxx_err.todo.li`
 
 If output matches with `.todo.out`, `.todo` will be removed by using fix mode.
 

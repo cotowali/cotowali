@@ -1,15 +1,15 @@
-call_expr.err.ri 5,2: function `unknown_fn` is not defined
+call_expr.err.li 5,2: function `unknown_fn` is not defined
   > unknown_fn()
     ^^^^^^^^^^^^
-call_expr.err.ri 8,2: `v` is not function (`int`)
+call_expr.err.li 8,2: `v` is not function (`int`)
   > v()
     ^^^
-call_expr.err.ri 11,4: mismatched types: `int` (expected) and `string` (found)
+call_expr.err.li 11,4: mismatched types: `int` (expected) and `string` (found)
   > "a"
     ^^^
-call_expr.err.ri 12,2: expected 1 arguments, but got 0
+call_expr.err.li 12,2: expected 1 arguments, but got 0
   > f()
     ^^^
-call_expr.err.ri 13,2: expected 1 arguments, but got 2
+call_expr.err.li 13,2: expected 1 arguments, but got 2
   > f(0, 1)
     ^^^^^^^

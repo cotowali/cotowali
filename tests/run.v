@@ -12,7 +12,7 @@ fn indent_each_lines(n int, s string) string {
 }
 
 enum FileSuffix {
-	ri
+	li
 	err
 	todo
 	out
@@ -21,7 +21,7 @@ enum FileSuffix {
 
 fn suffix(s FileSuffix) string {
 	return match s {
-		.ri { '.ri' }
+		.li { '.li' }
 		.err { '.err' }
 		.todo { '.todo' }
 		.out { '.out' }
@@ -30,20 +30,20 @@ fn suffix(s FileSuffix) string {
 }
 
 fn is_err_test_file(f string) bool {
-	name := f.trim_suffix(suffix(.ri)).trim_suffix(suffix(.todo))
+	name := f.trim_suffix(suffix(.li)).trim_suffix(suffix(.todo))
 	return name.ends_with(suffix(.err)) || name == 'error'
 }
 
 fn is_todo_test_file(f string) bool {
-	return f.trim_suffix(suffix(.ri)).ends_with(suffix(.todo))
+	return f.trim_suffix(suffix(.li)).ends_with(suffix(.todo))
 }
 
 fn is_noemit_test_file(f string) bool {
-	return f.trim_suffix(suffix(.ri)).trim_suffix(suffix(.todo)).ends_with(suffix(.noemit))
+	return f.trim_suffix(suffix(.li)).trim_suffix(suffix(.todo)).ends_with(suffix(.noemit))
 }
 
 fn out_path(f string) string {
-	return f.trim_suffix(suffix(.ri)) + suffix(.out)
+	return f.trim_suffix(suffix(.li)) + suffix(.out)
 }
 
 const skip_list = ['nothing']
@@ -54,7 +54,7 @@ fn is_target_file(s string) bool {
 			return false
 		}
 	}
-	return s.ends_with(suffix(.ri))
+	return s.ends_with(suffix(.li))
 }
 
 fn get_sources(paths []string) []string {
@@ -160,7 +160,7 @@ fn (mut t TestCase) run() {
 		if correct_exit_code {
 			if t.is_todo_test {
 				if t.output == t.expected {
-					fix_todo(t.path, .ri)
+					fix_todo(t.path, .li)
 					fix_todo(t.out_path, .out)
 					t.result = .fixed
 				}
@@ -239,7 +239,7 @@ fn run(paths []string) bool {
 
 fn main() {
 	if ['--help', '-h', 'help'].any(it in os.args) {
-		println('Usage: v run tests/run.v [test.ri|tests]...')
+		println('Usage: v run tests/run.v [test.li|tests]...')
 		return
 	}
 	paths := if os.args.len > 1 {

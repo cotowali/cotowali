@@ -24,4 +24,4 @@ for i < lines.len {
 	i++
 }
 
-write_file('examples/readme_example.ri', lines[begin..end].map(it + '\n').join('')) ?
+write_file('examples/readme_example.li', lines[begin..end].map(it + '\n').join('')) ?

@@ -1,0 +1,9 @@
+fn fib(n int) int {
+  if n < 2 {
+    return n
+  }
+  return fib(n - 1) + fib(n - 2)
+}
+fib(5)
+fib(6)
+fib(7)

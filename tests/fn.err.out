@@ -1,18 +1,18 @@
-fn.err.ri 1,14: `i` is duplicated
+fn.err.li 1,14: `i` is duplicated
   > i
     ^
-fn.err.ri 2,10: unknown type `foo`
+fn.err.li 2,10: unknown type `foo`
   > foo
     ^^^
-fn.err.ri 5,11: mismatched types: `string` (expected) and `int` (found)
+fn.err.li 5,11: mismatched types: `string` (expected) and `int` (found)
   > i
     ^
-fn.err.ri 7,5: `g` is duplicated
+fn.err.li 7,5: `g` is duplicated
   > g
     ^
-fn.err.ri 10,2: `v` is not function (`int`)
+fn.err.li 10,2: `v` is not function (`int`)
   > v()
     ^^^
-fn.err.ri 12,2: cannot call `int`
+fn.err.li 12,2: cannot call `int`
   > 0()
     ^^^
