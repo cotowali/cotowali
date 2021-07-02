@@ -22,6 +22,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 		ast.InlineShell { e.writeln(stmt.text) }
 		ast.ReturnStmt { e.return_stmt(stmt) }
 		ast.RequireStmt { e.require_stmt(stmt) }
+		ast.WhileStmt { panic('unimplemented') }
 	}
 }
 

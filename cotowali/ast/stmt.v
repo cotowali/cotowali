@@ -5,7 +5,7 @@ import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymb
 import cotowali.token { Token }
 
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
-	IfStmt | InlineShell | RequireStmt | ReturnStmt
+	IfStmt | InlineShell | RequireStmt | ReturnStmt | WhileStmt
 
 fn (mut r Resolver) stmts(stmts []Stmt) {
 	for stmt in stmts {
@@ -26,6 +26,7 @@ fn (mut r Resolver) stmt(stmt Stmt) {
 		InlineShell { r.inline_shell(stmt) }
 		RequireStmt { r.require_stmt(stmt) }
 		ReturnStmt { r.return_stmt(stmt) }
+		WhileStmt { r.while_stmt(stmt) }
 	}
 }
 
@@ -257,4 +258,22 @@ fn (mut r Resolver) require_stmt(stmt RequireStmt) {
 	}
 
 	r.file(stmt.file)
+}
+
+pub struct WhileStmt {
+pub:
+	cond Expr
+	body Block
+}
+
+fn (mut r Resolver) while_stmt(stmt WhileStmt) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+
+	r.expr(stmt.cond)
+	r.block(stmt.body)
 }
