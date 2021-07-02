@@ -112,6 +112,7 @@ fn test_lexer() {
 	ktest('#[attr]', [.hash, .l_bracket, .ident, .r_bracket])
 	ktest('.....', [.dotdotdot, .dot, .dot])
 	ktest('require "file.li"', [.key_require, .string_lit])
+	ktest('yield 0', [.key_yield, .int_lit])
 
 	test('if i == 0 { } else if i != 1 {} else {}', [
 		t(.key_if, 'if'),
