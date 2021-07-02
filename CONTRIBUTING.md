@@ -10,6 +10,6 @@ See [development.md](./docs/development.md)
 
 # How to contribute with issue
 
-0. Visit https://github.com/cotowari/cotowari/issues/new .
+0. Visit https://github.com/cotowali/cotowali/issues/new .
 0. Select kind of issue.
 0. Fill out template.

@@ -1,3 +1,3 @@
-# cotowari builtin
+# cotowali builtin
 
-# end cotowari builtin
+# end cotowali builtin

@@ -1,10 +1,10 @@
 module tools
 
 import cli { Command }
-import cotowari.context { new_default_context }
-import cotowari.parser
-import cotowari.checker { new_checker }
-import cotowari.ast { new_resolver }
+import cotowali.context { new_default_context }
+import cotowali.parser
+import cotowali.checker { new_checker }
+import cotowali.ast { new_resolver }
 
 const (
 	ast_command = Command{

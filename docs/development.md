@@ -11,9 +11,9 @@
 
 ### Performance
 
-**Cotowari doesn't have to be fast.**
+**Cotowali doesn't have to be fast.**
 
-- Cotowari target small (~10k LoC) `.ri` source code.
+- Cotowali target small (~10k LoC) `.ri` source code.
 - Of course it's better to be fast. But it is not important.
 - This doesn't mean the code has to be super slow.
 

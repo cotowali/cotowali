@@ -50,7 +50,7 @@ tasks:
         done
       fi
     tasks:
-      unit: v test ${@:-./cotowari}
+      unit: v test ${@:-./cotowali}
       integration: v run tests/run.v $@
       fix: v -d fix run tests/run.v $@
       hello: z run examples/hello.ri

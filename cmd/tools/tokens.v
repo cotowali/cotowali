@@ -2,9 +2,9 @@ module tools
 
 import cli { Command }
 import strings
-import cotowari.context { new_default_context }
-import cotowari.lexer { new_lexer }
-import cotowari.source
+import cotowali.context { new_default_context }
+import cotowali.lexer { new_lexer }
+import cotowali.source
 
 const (
 	tokens_command = Command{

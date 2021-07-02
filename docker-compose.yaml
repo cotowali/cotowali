@@ -5,18 +5,18 @@ services:
       dockerfile: docker/Dockerfile
       context: .
       target: dev
-    image: ${COTOWARI_IMAGE_PREFIX}cotowari-dev:${COTOWARI_IMAGE_TAG:-latest}
+    image: ${COTOWALI_IMAGE_PREFIX}cotowali-dev:${COTOWALI_IMAGE_TAG:-latest}
     environment:
-      - COTOWARI_ROOT="${COTOWARI_ROOT:-/usr/local/cotowari}"
+      - COTOWALI_ROOT="${COTOWALI_ROOT:-/usr/local/cotowali}"
     volumes:
-      - .:${COTOWARI_ROOT:-/usr/local/cotowari}
+      - .:${COTOWALI_ROOT:-/usr/local/cotowali}
   dev-emscripten:
     build:
       dockerfile: docker/Dockerfile
       context: .
       target: dev-emscripten
-    image: ${COTOWARI_IMAGE_PREFIX}cotowari-dev:emscripten-${COTOWARI_IMAGE_TAG:-latest}
+    image: ${COTOWALI_IMAGE_PREFIX}cotowali-dev:emscripten-${COTOWALI_IMAGE_TAG:-latest}
     environment:
-      - COTOWARI_ROOT="${COTOWARI_ROOT:-/usr/local/cotowari}"
+      - COTOWALI_ROOT="${COTOWALI_ROOT:-/usr/local/cotowali}"
     volumes:
-      - .:${COTOWARI_ROOT:-/usr/local/cotowari}
+      - .:${COTOWALI_ROOT:-/usr/local/cotowali}

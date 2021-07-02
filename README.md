@@ -1,6 +1,6 @@
 <div align="center">
-  <img width="200" src="https://raw.githubusercontent.com/cotowari/logo/main/cotowari.svg?sanitize=true">
-  <h1>Cotowari</h1>
+  <img width="200" src="https://raw.githubusercontent.com/cotowali/logo/main/cotowali.svg?sanitize=true">
+  <h1>Cotowali</h1>
   <p>A statically typed script language that transpile into POSIX sh</p>
 </div>
 
@@ -8,7 +8,7 @@
 > It means that only a few small snippets in `tests` will work.
 > First release is planned for later this year.
 
-## Concepts of Cotowari
+## Concepts of Cotowali
 
 - Outputs shell script that is fully compliant with POSIX standards.
 - Simple syntax.
@@ -99,4 +99,4 @@ docker compose run dev
 
 ## Acknowledgements
 
-Cotowari is supported by 2021 Exploratory IT Human Resources Project ([The MITOU Program](https://www.ipa.go.jp/english/humandev/third.html) by IPA: Information-technology Promotion Agency, Japan.
+Cotowali is supported by 2021 Exploratory IT Human Resources Project ([The MITOU Program](https://www.ipa.go.jp/english/humandev/third.html) by IPA: Information-technology Promotion Agency, Japan.

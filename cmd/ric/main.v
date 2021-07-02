@@ -3,11 +3,11 @@ module main
 import os
 import cli { Command, Flag }
 import v.vmod
-import cotowari { compile }
-import cotowari.config { backend_from_str }
-import cotowari.context { Context, new_context }
-import cotowari.source { Source }
-import cotowari.errors { unreachable }
+import cotowali { compile }
+import cotowali.config { backend_from_str }
+import cotowali.context { Context, new_context }
+import cotowali.source { Source }
+import cotowali.errors { unreachable }
 import cmd.tools
 
 const (
@@ -57,7 +57,7 @@ fn execute_run(cmd Command) ? {
 		exit(1)
 	}
 	ctx := new_ctx_from_cmd(cmd)
-	cotowari.run(s, ctx) or {
+	cotowali.run(s, ctx) or {
 		eprint(ctx.errors.format(errors.PrettyFormatter{}))
 		exit(1)
 	}

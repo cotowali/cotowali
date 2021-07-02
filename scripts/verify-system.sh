@@ -1,5 +1,5 @@
 #!/bin/sh
-# TODO: replace with cotowari
+# TODO: replace with cotowali
 
 fail=""
 if ! which z > /dev/null

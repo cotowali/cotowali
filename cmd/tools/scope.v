@@ -1,8 +1,8 @@
 module tools
 
 import cli { Command }
-import cotowari.context { new_default_context }
-import cotowari.parser
+import cotowali.context { new_default_context }
+import cotowali.parser
 
 const (
 	scope_command = Command{

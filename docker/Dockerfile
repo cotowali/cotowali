@@ -1,6 +1,6 @@
 ARG vroot="/usr/local/v"
 ARG vflags="-cc clang"
-ARG cotowari_root=/usr/local/cotowari
+ARG cotowali_root=/usr/local/cotowali
 
 
 # build-deps
@@ -41,9 +41,9 @@ COPY --from=build-deps $VROOT $VROOT
 WORKDIR $VROOT
 RUN ./v symlink
 
-ARG cotowari_root
-ENV COTOWARI_ROOT=$cotowari_root
-WORKDIR $COTOWARI_ROOT
+ARG cotowali_root
+ENV COTOWALI_ROOT=$cotowali_root
+WORKDIR $COTOWALI_ROOT
 
 COPY . .
 
@@ -63,9 +63,9 @@ COPY --from=build-deps $VROOT $VROOT
 WORKDIR $VROOT
 RUN ./v symlink
 
-ARG cotowari_root
-ENV COTOWARI_ROOT=$cotowari_root
-WORKDIR $COTOWARI_ROOT
+ARG cotowali_root
+ENV COTOWALI_ROOT=$cotowali_root
+WORKDIR $COTOWALI_ROOT
 
 COPY . .
 
