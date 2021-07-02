@@ -1,0 +1,3 @@
+while.err.li 1,7: non-bool type used as while condition
+  > 100
+    ^^^
