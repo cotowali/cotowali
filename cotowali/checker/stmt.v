@@ -43,9 +43,7 @@ fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 
 fn (mut c Checker) assert_stmt(stmt ast.AssertStmt) {
 	c.expr(stmt.expr)
-	if stmt.expr.typ() != builtin_type(.bool) {
-		c.error('non-bool type used as assert condition', stmt.expr.pos())
-	}
+	c.expect_bool_expr(stmt.expr, 'assert condition') or {}
 }
 
 fn (mut c Checker) block(block ast.Block) {
@@ -80,10 +78,7 @@ fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 			break
 		}
 		c.expr(branch.cond)
-		cond_type := branch.cond.typ()
-		if cond_type != builtin_type(.bool) {
-			c.error('non-bool type used as if condition', branch.cond.pos())
-		}
+		c.expect_bool_expr(branch.cond, 'if condition') or {}
 		c.block(branch.body)
 	}
 }

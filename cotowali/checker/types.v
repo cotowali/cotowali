@@ -1,5 +1,6 @@
 module checker
 
+import cotowali.ast { Expr }
 import cotowali.symbols { TypeSymbol, builtin_type }
 import cotowali.source { Pos }
 
@@ -26,4 +27,11 @@ fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
 	m2 := '`$v.got.name` ($v.got_label)'
 	c.error('mismatched types: $m1 and $m2', v.pos)
 	return error('mismatched types')
+}
+
+fn (mut c Checker) expect_bool_expr(expr Expr, context_name string) ? {
+	if expr.typ() != builtin_type(.bool) {
+		c.error('non-bool type used as $context_name', expr.pos())
+		return error('non-bool')
+	}
 }
