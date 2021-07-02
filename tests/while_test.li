@@ -1,0 +1,8 @@
+let i = 0
+let n = 1
+while i < 10 {
+  n = n * 2
+  i = i + 1
+}
+
+assert n == 1024
