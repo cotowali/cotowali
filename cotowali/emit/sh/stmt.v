@@ -22,7 +22,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 		ast.InlineShell { e.writeln(stmt.text) }
 		ast.ReturnStmt { e.return_stmt(stmt) }
 		ast.RequireStmt { e.require_stmt(stmt) }
-		ast.WhileStmt { panic('unimplemented') }
+		ast.WhileStmt { e.while_stmt(stmt) }
 	}
 }
 
@@ -86,4 +86,15 @@ fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {
 
 fn (mut e Emitter) require_stmt(stmt ast.RequireStmt) {
 	e.file(stmt.file)
+}
+
+fn (mut e Emitter) while_stmt(stmt ast.WhileStmt) {
+	e.write('while ')
+	e.sh_test_command(fn (mut e Emitter, cond ast.Expr) {
+		e.sh_test_cond_is_true(cond)
+	}, stmt.cond)
+	e.writeln('')
+	e.write_block({ open: 'do', close: 'done' }, fn (mut e Emitter, stmt ast.WhileStmt) {
+		e.block(stmt.body)
+	}, stmt)
 }
