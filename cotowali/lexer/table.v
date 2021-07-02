@@ -52,6 +52,7 @@ const (
 		'decl':    k(.key_decl)
 		'require': k(.key_require)
 		'struct':  k(.key_struct)
+		'while':   k(.key_while)
 		'yield':   k(.key_yield)
 		'true':    k(.bool_lit)
 		'false':   k(.bool_lit)
