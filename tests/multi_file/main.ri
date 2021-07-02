@@ -1,3 +1,0 @@
-require "./f.li"
-f_echo('hello f')
-f2_echo('hello f2')

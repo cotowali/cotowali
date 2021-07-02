@@ -1,4 +1,0 @@
-${
-  text="inline-shell"
-  echo "hello $text"
-}

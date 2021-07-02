@@ -1,7 +1,0 @@
-echo('file: f2')
-fn f2_echo(msg string) {
-  echo('echo_f2')
-  echo(msg)
-}
-
-require "./f.li"

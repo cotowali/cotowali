@@ -1,5 +1,0 @@
-fn helloworld() string {
-  return "Hello World"
-}
-
-helloworld()
