@@ -77,7 +77,7 @@ fn execute_compile(cmd Command) ? {
 		eprint(ctx.errors.format(errors.PrettyFormatter{}))
 		exit(1)
 	}
-	println(out)
+	print(out)
 }
 
 fn main() {
