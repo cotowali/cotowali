@@ -51,6 +51,9 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_require {
 			return ast.Stmt(p.parse_require_stmt() ?)
 		}
+		.key_while {
+			return ast.Stmt(p.parse_while_stmt() ?)
+		}
 		.inline_shell {
 			tok := p.consume()
 			return ast.InlineShell{
@@ -255,5 +258,24 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 	f := parse_file(path, p.ctx) or { return p.error(err.msg, pos) }
 	return ast.RequireStmt{
 		file: f
+	}
+}
+
+fn (mut p Parser) parse_while_stmt() ?ast.WhileStmt {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
+	p.consume_with_assert(.key_while)
+	cond := p.parse_expr(.toplevel) ?
+	body := p.parse_block('while_$p.count', []) ?
+	p.count++
+
+	return ast.WhileStmt{
+		cond: cond
+		body: body
 	}
 }
