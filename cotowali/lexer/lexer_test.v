@@ -89,9 +89,9 @@ fn test_lexer() {
 	crlf := cr + lf
 	test(' "🐈__" a ', [
 		// Pos{i, line, col, len, last_line, last_col}
-		Token{.string_lit, '🐈__', Pos{1, 1, 2, 8, 1, 6}},
-		Token{.ident, 'a', Pos{10, 1, 8, 1, 1, 8}},
-		Token{.eof, '', Pos{12, 1, 10, 1, 1, 10}},
+		Token{.string_lit, '🐈__', Pos{1, 1, 2, 8, 1, 7}},
+		Token{.ident, 'a', Pos{10, 1, 9, 1, 1, 9}},
+		Token{.eof, '', Pos{12, 1, 11, 1, 1, 11}},
 	])
 	ktest('fn f(a, b){}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren, .l_brace,
 		.r_brace, .eof])
