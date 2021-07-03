@@ -18,10 +18,10 @@ pub fn new_checker(ctx &Context) Checker {
 	}
 }
 
-fn (mut c Checker) error(msg string, pos Pos) {
-	c.ctx.errors.push(
+fn (mut c Checker) error(msg string, pos Pos) ? {
+	return IError(c.ctx.errors.push(
 		source: c.source
 		msg: msg
 		pos: pos
-	)
+	))
 }
