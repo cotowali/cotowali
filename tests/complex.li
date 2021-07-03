@@ -22,6 +22,6 @@ fn f(a int) {
 
 let a = 0
 a = 1
-f(a) |> cat()
+f(a)
 echo(1 + 1) |> cat()
 echo(2 * 3)
