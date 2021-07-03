@@ -57,7 +57,7 @@ pub enum TypeKind {
 	placeholder
 	unknown
 	primitive
-	func
+	function
 	array
 	reference
 }
@@ -73,7 +73,7 @@ pub fn (t TypeSymbol) kind() TypeKind {
 		UnknownTypeInfo { tk(.unknown) }
 		PlaceholderTypeInfo { tk(.placeholder) }
 		PrimitiveTypeInfo { tk(.primitive) }
-		FunctionTypeInfo { tk(.func) }
+		FunctionTypeInfo { tk(.function) }
 		ArrayTypeInfo { tk(.array) }
 		ReferenceTypeInfo { tk(.reference) }
 	}
