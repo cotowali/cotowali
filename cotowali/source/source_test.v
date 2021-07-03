@@ -9,6 +9,7 @@ fn test_read_file() {
 	expected := Source{
 		path: @FILE
 		code: code
+		lines: code.split_into_lines()
 	}
 
 	assert got == expected
@@ -24,4 +25,10 @@ fn test_at() {
 fn test_slice() {
 	s := read_file(@FILE) or { panic(err) }
 	assert s.slice(1, 9) == '/ 🐈 <'
+}
+
+fn test_line() ? {
+	s := read_file(@FILE) ?
+	assert s.line(1) == 'module source'
+	assert s.line(100000) == ''
 }
