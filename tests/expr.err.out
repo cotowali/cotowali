@@ -28,12 +28,15 @@ expr.err.li 14,4: mismatched types: `int` (expected) and `string` (found)
 expr.err.li 14,14: mismatched types: `int` (expected) and `string` (found)
   > "a"
     ^^^
-expr.err.li 17,6: mismatched types: `int` (expected) and `string` (found)
+expr.err.li 15,7: expected function call, but found int
+  > 0
+    ^
+expr.err.li 18,6: mismatched types: `int` (expected) and `string` (found)
   > '10'
     ^^^^
-expr.err.li 18,2: `int` does not support indexing
+expr.err.li 19,2: `int` does not support indexing
   > arr[0][0]
     ^^^^^^^^^
-expr.err.li 19,2: `int` does not support indexing
+expr.err.li 20,2: `int` does not support indexing
   > x[0]
     ^^^^

@@ -114,8 +114,11 @@ fn (mut c Checker) paren_expr(expr ast.ParenExpr) {
 }
 
 fn (mut c Checker) pipeline(expr ast.Pipeline) {
-	for e in expr.exprs {
+	for i, e in expr.exprs {
 		c.expr(e)
+		if i > 0 {
+			c.expect_function_call(e) or {}
+		}
 	}
 	// TODO: check stdin/stout type
 }

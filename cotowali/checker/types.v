@@ -33,3 +33,10 @@ fn (mut c Checker) expect_bool_expr(expr Expr, context_name string) ? {
 		return c.error('non-bool type used as $context_name', expr.pos())
 	}
 }
+
+fn (mut c Checker) expect_function_call(expr Expr) ? {
+	if expr !is ast.CallExpr {
+		ts := expr.type_symbol()
+		return c.error('expected function call, but found $ts.name', expr.pos())
+	}
+}
