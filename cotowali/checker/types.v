@@ -3,6 +3,7 @@ module checker
 import cotowali.ast { Expr }
 import cotowali.symbols { TypeSymbol, builtin_type }
 import cotowali.source { Pos }
+import cotowali.errors { unreachable }
 
 struct TypeCheckingConfig {
 	want       TypeSymbol [required]
@@ -34,9 +35,13 @@ fn (mut c Checker) expect_bool_expr(expr Expr, context_name string) ? {
 	}
 }
 
-fn (mut c Checker) expect_function_call(expr Expr) ? {
-	if expr !is ast.CallExpr {
-		ts := expr.type_symbol()
-		return c.error('expected function call, but found $ts.name', expr.pos())
+fn (mut c Checker) expect_function_call(expr Expr) ?ast.CallExpr {
+	if expr is ast.CallExpr {
+		return expr
 	}
+	ts := expr.type_symbol()
+	c.error('expected function call, but found $ts.name', expr.pos()) ?
+	// wait for fix v bug
+	// return c.error(...)
+	panic(unreachable)
 }

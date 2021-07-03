@@ -117,10 +117,19 @@ fn (mut c Checker) pipeline(expr ast.Pipeline) {
 	for i, e in expr.exprs {
 		c.expr(e)
 		if i > 0 {
-			c.expect_function_call(e) or {}
+			right := c.expect_function_call(e) or { continue }
+
+			left := expr.exprs[i - 1]
+			c.check_types(
+				want: left.type_symbol()
+				want_label: 'left'
+				got: right.scope.must_lookup_type(right.fn_info().pipe_in)
+				got_label: 'pipe in of right'
+				pos: left.pos().merge(right.pos)
+				synmetric: true
+			) or {}
 		}
 	}
-	// TODO: check stdin/stout type
 }
 
 fn (mut c Checker) prefix_expr(expr ast.PrefixExpr) {
