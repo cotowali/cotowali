@@ -5,11 +5,11 @@ fn fib(n int) int {
   return fib(n - 1) + fib(n - 2)
 }
 
-fn int | twice() int {
+fn int |> twice() int {
    let n = 0
    read(&n)
    return n * 2
 }
 
 assert fib(6) == 8
-assert (fib(6) | twice()) == 16
+assert (fib(6) |> twice()) == 16

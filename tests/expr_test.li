@@ -45,12 +45,12 @@ assert zero() == 0
 assert add(3, 4) == 7
 assert add(as_int("1"), 2) == 3
 
-fn int | inc() int {
+fn int |> inc() int {
   let n = 0
   read(&n)
   return n + 1
 }
 
-assert (10 | inc()) == 11
+assert (10 |> inc()) == 11
 
 assert call('add', '3', '4') == '7'

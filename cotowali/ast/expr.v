@@ -348,7 +348,7 @@ fn (mut r Resolver) array_literal(expr ArrayLiteral) {
 	r.exprs(expr.elements)
 }
 
-// expr | expr | expr
+// expr |> expr |> expr
 pub struct Pipeline {
 pub:
 	scope &Scope

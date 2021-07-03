@@ -17,7 +17,6 @@ const (
 		`/`: k(.div)
 		`%`: k(.mod)
 		`&`: k(.amp)
-		`|`: k(.pipe)
 		`=`: k(.assign)
 		`!`: k(.not)
 		`,`: k(.comma)
@@ -33,6 +32,7 @@ const (
 		'!=': k(.ne)
 		'<=': k(.le)
 		'>=': k(.ge)
+		'|>': k(.pipe)
 	}
 
 	table_for_three_chars_symbols = map{

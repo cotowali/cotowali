@@ -25,7 +25,7 @@ expr.err.li 12,2: invalid left-hand side of assignment
 expr.err.li 14,4: mismatched types: `int` (expected) and `string` (found)
   > "a"
     ^^^
-expr.err.li 14,13: mismatched types: `int` (expected) and `string` (found)
+expr.err.li 14,14: mismatched types: `int` (expected) and `string` (found)
   > "a"
     ^^^
 expr.err.li 17,6: mismatched types: `int` (expected) and `string` (found)

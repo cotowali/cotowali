@@ -97,7 +97,7 @@ fn test_lexer() {
 		.r_brace, .eof])
 	ktest('decl fn f()', [.key_decl, .key_fn, .ident, .l_paren, .r_paren])
 	ktest('let i = 0', [.key_let, .ident, .assign, .int_lit, .eof])
-	ktest('&a.b | c', [.amp, .ident, .dot, .ident, .pipe, .ident, .eof])
+	ktest('&a.b |> c', [.amp, .ident, .dot, .ident, .pipe, .ident, .eof])
 	ktest('a && b || c &', [.ident, .logical_and, .ident, .logical_or, .ident, .amp, .eof])
 	ktest('return 0', [.key_return, .int_lit])
 	ktest('assert a == b', [.key_assert, .ident, .eq, .ident])
