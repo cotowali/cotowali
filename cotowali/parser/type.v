@@ -25,7 +25,7 @@ fn (mut p Parser) parse_ident_type() ?Type {
 	}
 
 	tok := p.consume_with_check(.ident) ?
-	return (p.scope.lookup_type(tok.text) or { return p.error(err, tok.pos) }).typ
+	return (p.scope.lookup_type(tok.text) or { return p.error(err.msg, tok.pos) }).typ
 }
 
 fn (mut p Parser) parse_reference_type() ?Type {
