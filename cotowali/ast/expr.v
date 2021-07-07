@@ -307,6 +307,10 @@ pub type StringLiteral = PrimitiveLiteral
 pub type IntLiteral = PrimitiveLiteral
 pub type FloatLiteral = PrimitiveLiteral
 
+pub fn (e BoolLiteral) bool() bool {
+	return e.token.text != 'false'
+}
+
 fn (mut r Resolver) bool_literal(expr BoolLiteral) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
