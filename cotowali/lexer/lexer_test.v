@@ -194,3 +194,10 @@ fn test_string() {
 fn test_inline_shell() {
 	test(r'${echo 1}', [t(.inline_shell, 'echo 1')])
 }
+
+fn test_number() {
+	test('1 1.1', [
+		t(.int_lit, '1'),
+		t(.float_lit, '1.1'),
+	])
+}

@@ -200,7 +200,16 @@ fn (mut lex Lexer) read_number() Token {
 		}
 	}
 
-	return lex.new_token_with_consume_for(is_digit, .int_lit)
+	mut is_float := false
+	mut err_msg := ''
+	for lex.byte() == `.` || lex.char(0).@is(.digit) {
+		if lex.byte() == `.` {
+			is_float = true
+		}
+		lex.consume()
+	}
+
+	return lex.new_token(if is_float { k(.float_lit) } else { k(.int_lit) })
 }
 
 fn (mut lex Lexer) read_at_ident() Token {
