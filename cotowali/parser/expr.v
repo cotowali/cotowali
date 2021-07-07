@@ -314,6 +314,13 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 				token: tok
 			}
 		}
+		.float_lit {
+			p.consume()
+			return ast.FloatLiteral{
+				scope: p.scope
+				token: tok
+			}
+		}
 		.string_lit {
 			p.consume()
 			return ast.StringLiteral{
