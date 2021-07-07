@@ -192,7 +192,7 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 	}
 }
 
-fn (mut lex Lexer) read_number() Token {
+fn (mut lex Lexer) read_number() ?Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
 		defer {
@@ -204,12 +204,16 @@ fn (mut lex Lexer) read_number() Token {
 	mut err_msg := ''
 	for lex.byte() == `.` || lex.char(0).@is(.digit) {
 		if lex.byte() == `.` {
+			if is_float {
+				err_msg = 'too many decimal points in number'
+			}
 			is_float = true
 		}
 		lex.consume()
 	}
 
-	return lex.new_token(if is_float { k(.float_lit) } else { k(.int_lit) })
+	tok := lex.new_token(if is_float { k(.float_lit) } else { k(.int_lit) })
+	return if err_msg.len == 0 { tok } else { lex.error(tok, err_msg) }
 }
 
 fn (mut lex Lexer) read_at_ident() Token {

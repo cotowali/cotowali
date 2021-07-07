@@ -200,4 +200,6 @@ fn test_number() {
 		t(.int_lit, '1'),
 		t(.float_lit, '1.1'),
 	])
+
+	ektest('1.1.1', [ek(.float_lit, .err)])
 }
