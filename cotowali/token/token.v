@@ -28,6 +28,7 @@ pub enum TokenKind {
 	amp
 	question
 	int_lit
+	float_lit
 	bool_lit
 	string_lit
 	l_paren
