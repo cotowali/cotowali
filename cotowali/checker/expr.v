@@ -10,6 +10,7 @@ fn (mut c Checker) expr(expr Expr) {
 		ast.BoolLiteral {}
 		ast.CallCommandExpr { c.call_command_expr(expr) }
 		ast.CallExpr { c.call_expr(mut expr) }
+		ast.FloatLiteral {}
 		ast.IndexExpr { c.index_expr(expr) }
 		ast.InfixExpr { c.infix_expr(expr) }
 		ast.IntLiteral {}

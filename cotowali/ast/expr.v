@@ -5,8 +5,9 @@ import cotowali.token { Token }
 import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id, builtin_type }
 import cotowali.errors { unreachable }
 
-pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | IndexExpr |
-	InfixExpr | IntLiteral | ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
+pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | FloatLiteral |
+	IndexExpr | InfixExpr | IntLiteral | ParenExpr | Pipeline | PrefixExpr | StringLiteral |
+	Var
 
 fn (mut r Resolver) exprs(exprs []Expr) {
 	for expr in exprs {
@@ -21,6 +22,7 @@ fn (mut r Resolver) expr(expr Expr) {
 		BoolLiteral { r.bool_literal(expr) }
 		CallCommandExpr { r.call_command_expr(expr) }
 		CallExpr { r.call_expr(mut expr) }
+		FloatLiteral { r.float_literal(expr) }
 		IndexExpr { r.index_expr(expr) }
 		InfixExpr { r.infix_expr(expr) }
 		IntLiteral { r.int_literal(expr) }
@@ -49,7 +51,7 @@ pub fn (expr Expr) pos() Pos {
 		InfixExpr { expr.pos() }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
 		PrefixExpr { expr.op.pos.merge(expr.expr.pos()) }
-		StringLiteral, IntLiteral, BoolLiteral { expr.token.pos }
+		StringLiteral, IntLiteral, FloatLiteral, BoolLiteral { expr.token.pos }
 	}
 }
 
@@ -83,6 +85,7 @@ pub fn (e Expr) typ() Type {
 		BoolLiteral { builtin_type(.bool) }
 		CallCommandExpr { builtin_type(.string) }
 		CallExpr { e.typ }
+		FloatLiteral { builtin_type(.float) }
 		StringLiteral { builtin_type(.string) }
 		IntLiteral { builtin_type(.int) }
 		ParenExpr { e.expr.typ() }
@@ -114,8 +117,8 @@ pub fn (e Expr) scope() &Scope {
 		IndexExpr {
 			e.left.scope()
 		}
-		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, InfixExpr, IntLiteral, Pipeline,
-		PrefixExpr, StringLiteral, Var {
+		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, FloatLiteral, InfixExpr, IntLiteral,
+		Pipeline, PrefixExpr, StringLiteral, Var {
 			e.scope
 		}
 	}
@@ -300,6 +303,7 @@ pub:
 pub type BoolLiteral = PrimitiveLiteral
 pub type StringLiteral = PrimitiveLiteral
 pub type IntLiteral = PrimitiveLiteral
+pub type FloatLiteral = PrimitiveLiteral
 
 fn (mut r Resolver) bool_literal(expr BoolLiteral) {
 	$if trace_resolver ? {
@@ -320,6 +324,15 @@ fn (mut r Resolver) string_literal(expr StringLiteral) {
 }
 
 fn (mut r Resolver) int_literal(expr IntLiteral) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+}
+
+fn (mut r Resolver) float_literal(expr FloatLiteral) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {

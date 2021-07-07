@@ -34,6 +34,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.BoolLiteral { panic('unimplemented') }
 		ast.CallCommandExpr { e.call_command_expr(expr, opt) }
 		ast.CallExpr { e.call_expr(expr, opt) }
+		ast.FloatLiteral { panic('unimplemented') }
 		ast.ParenExpr { e.paren_expr(expr, opt) }
 		ast.Pipeline { e.pipeline(expr, opt) }
 		ast.InfixExpr { e.infix_expr(expr, opt) }
