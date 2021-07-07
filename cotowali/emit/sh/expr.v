@@ -104,11 +104,16 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	}
 }
 
+fn (mut e Emitter) sh_result_to_bool() {
+	e.write(" && echo 'true' || echo 'false'")
+}
+
 fn (mut e Emitter) write_test_to_bool_str_block<T>(f fn (mut Emitter, T), v T) {
-	open, close := '\$( [ ', " ] && echo 'true' || echo 'false' )"
-	e.write('"')
-	e.write_inline_block({ open: open, close: close }, f, v)
-	e.write('"')
+	open, close := '"\$(', ')"'
+	e.write(open)
+	e.write_inline_block({ open: '[ ', close: ' ]' }, f, v)
+	e.sh_result_to_bool()
+	e.write(close)
 }
 
 fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
