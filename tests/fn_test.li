@@ -3,6 +3,10 @@ fn add(a int, b int) int {
   return a + b
 }
 
+fn div(a float, b float) float {
+  return a / b
+}
+
 fn sum(vals ...int) int {
   let res = 0
   for v in vals {
@@ -12,6 +16,7 @@ fn sum(vals ...int) int {
 }
 
 assert add(1, 2) == 3
+assert div(1, 2) == 0.5
 assert sum(1, 2, 3) == 6
 
 assert @expr('1', '+', '1') == '2'
