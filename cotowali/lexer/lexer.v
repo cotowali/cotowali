@@ -94,7 +94,7 @@ fn (mut lex Lexer) read_newline() Token {
 		}
 	}
 
-	if lex.char(0).byte() == `\r` && lex.char(1).byte() == `\n` {
+	if lex.byte() == `\r` && lex.char(1).byte() == `\n` {
 		lex.consume()
 	}
 	return lex.new_token_with_consume(.eol)
@@ -111,7 +111,7 @@ fn (mut lex Lexer) read_string_lit(quote byte) ?Token {
 	lex.consume()
 	begin := lex.idx()
 	mut unterminated := false
-	for lex.char(0).byte() != quote {
+	for lex.byte() != quote {
 		lex.consume()
 		if lex.is_eof() || is_eol(lex.char(0)) {
 			unterminated = true
@@ -227,9 +227,9 @@ fn (mut lex Lexer) read_dollar_directive() Token {
 	lex.skip_with_assert(fn (c Char) bool {
 		return c.byte() == `$`
 	})
-	if lex.char(0).byte() == `{` {
+	if lex.byte() == `{` {
 		lex.skip()
-		for lex.char(0).byte() != `}` {
+		for lex.byte() != `}` {
 			if lex.is_eof() {
 				panic('unterminated inline shell')
 			}
