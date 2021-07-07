@@ -137,7 +137,6 @@ fn (mut lex Lexer) new_token_with_consume_not_for(cond CharCond, kind TokenKind)
 
 // --
 
-[inline]
 fn (lex &Lexer) char(n int) Char {
 	if lex.is_eof() {
 		return Char('\uFFFF')
