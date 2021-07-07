@@ -7,6 +7,7 @@ pub enum BuiltinTypeKey {
 	any
 	unknown
 	int
+	float
 	string
 	bool
 }
@@ -61,6 +62,7 @@ pub fn (mut s Scope) register_builtin() {
 		ts_(.unknown, UnknownTypeInfo{}),
 		ts_(.any, PrimitiveTypeInfo{}),
 		ts_(.int, PrimitiveTypeInfo{}),
+		ts_(.float, PrimitiveTypeInfo{}),
 		ts_(.string, PrimitiveTypeInfo{}),
 		ts_(.bool, PrimitiveTypeInfo{}),
 	]
