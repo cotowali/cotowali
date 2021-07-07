@@ -34,13 +34,13 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.BoolLiteral { panic('unimplemented') }
 		ast.CallCommandExpr { e.call_command_expr(expr, opt) }
 		ast.CallExpr { e.call_expr(expr, opt) }
-		ast.FloatLiteral { panic('unimplemented') }
+		ast.FloatLiteral { e.write_echo_if_command_then_write(expr.token.text, opt) }
+		ast.IntLiteral { e.write_echo_if_command_then_write(expr.token.text, opt) }
 		ast.ParenExpr { e.paren_expr(expr, opt) }
 		ast.Pipeline { e.pipeline(expr, opt) }
 		ast.InfixExpr { e.infix_expr(expr, opt) }
 		ast.IndexExpr { e.index_expr(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
-		ast.IntLiteral { e.write_echo_if_command_then_write(expr.token.text, opt) }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
 		ast.StringLiteral { e.write_echo_if_command_then_write("'$expr.token.text'", opt) }
 		ast.Var { e.var_(expr, opt) }
