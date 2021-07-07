@@ -47,6 +47,18 @@ assert '10' == '10'
 assert '10' != '11'
 assert '10' + '10' == '1010'
 
+if true {
+  assert true
+} else {
+  assert false
+}
+
+if false {
+  assert false
+} else {
+  assert true
+}
+
 fn zero() int {
   let v = 0
 

@@ -31,7 +31,7 @@ fn (mut e Emitter) expr_or_string(expr ExprOrString, opt ExprOpt) {
 fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 	match expr {
 		ast.AsExpr { e.expr(expr.expr, opt) }
-		ast.BoolLiteral { panic('unimplemented') }
+		ast.BoolLiteral { e.bool_literal(expr, opt) }
 		ast.CallCommandExpr { e.call_command_expr(expr, opt) }
 		ast.CallExpr { e.call_expr(expr, opt) }
 		ast.FloatLiteral { e.float_literal(expr, opt) }
@@ -62,6 +62,10 @@ fn (mut e Emitter) write_echo_if_command(opt ExprOpt) {
 fn (mut e Emitter) write_echo_if_command_then_write(s string, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 	e.write(s)
+}
+
+fn (mut e Emitter) bool_literal(expr ast.BoolLiteral, opt ExprOpt) {
+	e.write_echo_if_command_then_write(if expr.bool() { 'true' } else { 'false' }, opt)
 }
 
 fn (mut e Emitter) float_literal(expr ast.FloatLiteral, opt ExprOpt) {
