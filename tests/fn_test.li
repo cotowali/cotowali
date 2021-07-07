@@ -11,7 +11,7 @@ fn sum(vals ...int) int {
   return res
 }
 
-add(1, 2)
-sum(1, 2, 3)
+assert add(1, 2) == 3
+assert sum(1, 2, 3) == 6
 
 assert @expr('1', '+', '1') == '2'
