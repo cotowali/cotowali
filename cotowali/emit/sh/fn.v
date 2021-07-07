@@ -29,7 +29,9 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 	if expr.func_id == builtin_fn_id(.read) {
 		e.write('read ')
 		e.reference(expr.args[0])
-		e.sh_result_to_bool()
+		if !opt.as_command {
+			e.sh_result_to_bool()
+		}
 		return
 	}
 
