@@ -13,3 +13,15 @@ fn (mut e Emitter) sh_test_cond_is_true(expr ExprOrString) {
 fn (mut e Emitter) sh_test_command<T>(f fn (mut Emitter, T), v T) {
 	e.write_inline_block({ open: '[ ', close: ' ]' }, f, v)
 }
+
+fn (mut e Emitter) sh_result_to_bool() {
+	e.write(" && echo 'true' || echo 'false'")
+}
+
+fn (mut e Emitter) sh_test_command_as_bool<T>(f fn (mut Emitter, T), v T) {
+	open, close := '"\$(', ')"'
+	e.write(open)
+	e.write_inline_block({ open: '[ ', close: ' ]' }, f, v)
+	e.sh_result_to_bool()
+	e.write(close)
+}

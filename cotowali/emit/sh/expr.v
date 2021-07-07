@@ -104,18 +104,6 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	}
 }
 
-fn (mut e Emitter) sh_result_to_bool() {
-	e.write(" && echo 'true' || echo 'false'")
-}
-
-fn (mut e Emitter) write_test_to_bool_str_block<T>(f fn (mut Emitter, T), v T) {
-	open, close := '"\$(', ')"'
-	e.write(open)
-	e.write_inline_block({ open: '[ ', close: ' ]' }, f, v)
-	e.sh_result_to_bool()
-	e.write(close)
-}
-
 fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 	if expr.left.typ() != builtin_type(.bool) {
 		panic(unreachable())
@@ -128,7 +116,7 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 		panic('unimplemented')
 	}
 
-	e.write_test_to_bool_str_block(fn (mut e Emitter, expr ast.InfixExpr) {
+	e.sh_test_command_as_bool(fn (mut e Emitter, expr ast.InfixExpr) {
 		op_flag := match expr.op.kind {
 			.logical_and { '-a' }
 			.logical_or { '-o' }
@@ -167,7 +155,7 @@ fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
 	open, close := '\$( echo " ', ' " | bc -l )' // $( echo " expr " | bc )
 
 	if expr.op.kind.@is(.comparsion_op) {
-		e.write_test_to_bool_str_block(fn (mut e Emitter, expr ast.InfixExpr) {
+		e.sh_test_command_as_bool(fn (mut e Emitter, expr ast.InfixExpr) {
 			open, close := '\$( echo " ', ' " | bc -l )' // see above
 
 			e.write(open)
@@ -194,7 +182,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	if expr.op.kind.@is(.comparsion_op) {
-		e.write_test_to_bool_str_block(fn (mut e Emitter, expr ast.InfixExpr) {
+		e.sh_test_command_as_bool(fn (mut e Emitter, expr ast.InfixExpr) {
 			op := match expr.op.kind {
 				.eq { '-eq' }
 				.ne { '-ne' }
@@ -236,7 +224,7 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 
 	match expr.op.kind {
 		.eq, .ne {
-			e.write_test_to_bool_str_block(fn (mut e Emitter, expr ast.InfixExpr) {
+			e.sh_test_command_as_bool(fn (mut e Emitter, expr ast.InfixExpr) {
 				op := if expr.op.kind == .eq { ' = ' } else { ' != ' }
 				e.sh_test_cond_infix(expr.left, op, expr.right)
 			}, expr)
