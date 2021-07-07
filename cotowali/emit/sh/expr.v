@@ -98,6 +98,7 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 
 	match expr.left.typ() {
 		builtin_type(.int) { e.infix_expr_for_int(expr, opt) }
+		builtin_type(.float) { e.infix_expr_for_float(expr, opt) }
 		builtin_type(.string) { e.infix_expr_for_string(expr, opt) }
 		builtin_type(.bool) { e.infix_expr_for_bool(expr, opt) }
 		else { panic('infix_expr for `$expr.left.type_symbol().name` is unimplemented') }
@@ -139,6 +140,35 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 		e.sh_test_cond_is_true(expr.right)
 		e.write(" ')' ")
 	}, expr)
+}
+
+fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
+	if expr.left.typ() != builtin_type(.float) {
+		panic(unreachable())
+	}
+	e.write_echo_if_command(opt)
+
+	open, close := '\$( echo " ', ' " | bc -l )' // $( echo " expr " | bc )
+
+	if expr.op.kind.@is(.comparsion_op) {
+		e.write_test_to_bool_str_block(fn (mut e Emitter, expr ast.InfixExpr) {
+			open, close := '\$( echo " ', ' " | bc -l )' // see above
+
+			e.write(open)
+			e.expr(expr.left, {})
+			e.write(' $expr.op.text ')
+			e.expr(expr.right, {})
+			e.write(close)
+
+			e.write(' -eq 1')
+		}, expr)
+		return
+	}
+	e.write(open)
+	e.expr(expr.left, {})
+	e.write(' $expr.op.text ')
+	e.expr(expr.right, {})
+	e.write(close)
 }
 
 fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
