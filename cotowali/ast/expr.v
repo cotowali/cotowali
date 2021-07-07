@@ -58,6 +58,8 @@ pub fn (expr Expr) pos() Pos {
 pub fn (e InfixExpr) typ() Type {
 	return if e.op.kind.@is(.comparsion_op) || e.op.kind.@is(.logical_infix_op) {
 		builtin_type(.bool)
+	} else if e.left.typ() == builtin_type(.float) || e.right.typ() == builtin_type(.float) {
+		builtin_type(.float)
 	} else {
 		e.right.typ()
 	}

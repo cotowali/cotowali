@@ -97,8 +97,7 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	}
 
 	match expr.left.typ() {
-		builtin_type(.int) { e.infix_expr_for_int(expr, opt) }
-		builtin_type(.float) { e.infix_expr_for_float(expr, opt) }
+		builtin_type(.int), builtin_type(.float) { e.infix_expr_for_number(expr, opt) }
 		builtin_type(.string) { e.infix_expr_for_string(expr, opt) }
 		builtin_type(.bool) { e.infix_expr_for_bool(expr, opt) }
 		else { panic('infix_expr for `$expr.left.type_symbol().name` is unimplemented') }
@@ -142,8 +141,20 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 	}, expr)
 }
 
+fn (mut e Emitter) infix_expr_for_number(expr ast.InfixExpr, opt ExprOpt) {
+	if expr.left.typ() !in [builtin_type(.int), builtin_type(.float)] {
+		panic(unreachable())
+	}
+
+	if expr.left.typ() == builtin_type(.float) || expr.right.typ() == builtin_type(.float) {
+		e.infix_expr_for_float(expr, opt)
+	} else {
+		e.infix_expr_for_int(expr, opt)
+	}
+}
+
 fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.typ() != builtin_type(.float) {
+	if expr.left.typ() !in [builtin_type(.float), builtin_type(.int)] {
 		panic(unreachable())
 	}
 	e.write_echo_if_command(opt)

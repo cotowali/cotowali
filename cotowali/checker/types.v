@@ -19,11 +19,22 @@ fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
 		return
 	}
 
-	if !v.synmetric {
+	if v.synmetric {
+		if v.want.typ == builtin_type(.float) && v.got.typ == builtin_type(.int) {
+			return
+		}
+		if v.want.typ == builtin_type(.int) && v.got.typ == builtin_type(.float) {
+			return
+		}
+	} else {
 		if v.want.typ == builtin_type(.any) {
 			return
 		}
+		if v.want.typ == builtin_type(.float) && v.got.typ == builtin_type(.int) {
+			return
+		}
 	}
+
 	m1 := '`$v.want.name` ($v.want_label)'
 	m2 := '`$v.got.name` ($v.got_label)'
 	return c.error('mismatched types: $m1 and $m2', v.pos)
