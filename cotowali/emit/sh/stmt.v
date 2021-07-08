@@ -93,5 +93,5 @@ fn (mut e Emitter) while_stmt(stmt ast.WhileStmt) {
 }
 
 fn (mut e Emitter) yield_stmt(stmt ast.YieldStmt) {
-	panic('unimplemented')
+	e.expr(stmt.expr, as_command: true, writeln: true)
 }
