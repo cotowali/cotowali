@@ -1,3 +1,4 @@
 // std
 
 fn string |> cat(files ...string) string
+fn seq(n int) ...int

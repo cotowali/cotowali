@@ -20,7 +20,6 @@ pub enum BuiltinFnKey {
 	echo = 1
 	call
 	read
-	seq
 }
 
 pub fn builtin_fn_id(key BuiltinFnKey) u64 {
@@ -85,7 +84,6 @@ pub fn (mut s Scope) register_builtin() {
 	fns := [
 		f_(.echo, params: [t_(.any)], ret: t_(.string)),
 		f_(.call, params: [t_(.string), variadic_types[t_(.string)]], ret: t_(.string)),
-		f_(.seq, params: [t_(.int)], ret: variadic_types[t_(.int)]),
 		f_(.read, params: [t_(.any)], ret: t_(.bool)),
 	]
 	for f in fns {
