@@ -20,7 +20,6 @@ pub enum BuiltinFnKey {
 	echo = 1
 	call
 	read
-	cat
 	seq
 }
 
