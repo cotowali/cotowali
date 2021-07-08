@@ -84,7 +84,13 @@ fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 }
 
 fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
-	panic('unimplemented')
+	e.write_echo_if_command(opt)
+
+	e.write(match expr.typ {
+		builtin_type(.bool) { false_value }
+		builtin_type(.int), builtin_type(.float) { '0' }
+		else { '' }
+	})
 }
 
 fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {

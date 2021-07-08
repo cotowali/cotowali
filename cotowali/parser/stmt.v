@@ -115,19 +115,27 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 	p.consume_with_assert(.key_let)
 	ident := p.consume_with_check(.ident) ?
 	name := ident.text
-	p.consume_with_check(.assign) ?
 
-	v := ast.Var{
+	left := ast.Var{
 		scope: p.scope
 		pos: ident.pos
 		sym: p.scope.register_var(name: name, pos: ident.pos) or {
 			return p.duplicated_error(name, ident.pos)
 		}
 	}
+	right := if _ := p.consume_if_kind_eq(.assign) {
+		expr := p.parse_expr(.toplevel) ?
+		expr
+	} else {
+		ast.Expr(ast.DefaultValue{
+			scope: p.scope
+			typ: (p.parse_type() ?).typ
+		})
+	}
 	return ast.AssignStmt{
 		is_decl: true
-		left: v
-		right: p.parse_expr(.toplevel) ?
+		left: left
+		right: right
 	}
 }
 
