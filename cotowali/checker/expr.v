@@ -119,12 +119,26 @@ fn (mut c Checker) pipeline(expr ast.Pipeline) {
 		c.expr(e)
 		if i > 0 {
 			right := c.expect_function_call(e) or { continue }
-
 			left := expr.exprs[i - 1]
+
+			mut left_ts := left.type_symbol()
+			if left_array_info := left_ts.array_info() {
+				if left_array_info.variadic {
+					left_ts = left.scope().must_lookup_type(left_array_info.elem)
+				}
+			}
+
+			mut pipe_in := right.scope.must_lookup_type(right.function_info().pipe_in)
+			if pipe_in_array_info := pipe_in.array_info() {
+				if pipe_in_array_info.variadic {
+					pipe_in = right.scope.must_lookup_type(pipe_in_array_info.elem)
+				}
+			}
+
 			c.check_types(
-				want: left.type_symbol()
+				want: left_ts
 				want_label: 'left'
-				got: right.scope.must_lookup_type(right.function_info().pipe_in)
+				got: pipe_in
 				got_label: 'pipe in of right'
 				pos: left.pos().merge(right.pos)
 				synmetric: true

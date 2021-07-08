@@ -223,8 +223,16 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr) {
 		e.func_id = sym.id
 		if owner := e.scope.owner() {
 			if sym.id == builtin_fn_id(.read) {
-				pipe_in := (owner.type_symbol().function_info() or { panic(unreachable()) }).pipe_in
-				new_fn_params := [e.scope.lookup_or_register_reference_type(target: pipe_in).typ]
+				owner_function_info := owner.type_symbol().function_info() or {
+					panic(unreachable())
+				}
+				mut pipe_in := e.scope.must_lookup_type(owner_function_info.pipe_in)
+				if pipe_in_array_info := pipe_in.array_info() {
+					if pipe_in_array_info.variadic {
+						pipe_in = e.scope.must_lookup_type(pipe_in_array_info.elem)
+					}
+				}
+				new_fn_params := [e.scope.lookup_or_register_reference_type(target: pipe_in.typ).typ]
 				e.func.sym = if new_fn := e.scope.register_fn(sym.name, params: new_fn_params) {
 					new_fn
 				} else {

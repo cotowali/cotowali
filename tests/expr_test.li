@@ -88,6 +88,17 @@ fn int |> inc() int {
   return n + 1
 }
 
+fn ...int |> sum() int {
+  let n = 0
+  let v = 0
+  while read(&v) {
+    n = n + v
+  }
+  return n
+}
+
 assert (10 |> inc()) == 11
+assert (seq(3) |> sum()) == 6
 
 assert call('add', '3', '4') == '7'
+
