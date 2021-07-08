@@ -98,6 +98,7 @@ fn ...int |> sum() int {
 }
 
 assert (10 |> inc()) == 11
+assert (10 |> sum()) == 10
 assert (seq(3) |> sum()) == 6
 
 assert call('add', '3', '4') == '7'
