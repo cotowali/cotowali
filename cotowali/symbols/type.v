@@ -9,9 +9,7 @@ pub struct UnknownTypeInfo {}
 
 pub struct PrimitiveTypeInfo {}
 
-pub struct PlaceholderTypeInfo {
-	is_function bool
-}
+pub struct PlaceholderTypeInfo {}
 
 pub type TypeInfo = ArrayTypeInfo | FunctionTypeInfo | PlaceholderTypeInfo | PrimitiveTypeInfo |
 	ReferenceTypeInfo | UnknownTypeInfo
@@ -39,12 +37,7 @@ pub fn (v TypeSymbol) full_name() string {
 }
 
 pub fn (t TypeSymbol) is_function() bool {
-	info := t.info
-	return match info {
-		PlaceholderTypeInfo { info.is_function }
-		FunctionTypeInfo { true }
-		else { false }
-	}
+	return t.kind() == .function
 }
 
 pub enum TypeKind {

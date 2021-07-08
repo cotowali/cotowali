@@ -7,7 +7,6 @@ const unresolved_type_symbol = TypeSymbol{
 
 pub enum BuiltinTypeKey {
 	placeholder = 0
-	placeholder_fn
 	void
 	any
 	unknown
@@ -49,18 +48,11 @@ pub fn (mut s Scope) register_builtin() {
 			info: info
 		}
 	}
-	placeholder_ts := fn (k BuiltinTypeKey, info PlaceholderTypeInfo) TypeSymbol {
-		return TypeSymbol{
-			typ: builtin_type(k)
-			info: info
-		}
-	}
 
 	t_ := builtin_type
 
 	type_symbols := [
 		symbols.unresolved_type_symbol,
-		placeholder_ts(.placeholder_fn, is_function: true),
 		ts_(.void, PrimitiveTypeInfo{}),
 		ts_(.unknown, UnknownTypeInfo{}),
 		ts_(.any, PrimitiveTypeInfo{}),
