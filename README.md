@@ -33,6 +33,25 @@ fn int |> twice() int {
 
 assert fib(6) == 8
 assert (fib(6) |> twice()) == 16
+
+fn ...int |> sum() int {
+  var v int
+  var res = 0
+  while read(&v) {
+    res = res + v
+  }
+  return res
+}
+
+fn ...int |> twice_each() ...int {
+  var n int
+  while read(&n) {
+    yield n * 2
+  }
+}
+
+assert (seq(3) |> sum()) == 6
+assert (seq(3) |> twice_each() |> sum()) == 12
 ```
 
 [There is more examples](./examples)
