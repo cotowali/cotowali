@@ -10,6 +10,7 @@ type ExprOrString = ast.Expr | string
 
 struct ExprOpt {
 	as_command        bool
+	as_condition      bool
 	expand_array      bool
 	writeln           bool
 	discard_stdout    bool
@@ -133,22 +134,15 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 		panic('unimplemented')
 	}
 
-	e.sh_test_command_as_bool(fn (mut e Emitter, expr ast.InfixExpr) {
-		op_flag := match expr.op.kind {
-			.logical_and { '-a' }
-			.logical_or { '-o' }
-			else { panic_and_value(unreachable(), '') }
-		}
+	op := match expr.op.kind {
+		.logical_and { '&&' }
+		.logical_or { '||' }
+		else { panic_and_value(unreachable(), '') }
+	}
 
-		// '(' $left = 'true' ')' -a '(' $right = 'true' )
-		e.write(" '(' ")
-		e.sh_test_cond_is_true(expr.left)
-		e.write(" ')' ")
-		e.write(' $op_flag ')
-		e.write(" '(' ")
-		e.sh_test_cond_is_true(expr.right)
-		e.write(" ')' ")
-	}, expr)
+	e.expr(expr.left, as_condition: true)
+	e.write(' $op ')
+	e.expr(expr.right, as_condition: true)
 }
 
 fn (mut e Emitter) infix_expr_for_number(expr ast.InfixExpr, opt ExprOpt) {
@@ -172,7 +166,7 @@ fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
 	open, close := '\$( echo " ', ' " | bc -l )' // $( echo " expr " | bc )
 
 	if expr.op.kind.@is(.comparsion_op) {
-		e.sh_test_command_as_bool(fn (mut e Emitter, expr ast.InfixExpr) {
+		e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
 			open, close := '\$( echo " ', ' " | bc -l )' // see above
 
 			e.write(open)
@@ -182,7 +176,7 @@ fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
 			e.write(close)
 
 			e.write(' -eq 1')
-		}, expr)
+		}, expr, opt)
 		return
 	}
 	e.write(open)
@@ -199,7 +193,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	if expr.op.kind.@is(.comparsion_op) {
-		e.sh_test_command_as_bool(fn (mut e Emitter, expr ast.InfixExpr) {
+		e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
 			op := match expr.op.kind {
 				.eq { '-eq' }
 				.ne { '-ne' }
@@ -210,7 +204,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 				else { panic_and_value(unreachable(), '') }
 			}
 			e.sh_test_cond_infix(expr.left, op, expr.right)
-		}, expr)
+		}, expr, opt)
 		return
 	}
 
@@ -241,10 +235,10 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 
 	match expr.op.kind {
 		.eq, .ne {
-			e.sh_test_command_as_bool(fn (mut e Emitter, expr ast.InfixExpr) {
+			e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
 				op := if expr.op.kind == .eq { ' = ' } else { ' != ' }
 				e.sh_test_cond_infix(expr.left, op, expr.right)
-			}, expr)
+			}, expr, opt)
 		}
 		.plus {
 			e.write_inline_block({ open: '\$( ', close: ' )' }, fn (mut e Emitter, expr ast.InfixExpr) {

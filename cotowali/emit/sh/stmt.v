@@ -34,10 +34,7 @@ fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
 
 fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 	e.write('if ')
-	e.sh_test_command(fn (mut e Emitter, cond ast.Expr) {
-		e.sh_test_cond_is_true(cond)
-	}, stmt.expr)
-	e.writeln('')
+	e.expr(stmt.expr, as_condition: true, writeln: true)
 	e.writeln('then')
 	e.writeln(':')
 
@@ -58,10 +55,7 @@ fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
 			e.writeln('else')
 		} else {
 			e.write(if i == 0 { 'if ' } else { 'elif ' })
-			e.sh_test_command(fn (mut e Emitter, cond ast.Expr) {
-				e.sh_test_cond_is_true(cond)
-			}, branch.cond)
-			e.writeln('')
+			e.expr(branch.cond, as_condition: true, writeln: true)
 			e.writeln('then')
 		}
 		e.indent()
@@ -90,9 +84,7 @@ fn (mut e Emitter) require_stmt(stmt ast.RequireStmt) {
 
 fn (mut e Emitter) while_stmt(stmt ast.WhileStmt) {
 	e.write('while ')
-	e.sh_test_command(fn (mut e Emitter, cond ast.Expr) {
-		e.sh_test_cond_is_true(cond)
-	}, stmt.cond)
+	e.expr(stmt.cond, as_condition: true, writeln: true)
 	e.writeln('')
 	e.write_block({ open: 'do', close: 'done' }, fn (mut e Emitter, stmt ast.WhileStmt) {
 		e.block(stmt.body)

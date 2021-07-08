@@ -19,20 +19,20 @@ fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
+	if expr.func_id == builtin_fn_id(.read) {
+		e.write('read ')
+		e.reference(expr.args[0])
+		if !(opt.as_command || opt.as_condition) {
+			e.sh_result_to_bool()
+		}
+		return
+	}
+
 	if !opt.as_command {
 		e.write('\$(')
 		defer {
 			e.write(')')
 		}
-	}
-
-	if expr.func_id == builtin_fn_id(.read) {
-		e.write('read ')
-		e.reference(expr.args[0])
-		if !opt.as_command {
-			e.sh_result_to_bool()
-		}
-		return
 	}
 
 	if expr.func_id == builtin_fn_id(.call) {
