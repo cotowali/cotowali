@@ -4,8 +4,8 @@ import cotowali.source { Pos, Source }
 import cotowali.token { Token }
 
 [inline]
-pub fn unreachable() string {
-	return 'unreachable - This is a compiler bug.'
+pub fn unreachable<T>(err T) string {
+	return 'unreachable - This is a compiler bug (err: $err).'
 }
 
 // Err represents cotowali compile error

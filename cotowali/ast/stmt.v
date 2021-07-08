@@ -133,7 +133,7 @@ pub fn (f FnDecl) is_varargs() bool {
 }
 
 pub fn (f FnDecl) function_info() FunctionTypeInfo {
-	return f.type_symbol().function_info() or { panic(unreachable()) }
+	return f.type_symbol().function_info() or { panic(unreachable(err)) }
 }
 
 pub fn (f FnDecl) type_symbol() TypeSymbol {

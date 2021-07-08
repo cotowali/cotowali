@@ -47,7 +47,7 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 		match tail_tok.kind {
 			.comma {}
 			.r_paren { break }
-			else { panic(unreachable()) }
+			else { panic(unreachable('')) }
 		}
 	}
 }

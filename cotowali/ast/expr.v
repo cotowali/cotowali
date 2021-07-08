@@ -38,7 +38,7 @@ fn (mut r Resolver) expr(expr Expr) {
 fn (mut r Resolver) set_typ(e Expr, typ Type) {
 	match mut e {
 		Var { e.sym.typ = typ }
-		else { panic(unreachable()) }
+		else { panic(unreachable(error('cannot set type'))) }
 	}
 }
 
@@ -197,7 +197,7 @@ pub fn (e CallExpr) is_varargs() bool {
 }
 
 pub fn (e CallExpr) function_info() FunctionTypeInfo {
-	return e.func.type_symbol().function_info() or { panic(unreachable()) }
+	return e.func.type_symbol().function_info() or { panic(unreachable(err)) }
 }
 
 fn (mut r Resolver) call_expr(mut expr CallExpr) {
@@ -234,7 +234,7 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr) {
 		if owner := e.scope.owner() {
 			if sym.id == builtin_fn_id(.read) {
 				owner_function_info := owner.type_symbol().function_info() or {
-					panic(unreachable())
+					panic(unreachable(err))
 				}
 				mut pipe_in := e.scope.must_lookup_type(owner_function_info.pipe_in)
 				if pipe_in_array_info := pipe_in.array_info() {

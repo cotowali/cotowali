@@ -12,7 +12,7 @@ pub fn (mut lex Lexer) next() ?Token {
 		if err is ErrWithToken {
 			return err.token
 		}
-		panic(unreachable())
+		panic(unreachable(err))
 	}
 }
 
@@ -79,7 +79,7 @@ pub fn (mut lex Lexer) read() ?Token {
 			else { return lex.read_unknown() }
 		}
 	}
-	panic(unreachable())
+	panic(unreachable(''))
 }
 
 fn (lex Lexer) is_eol() bool {

@@ -82,7 +82,7 @@ fn (mut p Parser) read_token() Token {
 			p.syntax_error(err.msg, err.token.pos)
 			return err.token
 		}
-		panic(unreachable())
+		panic(unreachable(err))
 	}
 	return tok
 }

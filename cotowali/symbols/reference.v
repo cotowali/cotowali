@@ -20,5 +20,5 @@ pub fn (s Scope) lookup_reference_type(info ReferenceTypeInfo) ?TypeSymbol {
 }
 
 pub fn (s Scope) must_lookup_reference_type(info ReferenceTypeInfo) TypeSymbol {
-	return s.lookup_reference_type(info) or { panic(unreachable()) }
+	return s.lookup_reference_type(info) or { panic(unreachable(err)) }
 }

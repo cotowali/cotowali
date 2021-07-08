@@ -104,7 +104,7 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 		}
 		node.stmts << p.parse_stmt()
 	}
-	panic(unreachable())
+	panic(unreachable(''))
 }
 
 fn (mut p Parser) parse_var_stmt() ?ast.AssignStmt {
@@ -234,7 +234,7 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 		val: ast.Var{
 			scope: body.scope
 			pos: ident.pos
-			sym: body.scope.lookup_var(ident.text) or { panic(unreachable()) }
+			sym: body.scope.lookup_var(ident.text) or { panic(unreachable(err)) }
 		}
 		expr: expr
 		body: body
