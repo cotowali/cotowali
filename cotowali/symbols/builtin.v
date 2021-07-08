@@ -29,8 +29,8 @@ pub fn builtin_fn_id(key BuiltinFnKey) u64 {
 }
 
 struct BuiltinFnInfo {
-	key     BuiltinFnKey
-	fn_info FunctionTypeInfo
+	key           BuiltinFnKey
+	function_info FunctionTypeInfo
 }
 
 fn (mut s Scope) must_register_builtin_fn(key BuiltinFnKey, info FunctionTypeInfo) &Var {
@@ -79,8 +79,8 @@ pub fn (mut s Scope) register_builtin() {
 		}
 	}
 
-	f_ := fn (k BuiltinFnKey, fn_info FunctionTypeInfo) BuiltinFnInfo {
-		return BuiltinFnInfo{k, fn_info}
+	f_ := fn (k BuiltinFnKey, function_info FunctionTypeInfo) BuiltinFnInfo {
+		return BuiltinFnInfo{k, function_info}
 	}
 
 	fns := [
@@ -90,6 +90,6 @@ pub fn (mut s Scope) register_builtin() {
 		f_(.read, params: [t_(.any)], ret: t_(.bool)),
 	]
 	for f in fns {
-		s.must_register_builtin_fn(f.key, f.fn_info)
+		s.must_register_builtin_fn(f.key, f.function_info)
 	}
 }

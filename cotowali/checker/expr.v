@@ -45,8 +45,8 @@ fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 
 	pos := Expr(expr).pos()
 	scope := expr.scope
-	fn_info := expr.fn_info()
-	params := fn_info.params
+	function_info := expr.function_info()
+	params := function_info.params
 	param_syms := params.map(scope.must_lookup_type(it))
 	is_varargs := expr.is_varargs()
 
@@ -124,7 +124,7 @@ fn (mut c Checker) pipeline(expr ast.Pipeline) {
 			c.check_types(
 				want: left.type_symbol()
 				want_label: 'left'
-				got: right.scope.must_lookup_type(right.fn_info().pipe_in)
+				got: right.scope.must_lookup_type(right.function_info().pipe_in)
 				got_label: 'pipe in of right'
 				pos: left.pos().merge(right.pos)
 				synmetric: true

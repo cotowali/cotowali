@@ -9,7 +9,7 @@ pub:
 	ret     Type = builtin_type(.void)
 }
 
-pub fn (t TypeSymbol) fn_info() ?FunctionTypeInfo {
+pub fn (t TypeSymbol) function_info() ?FunctionTypeInfo {
 	return if t.info is FunctionTypeInfo { t.info } else { none }
 }
 

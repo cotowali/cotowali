@@ -176,7 +176,7 @@ pub mut:
 }
 
 pub fn (e CallExpr) is_varargs() bool {
-	syms := e.fn_info().params.map(e.scope.must_lookup_type(it))
+	syms := e.function_info().params.map(e.scope.must_lookup_type(it))
 	if syms.len > 0 {
 		last := syms.last()
 		if last.info is ArrayTypeInfo {
@@ -186,8 +186,8 @@ pub fn (e CallExpr) is_varargs() bool {
 	return false
 }
 
-pub fn (e CallExpr) fn_info() FunctionTypeInfo {
-	return e.func.type_symbol().fn_info() or { panic(unreachable()) }
+pub fn (e CallExpr) function_info() FunctionTypeInfo {
+	return e.func.type_symbol().function_info() or { panic(unreachable()) }
 }
 
 fn (mut r Resolver) call_expr(mut expr CallExpr) {
@@ -218,12 +218,12 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr) {
 			return
 		}
 
-		fn_info := e.fn_info()
-		e.typ = fn_info.ret
+		function_info := e.function_info()
+		e.typ = function_info.ret
 		e.func_id = sym.id
 		if owner := e.scope.owner() {
 			if sym.id == builtin_fn_id(.read) {
-				pipe_in := (owner.type_symbol().fn_info() or { panic(unreachable()) }).pipe_in
+				pipe_in := (owner.type_symbol().function_info() or { panic(unreachable()) }).pipe_in
 				new_fn_params := [e.scope.lookup_or_register_reference_type(target: pipe_in).typ]
 				e.func.sym = if new_fn := e.scope.register_fn(sym.name, params: new_fn_params) {
 					new_fn

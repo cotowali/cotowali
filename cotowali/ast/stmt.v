@@ -122,7 +122,7 @@ pub mut:
 }
 
 pub fn (f FnDecl) is_varargs() bool {
-	syms := f.fn_info().params.map(f.parent_scope.must_lookup_type(it))
+	syms := f.function_info().params.map(f.parent_scope.must_lookup_type(it))
 	if syms.len > 0 {
 		last := syms.last()
 		if last.info is ArrayTypeInfo {
@@ -132,8 +132,8 @@ pub fn (f FnDecl) is_varargs() bool {
 	return false
 }
 
-pub fn (f FnDecl) fn_info() FunctionTypeInfo {
-	return f.type_symbol().fn_info() or { panic(unreachable()) }
+pub fn (f FnDecl) function_info() FunctionTypeInfo {
+	return f.type_symbol().function_info() or { panic(unreachable()) }
 }
 
 pub fn (f FnDecl) type_symbol() TypeSymbol {
@@ -141,7 +141,7 @@ pub fn (f FnDecl) type_symbol() TypeSymbol {
 }
 
 pub fn (f FnDecl) ret_type_symbol() TypeSymbol {
-	return f.parent_scope.must_lookup_type(f.fn_info().ret)
+	return f.parent_scope.must_lookup_type(f.function_info().ret)
 }
 
 fn (mut r Resolver) fn_decl(decl FnDecl) {
