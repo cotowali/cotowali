@@ -14,6 +14,10 @@ fn (info ArrayTypeInfo) typename(s &Scope) string {
 	return '$prefix$elem_ts.name'
 }
 
+pub fn (ts &TypeSymbol) array_info() ?ArrayTypeInfo {
+	return if ts.info is ArrayTypeInfo { ts.info } else { none }
+}
+
 pub fn (mut s Scope) lookup_or_register_array_type(info ArrayTypeInfo) TypeSymbol {
 	return s.lookup_or_register_type(name: info.typename(s), info: info)
 }
