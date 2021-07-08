@@ -139,10 +139,10 @@ fn (mut p Parser) parse_as_expr() ?ast.Expr {
 
 	expr := p.parse_expr(ExprKind.as_cast.inner()) ?
 	if _ := p.consume_if_kind_eq(.key_as) {
-		typ := p.parse_type() ?
+		ts := p.parse_type() ?
 		return ast.AsExpr{
 			pos: expr.pos().merge(p.token(-1).pos)
-			typ: typ
+			typ: ts.typ
 			expr: expr
 		}
 	} else {
@@ -203,13 +203,13 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 	mut last_tok := first_tok
 	if _ := p.consume_if_kind_eq(.r_paren) {
 		// []Type{}
-		elem_typ := p.parse_type() ?
+		elem_ts := p.parse_type() ?
 		p.consume_with_check(.l_brace) ?
 		last_tok = p.consume_with_check(.r_brace) ?
 		return ast.ArrayLiteral{
 			scope: p.scope
 			pos: first_tok.pos.merge(last_tok.pos)
-			elem_typ: elem_typ
+			elem_typ: elem_ts.typ
 			elements: []
 		}
 	}

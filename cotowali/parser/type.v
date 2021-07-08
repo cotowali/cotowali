@@ -1,8 +1,8 @@
 module parser
 
-import cotowali.symbols { Type }
+import cotowali.symbols { TypeSymbol }
 
-fn (mut p Parser) parse_array_type() ?Type {
+fn (mut p Parser) parse_array_type() ?TypeSymbol {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
@@ -13,10 +13,10 @@ fn (mut p Parser) parse_array_type() ?Type {
 	p.consume_with_assert(.l_bracket)
 	p.consume_with_check(.r_bracket) ?
 	elem := p.parse_type() ?
-	return p.scope.lookup_or_register_array_type(elem: elem).typ
+	return p.scope.lookup_or_register_array_type(elem: elem.typ)
 }
 
-fn (mut p Parser) parse_ident_type() ?Type {
+fn (mut p Parser) parse_ident_type() ?TypeSymbol {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
@@ -25,10 +25,10 @@ fn (mut p Parser) parse_ident_type() ?Type {
 	}
 
 	tok := p.consume_with_check(.ident) ?
-	return (p.scope.lookup_type(tok.text) or { return p.error(err.msg, tok.pos) }).typ
+	return p.scope.lookup_type(tok.text) or { return p.error(err.msg, tok.pos) }
 }
 
-fn (mut p Parser) parse_reference_type() ?Type {
+fn (mut p Parser) parse_reference_type() ?TypeSymbol {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
@@ -38,10 +38,10 @@ fn (mut p Parser) parse_reference_type() ?Type {
 
 	p.consume_with_assert(.amp)
 	target := p.parse_type() ?
-	return p.scope.lookup_or_register_reference_type(target: target).typ
+	return p.scope.lookup_or_register_reference_type(target: target.typ)
 }
 
-fn (mut p Parser) parse_variadic_type() ?Type {
+fn (mut p Parser) parse_variadic_type() ?TypeSymbol {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
@@ -51,10 +51,10 @@ fn (mut p Parser) parse_variadic_type() ?Type {
 
 	p.consume_with_assert(.dotdotdot)
 	elem := p.parse_type() ?
-	return p.scope.lookup_or_register_array_type(elem: elem, variadic: true).typ
+	return p.scope.lookup_or_register_array_type(elem: elem.typ, variadic: true)
 }
 
-fn (mut p Parser) parse_type() ?Type {
+fn (mut p Parser) parse_type() ?TypeSymbol {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {

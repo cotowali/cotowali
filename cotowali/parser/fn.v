@@ -29,17 +29,19 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 
 	for {
 		name_tok := p.consume_with_check(.ident) ?
-		is_varargs := p.kind(0) == .dotdotdot
+		ts := p.parse_type() ?
 
 		info.params << FnParamParsingInfo{
 			name: name_tok.text
 			pos: name_tok.pos
-			typ: p.parse_type() ?
+			typ: ts.typ
 		}
 
-		if is_varargs {
-			p.consume_with_check(.r_paren) ?
-			break
+		if array_info := ts.array_info() {
+			if array_info.variadic {
+				p.consume_with_check(.r_paren) ?
+				break
+			}
 		}
 		tail_tok := p.consume_with_check(.comma, .r_paren) ?
 		match tail_tok.kind {
@@ -66,7 +68,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 		//      v
 		// fn [ ] int | f()
 		//      ^
-		info.pipe_in = p.parse_type() ?
+		info.pipe_in = (p.parse_type() ?).typ
 		p.consume_with_check(.pipe) ?
 	}
 
@@ -74,7 +76,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 
 	p.parse_fn_params(mut info) ?
 	if p.kind(0) != .l_brace {
-		info.ret_typ = p.parse_type() ?
+		info.ret_typ = (p.parse_type() ?).typ
 	}
 
 	return info
