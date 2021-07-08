@@ -43,6 +43,9 @@ expr.err.li 19,2: `int` does not support indexing
 expr.err.li 20,2: `int` does not support indexing
   > x[0]
     ^^^^
-expr.err.li 24,9: mismatched types: `&int` (expected) and `&string` (found)
+expr.err.li 23,10: undefined variable `n`
+  > n
+    ^
+expr.err.li 26,9: mismatched types: `&int` (expected) and `&string` (found)
   > &s
     ^^

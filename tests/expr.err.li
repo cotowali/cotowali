@@ -20,6 +20,8 @@ arr[0][0]
 x[0]
 
 fn int |> g() {
+  read(&n)
+
   var s string
   read(&s)
 }
