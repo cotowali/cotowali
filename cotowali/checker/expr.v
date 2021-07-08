@@ -70,11 +70,17 @@ fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 	}
 	for i, arg in args {
 		c.expr(arg)
+
 		arg_ts := arg.type_symbol()
 		param_ts := if is_varargs && i >= params.len - 1 {
 			varargs_elem_ts
 		} else {
 			scope.must_lookup_type(params[i])
+		}
+
+		if param_ts.kind() == .placeholder || arg_ts.kind() == .placeholder {
+			call_args_types_ok = false
+			continue
 		}
 
 		c.check_types(want: param_ts, got: arg_ts, pos: arg.pos()) or { call_args_types_ok = false }
