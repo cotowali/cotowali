@@ -41,6 +41,19 @@ fn (mut p Parser) parse_reference_type() ?Type {
 	return p.scope.lookup_or_register_reference_type(target: target).typ
 }
 
+fn (mut p Parser) parse_variadic_type() ?Type {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
+	p.consume_with_assert(.dotdotdot)
+	elem := p.parse_type() ?
+	return p.scope.lookup_or_register_array_type(elem: elem, variadic: true).typ
+}
+
 fn (mut p Parser) parse_type() ?Type {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
@@ -52,6 +65,7 @@ fn (mut p Parser) parse_type() ?Type {
 	match p.kind(0) {
 		.l_bracket { return p.parse_array_type() }
 		.amp { return p.parse_reference_type() }
+		.dotdotdot { return p.parse_variadic_type() }
 		else { return p.parse_ident_type() }
 	}
 }

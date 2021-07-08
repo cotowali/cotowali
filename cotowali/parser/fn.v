@@ -29,17 +29,12 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 
 	for {
 		name_tok := p.consume_with_check(.ident) ?
-		is_varargs := if _ := p.consume_if_kind_eq(.dotdotdot) { true } else { false }
-
-		mut typ := p.parse_type() ?
-		if is_varargs {
-			typ = p.scope.lookup_or_register_array_type(elem: typ, variadic: true).typ
-		}
+		is_varargs := p.kind(0) == .dotdotdot
 
 		info.params << FnParamParsingInfo{
 			name: name_tok.text
 			pos: name_tok.pos
-			typ: typ
+			typ: p.parse_type() ?
 		}
 
 		if is_varargs {
