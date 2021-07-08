@@ -61,6 +61,9 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 				text: tok.text
 			}
 		}
+		.key_yield {
+			return ast.Stmt(p.parse_yield_stmt() ?)
+		}
 		else {}
 	}
 	expr := p.parse_expr(.toplevel) ?
@@ -284,5 +287,19 @@ fn (mut p Parser) parse_while_stmt() ?ast.WhileStmt {
 	return ast.WhileStmt{
 		cond: cond
 		body: body
+	}
+}
+
+fn (mut p Parser) parse_yield_stmt() ?ast.YieldStmt {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
+	p.consume_with_assert(.key_yield)
+	return ast.YieldStmt{
+		expr: p.parse_expr(.toplevel) ?
 	}
 }
