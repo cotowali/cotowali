@@ -23,6 +23,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 		ast.ReturnStmt { e.return_stmt(stmt) }
 		ast.RequireStmt { e.require_stmt(stmt) }
 		ast.WhileStmt { e.while_stmt(stmt) }
+		ast.YieldStmt { e.yield_stmt(stmt) }
 	}
 }
 
@@ -89,4 +90,8 @@ fn (mut e Emitter) while_stmt(stmt ast.WhileStmt) {
 	e.write_block({ open: 'do', close: 'done' }, fn (mut e Emitter, stmt ast.WhileStmt) {
 		e.block(stmt.body)
 	}, stmt)
+}
+
+fn (mut e Emitter) yield_stmt(stmt ast.YieldStmt) {
+	panic('unimplemented')
 }

@@ -23,6 +23,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 		ast.ReturnStmt { c.return_stmt(stmt) }
 		ast.RequireStmt { c.require_stmt(mut stmt) }
 		ast.WhileStmt { c.while_stmt(stmt) }
+		ast.YieldStmt { c.yield_stmt(stmt) }
 	}
 }
 
@@ -100,4 +101,8 @@ fn (mut c Checker) while_stmt(stmt ast.WhileStmt) {
 	c.expr(stmt.cond)
 	c.expect_bool_expr(stmt.cond, 'while condition') or {}
 	c.block(stmt.body)
+}
+
+fn (mut c Checker) yield_stmt(stmt ast.YieldStmt) {
+	// TODO
 }
