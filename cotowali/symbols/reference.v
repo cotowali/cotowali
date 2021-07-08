@@ -8,7 +8,7 @@ pub:
 }
 
 fn (info ReferenceTypeInfo) typename(s &Scope) string {
-	return '&${s.must_lookup_type(info.target)}'
+	return '&${s.must_lookup_type(info.target).name}'
 }
 
 pub fn (mut s Scope) lookup_or_register_reference_type(info ReferenceTypeInfo) TypeSymbol {
