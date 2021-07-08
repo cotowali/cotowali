@@ -80,7 +80,7 @@ pub fn (v TypeSymbol) str() string {
 // -- register / lookup --
 
 fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
-	if ts.typ in s.type_symbols {
+	if ts.typ != 0 && ts.typ in s.type_symbols {
 		return error('$ts.typ is exists')
 	}
 	if ts.name.len > 0 && ts.name in s.name_to_type {
@@ -106,6 +106,15 @@ pub fn (mut s Scope) register_type(ts TypeSymbol) ?TypeSymbol {
 [inline]
 fn (mut s Scope) must_register_type(ts TypeSymbol) TypeSymbol {
 	return s.register_type(ts) or { panic(unreachable()) }
+}
+
+fn (mut s Scope) must_register_builtin_type(ts TypeSymbol) TypeSymbol {
+	s.check_before_register_type(ts) or { panic(err.msg) }
+	s.type_symbols[ts.typ] = ts
+	if ts.name.len > 0 && ts.kind() != .placeholder {
+		s.name_to_type[ts.name] = ts.typ
+	}
+	return ts
 }
 
 type TypeOrName = Type | string
