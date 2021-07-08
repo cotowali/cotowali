@@ -15,7 +15,7 @@ pub mut:
 }
 
 pub fn (v Var) is_function() bool {
-	return v.type_symbol().is_function()
+	return v.type_symbol().kind() == .function
 }
 
 pub fn (v Var) str() string {

@@ -36,10 +36,6 @@ pub fn (v TypeSymbol) full_name() string {
 	return Symbol(v).full_name()
 }
 
-pub fn (t TypeSymbol) is_function() bool {
-	return t.kind() == .function
-}
-
 pub enum TypeKind {
 	placeholder
 	unknown
