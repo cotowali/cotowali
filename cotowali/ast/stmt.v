@@ -2,7 +2,6 @@ module ast
 
 import cotowali.source { Pos }
 import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol }
-import cotowali.token { Token }
 import cotowali.errors { unreachable }
 
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
@@ -226,8 +225,7 @@ fn (mut r Resolver) inline_shell(stmt InlineShell) {
 
 pub struct ReturnStmt {
 pub:
-	token Token // key_return token
-	expr  Expr
+	expr Expr
 }
 
 fn (mut r Resolver) return_stmt(stmt ReturnStmt) {
@@ -238,10 +236,6 @@ fn (mut r Resolver) return_stmt(stmt ReturnStmt) {
 		}
 	}
 	r.expr(stmt.expr)
-}
-
-pub fn (stmt ReturnStmt) pos() Pos {
-	return stmt.token.pos.merge(stmt.expr.pos())
 }
 
 pub struct RequireStmt {

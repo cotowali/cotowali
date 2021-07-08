@@ -246,9 +246,8 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 		}
 	}
 
-	tok := p.consume_with_assert(.key_return)
+	p.consume_with_assert(.key_return)
 	return ast.ReturnStmt{
-		token: tok
 		expr: p.parse_expr(.toplevel) ?
 	}
 }
