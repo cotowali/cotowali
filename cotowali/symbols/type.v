@@ -26,12 +26,6 @@ pub:
 	info TypeInfo = TypeInfo(PlaceholderTypeInfo{})
 }
 
-const unresolved_type_symbol = TypeSymbol{
-	typ: Type(-1)
-	name: 'unresolved'
-	info: PlaceholderTypeInfo{}
-}
-
 pub fn (v TypeSymbol) scope() ?&Scope {
 	return Symbol(v).scope()
 }
