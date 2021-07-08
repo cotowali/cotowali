@@ -75,9 +75,17 @@ pub fn (e IndexExpr) typ() Type {
 }
 
 pub fn (e PrefixExpr) typ() Type {
-	return match e.op.kind {
-		.amp { e.scope.must_lookup_reference_type(target: e.expr.typ()).typ }
-		else { e.expr.typ() }
+	match e.op.kind {
+		.amp {
+			return if ref := e.scope.lookup_reference_type(target: e.expr.typ()) {
+				ref.typ
+			} else {
+				builtin_type(.placeholder)
+			}
+		}
+		else {
+			return e.expr.typ()
+		}
 	}
 }
 
@@ -429,7 +437,7 @@ fn (mut r Resolver) prefix_expr(mut expr PrefixExpr) {
 	}
 
 	r.expr(expr.expr)
-	if expr.op.kind == .amp {
+	if expr.op.kind == .amp && expr.expr.typ() != builtin_type(.placeholder) {
 		expr.scope.lookup_or_register_reference_type(target: expr.expr.typ())
 	}
 }
