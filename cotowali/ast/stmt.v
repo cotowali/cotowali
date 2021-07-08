@@ -3,6 +3,7 @@ module ast
 import cotowali.source { Pos }
 import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol }
 import cotowali.token { Token }
+import cotowali.errors { unreachable }
 
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
 	IfStmt | InlineShell | RequireStmt | ReturnStmt | WhileStmt
@@ -132,7 +133,7 @@ pub fn (f FnDecl) is_varargs() bool {
 }
 
 pub fn (f FnDecl) fn_info() FunctionTypeInfo {
-	return f.type_symbol().fn_info()
+	return f.type_symbol().fn_info() or { panic(unreachable()) }
 }
 
 pub fn (f FnDecl) type_symbol() TypeSymbol {
@@ -140,8 +141,7 @@ pub fn (f FnDecl) type_symbol() TypeSymbol {
 }
 
 pub fn (f FnDecl) ret_type_symbol() TypeSymbol {
-	ret := f.parent_scope.must_lookup_type(f.typ).fn_info().ret
-	return f.parent_scope.must_lookup_type(ret)
+	return f.parent_scope.must_lookup_type(f.fn_info().ret)
 }
 
 fn (mut r Resolver) fn_decl(decl FnDecl) {

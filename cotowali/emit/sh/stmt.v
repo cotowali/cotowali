@@ -28,7 +28,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 
 fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
 	discard_stdout := e.inside_fn
-		&& if stmt is ast.CallExpr { e.cur_fn.type_symbol().fn_info().ret != builtin_type(.void) } else { true }
+		&& if stmt is ast.CallExpr { e.cur_fn.fn_info().ret != builtin_type(.void) } else { true }
 	e.expr(stmt, as_command: true, discard_stdout: discard_stdout, writeln: true)
 }
 
