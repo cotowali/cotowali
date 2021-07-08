@@ -12,10 +12,10 @@ fn new_arr() []int {
 }
 
 [0, 1, 2]
-let v = ['a', 'b', 'c']
+var v = ['a', 'b', 'c']
 v
 
-let arr = [0, 1, 2]
+var arr = [0, 1, 2]
 echo_arr(arr)
 echo_arr([0, 1, 2])
 raw_arr(arr)
@@ -31,14 +31,14 @@ fn for_in_test() {
 for_in_test()
 
 fn index_test() {
-  let arr = [10, 11, 12]
+  var arr = [10, 11, 12]
   assert arr[0] == 10
   assert arr[1] == 11
   arr[2] = 100
   assert arr[2] == 100
 
   arr = [10, 11, 12]
-  let i = 0
+  var i = 0
   assert arr[i] == 10
   i = 2
   assert arr[i] == 12

@@ -1,5 +1,5 @@
-let i = 0
-let n = 1
+var i = 0
+var n = 1
 while i < 10 {
   n = n * 2
   i = i + 1

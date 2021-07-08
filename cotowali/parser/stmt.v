@@ -36,8 +36,8 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_fn {
 			return ast.Stmt(p.parse_fn_decl() ?)
 		}
-		.key_let {
-			return ast.Stmt(p.parse_let_stmt() ?)
+		.key_var {
+			return ast.Stmt(p.parse_var_stmt() ?)
 		}
 		.key_if {
 			return ast.Stmt(p.parse_if_stmt() ?)
@@ -104,7 +104,7 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 	panic(unreachable())
 }
 
-fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
+fn (mut p Parser) parse_var_stmt() ?ast.AssignStmt {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
@@ -112,7 +112,7 @@ fn (mut p Parser) parse_let_stmt() ?ast.AssignStmt {
 		}
 	}
 
-	p.consume_with_assert(.key_let)
+	p.consume_with_assert(.key_var)
 	ident := p.consume_with_check(.ident) ?
 	name := ident.text
 

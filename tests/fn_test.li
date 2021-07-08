@@ -8,7 +8,7 @@ fn div(a float, b float) float {
 }
 
 fn sum(vals ...int) int {
-  let res = 0
+  var res = 0
   for v in vals {
     res = res + v
   }

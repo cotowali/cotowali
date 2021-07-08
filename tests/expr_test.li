@@ -8,7 +8,7 @@ assert 1 / 2 == 0
 assert 1.0 / 2 == 0.5
 assert 1 / 2.0 == 0.5
 
-let v = 1
+var v = 1
 v = 10
 assert -v == -10
 assert +v == 10
@@ -60,7 +60,7 @@ if false {
 }
 
 fn zero() int {
-  let v = 0
+  var v = 0
 
   // evaluated but not used. this is valid but no output
   0
@@ -83,14 +83,14 @@ assert add(3, 4) == 7
 assert add(as_int("1"), 2) == 3
 
 fn int |> inc() int {
-  let n = 0
+  var n = 0
   read(&n)
   return n + 1
 }
 
 fn ...int |> sum() int {
-  let n int
-  let v int
+  var n int
+  var v int
   while read(&v) {
     n = n + v
   }

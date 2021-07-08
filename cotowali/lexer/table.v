@@ -42,7 +42,7 @@ const (
 	table_for_keywords = map{
 		'as':      k(.key_as)
 		'assert':  k(.key_assert)
-		'let':     k(.key_let)
+		'var':     k(.key_var)
 		'if':      k(.key_if)
 		'else':    k(.key_else)
 		'for':     k(.key_for)

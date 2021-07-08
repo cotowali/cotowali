@@ -1,17 +1,17 @@
 fn f(a int) {
-  let b = 0
+  var b = 0
   echo(echo(a))
   echo(b)
   echo(a)
   if a == 1 {
-    let a = 0
+    var a = 0
     echo(39)
   } else if a == 2 {
-    let a = 0
+    var a = 0
     echo(a)
     echo(2)
   } else {
-    let a = 0
+    var a = 0
     echo(a)
   }
 
@@ -20,7 +20,7 @@ fn f(a int) {
   }
 }
 
-let a = 0
+var a = 0
 a = 1
 f(a)
 echo(1 + 1) |> cat()

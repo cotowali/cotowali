@@ -26,7 +26,7 @@ fn fib(n int) int {
 }
 
 fn int |> twice() int {
-   let n = 0
+   var n = 0
    read(&n)
    return n * 2
 }

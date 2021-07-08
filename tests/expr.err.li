@@ -5,7 +5,7 @@ fn f(a int) int {
 echo(x)
 
 f("a") + "a"
-let x = "a" + f("a")
+var x = "a" + f("a")
 
 y = 10
 y = "10"
@@ -14,7 +14,7 @@ y = "10"
 f("a") |> f("a")
 0 |> 0
 
-let arr = [0]
+var arr = [0]
 arr['10']
 arr[0][0]
 x[0]
