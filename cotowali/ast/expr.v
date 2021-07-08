@@ -5,9 +5,9 @@ import cotowali.token { Token }
 import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id, builtin_type }
 import cotowali.errors { unreachable }
 
-pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | FloatLiteral |
-	IndexExpr | InfixExpr | IntLiteral | ParenExpr | Pipeline | PrefixExpr | StringLiteral |
-	Var
+pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | DefaultValue |
+	FloatLiteral | IndexExpr | InfixExpr | IntLiteral | ParenExpr | Pipeline | PrefixExpr |
+	StringLiteral | Var
 
 fn (mut r Resolver) exprs(exprs []Expr) {
 	for expr in exprs {
@@ -22,6 +22,7 @@ fn (mut r Resolver) expr(expr Expr) {
 		BoolLiteral { r.bool_literal(expr) }
 		CallCommandExpr { r.call_command_expr(expr) }
 		CallExpr { r.call_expr(mut expr) }
+		DefaultValue { r.default_value(expr) }
 		FloatLiteral { r.float_literal(expr) }
 		IndexExpr { r.index_expr(expr) }
 		InfixExpr { r.infix_expr(expr) }
@@ -47,7 +48,7 @@ pub fn (e InfixExpr) pos() Pos {
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
-		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, Var, ParenExpr, IndexExpr { expr.pos }
+		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DefaultValue, Var, ParenExpr, IndexExpr { expr.pos }
 		InfixExpr { expr.pos() }
 		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
 		PrefixExpr { expr.op.pos.merge(expr.expr.pos()) }
@@ -87,6 +88,7 @@ pub fn (e Expr) typ() Type {
 		BoolLiteral { builtin_type(.bool) }
 		CallCommandExpr { builtin_type(.string) }
 		CallExpr { e.typ }
+		DefaultValue { e.typ }
 		FloatLiteral { builtin_type(.float) }
 		StringLiteral { builtin_type(.string) }
 		IntLiteral { builtin_type(.int) }
@@ -119,8 +121,8 @@ pub fn (e Expr) scope() &Scope {
 		IndexExpr {
 			e.left.scope()
 		}
-		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, FloatLiteral, InfixExpr, IntLiteral,
-		Pipeline, PrefixExpr, StringLiteral, Var {
+		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, FloatLiteral,
+		InfixExpr, IntLiteral, Pipeline, PrefixExpr, StringLiteral, Var {
 			e.scope
 		}
 	}
@@ -243,6 +245,22 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr) {
 		}
 	} else {
 		r.error('cannot call `$e.func.type_symbol().name`', e.pos)
+	}
+}
+
+pub struct DefaultValue {
+pub:
+	scope &Scope
+	typ   Type
+	pos   Pos
+}
+
+fn (mut r Resolver) default_value(expr DefaultValue) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
 	}
 }
 
