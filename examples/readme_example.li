@@ -23,7 +23,7 @@ fn ...int |> sum() int {
   return res
 }
 
-fn ...int |> twice_each() ...int {
+fn ...int |> twice_each() |> ...int {
   var n int
   while read(&n) {
     yield n * 2
