@@ -33,6 +33,9 @@ pub fn run(s Source, ctx &Context) ?int {
 	defer {
 		os.rm(temp_file) or { panic(err) }
 	}
-	code := os.system('sh "$temp_file"')
+	code := match ctx.config.backend {
+		.powershell { os.system('powershell.exe $temp_file') }
+		else { os.system('sh "$temp_file"') }
+	}
 	return code
 }
