@@ -7,6 +7,10 @@ pub:
 	elements []Type
 }
 
+pub fn (ts TypeSymbol) tuple_info() ?TupleTypeInfo {
+	return if ts.info is TupleTypeInfo { ts.info } else { none }
+}
+
 fn (info TupleTypeInfo) typename(s &Scope) string {
 	return '(${info.elements.map(s.must_lookup_type(it).name).join(',')})'
 }
