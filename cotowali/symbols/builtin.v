@@ -20,6 +20,12 @@ pub fn builtin_type(key BuiltinTypeKey) Type {
 	return Type(u64(key))
 }
 
+const number_types = [builtin_type(.int), builtin_type(.float)]
+
+pub fn (t Type) is_number() bool {
+	return t in symbols.number_types
+}
+
 pub enum BuiltinFnKey {
 	echo = 1
 	call
