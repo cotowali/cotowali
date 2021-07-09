@@ -136,11 +136,11 @@ pub fn (f FnDecl) function_info() FunctionTypeInfo {
 	return f.type_symbol().function_info() or { panic(unreachable(err)) }
 }
 
-pub fn (f FnDecl) type_symbol() TypeSymbol {
+pub fn (f FnDecl) type_symbol() &TypeSymbol {
 	return f.parent_scope.must_lookup_type(f.typ)
 }
 
-pub fn (f FnDecl) ret_type_symbol() TypeSymbol {
+pub fn (f FnDecl) ret_type_symbol() &TypeSymbol {
 	return f.parent_scope.must_lookup_type(f.function_info().ret)
 }
 

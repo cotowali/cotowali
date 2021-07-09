@@ -118,11 +118,11 @@ pub fn (e Expr) typ() Type {
 }
 
 [inline]
-pub fn (v Var) type_symbol() TypeSymbol {
+pub fn (v Var) type_symbol() &TypeSymbol {
 	return v.sym.type_symbol()
 }
 
-pub fn (e Expr) type_symbol() TypeSymbol {
+pub fn (e Expr) type_symbol() &TypeSymbol {
 	return match e {
 		Var { e.type_symbol() }
 		else { e.scope().must_lookup_type(e.typ()) }

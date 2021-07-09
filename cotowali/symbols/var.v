@@ -34,7 +34,7 @@ pub fn (v Var) full_name() string {
 	return Symbol(v).full_name()
 }
 
-pub fn (v Var) type_symbol() TypeSymbol {
+pub fn (v Var) type_symbol() &TypeSymbol {
 	if scope := v.scope() {
 		return scope.lookup_type(v.typ) or { unresolved_type_symbol }
 	}

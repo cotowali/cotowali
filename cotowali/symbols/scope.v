@@ -13,7 +13,7 @@ mut:
 	parent       &Scope
 	children     []&Scope
 	vars         map[string]&Var
-	type_symbols map[u64]TypeSymbol // map[Type]TypeSymbol
+	type_symbols map[u64]&TypeSymbol // map[Type]&TypeSymbol
 	name_to_type map[string]Type
 }
 

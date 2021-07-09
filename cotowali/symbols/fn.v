@@ -28,12 +28,12 @@ pub fn (t TypeSymbol) fn_signature() ?string {
 	}
 }
 
-pub fn (mut s Scope) lookup_or_register_fn_type(info FunctionTypeInfo) TypeSymbol {
+pub fn (mut s Scope) lookup_or_register_fn_type(info FunctionTypeInfo) &TypeSymbol {
 	typename := info.signature(s)
 	return s.lookup_or_register_type(name: typename, info: info)
 }
 
-pub fn (s Scope) lookup_fn_type(info FunctionTypeInfo) ?TypeSymbol {
+pub fn (s Scope) lookup_fn_type(info FunctionTypeInfo) ?&TypeSymbol {
 	typename := info.signature(s)
 	return s.lookup_type(typename)
 }

@@ -70,7 +70,7 @@ fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 		scope.must_lookup_type((param_syms.last().info as ArrayTypeInfo).elem)
 	} else {
 		// ?TypeSymbol(none)
-		TypeSymbol{}
+		&TypeSymbol{}
 	}
 	for i, arg in args {
 		arg_ts := arg.type_symbol()

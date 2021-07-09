@@ -1,6 +1,6 @@
 module symbols
 
-const unresolved_type_symbol = TypeSymbol{
+const unresolved_type_symbol = &TypeSymbol{
 	typ: builtin_type(.placeholder)
 	name: 'unresolved'
 }
@@ -58,7 +58,7 @@ pub fn (mut s Scope) register_builtin() {
 	t_ := builtin_type
 
 	type_symbols := [
-		symbols.unresolved_type_symbol,
+		*symbols.unresolved_type_symbol,
 		ts_(.void, PrimitiveTypeInfo{}),
 		ts_(.unknown, UnknownTypeInfo{}),
 		ts_(.any, PrimitiveTypeInfo{}),

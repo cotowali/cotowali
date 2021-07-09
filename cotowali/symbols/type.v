@@ -78,10 +78,10 @@ fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
 	}
 }
 
-pub fn (mut s Scope) register_type(ts TypeSymbol) ?TypeSymbol {
+pub fn (mut s Scope) register_type(ts TypeSymbol) ?&TypeSymbol {
 	s.check_before_register_type(ts) ?
 	typ := if ts.typ == 0 { Type(auto_id()) } else { ts.typ }
-	new_ts := TypeSymbol{
+	new_ts := &TypeSymbol{
 		...ts
 		typ: typ
 		scope: s
@@ -94,17 +94,20 @@ pub fn (mut s Scope) register_type(ts TypeSymbol) ?TypeSymbol {
 }
 
 [inline]
-fn (mut s Scope) must_register_type(ts TypeSymbol) TypeSymbol {
+fn (mut s Scope) must_register_type(ts TypeSymbol) &TypeSymbol {
 	return s.register_type(ts) or { panic(unreachable(err)) }
 }
 
-fn (mut s Scope) must_register_builtin_type(ts TypeSymbol) TypeSymbol {
+fn (mut s Scope) must_register_builtin_type(ts TypeSymbol) &TypeSymbol {
 	s.check_before_register_type(ts) or { panic(err.msg) }
-	s.type_symbols[ts.typ] = ts
-	if ts.name.len > 0 && ts.kind() != .placeholder {
-		s.name_to_type[ts.name] = ts.typ
+	new_ts := &TypeSymbol{
+		...ts
 	}
-	return ts
+	s.type_symbols[ts.typ] = new_ts
+	if ts.name.len > 0 && ts.kind() != .placeholder {
+		s.name_to_type[new_ts.name] = new_ts.typ
+	}
+	return new_ts
 }
 
 type TypeOrName = Type | string
@@ -119,7 +122,7 @@ fn (s &Scope) name_to_type(name string) ?Type {
 	}
 }
 
-pub fn (s &Scope) lookup_type(key TypeOrName) ?TypeSymbol {
+pub fn (s &Scope) lookup_type(key TypeOrName) ?&TypeSymbol {
 	// dont use `int_typ := if ...` to avoid compiler bug
 	mut typ := u64(0)
 	match key {
@@ -137,11 +140,11 @@ pub fn (s &Scope) lookup_type(key TypeOrName) ?TypeSymbol {
 	return none
 }
 
-pub fn (s &Scope) must_lookup_type(key TypeOrName) TypeSymbol {
+pub fn (s &Scope) must_lookup_type(key TypeOrName) &TypeSymbol {
 	return s.lookup_type(key) or { panic(unreachable(err)) }
 }
 
-pub fn (mut s Scope) lookup_or_register_type(ts TypeSymbol) TypeSymbol {
+pub fn (mut s Scope) lookup_or_register_type(ts TypeSymbol) &TypeSymbol {
 	if ts.name.len > 0 {
 		return s.lookup_type(ts.name) or { s.must_register_type(ts) }
 	}
