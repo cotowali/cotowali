@@ -90,8 +90,8 @@ pub fn (e PrefixExpr) typ() Type {
 }
 
 pub fn (e Expr) typ() Type {
-	return match e {
-		ArrayLiteral { e.scope.must_lookup_array_type(elem: e.elem_typ).typ }
+	return match mut e {
+		ArrayLiteral { e.scope.lookup_or_register_array_type(elem: e.elem_typ).typ }
 		AsExpr { e.typ }
 		BoolLiteral { builtin_type(.bool) }
 		CallCommandExpr { builtin_type(.string) }
@@ -384,9 +384,9 @@ fn (mut r Resolver) float_literal(expr FloatLiteral) {
 pub struct ArrayLiteral {
 pub:
 	pos      Pos
-	scope    &Scope
 	elem_typ Type
 pub mut:
+	scope    &Scope
 	elements []Expr
 }
 
