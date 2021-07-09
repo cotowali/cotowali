@@ -62,7 +62,12 @@ fn (mut p Parser) parse_tuple_type() ?TypeSymbol {
 		}
 		p.consume_with_check(.comma) ?
 	}
-	return p.scope.lookup_or_register_tuple_type(elements: elements)
+	return if elements.len == 1 {
+		// treat single value tuple as element type
+		p.scope.must_lookup_type(elements[0])
+	} else {
+		p.scope.lookup_or_register_tuple_type(elements: elements)
+	}
 }
 
 fn (mut p Parser) parse_variadic_type() ?TypeSymbol {
