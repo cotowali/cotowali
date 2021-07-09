@@ -3,6 +3,12 @@ module checker
 import cotowali.ast { Expr }
 import cotowali.symbols { ArrayTypeInfo, TypeSymbol, builtin_type }
 
+fn (mut c Checker) exprs(exprs []Expr) {
+	for expr in exprs {
+		c.expr(expr)
+	}
+}
+
 fn (mut c Checker) expr(expr Expr) {
 	match mut expr {
 		ast.ArrayLiteral { c.array_literal(expr) }
@@ -24,9 +30,7 @@ fn (mut c Checker) expr(expr Expr) {
 }
 
 fn (mut c Checker) array_literal(expr ast.ArrayLiteral) {
-	for e in expr.elements {
-		c.expr(e)
-	}
+	c.exprs(expr.elements)
 }
 
 fn (mut c Checker) as_expr(expr ast.AsExpr) {
@@ -34,9 +38,7 @@ fn (mut c Checker) as_expr(expr ast.AsExpr) {
 }
 
 fn (mut c Checker) call_command_expr(expr ast.CallCommandExpr) {
-	for arg in expr.args {
-		c.expr(arg)
-	}
+	c.exprs(expr.args)
 }
 
 fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
@@ -61,6 +63,8 @@ fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 		c.error('expected $params.len arguments, but got $args.len', pos) or { return }
 	}
 
+	c.exprs(args)
+
 	mut call_args_types_ok := true
 	varargs_elem_ts := if is_varargs {
 		scope.must_lookup_type((param_syms.last().info as ArrayTypeInfo).elem)
@@ -69,8 +73,6 @@ fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
 		TypeSymbol{}
 	}
 	for i, arg in args {
-		c.expr(arg)
-
 		arg_ts := arg.type_symbol()
 		param_ts := if is_varargs && i >= params.len - 1 {
 			varargs_elem_ts
@@ -122,8 +124,9 @@ fn (mut c Checker) paren_expr(expr ast.ParenExpr) {
 }
 
 fn (mut c Checker) pipeline(expr ast.Pipeline) {
+	c.exprs(expr.exprs)
+
 	for i, e in expr.exprs {
-		c.expr(e)
 		if i > 0 {
 			right := c.expect_function_call(e) or { continue }
 			left := expr.exprs[i - 1]
