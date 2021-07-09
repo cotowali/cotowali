@@ -14,21 +14,29 @@ struct TypeCheckingConfig {
 	synmetric  bool
 }
 
-fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
-	if v.want.typ == v.got.typ {
-		return
+fn is_same_type(a TypeSymbol, b TypeSymbol) bool {
+	if a.typ == b.typ {
+		return true
 	}
 
 	// treat `(int)` as equal to `int`
-	if want_tuple_info := v.want.tuple_info() {
-		if want_tuple_info.elements.len == 1 && want_tuple_info.elements[0] == v.got.typ {
-			return
+	if a_tuple_info := a.tuple_info() {
+		if a_tuple_info.elements.len == 1 && a_tuple_info.elements[0] == b.typ {
+			return true
 		}
 	}
-	if got_tuple_info := v.got.tuple_info() {
-		if got_tuple_info.elements.len == 1 && got_tuple_info.elements[0] == v.want.typ {
-			return
+	if b_tuple_info := b.tuple_info() {
+		if b_tuple_info.elements.len == 1 && b_tuple_info.elements[0] == a.typ {
+			return true
 		}
+	}
+
+	return false
+}
+
+fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
+	if is_same_type(v.want, v.got) {
+		return
 	}
 
 	if v.synmetric {
