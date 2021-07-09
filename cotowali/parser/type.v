@@ -1,6 +1,6 @@
 module parser
 
-import cotowali.symbols { TypeSymbol }
+import cotowali.symbols { Type, TypeSymbol }
 
 fn (mut p Parser) parse_array_type() ?TypeSymbol {
 	$if trace_parser ? {
@@ -41,6 +41,30 @@ fn (mut p Parser) parse_reference_type() ?TypeSymbol {
 	return p.scope.lookup_or_register_reference_type(target: target.typ)
 }
 
+fn (mut p Parser) parse_tuple_type() ?TypeSymbol {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
+	p.consume_with_assert(.l_paren)
+	if _ := p.consume_if_kind_eq(.r_paren) {
+		return p.scope.lookup_or_register_tuple_type(elements: [])
+	}
+
+	mut elements := []Type{}
+	for {
+		elements << (p.parse_type() ?).typ
+		if _ := p.consume_if_kind_eq(.r_paren) {
+			break
+		}
+		p.consume_with_check(.comma) ?
+	}
+	return p.scope.lookup_or_register_tuple_type(elements: elements)
+}
+
 fn (mut p Parser) parse_variadic_type() ?TypeSymbol {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
@@ -66,6 +90,7 @@ fn (mut p Parser) parse_type() ?TypeSymbol {
 		.l_bracket { return p.parse_array_type() }
 		.amp { return p.parse_reference_type() }
 		.dotdotdot { return p.parse_variadic_type() }
+		.l_paren { return p.parse_tuple_type() }
 		else { return p.parse_ident_type() }
 	}
 }
