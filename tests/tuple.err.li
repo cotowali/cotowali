@@ -1,4 +1,4 @@
-fn (int, int) |> f() (int, int) {
+fn ...(int, int) |> f() ...(int, int) {
   return 0
   return ('x', 'y')
 }

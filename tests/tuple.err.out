@@ -1,7 +1,7 @@
-tuple.err.li 2,11: mismatched types: `(int,int)` (expected) and `int` (found)
+tuple.err.li 2,11: mismatched types: `...(int,int)` (expected) and `int` (found)
   > 0
     ^
-tuple.err.li 3,11: mismatched types: `(int,int)` (expected) and `(string,string)` (found)
+tuple.err.li 3,11: mismatched types: `...(int,int)` (expected) and `(string,string)` (found)
   > ('x', 'y')
     ^^^^^^^^^^
 tuple.err.li 6,2: mismatched types: `int` (left) and `(int,int)` (pipe in of right)
