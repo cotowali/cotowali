@@ -265,10 +265,10 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write_inline_block({ open: open, close: close }, fn (mut e Emitter, v ExprWithOpt) {
 		exprs := (v.expr as ast.ParenExpr).exprs
 		for i, expr in exprs {
-			e.expr(expr, { ...v.opt, as_command: false })
 			if i > 0 {
 				e.write(' ')
 			}
+			e.expr(expr, { ...v.opt, as_command: false })
 		}
 	}, ExprWithOpt{expr, opt})
 }
