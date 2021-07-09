@@ -110,11 +110,18 @@ fn (lic Lic) new_test_case(path string) TestCase {
 	}
 }
 
-enum TestResult {
+enum TestResultStatus {
 	ok
 	failed
 	fixed
 	todo
+}
+
+struct TestResult {
+mut:
+	exit_code int
+	output    string
+	status    TestResultStatus
 }
 
 struct TestCase {
@@ -125,11 +132,8 @@ mut:
 	is_err_test    bool       [required]
 	is_todo_test   bool       [required]
 	is_noemit_test bool       [required]
+	expected       string     [required]
 	result         TestResult
-
-	exit_code int
-	expected  string [required]
-	output    string
 }
 
 fn fix_todo(f string, s FileSuffix) {
@@ -145,19 +149,24 @@ fn (mut t TestCase) run() {
 	} else {
 		t.lic.execute(.run, t.path)
 	}
-	t.output = result.output
-	t.exit_code = result.exit_code
+	t.result.output = result.output
+	t.result.exit_code = result.exit_code
 
-	correct_exit_code := if t.is_err_test { t.exit_code != 0 } else { t.exit_code == 0 }
-	if t.is_todo_test {
-		t.result = .todo
+	correct_exit_code := if t.is_err_test {
+		t.result.exit_code != 0
 	} else {
-		t.result = if t.output == t.expected && correct_exit_code {
-			TestResult.ok
+		t.result.exit_code == 0
+	}
+	if t.is_todo_test {
+		t.result.status = .todo
+	} else {
+		t.result.status = if t.result.output == t.expected && correct_exit_code {
+			TestResultStatus.ok
 		} else {
-			TestResult.failed
+			TestResultStatus.failed
 		}
 	}
+
 	$if fix ? {
 		if correct_exit_code {
 			if t.is_todo_test {
@@ -174,7 +183,7 @@ fn (mut t TestCase) run() {
 	}
 }
 
-fn (t TestCase) failed_result(file string) string {
+fn (t TestCase) failed_message(file string) string {
 	format_output := fn (text string) string {
 		indent := ' '.repeat(4)
 		return if text.len == 0 { '${indent}__EMPTY__' } else { indent_each_lines(1, text) }
@@ -182,14 +191,14 @@ fn (t TestCase) failed_result(file string) string {
 
 	mut lines := [
 		'${term.fail_message('[FAIL]')} $file',
-		'${indent(1)}exit_code: $t.exit_code',
+		'${indent(1)}exit_code: $t.result.exit_code',
 		'${indent(1)}output:',
-		format_output(t.output),
+		format_output(t.result.output),
 		'${indent(1)}expected:',
 		format_output(t.expected),
 	]
 	if diff_cmd := find_working_diff_command() {
-		diff := color_compare_strings(diff_cmd, rand.ulid(), t.expected, t.output)
+		diff := color_compare_strings(diff_cmd, rand.ulid(), t.expected, t.result.output)
 		lines << [
 			'${indent}diff:',
 			indent_each_lines(2, diff),
@@ -199,13 +208,13 @@ fn (t TestCase) failed_result(file string) string {
 	return lines.map(it + '\n').join('')
 }
 
-fn (t TestCase) result() string {
+fn (t TestCase) result_message() string {
 	file := os.join_path(os.base(os.dir(t.path)), os.base(t.path))
-	return match t.result {
+	return match t.result.status {
 		.ok { '${term.ok_message('[ OK ]')} $file' }
 		.fixed { '${term.ok_message('[ OK ]')} $file (FIXED)' }
 		.todo { '${term.warn_message('[TODO]')} $file' }
-		.failed { t.failed_result(file) }
+		.failed { t.failed_message(file) }
 	}
 }
 
@@ -233,8 +242,8 @@ fn run(paths []string) bool {
 	for path in sources {
 		mut t := lic.new_test_case(path)
 		t.run()
-		ok = ok && t.result != .failed
-		println(t.result())
+		ok = ok && t.result.status != .failed
+		println(t.result_message())
 	}
 	return ok
 }
