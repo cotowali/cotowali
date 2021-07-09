@@ -56,18 +56,26 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	p.consume_with_assert(.key_fn)
 	mut info := FnSignatureParsingInfo{}
 
-	if p.kind(1) != .l_paren {
-		// kind(1) is:
-		//
-		//      v
+	if !(p.kind(0) == .ident && p.kind(1) == .l_paren) {
+		//    v kind(0) == .ident
 		// fn f ( )
-		//      ^
-		//        vv
+		//      ^ kind(1) == .l_paren
+		//
+		//    vvv kind(0) == .ident
 		// fn int |> f()
-		//        ^^
-		//      v
+		//        ^^ kind(1) != .l_paren
+		//
+		//    v kind(0) != .ident
 		// fn [ ] int |> f()
-		//      ^
+		//      ^ kind(1) != .l_paren
+		//
+		//    vvv kind(0) != .ident
+		// fn ... int _> f()
+		//        ^^^ kind(1) != .l_paren
+		//
+		//    vvv kind(0) != .ident
+		// fn ... ( int, int ) |> f()
+		//        ^ kind(1) == .l_paren
 		info.pipe_in = (p.parse_type() ?).typ
 		p.consume_with_check(.pipe) ?
 	}
