@@ -183,6 +183,16 @@ fn (mut t TestCase) run() {
 	}
 }
 
+fn (t TestCase) summary_message(file string) string {
+	status := match t.result.status {
+		.ok, .fixed { term.ok_message('[ OK ]') }
+		.todo { term.warn_message('[TODO]') }
+		.failed { term.fail_message('[FAIL]') }
+	}
+	msg := '$status $file'
+	return if t.result.status == .fixed { '$msg (FIXED)' } else { msg }
+}
+
 fn (t TestCase) failed_message(file string) string {
 	format_output := fn (text string) string {
 		indent := ' '.repeat(4)
@@ -190,7 +200,7 @@ fn (t TestCase) failed_message(file string) string {
 	}
 
 	mut lines := [
-		'${term.fail_message('[FAIL]')} $file',
+		t.summary_message(file),
 		'${indent(1)}exit_code: $t.result.exit_code',
 		'${indent(1)}output:',
 		format_output(t.result.output),
@@ -211,10 +221,8 @@ fn (t TestCase) failed_message(file string) string {
 fn (t TestCase) result_message() string {
 	file := os.join_path(os.base(os.dir(t.path)), os.base(t.path))
 	return match t.result.status {
-		.ok { '${term.ok_message('[ OK ]')} $file' }
-		.fixed { '${term.ok_message('[ OK ]')} $file (FIXED)' }
-		.todo { '${term.warn_message('[TODO]')} $file' }
 		.failed { t.failed_message(file) }
+		else { t.summary_message(file) }
 	}
 }
 
