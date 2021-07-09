@@ -47,18 +47,17 @@ pub enum TypeKind {
 
 // type kind
 [inline]
-fn tk(k TypeKind) TypeKind {
-	return k
-}
-
 pub fn (t TypeSymbol) kind() TypeKind {
+	k := fn (k TypeKind) TypeKind {
+		return k
+	}
 	return match t.info {
-		UnknownTypeInfo { tk(.unknown) }
-		PlaceholderTypeInfo { tk(.placeholder) }
-		PrimitiveTypeInfo { tk(.primitive) }
-		FunctionTypeInfo { tk(.function) }
-		ArrayTypeInfo { tk(.array) }
-		ReferenceTypeInfo { tk(.reference) }
+		UnknownTypeInfo { k(.unknown) }
+		PlaceholderTypeInfo { k(.placeholder) }
+		PrimitiveTypeInfo { k(.primitive) }
+		FunctionTypeInfo { k(.function) }
+		ArrayTypeInfo { k(.array) }
+		ReferenceTypeInfo { k(.reference) }
 	}
 }
 
