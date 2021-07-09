@@ -250,7 +250,12 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr) {
 						pipe_in = e.scope.must_lookup_type(pipe_in_array_info.elem)
 					}
 				}
-				new_fn_params := [e.scope.lookup_or_register_reference_type(target: pipe_in.typ).typ]
+				new_fn_params := if pipe_in_tuple_info := pipe_in.tuple_info() {
+					elements := pipe_in_tuple_info.elements
+					elements.map(e.scope.lookup_or_register_reference_type(target: it).typ)
+				} else {
+					[e.scope.lookup_or_register_reference_type(target: pipe_in.typ).typ]
+				}
 				e.func.sym = if new_fn := e.scope.register_fn(sym.name, params: new_fn_params) {
 					new_fn
 				} else {

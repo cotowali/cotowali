@@ -20,8 +20,11 @@ fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
 
 fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 	if expr.func_id == builtin_fn_id(.read) {
-		e.write('read ')
-		e.reference(expr.args[0])
+		e.write('read')
+		for arg in expr.args {
+			e.write(' ')
+			e.reference(arg)
+		}
 		if !(opt.as_command || opt.as_condition) {
 			e.sh_result_to_bool()
 		}
