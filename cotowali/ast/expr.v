@@ -74,6 +74,14 @@ pub fn (e IndexExpr) typ() Type {
 	}
 }
 
+pub fn (mut e ParenExpr) typ() Type {
+	return match e.exprs.len {
+		0 { e.scope.lookup_or_register_tuple_type({}).typ }
+		1 { e.exprs[0].typ() }
+		else { e.scope.lookup_or_register_tuple_type(elements: e.exprs.map(it.typ())).typ }
+	}
+}
+
 pub fn (e PrefixExpr) typ() Type {
 	match e.op.kind {
 		.amp {
@@ -100,7 +108,7 @@ pub fn (e Expr) typ() Type {
 		FloatLiteral { builtin_type(.float) }
 		StringLiteral { builtin_type(.string) }
 		IntLiteral { builtin_type(.int) }
-		ParenExpr { e.expr.typ() }
+		ParenExpr { e.typ() }
 		Pipeline { e.exprs.last().typ() }
 		PrefixExpr { e.typ() }
 		InfixExpr { e.typ() }
@@ -123,14 +131,14 @@ pub fn (e Expr) type_symbol() TypeSymbol {
 
 pub fn (e Expr) scope() &Scope {
 	return match e {
-		AsExpr, ParenExpr {
+		AsExpr {
 			e.expr.scope()
 		}
 		IndexExpr {
 			e.left.scope()
 		}
 		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, FloatLiteral,
-		InfixExpr, IntLiteral, Pipeline, PrefixExpr, StringLiteral, Var {
+		InfixExpr, IntLiteral, ParenExpr, Pipeline, PrefixExpr, StringLiteral, Var {
 			e.scope
 		}
 	}
@@ -314,9 +322,10 @@ fn (mut r Resolver) index_expr(expr IndexExpr) {
 
 pub struct ParenExpr {
 pub:
-	pos Pos
+	pos   Pos
+	exprs []Expr
 pub mut:
-	expr Expr
+	scope &Scope
 }
 
 fn (mut r Resolver) paren_expr(expr ParenExpr) {
@@ -327,7 +336,7 @@ fn (mut r Resolver) paren_expr(expr ParenExpr) {
 		}
 	}
 
-	r.expr(expr.expr)
+	r.exprs(expr.exprs)
 }
 
 pub struct PrimitiveLiteral {

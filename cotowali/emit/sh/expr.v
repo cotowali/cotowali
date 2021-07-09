@@ -263,7 +263,13 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 	open, close := if opt.inside_arithmetic { ' ( ', ' ) ' } else { '', '' }
 	e.write_inline_block({ open: open, close: close }, fn (mut e Emitter, v ExprWithOpt) {
-		e.expr((v.expr as ast.ParenExpr).expr, { ...v.opt, as_command: false })
+		exprs := (v.expr as ast.ParenExpr).exprs
+		for i, expr in exprs {
+			e.expr(expr, { ...v.opt, as_command: false })
+			if i > 0 {
+				e.write(' ')
+			}
+		}
 	}, ExprWithOpt{expr, opt})
 }
 

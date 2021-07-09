@@ -120,7 +120,7 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 }
 
 fn (mut c Checker) paren_expr(expr ast.ParenExpr) {
-	c.expr(expr.expr)
+	c.exprs(expr.exprs)
 }
 
 fn (mut c Checker) pipeline(expr ast.Pipeline) {

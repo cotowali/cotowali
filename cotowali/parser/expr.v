@@ -233,12 +233,30 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_paren_expr() ?ast.Expr {
-	l_paren := p.consume()
-	expr := p.parse_expr(.toplevel) ?
-	r_paren := p.consume_with_check(.r_paren) ?
+	l_paren := p.consume_with_assert(.l_paren)
+
+	mut pos := l_paren.pos
+	mut exprs := []ast.Expr{}
+
+	if r_paren := p.consume_if_kind_eq(.r_paren) {
+		// `()`
+		pos = pos.merge(r_paren.pos)
+	} else {
+		// `(int)` or `(int, int)`
+		for {
+			exprs << p.parse_expr(.toplevel) ?
+			tail := p.consume_with_check(.comma, .r_paren) ?
+			if tail.kind == .r_paren {
+				pos = pos.merge(tail.pos)
+				break
+			}
+		}
+	}
+
 	return ast.ParenExpr{
-		pos: l_paren.pos.merge(r_paren.pos)
-		expr: expr
+		pos: pos
+		exprs: exprs
+		scope: p.scope
 	}
 }
 
