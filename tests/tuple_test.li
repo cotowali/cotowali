@@ -25,3 +25,8 @@ fn (int) |> twice() |> (int) {
 assert ((1, 2) |> add() |> sum()) == 3
 assert ((3) |> twice()) == 6
 assert (3 |> twice()) == (6)
+
+fn () |> zero() int {
+  return 0
+}
+assert (() |> zero()) == 0
