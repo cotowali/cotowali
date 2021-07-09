@@ -62,11 +62,11 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 		//      v
 		// fn f ( )
 		//      ^
-		//        v
-		// fn int | f()
-		//        ^
+		//        vv
+		// fn int |> f()
+		//        ^^
 		//      v
-		// fn [ ] int | f()
+		// fn [ ] int |> f()
 		//      ^
 		info.pipe_in = (p.parse_type() ?).typ
 		p.consume_with_check(.pipe) ?
