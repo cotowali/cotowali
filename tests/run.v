@@ -2,6 +2,7 @@ import os
 import rand
 import term
 import v.util { color_compare_strings, find_working_diff_command }
+import time
 
 fn indent(n int) string {
 	return '  '.repeat(n)
@@ -122,6 +123,7 @@ mut:
 	exit_code int
 	output    string
 	status    TestResultStatus
+	elapsed   time.Duration
 }
 
 struct TestCase {
@@ -142,6 +144,8 @@ fn fix_todo(f string, s FileSuffix) {
 }
 
 fn (mut t TestCase) run() {
+	mut sw := time.new_stopwatch({})
+	sw.start()
 	result := if t.is_err_test {
 		t.lic.execute(.compile, t.path)
 	} else if t.is_noemit_test {
@@ -149,6 +153,8 @@ fn (mut t TestCase) run() {
 	} else {
 		t.lic.execute(.run, t.path)
 	}
+	sw.stop()
+	t.result.elapsed = sw.elapsed()
 	t.result.output = result.output
 	t.result.exit_code = result.exit_code
 
@@ -189,7 +195,8 @@ fn (t TestCase) summary_message(file string) string {
 		.todo { term.warn_message('[TODO]') }
 		.failed { term.fail_message('[FAIL]') }
 	}
-	msg := '$status $file'
+	elapsed_ms := f64(t.result.elapsed.microseconds()) / 1000.0
+	msg := '$status ${elapsed_ms:6.2f} ms $file'
 	return if t.result.status == .fixed { '$msg (FIXED)' } else { msg }
 }
 
