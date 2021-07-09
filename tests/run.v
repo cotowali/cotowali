@@ -176,14 +176,14 @@ fn (mut t TestCase) run() {
 	$if fix ? {
 		if correct_exit_code {
 			if t.is_todo_test {
-				if t.output == t.expected {
+				if t.result.output == t.expected {
 					fix_todo(t.path, .li)
 					fix_todo(t.out_path, .out)
-					t.result = .fixed
+					t.result.status = .fixed
 				}
-			} else if t.output != t.expected {
-				os.write_file(t.out_path, t.output) or { panic(err) }
-				t.result = .fixed
+			} else if t.result.output != t.expected {
+				os.write_file(t.out_path, t.result.output) or { panic(err) }
+				t.result.status = .fixed
 			}
 		}
 	}
