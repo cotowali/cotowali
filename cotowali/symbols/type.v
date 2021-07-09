@@ -12,7 +12,7 @@ pub struct PrimitiveTypeInfo {}
 pub struct PlaceholderTypeInfo {}
 
 pub type TypeInfo = ArrayTypeInfo | FunctionTypeInfo | PlaceholderTypeInfo | PrimitiveTypeInfo |
-	ReferenceTypeInfo | UnknownTypeInfo
+	ReferenceTypeInfo | TupleTypeInfo | UnknownTypeInfo
 
 pub struct TypeSymbol {
 mut:
@@ -43,6 +43,7 @@ pub enum TypeKind {
 	function
 	array
 	reference
+	tuple
 }
 
 // type kind
@@ -58,6 +59,7 @@ pub fn (t TypeSymbol) kind() TypeKind {
 		FunctionTypeInfo { k(.function) }
 		ArrayTypeInfo { k(.array) }
 		ReferenceTypeInfo { k(.reference) }
+		TupleTypeInfo { k(.tuple) }
 	}
 }
 
