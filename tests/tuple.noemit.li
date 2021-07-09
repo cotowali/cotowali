@@ -1,1 +1,0 @@
-fn (int, string) |> f1() (int, string) {}

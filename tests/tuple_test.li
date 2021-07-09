@@ -1,0 +1,19 @@
+fn ...int |> sum() |> int {
+  var res = 0
+  var v int
+  while read(&v) {
+    res = res + v
+  }
+  return res
+}
+
+
+fn ...(int, int) |> add() |> ...int {
+  var v1 int
+  var v2 int
+  while read(&v1, &v2) {
+    yield v1 + v2
+  }
+}
+
+assert ((1, 2) |> add() |> sum()) == 3
