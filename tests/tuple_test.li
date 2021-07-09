@@ -16,4 +16,12 @@ fn ...(int, int) |> add() |> ...int {
   }
 }
 
+fn (int) |> twice() |> (int) {
+  var n int
+  read(&n)
+  return n * 2
+}
+
 assert ((1, 2) |> add() |> sum()) == 3
+assert ((3) |> twice()) == 6
+assert (3 |> twice()) == (6)
