@@ -1,7 +1,7 @@
 module checker
 
 import cotowali.ast { Expr }
-import cotowali.symbols { TypeSymbol, builtin_type }
+import cotowali.symbols { Type, TypeSymbol, builtin_type }
 import cotowali.source { Pos }
 import cotowali.errors { unreachable }
 
@@ -14,43 +14,55 @@ struct TypeCheckingConfig {
 	synmetric  bool
 }
 
-fn is_same_type(a TypeSymbol, b TypeSymbol) bool {
-	if a.typ == b.typ {
+fn can_promote(want TypeSymbol, got TypeSymbol) bool {
+	if _unlikely_(want.typ == got.typ) {
 		return true
 	}
 
-	// treat `(int)` as equal to `int`
-	if a_tuple_info := a.tuple_info() {
-		if a_tuple_info.elements.len == 1 && a_tuple_info.elements[0] == b.typ {
-			return true
-		}
+	if want.typ == builtin_type(.any) {
+		return true
 	}
-	if b_tuple_info := b.tuple_info() {
-		if b_tuple_info.elements.len == 1 && b_tuple_info.elements[0] == a.typ {
-			return true
+
+	if want.typ.is_number() && got.typ.is_number() {
+		return can_promote_number(want.typ, got.typ)
+	}
+
+	if want_tuple_info := want.tuple_info() {
+		unsafe {
+			elements := &want_tuple_info.elements
+			if elements.len == 1 && elements[0] == got.typ {
+				return true
+			}
 		}
 	}
 
 	return false
 }
 
-fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
-	if is_same_type(v.want, v.got) {
-		return
+fn can_promote_number(want Type, got Type) bool {
+	if _unlikely_(want == got) {
+		return true
 	}
 
+	if want == builtin_type(.float) && got == builtin_type(.int) {
+		return true
+	}
+	return false
+}
+
+fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
+	if v.want.typ == v.got.typ {
+		return
+	}
 	if v.synmetric {
-		if v.want.typ == builtin_type(.float) && v.got.typ == builtin_type(.int) {
-			return
-		}
-		if v.want.typ == builtin_type(.int) && v.got.typ == builtin_type(.float) {
-			return
+		// don't promte to any ( `int + any` should be invalid )
+		if v.want.typ != builtin_type(.any) && v.got.typ != builtin_type(.any) {
+			if can_promote(v.want, v.got) || can_promote(v.got, v.want) {
+				return
+			}
 		}
 	} else {
-		if v.want.typ == builtin_type(.any) {
-			return
-		}
-		if v.want.typ == builtin_type(.float) && v.got.typ == builtin_type(.int) {
+		if can_promote(v.want, v.got) {
 			return
 		}
 	}
