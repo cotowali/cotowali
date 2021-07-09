@@ -19,6 +19,18 @@ fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
 		return
 	}
 
+	// treat `(int)` as equal to `int`
+	if want_tuple_info := v.want.tuple_info() {
+		if want_tuple_info.elements.len == 1 && want_tuple_info.elements[0] == v.got.typ {
+			return
+		}
+	}
+	if got_tuple_info := v.got.tuple_info() {
+		if got_tuple_info.elements.len == 1 && got_tuple_info.elements[0] == v.want.typ {
+			return
+		}
+	}
+
 	if v.synmetric {
 		if v.want.typ == builtin_type(.float) && v.got.typ == builtin_type(.int) {
 			return
