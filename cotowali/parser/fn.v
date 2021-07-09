@@ -76,6 +76,12 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 
 	p.parse_fn_params(mut info) ?
 	if p.kind(0) != .l_brace {
+		// consume output pipe symbol (optional)
+		//        vv
+		// fn f() |> int
+		//        ^^
+		p.consume_if_kind_eq(.pipe) or {}
+
 		info.ret_typ = (p.parse_type() ?).typ
 	}
 

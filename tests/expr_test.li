@@ -97,7 +97,7 @@ fn ...int |> sum() int {
   return n
 }
 
-fn ...int |> twice() ...int {
+fn ...int |> twice() |> ...int {
   var v int
   while read(&v) {
     yield v * 2
