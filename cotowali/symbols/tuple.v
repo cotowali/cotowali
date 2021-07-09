@@ -12,7 +12,7 @@ pub fn (ts TypeSymbol) tuple_info() ?TupleTypeInfo {
 }
 
 fn (info TupleTypeInfo) typename(s &Scope) string {
-	return '(${info.elements.map(s.must_lookup_type(it).name).join(',')})'
+	return '(${info.elements.map(s.must_lookup_type(it).name).join(', ')})'
 }
 
 pub fn (mut s Scope) lookup_or_register_tuple_type(info TupleTypeInfo) TypeSymbol {
