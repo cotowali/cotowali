@@ -4,3 +4,12 @@ fn ...(int, int) |> f() ...(int, int) {
 }
 
 0 |> f()
+
+fn () |> zero() int {
+  var v int
+  read(&v)
+  return 0
+}
+
+0 |> zero()
+(1, 2) |> zero()
