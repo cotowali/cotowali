@@ -48,17 +48,19 @@ fn (mut p Parser) unexpected_token_error(found Token, expects ...TokenKind) IErr
 	}
 
 	found_str := if found.text.len > 0 { found.text } else { found.kind.str() }
+	mut msg := 'unexpected token `$found_str`'
 	if expects.len == 0 {
-		return p.syntax_error('unexpected token `$found_str`', found.pos)
+		return p.syntax_error(msg, found.pos)
 	}
-	mut expect := 'expect '
+
+	msg += ', expecting '
 	if expects.len == 1 {
-		expect = '`$expects[0].str()`'
+		msg += '`${expects[0].str()}`'
 	} else {
 		last := expects.last().str()
-		expect = expects[..expects.len - 1].map(it.str()).join(', ') + ', or `$last`'
+		msg += expects[..expects.len - 1].map(it.str()).join(', ') + ' or `$last`'
 	}
-	return p.syntax_error(expect + ', but found `$found_str`', found.pos)
+	return p.syntax_error(msg, found.pos)
 }
 
 fn (mut p Parser) duplicated_error(name string, pos Pos) IError {
