@@ -240,6 +240,23 @@ fn (mut p Parser) parse_map_literal() ?ast.Expr {
 		}
 	}
 
+	// map[key]value{}
+	if key_map := p.consume_if_kind_eq(.key_map) {
+		p.consume_with_check(.l_bracket) ?
+		key_ts := p.parse_type() ?
+		p.consume_with_check(.r_bracket) ?
+		value_ts := p.parse_type() ?
+		p.consume_with_check(.l_brace) ?
+		r_brace := p.consume_with_check(.r_brace) ?
+
+		return ast.MapLiteral{
+			scope: p.scope
+			pos: key_map.pos.merge(r_brace.pos)
+			key_typ: key_ts.typ
+			value_typ: value_ts.typ
+		}
+	}
+
 	l_brace := p.consume_with_assert(.l_brace)
 	mut pos := l_brace.pos
 	mut entries := []ast.MapLiteralEntry{}
@@ -391,7 +408,7 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 		.l_bracket {
 			return p.parse_array_literal()
 		}
-		.l_brace {
+		.l_brace, .key_map {
 			return p.parse_map_literal()
 		}
 		.l_paren {

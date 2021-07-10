@@ -1,3 +1,4 @@
 fn f(m map[string]string) {}
 
+f(map[string]string{})
 f({ 'key': 'value' })
