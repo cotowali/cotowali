@@ -1,0 +1,27 @@
+fn add(a int, b int) int {
+  return a + b
+}
+
+var int_without_init int
+var float_without_init float
+var string_without_init string
+var bool_without_init bool
+assert int_without_init == 0
+assert float_without_init == 0.0
+assert string_without_init == ''
+assert bool_without_init == false
+
+var n = 0
+assert n == 0
+n = 1
+assert n == 1
+
+n = 1 + 2
+assert n == 3
+n = n + 2
+assert n == 5
+
+n = add(1, 2)
+assert n == 3
+n = add(n, 2)
+assert n == 5
