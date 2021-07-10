@@ -244,12 +244,14 @@ fn (mut p Parser) parse_map_literal() ?ast.Expr {
 	mut key_typ := builtin_type(.placeholder)
 	mut value_typ := builtin_type(.placeholder)
 
-	// map[key]value{}
+	// map[key]value{} or // map{ key: value }
 	if _ := p.consume_if_kind_eq(.key_map) {
-		p.consume_with_check(.l_bracket) ?
-		key_typ = (p.parse_type() ?).typ
-		p.consume_with_check(.r_bracket) ?
-		value_typ = (p.parse_type() ?).typ
+		// map[key]value{}
+		if _ := p.consume_if_kind_eq(.l_bracket) {
+			key_typ = (p.parse_type() ?).typ
+			p.consume_with_check(.r_bracket) ?
+			value_typ = (p.parse_type() ?).typ
+		}
 	}
 
 	mut entries := []ast.MapLiteralEntry{}
