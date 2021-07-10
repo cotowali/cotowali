@@ -256,7 +256,7 @@ fn (mut p Parser) parse_map_literal() ?ast.Expr {
 	p.consume_with_check(.l_brace) ?
 
 	// no entry is allowed for map[key]value{} syntax (when using this syntax, key_typ is not placholder)
-	if !(key_typ == builtin_type(.placeholder) && p.kind(0) == .r_brace) {
+	if !(key_typ != builtin_type(.placeholder) && p.kind(0) == .r_brace) {
 		for {
 			key := p.parse_expr(.toplevel) ?
 			p.consume_with_check(.colon) ?
