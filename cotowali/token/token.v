@@ -7,7 +7,6 @@ pub enum TokenKind {
 	ident
 	key_as
 	key_assert
-	key_decl
 	key_else
 	key_export
 	key_fn
@@ -139,7 +138,6 @@ fn (k TokenKind) is_keyword() bool {
 	return k in [
 		.key_as,
 		.key_assert,
-		.key_decl,
 		.key_else,
 		.key_export,
 		.key_fn,

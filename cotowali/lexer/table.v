@@ -50,7 +50,6 @@ const (
 		'false':   tk(.bool_lit)
 		'as':      tk(.key_as)
 		'assert':  tk(.key_assert)
-		'decl':    tk(.key_decl)
 		'export':  tk(.key_export)
 		'else':    tk(.key_else)
 		'fn':      tk(.key_fn)

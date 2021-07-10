@@ -95,7 +95,6 @@ fn test_lexer() {
 	])
 	ktest('fn f(a, b){}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren, .l_brace,
 		.r_brace, .eof])
-	ktest('decl fn f()', [.key_decl, .key_fn, .ident, .l_paren, .r_paren])
 	ktest('var i = 0', [.key_var, .ident, .assign, .int_lit, .eof])
 	ktest('&a.b |> c', [.amp, .ident, .dot, .ident, .pipe, .ident, .eof])
 	ktest('a && b || c &', [.ident, .logical_and, .ident, .logical_or, .ident, .amp, .eof])
