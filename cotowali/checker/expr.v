@@ -10,12 +10,12 @@ fn (mut c Checker) exprs(exprs []Expr) {
 }
 
 fn (mut c Checker) expr(expr Expr) {
-	match mut expr {
+	match expr {
 		ast.ArrayLiteral { c.array_literal(expr) }
 		ast.AsExpr { c.as_expr(expr) }
 		ast.BoolLiteral {}
 		ast.CallCommandExpr { c.call_command_expr(expr) }
-		ast.CallExpr { c.call_expr(mut expr) }
+		ast.CallExpr { c.call_expr(expr) }
 		ast.DefaultValue {}
 		ast.FloatLiteral {}
 		ast.IndexExpr { c.index_expr(expr) }
@@ -41,7 +41,7 @@ fn (mut c Checker) call_command_expr(expr ast.CallCommandExpr) {
 	c.exprs(expr.args)
 }
 
-fn (mut c Checker) call_expr(mut expr ast.CallExpr) {
+fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	if Expr(expr).typ() == builtin_type(.placeholder) {
 		return
 	}
