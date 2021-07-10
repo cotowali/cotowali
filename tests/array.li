@@ -14,6 +14,7 @@ fn new_arr() []int {
 [0, 1, 2]
 var v = ['a', 'b', 'c']
 v
+v = []string{}
 
 var arr = [0, 1, 2]
 echo_arr(arr)

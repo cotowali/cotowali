@@ -201,7 +201,7 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 
 	first_tok := p.consume_with_check(.l_bracket) ?
 	mut last_tok := first_tok
-	if _ := p.consume_if_kind_eq(.r_paren) {
+	if _ := p.consume_if_kind_eq(.r_bracket) {
 		// []Type{}
 		elem_ts := p.parse_type() ?
 		p.consume_with_check(.l_brace) ?
