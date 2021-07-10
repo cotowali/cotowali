@@ -38,7 +38,7 @@ fn ...int |> sum() int {
   var v int
   var res = 0
   while read(&v) {
-    res = res + v
+    res += v
   }
   return res
 }
