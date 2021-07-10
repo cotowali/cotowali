@@ -8,19 +8,19 @@ pub enum TokenKind {
 	ident
 	key_as
 	key_assert
-	key_fn
-	key_var
-	key_if
-	key_else
-	key_for
-	key_while
-	key_in
-	key_return
 	key_decl
+	key_else
+	key_fn
+	key_for
+	key_if
+	key_in
 	key_require
-	key_yield
+	key_return
 	key_struct
 	key_use
+	key_var
+	key_while
+	key_yield
 	inline_shell
 	comma
 	hash
@@ -137,18 +137,18 @@ fn (k TokenKind) is_keyword() bool {
 	return k in [
 		.key_as,
 		.key_assert,
-		.key_fn,
-		.key_var,
-		.key_if,
-		.key_else,
-		.key_for,
-		.key_while,
-		.key_in,
-		.key_return,
 		.key_decl,
+		.key_else,
+		.key_fn,
+		.key_for,
+		.key_if,
+		.key_in,
 		.key_require,
+		.key_return,
 		.key_struct,
 		.key_use,
+		.key_var,
+		.key_while,
 		.key_yield,
 	]
 }
