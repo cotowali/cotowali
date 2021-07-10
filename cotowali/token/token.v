@@ -127,6 +127,7 @@ fn (k TokenKind) is_infix_op() bool {
 fn (k TokenKind) is_literal() bool {
 	return k in [
 		.int_lit,
+		.float_lit,
 		.bool_lit,
 		.string_lit,
 	]
