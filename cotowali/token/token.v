@@ -84,6 +84,11 @@ fn (k TokenKind) is_op() bool {
 }
 
 [inline]
+fn (k TokenKind) is_assign_op() bool {
+	return k == .assign
+}
+
+[inline]
 fn (k TokenKind) is_comparsion_op() bool {
 	return k in [
 		.eq,
@@ -158,6 +163,7 @@ fn (k TokenKind) is_keyword() bool {
 
 pub enum TokenKindClass {
 	op
+	assign_op
 	comparsion_op
 	infix_op
 	logical_infix_op
@@ -171,6 +177,7 @@ pub enum TokenKindClass {
 pub fn (k TokenKind) @is(class TokenKindClass) bool {
 	return match class {
 		.op { k.is_op() }
+		.assign_op { k.is_assign_op() }
 		.comparsion_op { k.is_comparsion_op() }
 		.logical_infix_op { k.is_logical_infix_op() }
 		.infix_op { k.is_infix_op() }

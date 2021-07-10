@@ -38,6 +38,8 @@ fn test_token_str() {
 fn test_is() {
 	assert TokenKind.plus.@is(.op)
 	assert !TokenKind.ident.@is(.op)
+	assert TokenKind.assign.@is(.assign_op)
+	assert !TokenKind.ident.@is(.assign_op)
 	assert TokenKind.eq.@is(.comparsion_op)
 	assert !TokenKind.ident.@is(.comparsion_op)
 	assert TokenKind.eq.@is(.infix_op)
