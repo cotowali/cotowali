@@ -117,6 +117,12 @@ fn test_lexer() {
 	ktest('use PATH', [.key_use, .ident])
 	ktest('export PATH', [.key_export, .ident])
 
+	ktest('n += 2', [.ident, .plus_assign, .int_lit])
+	ktest('n -= 2', [.ident, .minus_assign, .int_lit])
+	ktest('n *= 2', [.ident, .mul_assign, .int_lit])
+	ktest('n /= 2', [.ident, .div_assign, .int_lit])
+	ktest('n %= 2', [.ident, .mod_assign, .int_lit])
+
 	test('if i == 0 { } else if i != 1 {} else {}', [
 		t(.key_if, 'if'),
 		t(.ident, 'i'),
