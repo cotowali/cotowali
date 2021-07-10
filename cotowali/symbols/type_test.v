@@ -95,3 +95,18 @@ fn test_is_number() ? {
 	assert !int_arr.typ.is_number()
 	assert (int_arr.array_info() ?).elem.is_number()
 }
+
+fn test_struct_type() ? {
+	mut s := new_global_scope()
+	ts := s.register_struct_type('',
+		fields: map{
+			'n': builtin_type(.int)
+			's': builtin_type(.string)
+		}
+	) ?
+	if struct_info := ts.struct_info() {
+		assert struct_info.type_to_str(s) == 'struct { n int, s string }'
+	} else {
+		assert false
+	}
+}
