@@ -1,11 +1,9 @@
 fn fizzbuzz(n int) {
   for i in seq(n) {
-    if i % 3 == 0 {
-      if i % 5 == 0 {
-        echo('fizzbuzz')
-      } else {
-        echo('fizz')
-      }
+    if i % 3 == 0 && i % 5 == 0 {
+      echo('fizzbuzz')
+    } else if i % 3 == 0 {
+      echo('fizz')
     } else if i % 5 == 0 {
       echo('buzz')
     } else {
