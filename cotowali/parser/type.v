@@ -35,7 +35,8 @@ fn (mut p Parser) parse_map_type() ?&TypeSymbol {
 			p.trace_end()
 		}
 	}
-	p.consume_with_assert(.l_bracket)
+	p.consume_with_assert(.key_map)
+	p.consume_with_check(.l_bracket) ?
 	key := p.parse_type() ?
 	p.consume_with_check(.r_bracket) ?
 	value := p.parse_type() ?
@@ -106,25 +107,11 @@ fn (mut p Parser) parse_type() ?&TypeSymbol {
 	}
 
 	match p.kind(0) {
-		.l_bracket {
-			if p.kind(1) == .r_bracket {
-				// []elem
-				return p.parse_array_type()
-			}
-			// [key]value
-			return p.parse_map_type()
-		}
-		.amp {
-			return p.parse_reference_type()
-		}
-		.dotdotdot {
-			return p.parse_variadic_type()
-		}
-		.l_paren {
-			return p.parse_tuple_type()
-		}
-		else {
-			return p.parse_ident_type()
-		}
+		.l_bracket { return p.parse_array_type() }
+		.key_map { return p.parse_map_type() }
+		.amp { return p.parse_reference_type() }
+		.dotdotdot { return p.parse_variadic_type() }
+		.l_paren { return p.parse_tuple_type() }
+		else { return p.parse_ident_type() }
 	}
 }
