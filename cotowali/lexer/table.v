@@ -45,6 +45,7 @@ const (
 		'as':      k(.key_as)
 		'assert':  k(.key_assert)
 		'decl':    k(.key_decl)
+		'export':  k(.key_export)
 		'else':    k(.key_else)
 		'fn':      k(.key_fn)
 		'for':     k(.key_for)
