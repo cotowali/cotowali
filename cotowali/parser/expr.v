@@ -252,22 +252,26 @@ fn (mut p Parser) parse_map_literal() ?ast.Expr {
 		value_typ = (p.parse_type() ?).typ
 	}
 
-	p.consume_with_check(.l_brace) ?
 	mut entries := []ast.MapLiteralEntry{}
-	for p.kind(0) != .r_brace {
-		key := p.parse_expr(.toplevel) ?
-		p.consume_with_check(.colon) ?
-		value := p.parse_expr(.toplevel) ?
+	p.consume_with_check(.l_brace) ?
 
-		entries << ast.MapLiteralEntry{
-			key: key
-			value: value
-		}
+	// no entry is allowed for map[key]value{} syntax (when using this syntax, key_typ is not placholder)
+	if !(key_typ == builtin_type(.placeholder) && p.kind(0) == .r_brace) {
+		for {
+			key := p.parse_expr(.toplevel) ?
+			p.consume_with_check(.colon) ?
+			value := p.parse_expr(.toplevel) ?
 
-		if p.kind(0) == .r_brace {
-			break
+			entries << ast.MapLiteralEntry{
+				key: key
+				value: value
+			}
+
+			if p.kind(0) == .r_brace {
+				break
+			}
+			p.consume_with_check(.eol, .comma) ?
 		}
-		p.consume_with_check(.eol, .comma) ?
 	}
 
 	r_brace := p.consume_with_assert(.r_brace)
