@@ -2,7 +2,7 @@ module parser
 
 import cotowali.token { TokenKind }
 import cotowali.ast
-import cotowali.symbols { new_placeholder_var }
+import cotowali.symbols { builtin_type, new_placeholder_var }
 import cotowali.errors { unreachable }
 import cotowali.util { struct_name }
 
@@ -240,27 +240,21 @@ fn (mut p Parser) parse_map_literal() ?ast.Expr {
 		}
 	}
 
-	// map[key]value{}
-	if key_map := p.consume_if_kind_eq(.key_map) {
-		p.consume_with_check(.l_bracket) ?
-		key_ts := p.parse_type() ?
-		p.consume_with_check(.r_bracket) ?
-		value_ts := p.parse_type() ?
-		p.consume_with_check(.l_brace) ?
-		r_brace := p.consume_with_check(.r_brace) ?
+	mut pos := p.token(0).pos
+	mut key_typ := builtin_type(.placeholder)
+	mut value_typ := builtin_type(.placeholder)
 
-		return ast.MapLiteral{
-			scope: p.scope
-			pos: key_map.pos.merge(r_brace.pos)
-			key_typ: key_ts.typ
-			value_typ: value_ts.typ
-		}
+	// map[key]value{}
+	if _ := p.consume_if_kind_eq(.key_map) {
+		p.consume_with_check(.l_bracket) ?
+		key_typ = (p.parse_type() ?).typ
+		p.consume_with_check(.r_bracket) ?
+		value_typ = (p.parse_type() ?).typ
 	}
 
-	l_brace := p.consume_with_assert(.l_brace)
-	mut pos := l_brace.pos
+	p.consume_with_check(.l_brace) ?
 	mut entries := []ast.MapLiteralEntry{}
-	for {
+	for p.kind(0) != .r_brace {
 		key := p.parse_expr(.toplevel) ?
 		p.consume_with_check(.colon) ?
 		value := p.parse_expr(.toplevel) ?
@@ -270,17 +264,21 @@ fn (mut p Parser) parse_map_literal() ?ast.Expr {
 			value: value
 		}
 
-		if r_brace := p.consume_if_kind_eq(.r_brace) {
-			pos = pos.merge(r_brace.pos)
+		if p.kind(0) == .r_brace {
 			break
 		}
 		p.consume_with_check(.eol, .comma) ?
 	}
 
+	r_brace := p.consume_with_assert(.r_brace)
+	pos = pos.merge(r_brace.pos)
+
 	return ast.MapLiteral{
 		scope: p.scope
 		pos: pos
 		entries: entries
+		key_typ: key_typ
+		value_typ: value_typ
 	}
 }
 
