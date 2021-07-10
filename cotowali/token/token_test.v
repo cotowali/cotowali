@@ -38,16 +38,27 @@ fn test_token_str() {
 fn test_is() {
 	assert TokenKind.plus.@is(.op)
 	assert !TokenKind.ident.@is(.op)
+
 	assert TokenKind.assign.@is(.assign_op)
+	assert TokenKind.assign.@is(.op)
 	assert !TokenKind.ident.@is(.assign_op)
+
 	assert TokenKind.eq.@is(.comparsion_op)
+	assert TokenKind.eq.@is(.op)
 	assert !TokenKind.ident.@is(.comparsion_op)
+
 	assert TokenKind.eq.@is(.infix_op)
+	assert TokenKind.eq.@is(.op)
 	assert !TokenKind.ident.@is(.infix_op)
+
 	assert TokenKind.not.@is(.prefix_op)
+	assert TokenKind.not.@is(.op)
 	assert !TokenKind.ident.@is(.prefix_op)
+
 	assert TokenKind.plus_plus.@is(.postfix_op)
+	assert TokenKind.plus_plus.@is(.op)
 	assert !TokenKind.ident.@is(.postfix_op)
+
 	assert TokenKind.bool_lit.@is(.literal)
 	assert !TokenKind.ident.@is(.literal)
 	assert TokenKind.key_if.@is(.keyword)

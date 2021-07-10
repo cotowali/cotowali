@@ -63,24 +63,7 @@ pub enum TokenKind {
 
 [inline]
 fn (k TokenKind) is_op() bool {
-	return k in [
-		.pipe,
-		.plus,
-		.minus,
-		.div,
-		.mul,
-		.mod,
-		.logical_and,
-		.logical_and,
-		.assign,
-		.not,
-		.eq,
-		.ne,
-		.gt,
-		.ge,
-		.lt,
-		.le,
-	]
+	return k.is_prefix_op() || k.is_postfix_op() || k.is_infix_op() || k.is_assign_op()
 }
 
 [inline]
