@@ -232,6 +232,41 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 	}
 }
 
+fn (mut p Parser) parse_map_literal() ?ast.Expr {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
+	l_brace := p.consume_with_assert(.l_brace)
+	mut pos := l_brace.pos
+	mut entries := []ast.MapLiteralEntry{}
+	for {
+		key := p.parse_expr(.toplevel) ?
+		p.consume_with_check(.colon) ?
+		value := p.parse_expr(.toplevel) ?
+
+		entries << ast.MapLiteralEntry{
+			key: key
+			value: value
+		}
+
+		if r_brace := p.consume_if_kind_eq(.r_brace) {
+			pos = pos.merge(r_brace.pos)
+			break
+		}
+		p.consume_with_check(.eol, .comma) ?
+	}
+
+	return ast.MapLiteral{
+		scope: p.scope
+		pos: pos
+		entries: entries
+	}
+}
+
 fn (mut p Parser) parse_paren_expr() ?ast.Expr {
 	l_paren := p.consume_with_assert(.l_paren)
 
@@ -355,6 +390,9 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 		}
 		.l_bracket {
 			return p.parse_array_literal()
+		}
+		.l_brace {
+			return p.parse_map_literal()
 		}
 		.l_paren {
 			return p.parse_paren_expr()

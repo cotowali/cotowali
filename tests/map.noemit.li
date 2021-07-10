@@ -1,1 +1,3 @@
 fn f(map [string]string) {}
+
+f({ 'key': 'value' })
