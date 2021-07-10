@@ -114,6 +114,7 @@ fn test_lexer() {
 	ktest('require "file.li"', [.key_require, .string_lit])
 	ktest('yield 0', [.key_yield, .int_lit])
 	ktest('while true { }', [.key_while, .bool_lit, .l_brace, .r_brace])
+	ktest('use PATH', [.key_use, .ident])
 
 	test('if i == 0 { } else if i != 1 {} else {}', [
 		t(.key_if, 'if'),

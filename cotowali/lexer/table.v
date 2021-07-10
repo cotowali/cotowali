@@ -53,6 +53,7 @@ const (
 		'require': k(.key_require)
 		'return':  k(.key_return)
 		'struct':  k(.key_struct)
+		'use':     k(.key_use)
 		'var':     k(.key_var)
 		'while':   k(.key_while)
 		'yield':   k(.key_yield)
