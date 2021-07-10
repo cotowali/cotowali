@@ -21,6 +21,7 @@ fn (mut c Checker) expr(expr Expr) {
 		ast.IndexExpr { c.index_expr(expr) }
 		ast.InfixExpr { c.infix_expr(expr) }
 		ast.IntLiteral {}
+		ast.MapLiteral { c.map_literal(expr) }
 		ast.ParenExpr { c.paren_expr(expr) }
 		ast.Pipeline { c.pipeline(expr) }
 		ast.PrefixExpr { c.prefix_expr(expr) }
@@ -117,6 +118,9 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 		pos: expr.pos()
 		synmetric: true
 	) or { return }
+}
+
+fn (mut c Checker) map_literal(expr ast.MapLiteral) {
 }
 
 fn (mut c Checker) paren_expr(expr ast.ParenExpr) {

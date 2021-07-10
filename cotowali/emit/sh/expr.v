@@ -42,6 +42,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.Pipeline { e.pipeline(expr, opt) }
 		ast.InfixExpr { e.infix_expr(expr, opt) }
 		ast.IndexExpr { e.index_expr(expr, opt) }
+		ast.MapLiteral { e.map_literal(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
 		ast.StringLiteral { e.string_literal(expr, opt) }

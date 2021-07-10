@@ -6,8 +6,8 @@ import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymb
 import cotowali.errors { unreachable }
 
 pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | DefaultValue |
-	FloatLiteral | IndexExpr | InfixExpr | IntLiteral | ParenExpr | Pipeline | PrefixExpr |
-	StringLiteral | Var
+	FloatLiteral | IndexExpr | InfixExpr | IntLiteral | MapLiteral | ParenExpr | Pipeline |
+	PrefixExpr | StringLiteral | Var
 
 fn (mut r Resolver) exprs(exprs []Expr) {
 	for expr in exprs {
@@ -27,6 +27,7 @@ fn (mut r Resolver) expr(expr Expr) {
 		IndexExpr { r.index_expr(expr) }
 		InfixExpr { r.infix_expr(expr) }
 		IntLiteral { r.int_literal(expr) }
+		MapLiteral { r.map_literal(mut expr) }
 		ParenExpr { r.paren_expr(expr) }
 		Pipeline { r.pipeline(expr) }
 		PrefixExpr { r.prefix_expr(mut expr) }
@@ -48,11 +49,22 @@ pub fn (e InfixExpr) pos() Pos {
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
-		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DefaultValue, Var, ParenExpr, IndexExpr { expr.pos }
-		InfixExpr { expr.pos() }
-		Pipeline { expr.exprs.first().pos().merge(expr.exprs.last().pos()) }
-		PrefixExpr { expr.op.pos.merge(expr.expr.pos()) }
-		StringLiteral, IntLiteral, FloatLiteral, BoolLiteral { expr.token.pos }
+		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DefaultValue, Var, ParenExpr, IndexExpr,
+		MapLiteral {
+			expr.pos
+		}
+		InfixExpr {
+			expr.pos()
+		}
+		Pipeline {
+			expr.exprs.first().pos().merge(expr.exprs.last().pos())
+		}
+		PrefixExpr {
+			expr.op.pos.merge(expr.expr.pos())
+		}
+		StringLiteral, IntLiteral, FloatLiteral, BoolLiteral {
+			expr.token.pos
+		}
 	}
 }
 
@@ -113,6 +125,7 @@ pub fn (e Expr) typ() Type {
 		PrefixExpr { e.typ() }
 		InfixExpr { e.typ() }
 		IndexExpr { e.typ() }
+		MapLiteral { e.scope.lookup_or_register_map_type(key: e.key_typ, value: e.value_typ).typ }
 		Var { e.sym.typ }
 	}
 }
@@ -138,7 +151,7 @@ pub fn (e Expr) scope() &Scope {
 			e.left.scope()
 		}
 		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, FloatLiteral,
-		InfixExpr, IntLiteral, ParenExpr, Pipeline, PrefixExpr, StringLiteral, Var {
+		InfixExpr, IntLiteral, MapLiteral, ParenExpr, Pipeline, PrefixExpr, StringLiteral, Var {
 			e.scope
 		}
 	}
@@ -323,6 +336,45 @@ fn (mut r Resolver) index_expr(expr IndexExpr) {
 
 	r.expr(expr.left)
 	r.expr(expr.index)
+}
+
+pub struct MapLiteralEntry {
+pub:
+	key   Expr
+	value Expr
+}
+
+pub struct MapLiteral {
+pub:
+	pos     Pos
+	entries []MapLiteralEntry
+pub mut:
+	scope     &Scope
+	key_typ   Type
+	value_typ Type
+}
+
+fn (mut r Resolver) map_literal(mut expr MapLiteral) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+
+	for entry in expr.entries {
+		r.expr(entry.key)
+		r.expr(entry.value)
+	}
+	if expr.entries.len > 0 {
+		entry := expr.entries[0]
+		if expr.key_typ == builtin_type(.placeholder) {
+			expr.key_typ = entry.key.typ()
+		}
+		if expr.value_typ == builtin_type(.placeholder) {
+			expr.value_typ = entry.value.typ()
+		}
+	}
 }
 
 pub struct ParenExpr {
