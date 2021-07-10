@@ -320,6 +320,11 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		.amp {
 			e.reference(expr.expr)
 		}
+		.not {
+			e.write('! { ')
+			e.expr(expr.expr, as_condition: true)
+			e.write(' ; }')
+		}
 		else {
 			panic('unimplemented')
 		}

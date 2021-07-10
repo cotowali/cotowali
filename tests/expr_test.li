@@ -68,6 +68,9 @@ assert (1 == 1) == (1 == 1)
 assert (1 == 0) == (1 == 0)
 assert (1 == 0) != (1 == 1)
 assert (1 == 1) != (1 == 0)
+assert !false
+assert !!true
+assert !(1 == 0)
 
 fn zero() int {
   var v = 0
