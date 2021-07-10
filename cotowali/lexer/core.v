@@ -86,8 +86,8 @@ fn (mut lex Lexer) error(token Token, msg string) IError {
 
 // --
 
-fn k(kind TokenKind) TokenKind {
-	return kind
+fn tk(k TokenKind) TokenKind {
+	return k
 }
 
 fn (lex &Lexer) pos_for_new_token() Pos {

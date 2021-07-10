@@ -45,11 +45,11 @@ pub fn (mut lex Lexer) read() ?Token {
 			return lex.read_newline()
 		}
 
-		mut kind := k(.unknown)
+		mut kind := tk(.unknown)
 
 		ccc := '${lex.char(0)}${lex.char(1)}${lex.char(2)}'
 
-		kind = table_for_three_chars_symbols[ccc] or { k(.unknown) }
+		kind = table_for_three_chars_symbols[ccc] or { tk(.unknown) }
 		if kind != .unknown {
 			return lex.new_token_with_consume_n(3, kind)
 		}
@@ -62,12 +62,12 @@ pub fn (mut lex Lexer) read() ?Token {
 			continue
 		}
 
-		kind = table_for_two_chars_symbols[cc] or { k(.unknown) }
+		kind = table_for_two_chars_symbols[cc] or { tk(.unknown) }
 		if kind != .unknown {
 			return lex.new_token_with_consume_n(2, kind)
 		}
 
-		kind = table_for_one_char_symbols[c.byte()] or { k(.unknown) }
+		kind = table_for_one_char_symbols[c.byte()] or { tk(.unknown) }
 		if kind != .unknown {
 			return lex.new_token_with_consume(kind)
 		}
@@ -184,7 +184,7 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 	lex.consume_for(is_ident_char)
 	text := lex.text()
 	pos := lex.pos_for_new_token()
-	kind := table_for_keywords[text] or { k(.ident) }
+	kind := table_for_keywords[text] or { tk(.ident) }
 	return Token{
 		pos: pos
 		text: text
@@ -212,7 +212,7 @@ fn (mut lex Lexer) read_number() ?Token {
 		lex.consume()
 	}
 
-	tok := lex.new_token(if is_float { k(.float_lit) } else { k(.int_lit) })
+	tok := lex.new_token(if is_float { tk(.float_lit) } else { tk(.int_lit) })
 	return if err_msg.len == 0 { tok } else { lex.error(tok, err_msg) }
 }
 
