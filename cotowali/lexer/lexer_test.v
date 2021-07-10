@@ -108,6 +108,7 @@ fn test_lexer() {
 	ktest('a -----', [.ident, .minus_minus, .minus_minus, .minus])
 	ktest('struct f { }', [.key_struct, .ident, .l_brace, .r_brace])
 	ktest("{ 'key': 0 }", [.l_brace, .string_lit, .colon, .int_lit, .r_brace])
+	ktest('map[string]string', [.key_map, .l_bracket, .ident, .r_bracket, .ident])
 	ktest('"0" as int', [.string_lit, .key_as, .ident])
 	ktest('#[attr]', [.hash, .l_bracket, .ident, .r_bracket])
 	ktest('.....', [.dotdotdot, .dot, .dot])

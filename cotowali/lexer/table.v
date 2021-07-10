@@ -56,6 +56,7 @@ const (
 		'for':     tk(.key_for)
 		'if':      tk(.key_if)
 		'in':      tk(.key_in)
+		'map':     tk(.key_map)
 		'require': tk(.key_require)
 		'return':  tk(.key_return)
 		'struct':  tk(.key_struct)
