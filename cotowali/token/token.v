@@ -4,7 +4,6 @@ import cotowali.source { Pos }
 
 pub enum TokenKind {
 	unknown
-	at_ident
 	ident
 	key_as
 	key_assert

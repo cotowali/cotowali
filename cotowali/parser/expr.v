@@ -374,7 +374,9 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 		}
 	}
 
-	if ident := p.consume_if_kind_eq(.at_ident) {
+	t := p.token(0)
+	if t.kind == .ident && t.text.len > 0 && t.text[0] == `@` {
+		ident := p.consume()
 		command := ident.text[1..] // '@command' -> 'command'
 		p.consume_with_check(.l_paren) ?
 		args := p.parse_call_args() ?

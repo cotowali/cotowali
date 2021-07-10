@@ -183,10 +183,10 @@ fn test_lexer() {
 fn test_at_ident() {
 	texts := ['@a.a', '@./a.a', '@/usr/local/bin/', '@~/.bin/cmd.py']
 	for text in texts {
-		test(text, [t(.at_ident, text)])
+		test(text, [t(.ident, text)])
 	}
 
-	ktest('@expr()', [.at_ident, .l_paren, .r_paren])
+	ktest('@expr()', [.ident, .l_paren, .r_paren])
 }
 
 fn test_string() {
