@@ -142,6 +142,14 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 		panic('unimplemented')
 	}
 
+	if expr.op.kind in [.eq, .ne] {
+		e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
+			op := if expr.op.kind == .eq { ' = ' } else { ' != ' }
+			e.sh_test_cond_infix(expr.left, op, expr.right)
+		}, expr, opt)
+		return
+	}
+
 	op := match expr.op.kind {
 		.logical_and { '&&' }
 		.logical_or { '||' }
