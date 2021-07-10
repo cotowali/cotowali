@@ -48,6 +48,11 @@ pub enum TokenKind {
 	logical_and
 	logical_or
 	assign
+	plus_assign
+	minus_assign
+	mul_assign
+	div_assign
+	mod_assign
 	not
 	eq
 	ne
@@ -68,7 +73,14 @@ fn (k TokenKind) is_op() bool {
 
 [inline]
 fn (k TokenKind) is_assign_op() bool {
-	return k == .assign
+	return k in [
+		.assign,
+		.plus_assign,
+		.minus_assign,
+		.mul_assign,
+		.div_assign,
+		.mod_assign,
+	]
 }
 
 [inline]
