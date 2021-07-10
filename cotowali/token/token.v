@@ -22,6 +22,7 @@ pub enum TokenKind {
 	key_while
 	key_yield
 	inline_shell
+	colon
 	comma
 	hash
 	dot
