@@ -31,3 +31,16 @@ fn test_simple_assign() {
   assert n == 5
 }
 test_simple_assign()
+
+fn test_composite_assign() {
+  var n = 0
+  n += 3
+  assert n == 3
+  n *= 3
+  assert n == 9
+  n /= 3
+  assert n == 3
+  n %= 2
+  assert n == 1
+}
+test_composite_assign()

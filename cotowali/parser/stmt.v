@@ -2,6 +2,8 @@ module parser
 
 import cotowali.ast
 import cotowali.errors { unreachable }
+import cotowali.token { Token, TokenKind }
+import cotowali.util { panic_and_value }
 import os
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
@@ -67,7 +69,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		else {}
 	}
 	expr := p.parse_expr(.toplevel) ?
-	if p.kind(0) == .assign {
+	if p.kind(0).@is(.assign_op) {
 		return ast.Stmt(p.parse_assign_stmt_with_left(expr) ?)
 	}
 	return expr
@@ -150,8 +152,47 @@ fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
 		}
 	}
 
-	p.consume_with_check(.assign) ?
-	right := p.parse_expr(.toplevel) ?
+	op := p.consume_with_assert(...[
+		.assign,
+		.plus_assign,
+		.minus_assign,
+		.mul_assign,
+		.div_assign,
+		.mod_assign,
+	])
+
+	mut right := p.parse_expr(.toplevel) ?
+	if op.kind == .assign {
+		return ast.AssignStmt{
+			left: left
+			right: right
+		}
+	}
+
+	infix_op_kind := match op.kind {
+		.plus_assign { TokenKind.plus }
+		.minus_assign { TokenKind.minus }
+		.mul_assign { TokenKind.mul }
+		.div_assign { TokenKind.div }
+		.mod_assign { TokenKind.mod }
+		else { panic_and_value(unreachable(''), TokenKind.unknown) }
+	}
+	match infix_op_kind {
+		.plus, .minus, .mul, .div, .mod {
+			right = ast.InfixExpr{
+				scope: right.scope()
+				op: Token{
+					...op
+					kind: infix_op_kind
+				}
+				left: left
+				right: right
+			}
+		}
+		else {
+			panic(unreachable(''))
+		}
+	}
 	return ast.AssignStmt{
 		left: left
 		right: right
