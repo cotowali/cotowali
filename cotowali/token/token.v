@@ -10,7 +10,7 @@ pub enum TokenKind {
 	key_assert
 	key_decl
 	key_else
-	key_exprot
+	key_export
 	key_fn
 	key_for
 	key_if
