@@ -20,6 +20,7 @@ pub enum TokenKind {
 	key_require
 	key_yield
 	key_struct
+	key_use
 	inline_shell
 	comma
 	hash
@@ -147,6 +148,7 @@ fn (k TokenKind) is_keyword() bool {
 		.key_decl,
 		.key_require,
 		.key_struct,
+		.key_use,
 		.key_yield,
 	]
 }
