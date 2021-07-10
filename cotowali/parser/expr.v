@@ -105,7 +105,7 @@ fn (mut p Parser) parse_prefix_expr() ?ast.Expr {
 		return ast.PrefixExpr{
 			scope: p.scope
 			op: op
-			expr: p.parse_expr(.prefix.inner()) ?
+			expr: p.parse_expr(.prefix) ?
 		}
 	}
 	return p.parse_expr(.prefix.inner())
