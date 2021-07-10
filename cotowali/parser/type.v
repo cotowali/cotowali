@@ -28,6 +28,20 @@ fn (mut p Parser) parse_ident_type() ?&TypeSymbol {
 	return p.scope.lookup_type(tok.text) or { return p.error(err.msg, tok.pos) }
 }
 
+fn (mut p Parser) parse_map_type() ?&TypeSymbol {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+	p.consume_with_assert(.l_bracket)
+	key := p.parse_type() ?
+	p.consume_with_check(.r_bracket) ?
+	value := p.parse_type() ?
+	return p.scope.lookup_or_register_map_type(key: key.typ, value: value.typ)
+}
+
 fn (mut p Parser) parse_reference_type() ?&TypeSymbol {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
@@ -92,10 +106,25 @@ fn (mut p Parser) parse_type() ?&TypeSymbol {
 	}
 
 	match p.kind(0) {
-		.l_bracket { return p.parse_array_type() }
-		.amp { return p.parse_reference_type() }
-		.dotdotdot { return p.parse_variadic_type() }
-		.l_paren { return p.parse_tuple_type() }
-		else { return p.parse_ident_type() }
+		.l_bracket {
+			if p.kind(1) == .r_bracket {
+				// []elem
+				return p.parse_array_type()
+			}
+			// [key]value
+			return p.parse_map_type()
+		}
+		.amp {
+			return p.parse_reference_type()
+		}
+		.dotdotdot {
+			return p.parse_variadic_type()
+		}
+		.l_paren {
+			return p.parse_tuple_type()
+		}
+		else {
+			return p.parse_ident_type()
+		}
 	}
 }
