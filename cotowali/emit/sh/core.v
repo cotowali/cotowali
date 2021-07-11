@@ -67,6 +67,15 @@ fn (mut e Emitter) seek(pos int) ? {
 	return e.code().seek(pos)
 }
 
+fn (mut e Emitter) lock_cursor() {
+	e.code().lock_cursor()
+}
+
+[inline]
+fn (mut e Emitter) unlock_cursor() {
+	e.code().unlock_cursor()
+}
+
 // --
 
 [inline]
