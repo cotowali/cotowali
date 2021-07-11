@@ -17,9 +17,13 @@ struct ExprOpt {
 	inside_arithmetic bool
 }
 
-struct ExprWithOpt {
-	expr ast.Expr [required]
-	opt  ExprOpt  [required]
+struct ExprWithOpt<T> {
+	expr T       [required]
+	opt  ExprOpt [required]
+}
+
+fn expr_with_opt<T>(expr T, opt ExprOpt) ExprWithOpt<T> {
+	return ExprWithOpt<T>{expr, opt}
 }
 
 fn (mut e Emitter) expr_or_string(expr ExprOrString, opt ExprOpt) {
@@ -115,13 +119,12 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
-	e.write_inline_block({ open: '\$( ', close: ' )' }, fn (mut e Emitter, v ExprWithOpt) {
-		expr := v.expr as ast.IndexExpr
-		name := e.ident_for(expr.left)
+	e.write_inline_block({ open: '\$( ', close: ' )' }, fn (mut e Emitter, v ExprWithOpt<ast.IndexExpr>) {
+		name := e.ident_for(v.expr.left)
 
 		e.write('array_get $name ')
-		e.expr(expr.index, v.opt)
-	}, ExprWithOpt{expr, opt})
+		e.expr(v.expr.index, v.opt)
+	}, expr_with_opt(expr, opt))
 }
 
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
@@ -275,15 +278,14 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 	open, close := if opt.inside_arithmetic { ' ( ', ' ) ' } else { '', '' }
-	e.write_inline_block({ open: open, close: close }, fn (mut e Emitter, v ExprWithOpt) {
-		exprs := (v.expr as ast.ParenExpr).exprs
-		for i, expr in exprs {
+	e.write_inline_block({ open: open, close: close }, fn (mut e Emitter, v ExprWithOpt<ast.ParenExpr>) {
+		for i, expr in v.expr.exprs {
 			if i > 0 {
 				e.write(' ')
 			}
 			e.expr(expr, { ...v.opt, as_command: false })
 		}
-	}, ExprWithOpt{expr, opt})
+	}, expr_with_opt(expr, opt))
 }
 
 fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
