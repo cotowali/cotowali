@@ -76,6 +76,17 @@ fn (mut e Emitter) unlock_cursor() {
 	e.code().unlock_cursor()
 }
 
+fn (mut e Emitter) with_lock_cursor<T>(f fn (mut Emitter, T), v T) {
+	distance_from_tail := e.code().len() - e.code().pos()
+	defer {
+		e.seek(e.code().len() - distance_from_tail) or { panic(err) }
+	}
+
+	e.lock_cursor()
+	f(mut e, v)
+	e.unlock_cursor()
+}
+
 // --
 
 [inline]
