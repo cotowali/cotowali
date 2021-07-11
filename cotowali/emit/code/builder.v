@@ -22,8 +22,7 @@ mut:
 	tmp_count int
 	buf       strings.Builder
 	tail_str  string
-pub mut:
-	flags BuilderFlags
+	flags     BuilderFlags
 }
 
 pub fn (b Builder) clone() Builder {
