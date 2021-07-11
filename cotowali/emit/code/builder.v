@@ -63,6 +63,10 @@ pub fn (mut b Builder) bytes() []byte {
 	return b.str().bytes()
 }
 
+pub fn (mut b Builder) pos() int {
+	return b.buf.len
+}
+
 pub fn (mut b Builder) seek(pos int) ? {
 	if pos == code.tail {
 		b.buf.write_string(b.tail_str)

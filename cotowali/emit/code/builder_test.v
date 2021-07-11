@@ -117,14 +117,18 @@ fn test_builder_seek() ? {
 	mut b := new_builder(10, new_default_context())
 	s1, s2, s3, s4 := 'ab', 'cd\n', 'ef', 'gh'
 
+	assert b.pos() == 0
 	b.write_string(s1) ?
 	b.write_string(s3) ?
+	assert b.pos() == b.len()
 	b.seek(s1.len) ?
+	assert b.pos() == s1.len
 	assert b.len() == s1.len + s3.len
 	b.write_string(s2) ?
 	assert b.len() == s1.len + s2.len + s3.len
 
 	b.seek(tail) ?
+	assert b.pos() == b.len()
 	b.write_string(s4) ?
 	assert b.len() == s1.len + s2.len + s3.len + s4.len
 
