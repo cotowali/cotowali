@@ -8,7 +8,7 @@ pub const tail = -0xffff
 
 [flag]
 pub enum BuilderFlags {
-	dummy
+	lock_cursor
 }
 
 pub fn (mut flags BuilderFlags) reset() {
@@ -72,6 +72,16 @@ pub fn (mut b Builder) bytes() []byte {
 
 // --
 
+pub fn (mut b Builder) lock_cursor() {
+	b.flags.set(.lock_cursor)
+}
+
+pub fn (mut b Builder) unlock_cursor() {
+	b.flags.clear(.lock_cursor)
+}
+
+// --
+
 pub fn (mut b Builder) write_indent() ?int {
 	s := b.ctx.config.indent.repeat(b.indent_n)
 	b.buf.write_string(s)
@@ -118,6 +128,12 @@ pub fn (mut b Builder) write(data []byte) ?int {
 	mut n := 0
 	if b.newline() {
 		n += b.write_indent() ?
+	}
+	if b.flags.has(.lock_cursor) {
+		pos := b.pos()
+		defer {
+			b.seek(pos) or { panic(err) }
+		}
 	}
 	n += b.buf.write(data) ?
 	return n

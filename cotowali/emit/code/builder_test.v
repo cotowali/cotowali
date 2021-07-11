@@ -7,11 +7,11 @@ fn test_builder_flags() {
 
 	assert b.flags == BuilderFlags(0)
 
-	b.flags.set(.dummy)
-	assert b.flags.has(.dummy)
+	b.flags.set(.lock_cursor)
+	assert b.flags.has(.lock_cursor)
 
 	b.flags.reset()
-	assert !b.flags.has(.dummy)
+	assert !b.flags.has(.lock_cursor)
 }
 
 fn test_builder_simple() ? {
@@ -140,4 +140,20 @@ fn test_builder_seek() ? {
 	}
 
 	assert b.str() == '$s1$s2$s3$s4'
+}
+
+fn test_lock_cursor() ? {
+	mut b := new_builder(10, new_default_context())
+	s := ['0', '1', '2', '3', '4', '5']
+	b.write_string(s[0]) ? // 0[cursor]
+	b.lock_cursor()
+	b.write_string(s[4]) ? // 0[cursor]4
+	b.write_string(s[3]) ? // 0[cursor]34
+	b.unlock_cursor()
+	b.write_string(s[1]) ? // 01[cursor]34
+	b.write_string(s[2]) ? // 012[cursor]34
+	b.seek(tail) ?
+	b.write_string(s[5]) ? // 012345[cursor]
+
+	assert b.str() == s.join('')
 }
