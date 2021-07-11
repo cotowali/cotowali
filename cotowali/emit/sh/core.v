@@ -55,7 +55,7 @@ fn (mut e Emitter) unindent() {
 	e.code().unindent()
 }
 
-fn (mut e Emitter) new_tmp_var() string {
+fn (mut e Emitter) new_tmp_ident() string {
 	defer {
 		e.tmp_count++
 	}
