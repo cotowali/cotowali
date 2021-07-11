@@ -41,7 +41,8 @@ tasks:
       else
         for f in "$@"
         do
-          if echo $f | grep '_test.v$' > /dev/null
+        echo $f
+          if echo $f | grep -e '_test.v$' -e '^cotowali' > /dev/null
           then
             z test.unit $f
           else
