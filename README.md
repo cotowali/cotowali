@@ -116,6 +116,10 @@ See [docs/development.md](./docs/development.md)
 docker compose run dev
 ```
 
+## Author
+
+zakuro &lt;z@kuro.red&gt;
+
 ## Acknowledgements
 
 Cotowali is supported by 2021 Exploratory IT Human Resources Project ([The MITOU Program](https://www.ipa.go.jp/english/humandev/third.html) by IPA: Information-technology Promotion Agency, Japan.
