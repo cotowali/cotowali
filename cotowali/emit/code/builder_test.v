@@ -2,6 +2,18 @@ module code
 
 import cotowali.context { new_context, new_default_context }
 
+fn test_builder_flags() {
+	mut b := new_builder(10, new_default_context())
+
+	assert b.flags == BuilderFlags(0)
+
+	b.flags.set(.dummy)
+	assert b.flags.has(.dummy)
+
+	b.flags.reset()
+	assert !b.flags.has(.dummy)
+}
+
 fn test_builder_simple() ? {
 	mut b := new_builder(10, new_context(indent: ' '))
 	s1, s2, s3 := 'bytes', 'str', 'strln'

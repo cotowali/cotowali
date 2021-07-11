@@ -6,6 +6,15 @@ import cotowali.context { Context }
 // magic number to represen tail of file
 pub const tail = -0xffff
 
+[flag]
+pub enum BuilderFlags {
+	dummy
+}
+
+pub fn (mut flags BuilderFlags) reset() {
+	flags = BuilderFlags(0)
+}
+
 pub struct Builder {
 	ctx &Context
 mut:
@@ -13,6 +22,8 @@ mut:
 	tmp_count int
 	buf       strings.Builder
 	tail_str  string
+pub mut:
+	flags BuilderFlags
 }
 
 pub fn (b Builder) clone() Builder {
