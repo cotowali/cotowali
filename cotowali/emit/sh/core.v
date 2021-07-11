@@ -8,12 +8,10 @@ import cotowali.ast { File, FnDecl }
 enum CodeKind {
 	builtin
 	main
-	literal
 }
 
 const ordered_code_kinds = [
 	CodeKind.builtin,
-	.literal,
 	.main,
 ]
 
@@ -35,7 +33,6 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 		out: out
 		codes: map{
 			CodeKind.builtin: code.new_builder(100, ctx)
-			CodeKind.literal: code.new_builder(100, ctx)
 			CodeKind.main:    code.new_builder(100, ctx)
 		}
 	}
