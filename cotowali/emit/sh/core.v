@@ -67,6 +67,14 @@ fn (mut e Emitter) seek(pos int) ? {
 	return e.code().seek(pos)
 }
 
+fn (mut e Emitter) with_seek<T>(pos int, f fn (mut Emitter, T), v T) {
+	pos_save := e.code().pos()
+	e.seek(pos) or { panic(err) }
+	f(mut e, v)
+	n := e.code().pos() - pos
+	e.seek(pos_save + n) or { panic(err) }
+}
+
 fn (mut e Emitter) lock_cursor() {
 	e.code().lock_cursor()
 }
