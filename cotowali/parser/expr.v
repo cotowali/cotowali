@@ -227,7 +227,6 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 	return ast.ArrayLiteral{
 		scope: p.scope
 		pos: first_tok.pos.merge(last_tok.pos)
-		elem_typ: elements[0].typ()
 		elements: elements
 	}
 }

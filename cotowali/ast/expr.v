@@ -17,7 +17,7 @@ fn (mut r Resolver) exprs(exprs []Expr) {
 
 fn (mut r Resolver) expr(expr Expr) {
 	match mut expr {
-		ArrayLiteral { r.array_literal(expr) }
+		ArrayLiteral { r.array_literal(mut expr) }
 		AsExpr { r.as_expr(expr) }
 		BoolLiteral { r.bool_literal(expr) }
 		CallCommandExpr { r.call_command_expr(expr) }
@@ -449,14 +449,14 @@ fn (mut r Resolver) float_literal(expr FloatLiteral) {
 
 pub struct ArrayLiteral {
 pub:
-	pos      Pos
-	elem_typ Type
+	pos Pos
 pub mut:
+	elem_typ Type
 	scope    &Scope
 	elements []Expr
 }
 
-fn (mut r Resolver) array_literal(expr ArrayLiteral) {
+fn (mut r Resolver) array_literal(mut expr ArrayLiteral) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -465,6 +465,9 @@ fn (mut r Resolver) array_literal(expr ArrayLiteral) {
 	}
 
 	r.exprs(expr.elements)
+	if expr.elements.len > 0 && expr.elem_typ == builtin_type(.placeholder) {
+		expr.elem_typ = expr.elements[0].typ()
+	}
 }
 
 // expr |> expr |> expr
