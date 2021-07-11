@@ -62,6 +62,11 @@ fn (mut e Emitter) new_tmp_ident() string {
 	return '_cotowali_tmp_$e.tmp_count'
 }
 
+[inline]
+fn (mut e Emitter) seek(pos int) ? {
+	return e.code().seek(pos)
+}
+
 // --
 
 [inline]
