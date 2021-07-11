@@ -26,6 +26,15 @@ fn expr_with_opt<T>(expr T, opt ExprOpt) ExprWithOpt<T> {
 	return ExprWithOpt<T>{expr, opt}
 }
 
+struct ExprWithValue<T, U> {
+	expr  T [required]
+	value U [required]
+}
+
+fn expr_with_value<T, U>(expr T, v U) ExprWithValue<T, U> {
+	return ExprWithValue<T,U>{expr, v}
+}
+
 fn (mut e Emitter) expr_or_string(expr ExprOrString, opt ExprOpt) {
 	match expr {
 		ast.Expr { e.expr(expr, opt) }
