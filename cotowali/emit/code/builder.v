@@ -151,13 +151,6 @@ pub fn (mut b Builder) writeln(s string) ?int {
 
 // --
 
-pub fn (mut b Builder) new_tmp_var() string {
-	defer {
-		b.tmp_count++
-	}
-	return '_cotowali_tmp_$b.tmp_count'
-}
-
 pub struct WriteBlockOpt {
 pub:
 	open  string [required]
