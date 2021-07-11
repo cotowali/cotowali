@@ -11,12 +11,15 @@ fn new_arr() []int {
   return [0, 1, 2]
 }
 
-[0, 1, 2]
-var v = ['a', 'b', 'c']
+var n = 2
+var a = 'a'
+
+[0, 1, n]
+var v = [a, 'b', 'c']
 v
 v = []string{}
 
-var arr = [0, 1, 2]
+var arr = [0, 1, n]
 echo_arr(arr)
 echo_arr([0, 1, 2])
 raw_arr(arr)

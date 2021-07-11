@@ -3,11 +3,11 @@ module sh
 import cotowali.ast
 
 fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
-	old_kind := e.cur_kind
-	e.cur_kind = .literal
 	ident := e.ident_for(expr)
-	e.assign(ident, ast.Expr(expr), ast.Expr(expr).type_symbol())
-	e.cur_kind = old_kind
+	e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, v ExprWithValue<ast.ArrayLiteral, string>) {
+		ident := v.value
+		e.assign(ident, ast.Expr(v.expr), ast.Expr(v.expr).type_symbol())
+	}, expr_with_value(expr, ident))
 
 	e.array(ident, opt)
 }
