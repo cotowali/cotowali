@@ -45,16 +45,6 @@ fn (mut e Emitter) code() &code.Builder {
 }
 
 [inline]
-fn (mut e Emitter) writeln(s string) {
-	e.code().writeln(s) or { panic(err) }
-}
-
-[inline]
-fn (mut e Emitter) write(s string) {
-	e.code().write_string(s) or { panic(err) }
-}
-
-[inline]
 fn (mut e Emitter) indent() {
 	e.code().indent()
 }
@@ -62,6 +52,18 @@ fn (mut e Emitter) indent() {
 [inline]
 fn (mut e Emitter) unindent() {
 	e.code().unindent()
+}
+
+// --
+
+[inline]
+fn (mut e Emitter) writeln(s string) {
+	e.code().writeln(s) or { panic(err) }
+}
+
+[inline]
+fn (mut e Emitter) write(s string) {
+	e.code().write_string(s) or { panic(err) }
 }
 
 fn (mut e Emitter) write_block<T>(opt code.WriteBlockOpt, f fn (mut Emitter, T), v T) {
