@@ -19,13 +19,14 @@ const ordered_code_kinds = [
 
 pub struct Emitter {
 mut:
-	cur_file  &File = 0
-	cur_fn    FnDecl
-	inside_fn bool
-	tmp_count int
-	out       io.Writer
-	codes     map[CodeKind]&code.Builder
-	cur_kind  CodeKind = .main
+	cur_file      &File = 0
+	cur_fn        FnDecl
+	inside_fn     bool
+	tmp_count     int
+	out           io.Writer
+	codes         map[CodeKind]&code.Builder
+	cur_kind      CodeKind = .main
+	stmt_head_pos map[CodeKind]int
 }
 
 [inline]
@@ -43,6 +44,11 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 [inline]
 fn (mut e Emitter) code() &code.Builder {
 	return e.codes[e.cur_kind]
+}
+
+[inline]
+fn (mut e Emitter) stmt_head_pos() int {
+	return e.stmt_head_pos[e.cur_kind]
 }
 
 [inline]

@@ -9,7 +9,12 @@ fn (mut e Emitter) stmts(stmts []Stmt) {
 	}
 }
 
+fn (mut e Emitter) begin_stmt() {
+	e.stmt_head_pos[e.cur_kind] = e.code().pos()
+}
+
 fn (mut e Emitter) stmt(stmt Stmt) {
+	e.begin_stmt()
 	match stmt {
 		ast.AssertStmt { e.assert_stmt(stmt) }
 		ast.FnDecl { e.fn_decl(stmt) }
