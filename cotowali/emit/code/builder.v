@@ -25,13 +25,6 @@ mut:
 	flags     BuilderFlags
 }
 
-pub fn (b Builder) clone() Builder {
-	return Builder{
-		...b
-		buf: b.buf.clone()
-	}
-}
-
 [inline]
 pub fn new_builder(n int, ctx &Context) &Builder {
 	return &Builder{
@@ -40,13 +33,28 @@ pub fn new_builder(n int, ctx &Context) &Builder {
 	}
 }
 
-pub fn (b &Builder) newline() bool {
-	return b.buf.len == 0 || b.buf.byte_at(b.buf.len - 1) == `\n`
+pub fn (b Builder) clone() Builder {
+	return Builder{
+		...b
+		buf: b.buf.clone()
+	}
+}
+
+// --
+
+pub fn (mut b Builder) pos() int {
+	return b.buf.len
 }
 
 pub fn (b &Builder) len() int {
 	return b.buf.len + b.tail_str.len
 }
+
+pub fn (b &Builder) newline() bool {
+	return b.buf.len == 0 || b.buf.byte_at(b.buf.len - 1) == `\n`
+}
+
+// --
 
 pub fn (mut b Builder) str() string {
 	if b.tail_str.len == 0 {
@@ -62,9 +70,23 @@ pub fn (mut b Builder) bytes() []byte {
 	return b.str().bytes()
 }
 
-pub fn (mut b Builder) pos() int {
-	return b.buf.len
+// --
+
+pub fn (mut b Builder) write_indent() ?int {
+	s := b.ctx.config.indent.repeat(b.indent_n)
+	b.buf.write_string(s)
+	return s.len
 }
+
+pub fn (mut b Builder) indent() {
+	b.indent_n++
+}
+
+pub fn (mut b Builder) unindent() {
+	b.indent_n--
+}
+
+// --
 
 pub fn (mut b Builder) seek(pos int) ? {
 	if pos == code.tail {
@@ -85,6 +107,8 @@ pub fn (mut b Builder) seek(pos int) ? {
 		b.tail_str = b.tail_str[tail_i..]
 	}
 }
+
+// --
 
 pub fn (mut b Builder) write(data []byte) ?int {
 	if data.len == 0 {
@@ -109,19 +133,7 @@ pub fn (mut b Builder) writeln(s string) ?int {
 	return n + 1
 }
 
-pub fn (mut b Builder) write_indent() ?int {
-	s := b.ctx.config.indent.repeat(b.indent_n)
-	b.buf.write_string(s)
-	return s.len
-}
-
-pub fn (mut b Builder) indent() {
-	b.indent_n++
-}
-
-pub fn (mut b Builder) unindent() {
-	b.indent_n--
-}
+// --
 
 pub fn (mut b Builder) new_tmp_var() string {
 	defer {
