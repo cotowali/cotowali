@@ -20,7 +20,8 @@ mut:
 	prev_char Char
 	pos       Pos
 	closed    bool // for iter
-	tracer    Tracer
+
+	tracer Tracer [if trace_lexer ?]
 }
 
 pub fn new_lexer(source &Source, ctx &Context) &Lexer {
@@ -60,17 +61,15 @@ fn (mut lex Lexer) start_pos() {
 
 // --
 
+[if trace_lexer ?]
 fn (mut lex Lexer) trace_begin(f string, args ...string) {
-	$if trace_lexer ? {
-		lex.tracer.begin_fn(f, ...args)
-		lex.tracer.write_field('char', lex.char(0).replace_each(['\n', r'\n', '\r', r'\r']))
-	}
+	lex.tracer.begin_fn(f, ...args)
+	lex.tracer.write_field('char', lex.char(0).replace_each(['\n', r'\n', '\r', r'\r']))
 }
 
+[if trace_lexer ?]
 fn (mut lex Lexer) trace_end() {
-	$if trace_lexer ? {
-		lex.tracer.end_fn()
-	}
+	lex.tracer.end_fn()
 }
 
 // --

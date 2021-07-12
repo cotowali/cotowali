@@ -12,8 +12,9 @@ import cotowali.debug { Tracer }
 pub struct Resolver {
 mut:
 	ctx    &Context
-	tracer Tracer
 	source &Source = 0
+
+	tracer Tracer [if trace_resolver ?]
 }
 
 pub fn new_resolver(ctx &Context) Resolver {
@@ -35,18 +36,14 @@ pub fn (mut r Resolver) resolve(node Node) {
 	}
 }
 
-[inline]
+[inline; if trace_resolver ?]
 fn (mut r Resolver) trace_begin(f string, args ...string) {
-	$if trace_resolver ? {
-		r.tracer.begin_fn(f, ...args)
-	}
+	r.tracer.begin_fn(f, ...args)
 }
 
-[inline]
+[inline; if trace_resolver ?]
 fn (mut r Resolver) trace_end() {
-	$if trace_resolver ? {
-		r.tracer.end_fn()
-	}
+	r.tracer.end_fn()
 }
 
 fn (mut r Resolver) error(msg string, pos Pos) {

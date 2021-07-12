@@ -19,7 +19,6 @@ pub mut:
 	ctx &Context
 mut:
 	count       int // counter to avoid some duplication (tmp name, etc...)
-	tracer      Tracer
 	brace_depth int
 	lexer       Lexer
 	prev_tok    Token
@@ -29,6 +28,8 @@ mut:
 	scope       &Scope
 
 	restore_strategy RestoreStrategy
+
+	tracer Tracer [if trace_parser ?]
 }
 
 [inline]
@@ -49,18 +50,14 @@ fn (mut p Parser) debug() {
 	})
 }
 
-[inline]
+[inline; if trace_parser ?]
 fn (mut p Parser) trace_begin(f string, args ...string) {
-	$if trace_parser ? {
-		p.tracer.begin_fn(f, ...args)
-	}
+	p.tracer.begin_fn(f, ...args)
 }
 
-[inline]
+[inline; if trace_parser ?]
 fn (mut p Parser) trace_end() {
-	$if trace_parser ? {
-		p.tracer.end_fn()
-	}
+	p.tracer.end_fn()
 }
 
 pub fn (p &Parser) token(i int) Token {
