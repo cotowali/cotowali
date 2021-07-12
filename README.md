@@ -3,10 +3,10 @@
   <h1>Cotowali</h1>
   <p>A statically typed script language that transpile into POSIX sh</p>
   <a href="http://mozilla.org/MPL/2.0/" rel="nofollow">
-    <img  alt="License: MPL 2.0" src="https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg">
+    <img  alt="License: MPL 2.0" src="https://img.shields.io/badge/License-MPL%202.0-blue.svg?style=flat-square">
   </a>
   <a href="https://www.gnu.org/licenses/gpl-3.0" rel="nofollow">
-    <img  alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-blue.svg">
+    <img  alt="License: GPLv3+" src="https://img.shields.io/badge/License-GPLv3%2B-blue.svg?style=flat-square">
   </a>
 </div>
 
