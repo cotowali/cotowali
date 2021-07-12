@@ -34,11 +34,12 @@ mut:
 
 [inline]
 pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
+	language_config := code.LanguageConfig{}
 	return Emitter{
 		out: out
 		codes: map{
-			CodeKind.builtin: code.new_builder(100, ctx)
-			CodeKind.main:    code.new_builder(100, ctx)
+			CodeKind.builtin: code.new_builder(100, ctx, language_config)
+			CodeKind.main:    code.new_builder(100, ctx, language_config)
 		}
 	}
 }

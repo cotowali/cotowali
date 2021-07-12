@@ -8,7 +8,7 @@ module code
 import cotowali.context { new_context, new_default_context }
 
 fn test_builder_flags() {
-	mut b := new_builder(10, new_default_context())
+	mut b := new_builder(10, new_default_context(), {})
 
 	assert b.flags == BuilderFlags(0)
 
@@ -20,7 +20,7 @@ fn test_builder_flags() {
 }
 
 fn test_builder_simple() ? {
-	mut b := new_builder(10, new_context(indent: ' '))
+	mut b := new_builder(10, new_context(indent: ' '), {})
 	s1, s2, s3 := 'bytes', 'str', 'strln'
 	mut n := 0
 	n = b.write(s1.bytes()) ?
@@ -45,7 +45,7 @@ fn test_builder_simple() ? {
 
 fn test_builder_indent() ? {
 	indent := '  '
-	mut b := new_builder(10, new_context(indent: indent))
+	mut b := new_builder(10, new_context(indent: indent), {})
 	s0_0, s0_1 := '0abc', '0efg'
 	s1_0, s1_1 := '1abc', '1efg'
 	s2_0, s2_1 := '2abc', '2efg'
@@ -119,7 +119,7 @@ fn test_builder_indent() ? {
 }
 
 fn test_builder_seek() ? {
-	mut b := new_builder(10, new_default_context())
+	mut b := new_builder(10, new_default_context(), {})
 	s1, s2, s3, s4 := 'ab', 'cd\n', 'ef', 'gh'
 
 	assert b.pos() == 0
@@ -148,7 +148,7 @@ fn test_builder_seek() ? {
 }
 
 fn test_lock_cursor() ? {
-	mut b := new_builder(10, new_default_context())
+	mut b := new_builder(10, new_default_context(), {})
 	s := ['0', '1', '2', '3', '4', '5']
 	b.write_string(s[0]) ? // 0[cursor]
 	b.lock_cursor()

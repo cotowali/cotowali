@@ -20,8 +20,12 @@ pub fn (mut flags BuilderFlags) reset() {
 	flags = BuilderFlags(0)
 }
 
+pub struct LanguageConfig {
+}
+
 pub struct Builder {
-	ctx &Context
+	ctx      &Context
+	language LanguageConfig
 mut:
 	indent_n  int
 	tmp_count int
@@ -31,10 +35,11 @@ mut:
 }
 
 [inline]
-pub fn new_builder(n int, ctx &Context) &Builder {
+pub fn new_builder(n int, ctx &Context, language LanguageConfig) &Builder {
 	return &Builder{
 		buf: strings.new_builder(n)
 		ctx: ctx
+		language: language
 	}
 }
 
