@@ -7,7 +7,7 @@ module ast
 
 import cotowali.source { Pos }
 import cotowali.token { Token }
-import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id, builtin_type }
+import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, MapTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id, builtin_type }
 import cotowali.errors { unreachable }
 
 pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | DefaultValue |
@@ -87,6 +87,7 @@ pub fn (e IndexExpr) typ() Type {
 	left_info := e.left.type_symbol().info
 	return match left_info {
 		ArrayTypeInfo { left_info.elem }
+		MapTypeInfo { left_info.value }
 		else { builtin_type(.unknown) }
 	}
 }
