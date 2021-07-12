@@ -145,6 +145,10 @@ pub fn (f FnDecl) type_symbol() &TypeSymbol {
 	return f.parent_scope.must_lookup_type(f.typ)
 }
 
+pub fn (f FnDecl) signature() string {
+	return f.type_symbol().fn_signature() or { panic(unreachable(err)) }
+}
+
 pub fn (f FnDecl) ret_type_symbol() &TypeSymbol {
 	return f.parent_scope.must_lookup_type(f.function_info().ret)
 }
