@@ -1,3 +1,11 @@
+fn f(m map[string]string) {}
+
+f(map[string]string{})
+f(map[string]string{ 'key': 'value' })
+f(map{ 'key': 'value' })
+f({ 'key': 'value' })
+
+
 var m_str_int = map{
   'a': 1
 }
