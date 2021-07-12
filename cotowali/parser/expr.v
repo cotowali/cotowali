@@ -260,6 +260,7 @@ fn (mut p Parser) parse_map_literal() ?ast.Expr {
 
 	mut entries := []ast.MapLiteralEntry{}
 	p.consume_with_check(.l_brace) ?
+	p.skip_eol()
 
 	// no entry is allowed for map[key]value{} syntax (when using this syntax, key_typ is not placholder)
 	if !(key_typ != builtin_type(.placeholder) && p.kind(0) == .r_brace) {
@@ -273,6 +274,7 @@ fn (mut p Parser) parse_map_literal() ?ast.Expr {
 				value: value
 			}
 
+			p.skip_eol()
 			if p.kind(0) == .r_brace {
 				break
 			}
