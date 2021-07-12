@@ -9,6 +9,7 @@ import cotowali.ast
 import cotowali.util { must_write }
 
 pub fn (mut e Emitter) emit(f &ast.File) {
+	e.builtin()
 	e.file(f)
 	for k in ordered_code_kinds {
 		must_write(e.out, e.codes[k].bytes())
@@ -21,7 +22,6 @@ fn (mut e Emitter) file(f &ast.File) {
 		e.cur_file = old_f
 	}
 	e.cur_file = f
-	e.builtin()
 	e.writeln('# file: $f.source.path')
 	e.stmts(f.stmts)
 }
