@@ -30,6 +30,7 @@ fn (mut e Emitter) builtin() {
 	builtins := [
 		$embed_file('../../../builtin/builtin.sh'),
 		$embed_file('../../../builtin/array.sh'),
+		$embed_file('../../../builtin/map.sh'),
 	]
 	old_kind := e.cur_kind
 	defer {
