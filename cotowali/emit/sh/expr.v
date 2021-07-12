@@ -136,7 +136,12 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 	e.write_inline_block({ open: '\$( ', close: ' )' }, fn (mut e Emitter, v ExprWithOpt<ast.IndexExpr>) {
 		name := e.ident_for(v.expr.left)
 
-		e.write('array_get $name ')
+		e.write(match v.expr.left.type_symbol().kind() {
+			.array { 'array_get $name ' }
+			.map { 'map_get $name ' }
+			else { panic_and_value(unreachable('invalid index left'), '') }
+		})
+
 		e.expr(v.expr.index, v.opt)
 	}, expr_with_opt(expr, opt))
 }
