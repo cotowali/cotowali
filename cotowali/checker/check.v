@@ -8,6 +8,13 @@ module checker
 import cotowali.ast
 
 pub fn (mut c Checker) check_file(mut f ast.File) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	old_source := c.source
 	defer {
 		c.source = old_source

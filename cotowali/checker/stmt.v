@@ -15,6 +15,13 @@ fn (mut c Checker) stmts(stmts []ast.Stmt) {
 }
 
 fn (mut c Checker) stmt(stmt ast.Stmt) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	match mut stmt {
 		ast.AssignStmt { c.assign_stmt(mut stmt) }
 		ast.AssertStmt { c.assert_stmt(stmt) }
@@ -33,6 +40,13 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 }
 
 fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.expr(stmt.right)
 
 	// 1. if is_decl, left type is set to right type
@@ -48,15 +62,36 @@ fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 }
 
 fn (mut c Checker) assert_stmt(stmt ast.AssertStmt) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.expr(stmt.expr)
 	c.expect_bool_expr(stmt.expr, 'assert condition') or {}
 }
 
 fn (mut c Checker) block(block ast.Block) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.stmts(block.stmts)
 }
 
 fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
+	$if trace_checker ? {
+		c.trace_begin(@FN, stmt.name, stmt.signature())
+		defer {
+			c.trace_end()
+		}
+	}
+
 	old_fn := c.current_fn
 	c.current_fn = stmt
 	defer {
@@ -68,6 +103,13 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 }
 
 fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.expr(stmt.expr)
 	ts := stmt.expr.type_symbol()
 	if ts.kind() != .array {
@@ -77,6 +119,13 @@ fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {
 }
 
 fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	for i, branch in stmt.branches {
 		if i == stmt.branches.len - 1 && stmt.has_else {
 			c.block(branch.body)
@@ -89,6 +138,13 @@ fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 }
 
 fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.expr(stmt.expr)
 	c.check_types(
 		want: c.current_fn.ret_type_symbol()
@@ -98,15 +154,36 @@ fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
 }
 
 fn (mut c Checker) require_stmt(mut stmt ast.RequireStmt) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.check_file(mut stmt.file)
 }
 
 fn (mut c Checker) while_stmt(stmt ast.WhileStmt) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.expr(stmt.cond)
 	c.expect_bool_expr(stmt.cond, 'while condition') or {}
 	c.block(stmt.body)
 }
 
 fn (mut c Checker) yield_stmt(stmt ast.YieldStmt) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	// TODO
 }

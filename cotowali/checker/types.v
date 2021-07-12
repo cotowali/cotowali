@@ -56,6 +56,18 @@ fn can_promote_number(want Type, got Type) bool {
 }
 
 fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
+	$if trace_checker ? {
+		args := [
+			'$v.want_label: $v.want.name',
+			'$v.got_label: $v.got.name',
+			'synmetric: $v.synmetric',
+		]
+		c.trace_begin(@FN, ...args)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	if v.want.typ == v.got.typ {
 		return
 	}
@@ -78,12 +90,26 @@ fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
 }
 
 fn (mut c Checker) expect_bool_expr(expr Expr, context_name string) ? {
+	$if trace_checker ? {
+		c.trace_begin(@FN, context_name)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	if expr.typ() != builtin_type(.bool) {
 		return c.error('non-bool type used as $context_name', expr.pos())
 	}
 }
 
 fn (mut c Checker) expect_function_call(expr Expr) ?ast.CallExpr {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	if expr is ast.CallExpr {
 		return expr
 	}

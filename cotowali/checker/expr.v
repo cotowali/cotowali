@@ -15,6 +15,13 @@ fn (mut c Checker) exprs(exprs []Expr) {
 }
 
 fn (mut c Checker) expr(expr Expr) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	match expr {
 		ast.ArrayLiteral { c.array_literal(expr) }
 		ast.AsExpr { c.as_expr(expr) }
@@ -40,16 +47,37 @@ fn (mut c Checker) array_literal(expr ast.ArrayLiteral) {
 }
 
 fn (mut c Checker) as_expr(expr ast.AsExpr) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.expr(expr.expr)
 }
 
 fn (mut c Checker) call_command_expr(expr ast.CallCommandExpr) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.exprs(expr.args)
 }
 
 fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	if Expr(expr).typ() == builtin_type(.placeholder) {
 		return
+	}
+
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
 	}
 
 	pos := Expr(expr).pos()
@@ -99,6 +127,13 @@ fn (mut c Checker) call_expr(expr ast.CallExpr) {
 }
 
 fn (mut c Checker) index_expr(expr ast.IndexExpr) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.expr(expr.left)
 	left_ts := expr.left.type_symbol()
 
@@ -119,6 +154,13 @@ fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 }
 
 fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.expr(expr.left)
 	c.expr(expr.right)
 	c.check_types(
@@ -132,13 +174,35 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 }
 
 fn (mut c Checker) map_literal(expr ast.MapLiteral) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
+	// TODO
 }
 
 fn (mut c Checker) paren_expr(expr ast.ParenExpr) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.exprs(expr.exprs)
 }
 
 fn (mut c Checker) pipeline(expr ast.Pipeline) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.exprs(expr.exprs)
 
 	for i, e in expr.exprs {
@@ -173,8 +237,21 @@ fn (mut c Checker) pipeline(expr ast.Pipeline) {
 }
 
 fn (mut c Checker) prefix_expr(expr ast.PrefixExpr) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
 	c.expr(expr.expr)
 }
 
 fn (mut c Checker) var_(v ast.Var) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
 }
