@@ -1,0 +1,24 @@
+var m_str_int = map{
+  'a': 1
+}
+var m_int_str = map{
+  1: 'a'
+}
+
+assert m_str_int['a'] == 1
+assert m_int_str[1] == 'a'
+
+m_str_int['a'] = m_str_int['a'] + 1
+m_int_str[1] = m_int_str[1] + 'a'
+assert m_str_int['a'] == 2
+assert m_int_str[1] == 'aa'
+
+m_str_int['b'] = 10
+m_int_str[10] = 'b'
+assert m_str_int['b'] == 10
+assert m_int_str[10] == 'b'
+
+m_str_int['c'] = m_str_int['a'] + m_str_int['b']
+m_int_str[100] = m_int_str[1] + m_int_str[10]
+assert m_str_int['c'] == 12
+assert m_int_str[100] == 'aab'
