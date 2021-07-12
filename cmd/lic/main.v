@@ -31,14 +31,20 @@ const (
 	flags = [backend_flag, no_emit_flag]
 )
 
-fn new_source_to_run(args []string) ?&Source {
-	if args.len == 0 {
-		return &Source{
-			path: 'stdin'
-			code: os.get_raw_lines_joined()
+fn new_source_from_args(args []string) ?&Source {
+	match args.len {
+		0 {
+			return &Source{
+				path: 'stdin'
+				code: os.get_raw_lines_joined()
+			}
 		}
-	} else {
-		return source.read_file(args[0])
+		1 {
+			return source.read_file(args[0])
+		}
+		else {
+			return error('too many source files')
+		}
 	}
 }
 
@@ -53,11 +59,7 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 }
 
 fn execute_run(cmd Command) ? {
-	if cmd.args.len > 1 {
-		eprintln('too many source files')
-		exit(1)
-	}
-	s := new_source_to_run(cmd.args) or {
+	s := new_source_from_args(cmd.args) or {
 		eprintln(err)
 		exit(1)
 	}
@@ -69,14 +71,10 @@ fn execute_run(cmd Command) ? {
 }
 
 fn execute_compile(cmd Command) ? {
-	if cmd.args.len == 0 {
-		eprintln('no source files are passed')
-		exit(1)
-	} else if cmd.args.len > 1 {
-		eprintln('too many source files')
+	s := new_source_from_args(cmd.args) or {
+		eprintln(err)
 		exit(1)
 	}
-	s := source.read_file(cmd.args[0]) ?
 	ctx := new_ctx_from_cmd(cmd)
 	out := compile(s, ctx) or {
 		eprint(ctx.errors.format(errors.PrettyFormatter{}))
