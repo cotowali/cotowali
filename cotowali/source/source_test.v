@@ -3,7 +3,6 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
-// 🐈 <-- to multibyte character test
 module source
 
 import os
@@ -21,19 +20,19 @@ fn test_read_file() {
 }
 
 fn test_at() {
-	s := read_file(@FILE) or { panic(err) }
+	s := new_source('', '// 🐈 nyan')
 	assert s.at(0) == '/'
 	assert s.at(3) == '🐈'
-	assert s.at(8) == '<'
+	assert s.at(8) == 'n'
 }
 
 fn test_slice() {
-	s := read_file(@FILE) or { panic(err) }
-	assert s.slice(1, 9) == '/ 🐈 <'
+	s := new_source('', '// 🐈 nyan')
+	assert s.slice(1, 9) == '/ 🐈 n'
 }
 
 fn test_line() ? {
 	s := read_file(@FILE) ?
-	assert s.line(1) == 'module source'
+	assert s.line(1) == '//'
 	assert s.line(100000) == ''
 }
