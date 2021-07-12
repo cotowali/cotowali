@@ -118,6 +118,20 @@ fn test_builder_indent() ? {
 	assert b.str() == out1
 }
 
+fn test_builder_comment() ? {
+	mut b := new_builder(10, new_default_context(), {})
+	b.write_string('text') ?
+	b.writeln_comment('comment') ?
+	b.write_string('text ') ?
+	b.writeln_comment('comment\ncomment') ?
+
+	assert b.str() == [
+		'text # comment',
+		'text # comment',
+		'# comment',
+	].map(it + '\n').join('')
+}
+
 fn test_builder_seek() ? {
 	mut b := new_builder(10, new_default_context(), {})
 	s1, s2, s3, s4 := 'ab', 'cd\n', 'ef', 'gh'
