@@ -1,9 +1,10 @@
+# start: builtin/array.sh
+#
 # Copyright (c) 2021 The Cotowali Authors. All rights reserved.
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
-
 
 str_to_array() {
   str_val=$1
@@ -64,3 +65,5 @@ array_assign() {
     array_set "$name" "$i" "$(eval echo "\$$(( i + 1 ))")"
   done
 }
+
+# end: builtin/array.sh
