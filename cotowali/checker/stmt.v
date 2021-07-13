@@ -185,5 +185,22 @@ fn (mut c Checker) yield_stmt(stmt ast.YieldStmt) {
 		}
 	}
 
-	// TODO
+	c.expr(stmt.expr)
+
+	mut want_typ := builtin_type(.placeholder)
+	if array_info := c.current_fn.ret_type_symbol().array_info() {
+		if array_info.variadic {
+			want_typ = array_info.elem
+		}
+	}
+
+	if want_typ == builtin_type(.placeholder) {
+		c.error('cannot use yield in function that return non-sequence type', stmt.pos) or {}
+	} else {
+		c.check_types(
+			want: c.current_fn.body.scope.must_lookup_type(want_typ)
+			got: stmt.expr.type_symbol()
+			pos: stmt.expr.pos()
+		) or {}
+	}
 }
