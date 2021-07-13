@@ -1,15 +1,15 @@
 tuple.err.li 2,10: mismatched types: `...(int, int)` (expected) and `int` (found)
-  > 0
-    ^
+  >   return 0
+             ^
 tuple.err.li 3,10: mismatched types: `...(int, int)` (expected) and `(string, string)` (found)
-  > ('x', 'y')
-    ^^^^^^^^^^
+  >   return ('x', 'y')
+             ^^^^^^^^^^
 tuple.err.li 6,1: mismatched types: `int` (left) and `(int, int)` (pipe in of right)
   > 0 |> f()
     ^^^^^^^^
 tuple.err.li 10,3: expected 0 arguments, but got 1
-  > read(&v)
-    ^^^^^^^^
+  >   read(&v)
+      ^^^^^^^^
 tuple.err.li 14,1: mismatched types: `int` (left) and `()` (pipe in of right)
   > 0 |> zero()
     ^^^^^^^^^^^
