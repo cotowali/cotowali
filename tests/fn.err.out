@@ -1,24 +1,24 @@
 fn.err.li 1,14: `i` is duplicated
-    1| fn f1(i int, i int) {}
-     |              ^
+    1 | fn f1(i int, i int) {}
+      |              ^
 fn.err.li 2,9: unknown type `foo`
-    2| fn f2(i foo) {}
-     |         ^^^
+    2 | fn f2(i foo) {}
+      |         ^^^
 fn.err.li 5,3: cannot use yield in function that return non-sequence type
-    5|   yield '0'
-     |   ^^^^^^^^^
+    5 |   yield '0'
+      |   ^^^^^^^^^
 fn.err.li 6,10: mismatched types: `string` (expected) and `int` (found)
-    6|   return i
-     |          ^
+    6 |   return i
+      |          ^
 fn.err.li 8,4: `g` is duplicated
-    8| fn g(i int) {}
-     |    ^
+    8 | fn g(i int) {}
+      |    ^
 fn.err.li 12,11: mismatched types: `string` (expected) and `int` (found)
-   12|     yield v
-     |           ^
+   12 |     yield v
+      |           ^
 fn.err.li 17,1: `v` is not function (`int`)
-   17| v()
-     | ^^^
+   17 | v()
+      | ^^^
 fn.err.li 19,1: cannot call `int`
-   19| 0()
-     | ^^^
+   19 | 0()
+      | ^^^

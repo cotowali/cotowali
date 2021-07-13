@@ -1,51 +1,51 @@
 expr.err.li 5,6: undefined variable `x`
-    5| echo(x)
-     |      ^
+    5 | echo(x)
+      |      ^
 expr.err.li 7,1: mismatched types: `int` (left) and `string` (right)
-    7| f("a") + "a"
-     | ^^^^^^^^^^^^
+    7 | f("a") + "a"
+      | ^^^^^^^^^^^^
 expr.err.li 7,3: mismatched types: `int` (expected) and `string` (found)
-    7| f("a") + "a"
-     |   ^^^
+    7 | f("a") + "a"
+      |   ^^^
 expr.err.li 8,9: mismatched types: `string` (left) and `int` (right)
-    8| var x = "a" + f("a")
-     |         ^^^^^^^^^^^^
+    8 | var x = "a" + f("a")
+      |         ^^^^^^^^^^^^
 expr.err.li 8,17: mismatched types: `int` (expected) and `string` (found)
-    8| var x = "a" + f("a")
-     |                 ^^^
+    8 | var x = "a" + f("a")
+      |                 ^^^
 expr.err.li 10,1: undefined variable `y`
-   10| y = 10
-     | ^
+   10 | y = 10
+      | ^
 expr.err.li 11,1: undefined variable `y`
-   11| y = "10"
-     | ^
+   11 | y = "10"
+      | ^
 expr.err.li 12,1: invalid left-hand side of assignment
-   12| 0 = 10
-     | ^
+   12 | 0 = 10
+      | ^
 expr.err.li 14,1: mismatched types: `int` (left) and `void` (pipe in of right)
-   14| f("a") |> f("a")
-     | ^^^^^^^^^^^^^^^^
+   14 | f("a") |> f("a")
+      | ^^^^^^^^^^^^^^^^
 expr.err.li 14,3: mismatched types: `int` (expected) and `string` (found)
-   14| f("a") |> f("a")
-     |   ^^^
+   14 | f("a") |> f("a")
+      |   ^^^
 expr.err.li 14,13: mismatched types: `int` (expected) and `string` (found)
-   14| f("a") |> f("a")
-     |             ^^^
+   14 | f("a") |> f("a")
+      |             ^^^
 expr.err.li 15,6: expected function call, but found int
-   15| 0 |> 0
-     |      ^
+   15 | 0 |> 0
+      |      ^
 expr.err.li 18,5: mismatched types: `int` (expected) and `string` (found)
-   18| arr['10']
-     |     ^^^^
+   18 | arr['10']
+      |     ^^^^
 expr.err.li 19,1: `int` does not support indexing
-   19| arr[0][0]
-     | ^^^^^^^^^
+   19 | arr[0][0]
+      | ^^^^^^^^^
 expr.err.li 20,1: `int` does not support indexing
-   20| x[0]
-     | ^^^^
+   20 | x[0]
+      | ^^^^
 expr.err.li 23,9: undefined variable `n`
-   23|   read(&n)
-     |         ^
+   23 |   read(&n)
+      |         ^
 expr.err.li 26,8: mismatched types: `&int` (expected) and `&string` (found)
-   26|   read(&s)
-     |        ^^
+   26 |   read(&s)
+      |        ^^
