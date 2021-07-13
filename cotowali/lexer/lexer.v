@@ -47,7 +47,7 @@ pub fn (mut lex Lexer) read() ?Token {
 		} else if is_digit(c) {
 			return lex.read_number()
 		} else if lex.is_eol() {
-			return lex.read_newline()
+			return lex.read_eol()
 		}
 
 		mut kind := tk(.unknown)
@@ -91,7 +91,7 @@ fn (lex Lexer) is_eol() bool {
 	return is_eol(lex.char(0))
 }
 
-fn (mut lex Lexer) read_newline() Token {
+fn (mut lex Lexer) read_eol() Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
 		defer {
