@@ -284,6 +284,7 @@ fn (mut r Resolver) while_stmt(stmt WhileStmt) {
 
 pub struct YieldStmt {
 pub:
+	pos  Pos
 	expr Expr
 }
 

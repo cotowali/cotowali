@@ -344,8 +344,10 @@ fn (mut p Parser) parse_yield_stmt() ?ast.YieldStmt {
 		}
 	}
 
-	p.consume_with_assert(.key_yield)
+	key := p.consume_with_assert(.key_yield)
+	expr := p.parse_expr(.toplevel) ?
 	return ast.YieldStmt{
-		expr: p.parse_expr(.toplevel) ?
+		pos: key.pos.merge(expr.pos())
+		expr: expr
 	}
 }
