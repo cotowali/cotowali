@@ -27,8 +27,8 @@ pub fn (p PrettyFormatter) format(err Err) string {
 	line := s.line(pos.line)
 	lines := [
 		'$s.file_name() $pos.line,$pos.col: $err.msg',
-		'${pos.line:5d}| ' + line,
-		'     | ' + ' '.repeat(pos.col - 1) + '^'.repeat(pos.last_col - pos.col + 1),
+		'${pos.line:5d} | ' + line,
+		'      | ' + ' '.repeat(pos.col - 1) + '^'.repeat(pos.last_col - pos.col + 1),
 	]
 	return lines.map('$it\n').join('')
 }
