@@ -25,11 +25,12 @@ pub fn (p PrettyFormatter) format(err Err) string {
 	s := err.source
 	pos := err.pos
 	line := s.line(pos.line)
-	l1 := '$s.file_name() $pos.line,$pos.col: $err.msg'
-	l2 := '${pos.line:5d}| ' + line
-	l3 := '     | ' + ' '.repeat(pos.col - 1) + '^'.repeat(pos.last_col - pos.col + 1)
-	underline_len := utf8_str_visible_length(s.slice(pos.i, pos.i + pos.len))
-	return '$l1\n$l2\n$l3\n'
+	lines := [
+		'$s.file_name() $pos.line,$pos.col: $err.msg',
+		'${pos.line:5d}| ' + line,
+		'     | ' + ' '.repeat(pos.col - 1) + '^'.repeat(pos.last_col - pos.col + 1),
+	]
+	return lines.map('$it\n').join('')
 }
 
 pub fn (errors Errors) format(f Formatter) string {
