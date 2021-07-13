@@ -6,6 +6,7 @@
 module errors
 
 import strings
+import cotowali.source { Source }
 
 pub interface Formatter {
 	format(Err) string
@@ -24,10 +25,14 @@ pub struct PrettyFormatter {}
 pub fn (p PrettyFormatter) format(err Err) string {
 	s := err.source
 	pos := err.pos
-	line := s.line(pos.line)
+
+	format_line := fn (s &Source, line int) string {
+		return '${line:5d} | ' + s.line(line)
+	}
+
 	lines := [
 		'$s.file_name() $pos.line,$pos.col: $err.msg',
-		'${pos.line:5d} | ' + line,
+		format_line(s, pos.line),
 		'      | ' + ' '.repeat(pos.col - 1) + '^'.repeat(pos.last_col - pos.col + 1),
 	]
 	return lines.map('$it\n').join('')
