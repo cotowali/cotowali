@@ -38,7 +38,7 @@ pub fn (s &Source) slice(begin int, end int) string {
 }
 
 pub fn (s &Source) line(i int) string {
-	return if i < s.lines.len { s.lines[i] } else { '' }
+	return if i <= s.lines.len { s.lines[i - 1] } else { '' }
 }
 
 pub fn (s &Source) file_name() string {
