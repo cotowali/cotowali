@@ -104,7 +104,9 @@ fn (lex &Lexer) pos_for_new_token() Pos {
 		len: pos.len - 1
 		line: min(pos.line, last_line)
 		last_line: last_line
-		last_col: last_col
+		// last_col becomes 0 at the beginning of the file or right after eol.
+		// So use col when last_col is 0
+		last_col: if last_col == 0 { pos.col } else { last_col }
 	}
 }
 
