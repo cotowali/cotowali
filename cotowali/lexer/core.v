@@ -190,10 +190,10 @@ fn (mut lex Lexer) skip() {
 
 [inline]
 fn (mut lex Lexer) consume() {
-	lex.prev_char = lex.char(0)
-	lex.pos.len += lex.prev_char.len
-	lex.pos.last_col += utf8_str_visible_length(lex.prev_char)
 	c := lex.char(0)
+	lex.prev_char = c
+	lex.pos.len += c.len
+	lex.pos.last_col += utf8_str_visible_length(c)
 	if c.byte() == `\n` || (c.byte() == `\r` && lex.char(1).byte() != `\n`) {
 		lex.pos.last_col = 1
 		lex.pos.last_line++

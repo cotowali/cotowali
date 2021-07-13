@@ -217,3 +217,25 @@ fn test_number() {
 
 	ektest('1.1.1', [ek(.float_lit, .err)])
 }
+
+fn test_multiline() {
+	lines := [
+		's1 s2',
+		's3  s4 ',
+		'',
+		' s5 ',
+	]
+	code := lines.join('\n')
+	test(code, [
+		// Pos{i, line, col, len, last_line, last_col}
+		Token{.ident, 's1', Pos{0, 1, 1, 2, 1, 2}},
+		Token{.ident, 's2', Pos{3, 1, 4, 2, 1, 5}},
+		Token{.eol, '\n', Pos{5, 1, lines[0].len + 1, 1, 1, 0}},
+		Token{.ident, 's3', Pos{6, 2, 1, 2, 2, 2}},
+		Token{.ident, 's4', Pos{10, 2, 5, 2, 2, 6}},
+		Token{.eol, '\n', Pos{13, 2, lines[1].len + 1, 1, 2, 0}},
+		Token{.eol, '\n', Pos{14, 3, lines[2].len + 1, 1, 3, 0}},
+		Token{.ident, 's5', Pos{16, 4, 2, 2, 4, 3}},
+		Token{.eof, '', Pos{code.len, 4, lines[3].len + 1, 1, 4, lines[3].len + 1}},
+	])
+}
