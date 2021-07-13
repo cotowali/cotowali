@@ -1,24 +1,24 @@
 fn.err.li 1,14: `i` is duplicated
   > i
     ^
-fn.err.li 2,10: unknown type `foo`
+fn.err.li 2,9: unknown type `foo`
   > foo
     ^^^
-fn.err.li 5,4: cannot use yield in function that return non-sequence type
+fn.err.li 5,3: cannot use yield in function that return non-sequence type
   > yield '0'
     ^^^^^^^^^
-fn.err.li 6,11: mismatched types: `string` (expected) and `int` (found)
+fn.err.li 6,10: mismatched types: `string` (expected) and `int` (found)
   > i
     ^
-fn.err.li 8,5: `g` is duplicated
+fn.err.li 8,4: `g` is duplicated
   > g
     ^
-fn.err.li 12,12: mismatched types: `string` (expected) and `int` (found)
+fn.err.li 12,11: mismatched types: `string` (expected) and `int` (found)
   > v
     ^
-fn.err.li 17,2: `v` is not function (`int`)
+fn.err.li 17,1: `v` is not function (`int`)
   > v()
     ^^^
-fn.err.li 19,2: cannot call `int`
+fn.err.li 19,1: cannot call `int`
   > 0()
     ^^^

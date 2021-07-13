@@ -1,51 +1,51 @@
-expr.err.li 5,7: undefined variable `x`
+expr.err.li 5,6: undefined variable `x`
   > x
     ^
-expr.err.li 7,2: mismatched types: `int` (left) and `string` (right)
+expr.err.li 7,1: mismatched types: `int` (left) and `string` (right)
   > f("a") + "a"
     ^^^^^^^^^^^^
-expr.err.li 7,4: mismatched types: `int` (expected) and `string` (found)
+expr.err.li 7,3: mismatched types: `int` (expected) and `string` (found)
   > "a"
     ^^^
-expr.err.li 8,10: mismatched types: `string` (left) and `int` (right)
+expr.err.li 8,9: mismatched types: `string` (left) and `int` (right)
   > "a" + f("a")
     ^^^^^^^^^^^^
-expr.err.li 8,18: mismatched types: `int` (expected) and `string` (found)
+expr.err.li 8,17: mismatched types: `int` (expected) and `string` (found)
   > "a"
     ^^^
-expr.err.li 10,2: undefined variable `y`
+expr.err.li 10,1: undefined variable `y`
   > y
     ^
-expr.err.li 11,2: undefined variable `y`
+expr.err.li 11,1: undefined variable `y`
   > y
     ^
-expr.err.li 12,2: invalid left-hand side of assignment
+expr.err.li 12,1: invalid left-hand side of assignment
   > 0
     ^
-expr.err.li 14,2: mismatched types: `int` (left) and `void` (pipe in of right)
+expr.err.li 14,1: mismatched types: `int` (left) and `void` (pipe in of right)
   > f("a") |> f("a")
     ^^^^^^^^^^^^^^^^
-expr.err.li 14,4: mismatched types: `int` (expected) and `string` (found)
+expr.err.li 14,3: mismatched types: `int` (expected) and `string` (found)
   > "a"
     ^^^
-expr.err.li 14,14: mismatched types: `int` (expected) and `string` (found)
+expr.err.li 14,13: mismatched types: `int` (expected) and `string` (found)
   > "a"
     ^^^
-expr.err.li 15,7: expected function call, but found int
+expr.err.li 15,6: expected function call, but found int
   > 0
     ^
-expr.err.li 18,6: mismatched types: `int` (expected) and `string` (found)
+expr.err.li 18,5: mismatched types: `int` (expected) and `string` (found)
   > '10'
     ^^^^
-expr.err.li 19,2: `int` does not support indexing
+expr.err.li 19,1: `int` does not support indexing
   > arr[0][0]
     ^^^^^^^^^
-expr.err.li 20,2: `int` does not support indexing
+expr.err.li 20,1: `int` does not support indexing
   > x[0]
     ^^^^
-expr.err.li 23,10: undefined variable `n`
+expr.err.li 23,9: undefined variable `n`
   > n
     ^
-expr.err.li 26,9: mismatched types: `&int` (expected) and `&string` (found)
+expr.err.li 26,8: mismatched types: `&int` (expected) and `&string` (found)
   > &s
     ^^

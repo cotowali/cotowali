@@ -1,6 +1,6 @@
 lexer.err.li 1,1: unterminated string literal
   > 'abc
     ^^^^
-lexer.err.li 2,2: too many decimal points in number
+lexer.err.li 2,1: too many decimal points in number
   > 1.0.0
     ^^^^^
