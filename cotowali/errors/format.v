@@ -24,12 +24,10 @@ pub struct PrettyFormatter {}
 pub fn (p PrettyFormatter) format(err Err) string {
 	s := err.source
 	pos := err.pos
-	// TODO: More pretty
-	code := s.slice(pos.i, pos.i + pos.len).clone()
-	underline_len := utf8_str_visible_length(code)
+	line := s.line(pos.line)
 	l1 := '$s.file_name() $pos.line,$pos.col: $err.msg'
-	l2 := '  > ' + code
-	l3 := '    ' + '^'.repeat(underline_len)
+	l2 := '  > ' + line
+	l3 := '    ' + ' '.repeat(pos.col - 1) + '^'.repeat(pos.last_col - pos.col + 1)
 	return '$l1\n$l2\n$l3\n'
 }
 
