@@ -33,6 +33,6 @@ fn test_slice() {
 
 fn test_line() ? {
 	s := read_file(@FILE) ?
-	assert s.line(1) == '//'
+	assert s.line(2) == '//'
 	assert s.line(100000) == ''
 }
