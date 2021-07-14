@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="200" src="https://raw.githubusercontent.com/cotowali/logo/main/cotowali.svg?sanitize=true">
+  <img width="200" src="https://raw.githubusercontent.com/cotowali/design/main/assets/cotowali.svg?sanitize=true">
   <h1>Cotowali</h1>
   <p>A statically typed script language that transpile into POSIX sh</p>
   <a href="http://mozilla.org/MPL/2.0/" rel="nofollow">
