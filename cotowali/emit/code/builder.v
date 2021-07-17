@@ -53,7 +53,7 @@ pub fn (b Builder) clone() Builder {
 
 // --
 
-pub fn (mut b Builder) pos() int {
+pub fn (b &Builder) pos() int {
 	return b.buf.len
 }
 
