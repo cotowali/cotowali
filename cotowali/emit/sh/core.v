@@ -56,12 +56,14 @@ fn (mut e Emitter) stmt_head_pos() int {
 
 [inline]
 fn (mut e Emitter) indent() {
-	e.code().indent()
+	mut code := e.code()
+	code.indent()
 }
 
 [inline]
 fn (mut e Emitter) unindent() {
-	e.code().unindent()
+	mut code := e.code()
+	code.unindent()
 }
 
 fn (mut e Emitter) new_tmp_ident() string {
@@ -73,7 +75,8 @@ fn (mut e Emitter) new_tmp_ident() string {
 
 [inline]
 fn (mut e Emitter) seek(pos int) ? {
-	return e.code().seek(pos)
+	mut code := e.code()
+	return code.seek(pos)
 }
 
 fn (mut e Emitter) insert_at<T>(pos int, f fn (mut Emitter, T), v T) {
@@ -85,12 +88,14 @@ fn (mut e Emitter) insert_at<T>(pos int, f fn (mut Emitter, T), v T) {
 }
 
 fn (mut e Emitter) lock_cursor() {
-	e.code().lock_cursor()
+	mut code := e.code()
+	code.lock_cursor()
 }
 
 [inline]
 fn (mut e Emitter) unlock_cursor() {
-	e.code().unlock_cursor()
+	mut code := e.code()
+	code.unlock_cursor()
 }
 
 fn (mut e Emitter) with_lock_cursor<T>(f fn (mut Emitter, T), v T) {
@@ -108,12 +113,14 @@ fn (mut e Emitter) with_lock_cursor<T>(f fn (mut Emitter, T), v T) {
 
 [inline]
 fn (mut e Emitter) writeln(s string) {
-	e.code().writeln(s) or { panic(err) }
+	mut code := e.code()
+	code.writeln(s) or { panic(err) }
 }
 
 [inline]
 fn (mut e Emitter) write(s string) {
-	e.code().write_string(s) or { panic(err) }
+	mut code := e.code()
+	code.write_string(s) or { panic(err) }
 }
 
 fn (mut e Emitter) write_block<T>(opt code.WriteBlockOpt, f fn (mut Emitter, T), v T) {
