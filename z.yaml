@@ -21,7 +21,7 @@ tasks:
 
   build.c: v {{lic_path}} -o main.c
 
-  build: mkdir -p .bin && v {{lic_path}} -o .bin/lic
+  build: mkdir -p .bin && v -prod {{lic_path}} -o .bin/lic
   symlink: ln -fs $(pwd)/.bin/lic /usr/local/bin/lic
   install: z build && cp $(pwd)/.bin/lic /usr/local/bin/lic
 
