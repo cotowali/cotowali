@@ -31,7 +31,7 @@ fn (mut e Emitter) sh_result_to_bool() {
 fn (mut e Emitter) sh_test_command_as_bool<T>(f fn (mut Emitter, T), v T) {
 	open, close := '"\$( ', ' )"'
 	e.write(open)
-	e.write_inline_block({ open: '[ ', close: ' ]' }, f, v)
+	e.sh_test_command(f, v)
 	e.sh_result_to_bool()
 	e.write(close)
 }
