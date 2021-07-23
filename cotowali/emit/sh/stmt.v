@@ -47,12 +47,15 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 	e.write('if ')
 	e.expr(stmt.expr, as_condition: true, writeln: true)
 	e.writeln('then')
-	e.writeln(':')
-
-	e.write_block({ open: 'else', close: 'fi' }, fn (mut e Emitter, stmt ast.AssertStmt) {
+	{
+		e.writeln(':')
+	}
+	e.writeln('else')
+	{
 		e.writeln("echo 'LINE $stmt.key_pos.line: assertion failed' >&2")
 		e.writeln('exit 1')
-	}, stmt)
+	}
+	e.writeln('fi')
 }
 
 fn (mut e Emitter) block(block ast.Block) {
@@ -79,9 +82,11 @@ fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
 fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
 	e.write('for ${e.ident_for(stmt.val)} in ')
 	e.expr(stmt.expr, expand_array: true, writeln: true)
-	e.write_block({ open: 'do', close: 'done' }, fn (mut e Emitter, stmt ast.ForInStmt) {
+	e.writeln('do')
+	{
 		e.block(stmt.body)
-	}, stmt)
+	}
+	e.writeln('done')
 }
 
 fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {
@@ -96,10 +101,11 @@ fn (mut e Emitter) require_stmt(stmt ast.RequireStmt) {
 fn (mut e Emitter) while_stmt(stmt ast.WhileStmt) {
 	e.write('while ')
 	e.expr(stmt.cond, as_condition: true, writeln: true)
-	e.writeln('')
-	e.write_block({ open: 'do', close: 'done' }, fn (mut e Emitter, stmt ast.WhileStmt) {
+	e.writeln('do')
+	{
 		e.block(stmt.body)
-	}, stmt)
+	}
+	e.writeln('done')
 }
 
 fn (mut e Emitter) yield_stmt(stmt ast.YieldStmt) {
