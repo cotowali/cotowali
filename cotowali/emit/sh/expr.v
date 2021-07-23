@@ -133,7 +133,7 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
-	e.write_inline_block({ open: '\$( ', close: ' )' }, fn (mut e Emitter, v ExprWithOpt<ast.IndexExpr>) {
+	e.sh_command_substitution(fn (mut e Emitter, v ExprWithOpt<ast.IndexExpr>) {
 		name := e.ident_for(v.expr.left)
 
 		e.write(match v.expr.left.type_symbol().kind() {
@@ -281,7 +281,7 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 			}, expr, opt)
 		}
 		.plus {
-			e.write_inline_block({ open: '\$( ', close: ' )' }, fn (mut e Emitter, expr ast.InfixExpr) {
+			e.sh_command_substitution(fn (mut e Emitter, expr ast.InfixExpr) {
 				e.write("printf '%s%s' ")
 				e.expr(expr.left, {})
 				e.write(' ')
@@ -354,13 +354,17 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
-	open, close := if opt.as_command { '', '' } else { '\$(', ')' }
-	e.write_inline_block({ open: open, close: close }, fn (mut e Emitter, pipeline ast.Pipeline) {
+	f := fn (mut e Emitter, pipeline ast.Pipeline) {
 		for i, expr in pipeline.exprs {
 			if i > 0 {
 				e.write(' | ')
 			}
 			e.expr(expr, as_command: true)
 		}
-	}, expr)
+	}
+	if opt.as_command {
+		f(mut e, expr)
+	} else {
+		e.sh_command_substitution(f, expr)
+	}
 }

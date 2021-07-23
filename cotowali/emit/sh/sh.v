@@ -43,3 +43,9 @@ fn (mut e Emitter) sh_test_command_for_expr<T>(f fn (mut Emitter, T), v T, opt E
 		e.sh_test_command_as_bool(f, v)
 	}
 }
+
+fn (mut e Emitter) sh_command_substitution<T>(f fn (mut Emitter, T), v T) {
+	e.write('\$( ')
+	f(mut e, v)
+	e.write(' )')
+}
