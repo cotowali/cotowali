@@ -29,11 +29,10 @@ fn (mut e Emitter) sh_result_to_bool() {
 }
 
 fn (mut e Emitter) sh_test_command_as_bool<T>(f fn (mut Emitter, T), v T) {
-	open, close := '"\$( ', ' )"'
-	e.write(open)
+	e.write('"\$( ')
 	e.sh_test_command(f, v)
 	e.sh_result_to_bool()
-	e.write(close)
+	e.write(' )"')
 }
 
 fn (mut e Emitter) sh_test_command_for_expr<T>(f fn (mut Emitter, T), v T, opt ExprOpt) {
