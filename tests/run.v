@@ -105,7 +105,7 @@ fn (lic Lic) execute(c LicCommand, file string) os.Result {
 
 fn (lic Lic) new_test_case(path string) TestCase {
 	out := out_path(path)
-	return {
+	return TestCase{
 		lic: lic
 		path: path
 		out_path: out
@@ -149,7 +149,7 @@ fn fix_todo(f string, s FileSuffix) {
 }
 
 fn (mut t TestCase) run() {
-	mut sw := time.new_stopwatch({})
+	mut sw := time.new_stopwatch()
 	sw.start()
 	result := if t.is_err_test {
 		t.lic.execute(.compile, t.path)
