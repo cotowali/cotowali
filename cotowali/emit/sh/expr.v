@@ -254,11 +254,13 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 	match expr.op.kind {
 		.plus, .minus, .div, .mul, .mod {
 			open, close := if opt.inside_arithmetic { '', '' } else { '\$(( ', ' ))' }
-			e.write_inline_block({ open: open, close: close }, fn (mut e Emitter, expr ast.InfixExpr) {
+			e.write(open)
+			{
 				e.expr(expr.left, inside_arithmetic: true)
 				e.write(' $expr.op.text ')
 				e.expr(expr.right, inside_arithmetic: true)
-			}, expr)
+			}
+			e.write(close)
 		}
 		else {
 			panic('unimplemented')
@@ -297,14 +299,16 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 	open, close := if opt.inside_arithmetic { ' ( ', ' ) ' } else { '', '' }
-	e.write_inline_block({ open: open, close: close }, fn (mut e Emitter, v ExprWithOpt<ast.ParenExpr>) {
-		for i, expr in v.expr.exprs {
+	e.write(open)
+	{
+		for i, subexpr in expr.exprs {
 			if i > 0 {
 				e.write(' ')
 			}
-			e.expr(expr, { ...v.opt, as_command: false })
+			e.expr(subexpr, { ...opt, as_command: false })
 		}
-	}, expr_with_opt(expr, opt))
+	}
+	e.write(close)
 }
 
 fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
