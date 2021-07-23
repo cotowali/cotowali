@@ -19,7 +19,7 @@ fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
 	e.write('$expr.command')
 	for arg in expr.args {
 		e.write(' ')
-		e.expr(arg, {})
+		e.expr(arg)
 	}
 }
 
@@ -44,10 +44,10 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 	}
 
 	if expr.func_id == builtin_fn_id(.call) {
-		e.expr(expr.args[0], {})
+		e.expr(expr.args[0])
 		for arg in expr.args[1..] {
 			e.write(' ')
-			e.expr(arg, {})
+			e.expr(arg)
 		}
 		return
 	}
@@ -56,7 +56,7 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 	mut args := expr.args
 	for arg in args {
 		e.write(' ')
-		e.expr(arg, {})
+		e.expr(arg)
 	}
 }
 

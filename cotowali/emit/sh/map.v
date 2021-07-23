@@ -13,9 +13,9 @@ fn (mut e Emitter) map_literal(expr MapLiteral, opt ExprOpt) {
 		ident := v.value
 		for entry in v.expr.entries {
 			e.write('map_set $ident ')
-			e.expr(entry.key, {})
+			e.expr(entry.key)
 			e.write(' ')
-			e.expr(entry.value, {})
+			e.expr(entry.value)
 			e.writeln('')
 		}
 	}, expr_with_value(expr, ident))

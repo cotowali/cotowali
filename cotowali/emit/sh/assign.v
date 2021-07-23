@@ -37,11 +37,11 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 
 fn (mut e Emitter) map_assign(name string, value ExprOrString) {
 	e.write('map_copy ')
-	e.map(name, {})
+	e.map(name)
 	e.write(' ')
 	match value {
 		string {
-			e.map(value, {})
+			e.map(value)
 			e.writeln('')
 		}
 		ast.Expr {
@@ -65,7 +65,7 @@ fn (mut e Emitter) assign(name string, value ExprOrString, ts TypeSymbol) {
 				}
 				ast.Expr {
 					e.write('$name=')
-					e.expr(value, {})
+					e.expr(value)
 					e.writeln('')
 				}
 			}
@@ -81,7 +81,7 @@ fn (mut e Emitter) assign_stmt(node ast.AssignStmt) {
 			.map { 'map_set $name ' }
 			else { panic_and_value(unreachable('invalid index left'), '') }
 		})
-		e.expr(node.left.index, {})
+		e.expr(node.left.index)
 		e.write(' ')
 		e.expr(node.right, writeln: true)
 	} else {

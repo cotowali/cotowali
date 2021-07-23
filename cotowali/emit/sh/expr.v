@@ -213,9 +213,9 @@ fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
 			open, close := '\$( echo " ', ' " | bc -l )' // see above
 
 			e.write(open)
-			e.expr(expr.left, {})
+			e.expr(expr.left)
 			e.write(' $expr.op.text ')
-			e.expr(expr.right, {})
+			e.expr(expr.right)
 			e.write(close)
 
 			e.write(' -eq 1')
@@ -223,9 +223,9 @@ fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
 		return
 	}
 	e.write(open)
-	e.expr(expr.left, {})
+	e.expr(expr.left)
 	e.write(' $expr.op.text ')
-	e.expr(expr.right, {})
+	e.expr(expr.right)
 	e.write(close)
 }
 
@@ -285,9 +285,9 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 		.plus {
 			e.sh_command_substitution(fn (mut e Emitter, expr ast.InfixExpr) {
 				e.write("printf '%s%s' ")
-				e.expr(expr.left, {})
+				e.expr(expr.left)
 				e.write(' ')
-				e.expr(expr.right, {})
+				e.expr(expr.right)
 			}, expr)
 		}
 		else {
@@ -305,7 +305,7 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 			if i > 0 {
 				e.write(' ')
 			}
-			e.expr(subexpr, { ...opt, as_command: false })
+			e.expr(subexpr, ExprOpt{ ...opt, as_command: false })
 		}
 	}
 	e.write(close)
