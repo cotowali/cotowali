@@ -21,7 +21,9 @@ fn (mut e Emitter) sh_test_cond_is_true(expr ExprOrString) {
 }
 
 fn (mut e Emitter) sh_test_command<T>(f fn (mut Emitter, T), v T) {
-	e.write_inline_block({ open: '[ ', close: ' ]' }, f, v)
+	e.write('[ ')
+	f(mut e, v)
+	e.write(' ]')
 }
 
 fn (mut e Emitter) sh_result_to_bool() {
