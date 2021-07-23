@@ -12,7 +12,7 @@ mut:
 }
 
 pub fn new_tracer() Tracer {
-	return {}
+	return Tracer{}
 }
 
 [inline]

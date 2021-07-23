@@ -39,7 +39,7 @@ pub:
 }
 
 pub fn (err ErrWithToken) to_err() Err {
-	return {
+	return Err{
 		source: err.source
 		pos: err.token.pos
 		msg: err.msg

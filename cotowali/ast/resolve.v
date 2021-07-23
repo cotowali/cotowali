@@ -18,7 +18,7 @@ mut:
 }
 
 pub fn new_resolver(ctx &Context) Resolver {
-	return {
+	return Resolver{
 		ctx: ctx
 	}
 }

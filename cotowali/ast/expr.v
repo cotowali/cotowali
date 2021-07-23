@@ -94,7 +94,7 @@ pub fn (e IndexExpr) typ() Type {
 
 pub fn (mut e ParenExpr) typ() Type {
 	return match e.exprs.len {
-		0 { e.scope.lookup_or_register_tuple_type({}).typ }
+		0 { e.scope.lookup_or_register_tuple_type().typ }
 		1 { e.exprs[0].typ() }
 		else { e.scope.lookup_or_register_tuple_type(elements: e.exprs.map(it.typ())).typ }
 	}
