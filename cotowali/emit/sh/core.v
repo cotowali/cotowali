@@ -122,26 +122,3 @@ fn (mut e Emitter) write(s string) {
 	mut code := e.code()
 	code.write_string(s) or { panic(err) }
 }
-
-fn (mut e Emitter) write_block<T>(opt code.WriteBlockOpt, f fn (mut Emitter, T), v T) {
-	e.writeln(opt.open)
-	e.indent()
-	defer {
-		e.unindent()
-		e.writeln(opt.close)
-	}
-
-	f(mut e, v)
-}
-
-fn (mut e Emitter) write_inline_block<T>(opt code.WriteInlineBlockOpt, f fn (mut Emitter, T), v T) {
-	e.write(opt.open)
-	defer {
-		e.write(opt.close)
-		if opt.writeln {
-			e.writeln('')
-		}
-	}
-
-	f(mut e, v)
-}

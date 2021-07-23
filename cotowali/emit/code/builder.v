@@ -167,38 +167,3 @@ pub fn (mut b Builder) writeln_comment(s string) ?int {
 	b.buf << `\n`
 	return n + 1
 }
-
-// --
-
-pub struct WriteBlockOpt {
-pub:
-	open  string [required]
-	close string [required]
-}
-
-pub struct WriteInlineBlockOpt {
-pub:
-	open    string [required]
-	close   string [required]
-	writeln bool
-}
-
-/*
-TODO: wait to fix v bug
-pub fn (mut b Builder) write_block<R, V>(opt WriteBlockOpt, f fn (mut R, V), mut receiver R, v V) {
-	if opt.inline {
-		b.write(opt.open)
-		defer {
-			b.write(opt.close)
-		}
-	} else {
-		b.writeln(opt.open)
-		b.indent()
-		defer {
-			b.unindent()
-			b.writeln(opt.close)
-		}
-	}
-
-	f(mut receiver, v)
-}*/
