@@ -253,7 +253,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 
 	match expr.op.kind {
 		.plus, .minus, .div, .mul, .mod {
-			open, close := if opt.inside_arithmetic { '', '' } else { '\$(( ( ', ' ) ))' }
+			open, close := if opt.inside_arithmetic { '', '' } else { '\$(( ', ' ))' }
 			e.write_inline_block({ open: open, close: close }, fn (mut e Emitter, expr ast.InfixExpr) {
 				e.expr(expr.left, inside_arithmetic: true)
 				e.write(' $expr.op.text ')
