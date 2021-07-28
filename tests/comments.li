@@ -10,3 +10,14 @@ assert /* comment */ 1 /* comment */ == /* comment */ 1 /* comment */
 
 /* comment
 // line comment in block comment */ assert 1 == 1
+
+/*
+ * /*
+ *  * nested-1
+ *  * /*
+ *  *  * nested 2
+ *  *  *
+ *  *  */
+ *  */
+ *  echo('this is comment')
+ */

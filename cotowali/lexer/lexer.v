@@ -103,11 +103,25 @@ fn (mut lex Lexer) skip_block_comment() {
 		}
 	}
 
-	for {
-		if lex.prev_char[0] == `*` && lex.byte() == `/` {
-			lex.skip()
-			break
+	lex.skip_with_assert(fn (c Char) bool {
+		return c[0] == `/`
+	})
+	lex.skip_with_assert(fn (c Char) bool {
+		return c[0] == `*`
+	})
+
+	mut depth := 1
+	for depth > 0 {
+		// '/*'
+		if lex.byte() == `/` && lex.char(1).byte() == `*` {
+			depth++
 		}
+
+		// '*/'
+		if lex.prev_char[0] == `*` && lex.byte() == `/` {
+			depth--
+		}
+
 		lex.skip()
 	}
 }
