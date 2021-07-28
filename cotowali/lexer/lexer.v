@@ -66,6 +66,10 @@ pub fn (mut lex Lexer) read() ?Token {
 			lex.skip_not_for(is_eol)
 			continue
 		}
+		if cc == '/*' {
+			lex.skip_block_comment()
+			continue
+		}
 
 		kind = table_for_two_chars_symbols[cc] or { tk(.unknown) }
 		if kind != .unknown {
@@ -89,6 +93,23 @@ pub fn (mut lex Lexer) read() ?Token {
 
 fn (lex Lexer) is_eol() bool {
 	return is_eol(lex.char(0))
+}
+
+fn (mut lex Lexer) skip_block_comment() {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN)
+		defer {
+			lex.trace_end()
+		}
+	}
+
+	for {
+		if lex.prev_char[0] == `*` && lex.byte() == `/` {
+			lex.skip()
+			break
+		}
+		lex.skip()
+	}
 }
 
 fn (mut lex Lexer) read_eol() Token {
