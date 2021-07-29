@@ -220,7 +220,9 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 	}
 	mut elements := []ast.Expr{}
 	for {
+		p.skip_eol()
 		elements << (p.parse_expr(.toplevel) ?)
+		p.skip_eol()
 		last_tok = p.consume_with_check(.r_bracket, .comma) ?
 		if last_tok.kind == .r_bracket {
 			break

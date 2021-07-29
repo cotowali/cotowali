@@ -19,7 +19,13 @@ var v = [a, 'b', 'c']
 v
 v = []string{}
 
-var arr = [0, 1, n]
+var arr = [
+  0
+  ,
+  1
+  ,
+  n
+]
 echo_arr(arr)
 echo_arr([0, 1, 2])
 raw_arr(arr)
