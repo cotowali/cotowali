@@ -288,11 +288,14 @@ fn (mut p Parser) parse_map_literal() ?ast.Expr {
 				value: value
 			}
 
-			p.skip_eol()
 			if p.kind(0) == .r_brace {
 				break
 			}
 			p.consume_with_check(.eol, .comma) ?
+			p.skip_eol()
+			if p.kind(0) == .r_brace {
+				break
+			}
 		}
 	}
 
