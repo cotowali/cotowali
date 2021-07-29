@@ -6,27 +6,49 @@ f(map{ 'key': 'value' })
 f({ 'key': 'value' })
 
 
-var m_str_int = map{
-  'a': 1
+fn test_simple() {
+  var m_str_int = map{
+    'a': 1
+  }
+  var m_int_str = map{
+    1: 'a'
+  }
+
+  assert m_str_int['a'] == 1
+  assert m_int_str[1] == 'a'
+
+  m_str_int['a'] = m_str_int['a'] + 1
+  m_int_str[1] = m_int_str[1] + 'a'
+  assert m_str_int['a'] == 2
+  assert m_int_str[1] == 'aa'
+
+  m_str_int['b'] = 10
+  m_int_str[10] = 'b'
+  assert m_str_int['b'] == 10
+  assert m_int_str[10] == 'b'
+
+  m_str_int['c'] = m_str_int['a'] + m_str_int['b']
+  m_int_str[100] = m_int_str[1] + m_int_str[10]
+  assert m_str_int['c'] == 12
+  assert m_int_str[100] == 'aab'
 }
-var m_int_str = map{
-  1: 'a'
+test_simple()
+
+fn test_complex() {
+  var map_array_map_map = {
+    'a': [{
+      'a': { 'a': 'a0aa' }
+      'b': { 'a': 'a0ba' }
+    }, map{
+      'a': { 'a': 'a1aa' }
+    }, map[string]string{
+      'a': { 'a': 'a2aa' }
+    }]
+    'b': [{
+      'a': { 'a': 'b0aa' }
+    }]
+  }
+  assert map_array_map_map['a'][0]['b']['a'] == 'a0ba'
+  assert map_array_map_map['a'][1]['a']['a'] == 'a1aa'
+  assert map_array_map_map['b'][0]['a']['a'] == 'b0aa'
 }
-
-assert m_str_int['a'] == 1
-assert m_int_str[1] == 'a'
-
-m_str_int['a'] = m_str_int['a'] + 1
-m_int_str[1] = m_int_str[1] + 'a'
-assert m_str_int['a'] == 2
-assert m_int_str[1] == 'aa'
-
-m_str_int['b'] = 10
-m_int_str[10] = 'b'
-assert m_str_int['b'] == 10
-assert m_int_str[10] == 'b'
-
-m_str_int['c'] = m_str_int['a'] + m_str_int['b']
-m_int_str[100] = m_int_str[1] + m_int_str[10]
-assert m_str_int['c'] == 12
-assert m_int_str[100] == 'aab'
