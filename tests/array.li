@@ -19,10 +19,12 @@ var v = [a, 'b', 'c']
 v
 v = []string{}
 
-var arr = [
-  0
+var arr = [0
   ,
+
   1 ,
+
+
   n
   ,
 ]
