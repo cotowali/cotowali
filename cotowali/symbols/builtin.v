@@ -33,6 +33,7 @@ pub fn (t Type) is_number() bool {
 
 pub enum BuiltinFnKey {
 	echo = 1
+	@typeof
 	call
 	read
 }
@@ -93,6 +94,7 @@ pub fn (mut s Scope) register_builtin() {
 		f_(.echo, params: [t_(.any)], ret: t_(.string)),
 		f_(.call, params: [t_(.string), variadic_types[t_(.string)]], ret: t_(.string)),
 		f_(.read, params: [t_(.any)], ret: t_(.bool)),
+		f_(.@typeof, params: [t_(.any)], ret: t_(.string)),
 	]
 	for f in fns {
 		s.must_register_builtin_fn(f.key, f.function_info)
