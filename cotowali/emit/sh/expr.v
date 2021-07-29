@@ -122,6 +122,9 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 		.array {
 			e.array(ident, opt)
 		}
+		.map {
+			e.map(ident, opt)
+		}
 		else {
 			// '$(( n == 0 ))' or 'echo "$n"'
 			s := if opt.inside_arithmetic { '$ident' } else { '"\$$ident"' }
