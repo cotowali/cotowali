@@ -37,15 +37,16 @@ test_simple()
 fn test_complex() {
   var map_array_map_map = {
     'a': [{
-      'a': { 'a': 'a0aa' }
-      'b': { 'a': 'a0ba' }
+      'a': { 'a': 'a0aa' },
+      'b': { 'a': 'a0ba' } // no trailing comma
     }, map{
-      'a': { 'a': 'a1aa' }
+      'a': { 'a': 'a1aa' }, // trailing comma
     }, map[string]string{
+      // no comma
       'a': { 'a': 'a2aa' }
     }]
     'b': [{
-      'a': { 'a': 'b0aa' }
+      'a': { 'a': 'b0aa', /* inline trailing comma */ }
     }]
   }
   assert map_array_map_map['a'][0]['b']['a'] == 'a0ba'
