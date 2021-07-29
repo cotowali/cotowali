@@ -137,14 +137,14 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	e.sh_command_substitution(fn (mut e Emitter, v ExprWithOpt<ast.IndexExpr>) {
-		name := e.ident_for(v.expr.left)
-
 		e.write(match v.expr.left.type_symbol().kind() {
-			.array { 'array_get $name ' }
-			.map { 'map_get $name ' }
+			.array { 'array_get ' }
+			.map { 'map_get ' }
 			else { panic_and_value(unreachable('invalid index left'), '') }
 		})
 
+		e.expr(v.expr.left)
+		e.write(' ')
 		e.expr(v.expr.index, v.opt)
 	}, expr_with_opt(expr, opt))
 }
