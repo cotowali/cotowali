@@ -22,9 +22,9 @@ v = []string{}
 var arr = [
   0
   ,
-  1
-  ,
+  1 ,
   n
+  ,
 ]
 echo_arr(arr)
 echo_arr([0, 1, 2])

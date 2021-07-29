@@ -222,12 +222,24 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 	for {
 		p.skip_eol()
 		elements << (p.parse_expr(.toplevel) ?)
+
 		p.skip_eol()
-		last_tok = p.consume_with_check(.r_bracket, .comma) ?
-		if last_tok.kind == .r_bracket {
+		if tok := p.consume_if_kind_eq(.r_bracket) {
+			// ends without trailing comma
+			last_tok = tok
+			break
+		}
+
+		last_tok = p.consume_with_check(.comma) ?
+
+		p.skip_eol()
+		if tok := p.consume_if_kind_eq(.r_bracket) {
+			// ends with trailing comma
+			last_tok = tok
 			break
 		}
 	}
+
 	$if !prod {
 		assert elements.len > 0
 	}
