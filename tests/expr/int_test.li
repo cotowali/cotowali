@@ -1,0 +1,45 @@
+assert 6 / 2 + 3 * 3 == 12
+assert 1 + 1 - 1 == 1
+assert 6 / 2 % 2 == 1
+
+assert 1 / 2 == 0
+assert 3 / 2 == 1
+
+var v = 1
+v = 10
+assert -v == -10
+assert +v == 10
+assert -+v == +-v
+assert - -v == + +v
+assert - - -v == -v
+
+
+assert 0 < 1
+assert 0 <= 1
+assert 0 <= 0
+assert 1 > 0
+assert 1 >= 0
+assert 0 >= 0
+
+fn zero() int {
+  var v = 0
+
+  // evaluated but not used. this is valid but no output
+  0
+  v
+  add(1, 2)
+
+  return v
+}
+
+fn add(a int, b int) int {
+  return a + b
+}
+
+fn as_int(v any) int {
+  return v as int
+}
+
+assert zero() == 0
+assert add(3, 4) == 7
+assert add(as_int("1"), 2) == 3
