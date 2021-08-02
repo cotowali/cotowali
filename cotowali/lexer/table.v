@@ -27,6 +27,7 @@ const (
 		`,`: tk(.comma)
 		`.`: tk(.dot)
 		`:`: tk(.colon)
+		`;`: tk(.eol)
 	}
 
 	table_for_two_chars_symbols = map{
