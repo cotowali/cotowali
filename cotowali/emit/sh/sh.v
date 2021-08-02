@@ -5,6 +5,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module sh
 
+import cotowali.ast
+
 const (
 	true_value  = "'true'"
 	false_value = "'false'"
@@ -49,4 +51,17 @@ fn (mut e Emitter) sh_command_substitution<T>(f fn (mut Emitter, T), v T) {
 	e.write('\$( ')
 	f(mut e, v)
 	e.write(' )')
+}
+
+fn (mut e Emitter) sh_awk_infix_expr(expr ast.InfixExpr) {
+	e.write(r'"$(echo ')
+	e.expr(expr.left)
+	e.write(' ')
+	e.expr(expr.right)
+	awk := if expr.op.kind.@is(.comparsion_op) {
+		"awk '{ print (\$1 $expr.op.text \$2 ? 1 : 0) }'"
+	} else {
+		"awk '{ print \$1 $expr.op.text \$2 }'"
+	}
+	e.write(' | $awk )"')
 }

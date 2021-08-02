@@ -209,27 +209,14 @@ fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
 	}
 	e.write_echo_if_command(opt)
 
-	open, close := '\$( echo " ', ' " | bc -l )' // $( echo " expr " | bc )
-
 	if expr.op.kind.@is(.comparsion_op) {
 		e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
-			open, close := '\$( echo " ', ' " | bc -l )' // see above
-
-			e.write(open)
-			e.expr(expr.left)
-			e.write(' $expr.op.text ')
-			e.expr(expr.right)
-			e.write(close)
-
+			e.sh_awk_infix_expr(expr)
 			e.write(' -eq 1')
 		}, expr, opt)
-		return
+	} else {
+		e.sh_awk_infix_expr(expr)
 	}
-	e.write(open)
-	e.expr(expr.left)
-	e.write(' $expr.op.text ')
-	e.expr(expr.right)
-	e.write(close)
 }
 
 fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
