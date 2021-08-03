@@ -103,7 +103,20 @@ fn (mut e Emitter) int_literal(expr ast.IntLiteral, opt ExprOpt) {
 }
 
 fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
-	e.write_echo_if_command_then_write("'$expr.token.text'", opt)
+	e.write_echo_if_command(opt)
+	match expr.open.kind {
+		.single_quote {
+			content := expr.contents.map(it.text).join('')
+			e.write("'$content'")
+		}
+		.double_quote {
+			content := expr.contents.map(it.text).join('')
+			e.write('"$content"')
+		}
+		else {
+			panic(unreachable('not a string'))
+		}
+	}
 }
 
 fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {

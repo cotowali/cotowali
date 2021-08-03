@@ -154,9 +154,14 @@ fn (mut p Parser) skip_eol() {
 	})
 }
 
-fn (mut p Parser) consume_with_check(kinds ...TokenKind) ?Token {
-	found := p.consume()
+fn (mut p Parser) check(kinds ...TokenKind) ?Token {
+	found := p.token(0)
 	return if found.kind !in kinds { p.unexpected_token_error(found, ...kinds) } else { found }
+}
+
+fn (mut p Parser) consume_with_check(kinds ...TokenKind) ?Token {
+	p.check(...kinds) ?
+	return p.consume()
 }
 
 fn (mut p Parser) consume_with_assert(kinds ...TokenKind) Token {

@@ -67,8 +67,11 @@ pub fn (expr Expr) pos() Pos {
 		PrefixExpr {
 			expr.op.pos.merge(expr.expr.pos())
 		}
-		StringLiteral, IntLiteral, FloatLiteral, BoolLiteral {
+		IntLiteral, FloatLiteral, BoolLiteral {
 			expr.token.pos
+		}
+		StringLiteral {
+			expr.open.pos.merge(expr.close.pos)
 		}
 	}
 }
@@ -409,7 +412,6 @@ pub:
 }
 
 pub type BoolLiteral = PrimitiveLiteral
-pub type StringLiteral = PrimitiveLiteral
 pub type IntLiteral = PrimitiveLiteral
 pub type FloatLiteral = PrimitiveLiteral
 
@@ -418,15 +420,6 @@ pub fn (e BoolLiteral) bool() bool {
 }
 
 fn (mut r Resolver) bool_literal(expr BoolLiteral) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-}
-
-fn (mut r Resolver) string_literal(expr StringLiteral) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -445,6 +438,27 @@ fn (mut r Resolver) int_literal(expr IntLiteral) {
 }
 
 fn (mut r Resolver) float_literal(expr FloatLiteral) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+}
+
+pub struct StringLiteral {
+pub:
+	scope    &Scope
+	open     Token
+	contents []Token
+	close    Token
+}
+
+pub fn (s &StringLiteral) is_const() bool {
+	return s.contents.all(it.kind == .string_lit_content_text)
+}
+
+fn (mut r Resolver) string_literal(expr StringLiteral) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {

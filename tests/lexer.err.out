@@ -1,6 +1,10 @@
-lexer.err.li 1,1: unterminated string literal
+lexer.err.li 1,2: unterminated string literal
     1 | 'abc
-      | ^^^^
+      |  ^^^
+lexer.err.li 1,5: unexpected token `
+`, expecting `single_quote`
+    1 | 'abc
+      |     ^
 lexer.err.li 2,1: too many decimal points in number
     2 | 1.0.0
       | ^^^^^

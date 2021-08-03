@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module parser
 
-import cotowali.token { TokenKind }
+import cotowali.token { Token, TokenKind }
 import cotowali.ast
 import cotowali.symbols { builtin_type, new_placeholder_var }
 import cotowali.errors { unreachable }
@@ -418,12 +418,8 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 				token: tok
 			}
 		}
-		.string_lit {
-			p.consume()
-			return ast.StringLiteral{
-				scope: p.scope
-				token: tok
-			}
+		.single_quote, .double_quote {
+			return ast.Expr(p.parse_string_literal() ?)
 		}
 		.bool_lit {
 			p.consume()
@@ -480,4 +476,68 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 		}
 	}
 	return expr
+}
+
+fn (mut p Parser) parse_string_literal() ?ast.StringLiteral {
+	tok := p.check(.single_quote, .double_quote) ?
+	match tok.kind {
+		.single_quote { return p.parse_single_quote_string_literal() }
+		.double_quote { return p.parse_double_quote_string_literal() }
+		else { panic(unreachable('expected quote')) }
+	}
+	panic(unreachable('expected quote'))
+}
+
+fn (mut p Parser) parse_single_quote_string_literal() ?ast.StringLiteral {
+	open := p.consume_with_assert(.single_quote)
+
+	if close := p.consume_if_kind_eq(.single_quote) {
+		return ast.StringLiteral{
+			scope: p.scope
+			open: open
+			close: close
+		}
+	}
+
+	content := p.consume_with_check(.string_lit_content_text) ?
+	close := p.consume_with_check(.single_quote) ?
+	return ast.StringLiteral{
+		scope: p.scope
+		open: open
+		contents: [content]
+		close: close
+	}
+}
+
+fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
+	open := p.consume_with_assert(.double_quote)
+
+	if close := p.consume_if_kind_eq(.double_quote) {
+		return ast.StringLiteral{
+			scope: p.scope
+			open: open
+			close: close
+		}
+	}
+
+	mut contents := []Token{}
+	for {
+		match p.kind(0) {
+			.string_lit_content_text {
+				contents << p.consume()
+			}
+			else {
+				break
+			}
+		}
+	}
+
+	close := p.consume_with_check(.double_quote) ?
+
+	return ast.StringLiteral{
+		scope: p.scope
+		open: open
+		contents: contents
+		close: close
+	}
 }
