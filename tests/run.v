@@ -124,23 +124,24 @@ enum TestResultStatus {
 }
 
 struct TestResult {
-mut:
+	path      string
 	exit_code int
+	expected  string
 	output    string
-	status    TestResultStatus
 	elapsed   time.Duration
+mut:
+	status TestResultStatus
 }
 
 struct TestCase {
 	lic Lic
 mut:
-	path           string     [required]
-	out_path       string     [required]
-	is_err_test    bool       [required]
-	is_todo_test   bool       [required]
-	is_noemit_test bool       [required]
-	expected       string     [required]
-	result         TestResult
+	path           string [required]
+	out_path       string [required]
+	is_err_test    bool   [required]
+	is_todo_test   bool   [required]
+	is_noemit_test bool   [required]
+	expected       string [required]
 }
 
 fn fix_todo(f string, s FileSuffix) {
@@ -148,10 +149,10 @@ fn fix_todo(f string, s FileSuffix) {
 	os.mv(f, base + suffix(s)) or { panic(err) }
 }
 
-fn (mut t TestCase) run() {
+fn (t &TestCase) run() TestResult {
 	mut sw := time.new_stopwatch()
 	sw.start()
-	result := if t.is_err_test {
+	cmd_res := if t.is_err_test {
 		t.lic.execute(.compile, t.path)
 	} else if t.is_noemit_test {
 		t.lic.execute(.noemit, t.path)
@@ -159,19 +160,19 @@ fn (mut t TestCase) run() {
 		t.lic.execute(.run, t.path)
 	}
 	sw.stop()
-	t.result.elapsed = sw.elapsed()
-	t.result.output = result.output
-	t.result.exit_code = result.exit_code
-
-	correct_exit_code := if t.is_err_test {
-		t.result.exit_code != 0
-	} else {
-		t.result.exit_code == 0
+	mut result := TestResult{
+		path: t.path
+		elapsed: sw.elapsed()
+		expected: t.expected
+		output: cmd_res.output
+		exit_code: cmd_res.exit_code
 	}
+
+	correct_exit_code := if t.is_err_test { result.exit_code != 0 } else { result.exit_code == 0 }
 	if t.is_todo_test {
-		t.result.status = .todo
+		result.status = .todo
 	} else {
-		t.result.status = if t.result.output == t.expected && correct_exit_code {
+		result.status = if result.output == result.expected && correct_exit_code {
 			TestResultStatus.ok
 		} else {
 			TestResultStatus.failed
@@ -181,46 +182,48 @@ fn (mut t TestCase) run() {
 	$if fix ? {
 		if correct_exit_code {
 			if t.is_todo_test {
-				if t.result.output == t.expected {
+				if result.output == result.expected {
 					fix_todo(t.path, .li)
 					fix_todo(t.out_path, .out)
-					t.result.status = .fixed
+					result.status = .fixed
 				}
-			} else if t.result.output != t.expected {
-				os.write_file(t.out_path, t.result.output) or { panic(err) }
-				t.result.status = .fixed
+			} else if result.output != result.expected {
+				os.write_file(t.out_path, result.output) or { panic(err) }
+				result.status = .fixed
 			}
 		}
 	}
+
+	return result
 }
 
-fn (t TestCase) summary_message(file string) string {
-	status := match t.result.status {
+fn (result TestResult) summary_message(file string) string {
+	status := match result.status {
 		.ok, .fixed { term.ok_message('[ OK ]') }
 		.todo { term.warn_message('[TODO]') }
 		.failed { term.fail_message('[FAIL]') }
 	}
-	elapsed_ms := f64(t.result.elapsed.microseconds()) / 1000.0
+	elapsed_ms := f64(result.elapsed.microseconds()) / 1000.0
 	msg := '$status ${elapsed_ms:6.2f} ms $file'
-	return if t.result.status == .fixed { '$msg (FIXED)' } else { msg }
+	return if result.status == .fixed { '$msg (FIXED)' } else { msg }
 }
 
-fn (t TestCase) failed_message(file string) string {
+fn (r TestResult) failed_message(file string) string {
 	format_output := fn (text string) string {
 		indent := ' '.repeat(4)
 		return if text.len == 0 { '${indent}__EMPTY__' } else { indent_each_lines(1, text) }
 	}
 
 	mut lines := [
-		t.summary_message(file),
-		'${indent(1)}exit_code: $t.result.exit_code',
+		r.summary_message(file),
+		'${indent(1)}exit_code: $r.exit_code',
 		'${indent(1)}output:',
-		format_output(t.result.output),
+		format_output(r.output),
 		'${indent(1)}expected:',
-		format_output(t.expected),
+		format_output(r.expected),
 	]
 	if diff_cmd := find_working_diff_command() {
-		diff := color_compare_strings(diff_cmd, rand.ulid(), t.expected, t.result.output)
+		diff := color_compare_strings(diff_cmd, rand.ulid(), r.expected, r.output)
 		lines << [
 			'${indent}diff:',
 			indent_each_lines(2, diff),
@@ -230,11 +233,11 @@ fn (t TestCase) failed_message(file string) string {
 	return lines.map(it + '\n').join('')
 }
 
-fn (t TestCase) result_message() string {
-	file := os.join_path(os.base(os.dir(t.path)), os.base(t.path))
-	return match t.result.status {
-		.failed { t.failed_message(file) }
-		else { t.summary_message(file) }
+fn (r TestResult) message() string {
+	file := os.join_path(os.base(os.dir(r.path)), os.base(r.path))
+	return match r.status {
+		.failed { r.failed_message(file) }
+		else { r.summary_message(file) }
 	}
 }
 
@@ -271,9 +274,9 @@ fn new_test_suite(paths []string) TestSuite {
 fn (t TestSuite) run() bool {
 	mut ok := true
 	for mut tt in t.cases {
-		tt.run()
-		ok = ok && tt.result.status != .failed
-		println(tt.result_message())
+		result := tt.run()
+		ok = ok && result.status != .failed
+		println(result.message())
 	}
 	return ok
 }
