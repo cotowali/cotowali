@@ -251,6 +251,12 @@ fn (mut lex Lexer) read_number() ?Token {
 		}
 		lex.consume()
 	}
+	if lex.byte() in [`e`, `E`] && lex.char(1)[0] in [`+`, `-`] {
+		lex.consume() // 'E'
+		lex.consume() // '+'
+		lex.consume_for_char_is(.digit)
+		is_float = true
+	}
 
 	tok := lex.new_token(if is_float { tk(.float_lit) } else { tk(.int_lit) })
 	return if err_msg.len == 0 { tok } else { lex.error(tok, err_msg) }

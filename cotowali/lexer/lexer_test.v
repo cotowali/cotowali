@@ -210,9 +210,11 @@ fn test_inline_shell() {
 }
 
 fn test_number() {
-	test('1 1.1', [
+	test('1 1.1 1E+9 1e-9', [
 		t(.int_lit, '1'),
 		t(.float_lit, '1.1'),
+		t(.float_lit, '1E+9'),
+		t(.float_lit, '1e-9'),
 	])
 
 	ektest('1.1.1', [ek(.float_lit, .err)])
