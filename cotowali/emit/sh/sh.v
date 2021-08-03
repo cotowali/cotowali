@@ -58,7 +58,7 @@ fn (mut e Emitter) sh_awk_infix_expr(expr ast.InfixExpr) {
 	if expr.op.kind.@is(.comparsion_op) {
 		awk_expr = '($awk_expr ? 1 : 0)'
 	}
-	awk := "awk '{ print $awk_expr }'"
+	awk := "awk '{ printf \"%lf\", $awk_expr }'"
 
 	e.write(r'"$(echo ')
 	{
