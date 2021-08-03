@@ -55,10 +55,12 @@ fn (mut e Emitter) sh_command_substitution<T>(f fn (mut Emitter, T), v T) {
 
 fn (mut e Emitter) sh_awk_infix_expr(expr ast.InfixExpr) {
 	mut awk_expr := '\$1 $expr.op.text \$2'
+	mut format := '%lf'
 	if expr.op.kind.@is(.comparsion_op) {
 		awk_expr = '($awk_expr ? 1 : 0)'
+		format = '%g'
 	}
-	awk := "awk '{ printf \"%lf\", $awk_expr }'"
+	awk := "awk '{ printf \"$format\", $awk_expr }'"
 
 	e.write(r'"$(echo ')
 	{
