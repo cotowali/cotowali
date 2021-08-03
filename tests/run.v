@@ -272,12 +272,38 @@ fn new_test_suite(paths []string) TestSuite {
 }
 
 fn (t TestSuite) run() bool {
+	mut sw := time.new_stopwatch()
+	sw.start()
 	status_list := t.cases.map(fn (t TestCase) TestResultStatus {
 		res := t.run()
 		println(res.message())
 		return res.status
 	})
-	return !status_list.any(it == .failed)
+	sw.stop()
+
+	mut ok_n, mut fixed_n, mut todo_n, mut failed_n := 0, 0, 0, 0
+	for s in status_list {
+		match s {
+			.ok { ok_n++ }
+			.fixed { fixed_n++ }
+			.todo { todo_n++ }
+			.failed { failed_n++ }
+		}
+	}
+
+	println('Total: $t.cases.len, Runtime: ${sw.elapsed().milliseconds()}ms')
+	println(term.ok_message('$ok_n Passed'))
+	if fixed_n > 0 {
+		println(term.ok_message('$fixed_n Fixed'))
+	}
+	if todo_n > 0 {
+		println(term.warn_message('$todo_n Skipped'))
+	}
+	if failed_n > 0 {
+		println(term.fail_message('$failed_n Failed'))
+	}
+
+	return failed_n == 0
 }
 
 fn main() {
