@@ -499,12 +499,23 @@ fn (mut p Parser) parse_single_quote_string_literal() ?ast.StringLiteral {
 		}
 	}
 
-	content := p.consume_with_check(.string_lit_content_text) ?
+	mut contents := []Token{}
+	for {
+		match p.kind(0) {
+			.string_lit_content_text, .string_lit_content_escaped_back_slash,
+			.string_lit_content_escaped_single_quote {
+				contents << p.consume()
+			}
+			else {
+				break
+			}
+		}
+	}
 	close := p.consume_with_check(.single_quote) ?
 	return ast.StringLiteral{
 		scope: p.scope
 		open: open
-		contents: [content]
+		contents: contents
 		close: close
 	}
 }

@@ -76,6 +76,14 @@ pub enum TokenKind {
 }
 
 [inline]
+fn (k TokenKind) is_string_lit_content_escaped_char() bool {
+	return k in [
+		.string_lit_content_escaped_single_quote,
+		.string_lit_content_escaped_back_slash,
+	]
+}
+
+[inline]
 fn (k TokenKind) is_op() bool {
 	return k.is_prefix_op() || k.is_postfix_op() || k.is_infix_op() || k.is_assign_op()
 }
@@ -174,6 +182,7 @@ pub enum TokenKindClass {
 	postfix_op
 	literal
 	keyword
+	string_lit_content_escaped_char
 }
 
 [inline]
@@ -188,6 +197,7 @@ pub fn (k TokenKind) @is(class TokenKindClass) bool {
 		.postfix_op { k.is_postfix_op() }
 		.literal { k.is_literal() }
 		.keyword { k.is_keyword() }
+		.string_lit_content_escaped_char { k.is_string_lit_content_escaped_char() }
 	}
 }
 

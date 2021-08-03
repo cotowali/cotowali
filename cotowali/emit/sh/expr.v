@@ -106,8 +106,22 @@ fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 	match expr.open.kind {
 		.single_quote {
-			content := expr.contents.map(it.text).join('')
-			e.write("'$content'")
+			for v in expr.contents {
+				match v.kind {
+					.string_lit_content_escaped_back_slash {
+						e.write(r'\\\\')
+					}
+					.string_lit_content_escaped_single_quote {
+						e.write(r"\'")
+					}
+					.string_lit_content_text {
+						e.write("'$v.text'")
+					}
+					else {
+						panic(unreachable('invalid string lit'))
+					}
+				}
+			}
 		}
 		.double_quote {
 			content := expr.contents.map(it.text).join('')
