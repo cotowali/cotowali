@@ -272,13 +272,12 @@ fn new_test_suite(paths []string) TestSuite {
 }
 
 fn (t TestSuite) run() bool {
-	mut ok := true
-	for mut tt in t.cases {
-		result := tt.run()
-		ok = ok && result.status != .failed
-		println(result.message())
-	}
-	return ok
+	status_list := t.cases.map(fn (t TestCase) TestResultStatus {
+		res := t.run()
+		println(res.message())
+		return res.status
+	})
+	return !status_list.any(it == .failed)
 }
 
 fn main() {
