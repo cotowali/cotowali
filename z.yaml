@@ -65,6 +65,13 @@ tasks:
       docker:
         - docker compose --env-file ./docker/push.env build
         - docker compose --env-file ./docker/push.env push
+  release:
+    tasks:
+      monthly: |
+        date="$(date +%Y.%m)"
+        tag="monthly.$date"
+        git tag -s "$tag" -m "Monthly release: $date"
+        git push origin "$tag"
   ci:
     tasks:
       setup-v: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
