@@ -7,6 +7,12 @@ module lexer
 
 import cotowali.token { Token }
 
+const (
+	sq = `\'`
+	dq = `"`
+	bs = `\\`
+)
+
 fn (mut lex Lexer) read_single_quote_string_lit_content() ?Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
@@ -15,9 +21,24 @@ fn (mut lex Lexer) read_single_quote_string_lit_content() ?Token {
 		}
 	}
 
+	if lex.byte() == lexer.bs {
+		next := lex.char(1)[0]
+		if next == lexer.bs {
+			return lex.new_token_with_consume_n(2, .string_lit_content_escaped_back_slash)
+		} else if next == lexer.sq {
+			return lex.new_token_with_consume_n(2, .string_lit_content_escaped_single_quote)
+		}
+	}
+
 	mut unterminated := false
-	for lex.byte() != `\'` {
+	for lex.byte() != lexer.sq {
 		lex.consume()
+
+		if lex.byte() == lexer.bs && lex.char(1).byte() in [lexer.bs, lexer.sq] {
+			// next is \\ or \'
+			break
+		}
+
 		if lex.is_eof() || is_eol(lex.char(0)) {
 			unterminated = true
 			break

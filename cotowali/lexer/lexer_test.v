@@ -198,7 +198,6 @@ fn test_at_ident() {
 }
 
 fn test_string() {
-	sq, dq := "'", '"'
 	test("$dq'abc'$dq", [
 		t(.double_quote, '"'),
 		t(.string_lit_content_text, "'abc'"),
@@ -209,6 +208,17 @@ fn test_string() {
 		t(.string_lit_content_text, '"abc"'),
 		t(.single_quote, "'"),
 	])
+
+	test("'" + r"a\\\n\'" + r'\"' + "'", [
+		t(.single_quote, "'"),
+		t(.string_lit_content_text, 'a'),
+		t(.string_lit_content_escaped_back_slash, r'\\'),
+		t(.string_lit_content_text, r'\n'),
+		t(.string_lit_content_escaped_single_quote, r"\'"),
+		t(.string_lit_content_text, r'\"'),
+		t(.single_quote, "'"),
+	])
+
 	ektest('"a', [ek(.double_quote, .ok), ek(.string_lit_content_text, .err)])
 	ektest('"a\na', [
 		ek(.double_quote, .ok),
