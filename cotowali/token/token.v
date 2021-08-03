@@ -37,7 +37,9 @@ pub enum TokenKind {
 	int_lit
 	float_lit
 	bool_lit
-	string_lit
+	double_quote
+	single_quote
+	string_lit_content_text
 	l_paren
 	r_paren
 	l_brace
@@ -135,7 +137,6 @@ fn (k TokenKind) is_literal() bool {
 		.int_lit,
 		.float_lit,
 		.bool_lit,
-		.string_lit,
 	]
 }
 

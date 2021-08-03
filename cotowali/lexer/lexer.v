@@ -41,6 +41,33 @@ pub fn (mut lex Lexer) read() ?Token {
 			return Token{.eof, '', lex.pos}
 		}
 
+		// process for string literal
+		match lex.status() {
+			.inside_single_quote {
+				if lex.byte() == `\'` {
+					lex.status_stack.pop()
+					return lex.new_token_with_consume(.single_quote)
+				}
+				return lex.read_single_quote_string_lit_content()
+			}
+			.inside_double_quote {
+				if lex.byte() == `"` {
+					lex.status_stack.pop()
+					return lex.new_token_with_consume(.double_quote)
+				}
+				return lex.read_double_quote_string_lit_content()
+			}
+			.normal {
+				if lex.byte() == `\'` {
+					lex.status_stack << .inside_single_quote
+					return lex.new_token_with_consume(.single_quote)
+				} else if lex.byte() == `"` {
+					lex.status_stack << .inside_double_quote
+					return lex.new_token_with_consume(.double_quote)
+				}
+			}
+		}
+
 		c := lex.char(0)
 		if is_ident_first_char(c) {
 			return lex.read_ident_or_keyword()
@@ -84,7 +111,6 @@ pub fn (mut lex Lexer) read() ?Token {
 		match c.byte() {
 			`@` { return lex.read_at_ident() }
 			`\$` { return lex.read_dollar_directive() }
-			`\'`, `"` { return lex.read_string_lit(c.byte()) }
 			else { return lex.read_unknown() }
 		}
 	}
@@ -140,18 +166,16 @@ fn (mut lex Lexer) read_eol() Token {
 	return lex.new_token_with_consume(.eol)
 }
 
-fn (mut lex Lexer) read_string_lit(quote byte) ?Token {
+fn (mut lex Lexer) read_single_quote_string_lit_content() ?Token {
 	$if trace_lexer ? {
-		lex.trace_begin(@FN, '$quote')
+		lex.trace_begin(@FN)
 		defer {
 			lex.trace_end()
 		}
 	}
 
-	lex.consume()
-	begin := lex.idx()
 	mut unterminated := false
-	for lex.byte() != quote {
+	for lex.byte() != `\'` {
 		lex.consume()
 		if lex.is_eof() || is_eol(lex.char(0)) {
 			unterminated = true
@@ -159,20 +183,40 @@ fn (mut lex Lexer) read_string_lit(quote byte) ?Token {
 		}
 	}
 
-	end := lex.idx()
-	if !unterminated {
-		lex.consume() // consume quote.
-	}
-
-	tok := Token{
-		kind: .string_lit
-		pos: lex.pos_for_new_token()
-		text: lex.source.slice(begin, end)
-	}
+	tok := lex.new_token(.string_lit_content_text)
 	if unterminated {
-		return lex.error(tok, 'unterminated string literal')
+		return lex.unterminated_string_lit_error(tok)
 	}
 	return tok
+}
+
+fn (mut lex Lexer) read_double_quote_string_lit_content() ?Token {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN)
+		defer {
+			lex.trace_end()
+		}
+	}
+
+	mut unterminated := false
+	for lex.byte() != `"` {
+		lex.consume()
+		if lex.is_eof() || is_eol(lex.char(0)) {
+			unterminated = true
+			break
+		}
+	}
+
+	tok := lex.new_token(.string_lit_content_text)
+	if unterminated {
+		return lex.unterminated_string_lit_error(tok)
+	}
+	return tok
+}
+
+fn (mut lex Lexer) unterminated_string_lit_error(tok Token) IError {
+	lex.status_stack.pop() // force exit from inside_string status
+	return lex.error(tok, 'unterminated string literal')
 }
 
 fn (mut lex Lexer) read_unknown() Token {

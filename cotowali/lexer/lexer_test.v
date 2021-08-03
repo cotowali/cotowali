@@ -94,7 +94,9 @@ fn test_lexer() {
 	crlf := cr + lf
 	test(' "🐈__" a ', [
 		// Pos{i, line, col, len, last_line, last_col}
-		Token{.string_lit, '🐈__', Pos{1, 1, 2, 8, 1, 7}},
+		Token{.double_quote, '"', Pos{1, 1, 2, 1, 1, 2}},
+		Token{.string_lit_content_text, '🐈__', Pos{2, 1, 3, 6, 1, 6}},
+		Token{.double_quote, '"', Pos{8, 1, 7, 1, 1, 7}},
 		Token{.ident, 'a', Pos{10, 1, 9, 1, 1, 9}},
 		Token{.eof, '', Pos{12, 1, 11, 1, 1, 11}},
 	])
@@ -112,12 +114,12 @@ fn test_lexer() {
 	ktest('a-----', [.ident]) // TODO
 	ktest('a -----', [.ident, .minus_minus, .minus_minus, .minus])
 	ktest('struct f { }', [.key_struct, .ident, .l_brace, .r_brace])
-	ktest("{ 'key': 0 }", [.l_brace, .string_lit, .colon, .int_lit, .r_brace])
+	ktest('{ 0: 0 }', [.l_brace, .int_lit, .colon, .int_lit, .r_brace])
 	ktest('map[string]string', [.key_map, .l_bracket, .ident, .r_bracket, .ident])
-	ktest('"0" as int', [.string_lit, .key_as, .ident])
+	ktest('0.0 as int', [.float_lit, .key_as, .ident])
 	ktest('#[attr]', [.hash, .l_bracket, .ident, .r_bracket])
 	ktest('.....', [.dotdotdot, .dot, .dot])
-	ktest('require "file.li"', [.key_require, .string_lit])
+	ktest('require "file.li"', [.key_require, .double_quote, .string_lit_content_text, .double_quote])
 	ktest('yield 0', [.key_yield, .int_lit])
 	ktest('while true { }', [.key_while, .bool_lit, .l_brace, .r_brace])
 	ktest('use PATH', [.key_use, .ident])
@@ -197,12 +199,34 @@ fn test_at_ident() {
 
 fn test_string() {
 	sq, dq := "'", '"'
-	test("$dq'abc'$dq", [t(.string_lit, "'abc'")])
-	test('$sq"abc"$sq', [t(.string_lit, '"abc"')])
-	ektest('"a', [ek(.string_lit, .err), ek(.eof, .ok)])
-	ektest('"a\na', [ek(.string_lit, .err), ek(.eol, .ok), ek(.ident, .ok)])
-	ektest("'a", [ek(.string_lit, .err), ek(.eof, .ok)])
-	ektest("'a\na", [ek(.string_lit, .err), ek(.eol, .ok), ek(.ident, .ok)])
+	test("$dq'abc'$dq", [
+		t(.double_quote, '"'),
+		t(.string_lit_content_text, "'abc'"),
+		t(.double_quote, '"'),
+	])
+	test('$sq"abc"$sq', [
+		t(.single_quote, "'"),
+		t(.string_lit_content_text, '"abc"'),
+		t(.single_quote, "'"),
+	])
+	ektest('"a', [ek(.double_quote, .ok), ek(.string_lit_content_text, .err)])
+	ektest('"a\na', [
+		ek(.double_quote, .ok),
+		ek(.string_lit_content_text, .err),
+		ek(.eol, .ok),
+		ek(.ident, .ok),
+	])
+	ektest("'a", [
+		ek(.single_quote, .ok),
+		ek(.string_lit_content_text, .err),
+		ek(.eof, .ok),
+	])
+	ektest("'a\na", [
+		ek(.single_quote, .ok),
+		ek(.string_lit_content_text, .err),
+		ek(.eol, .ok),
+		ek(.ident, .ok),
+	])
 }
 
 fn test_inline_shell() {

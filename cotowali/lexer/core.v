@@ -12,14 +12,22 @@ import cotowali.util { min }
 import cotowali.errors { ErrWithToken, unreachable }
 import cotowali.debug { Tracer }
 
+enum LexerStatus {
+	normal
+	inside_single_quote
+	inside_double_quote
+}
+
 pub struct Lexer {
 pub:
 	source &Source
 	ctx    &Context
 mut:
-	prev_char Char
-	pos       Pos
-	closed    bool // for iter
+	prev_char     Char
+	pos           Pos
+	closed        bool // for iter
+	in_string_lit bool
+	status_stack  []LexerStatus
 
 	tracer Tracer [if trace_lexer ?]
 }
@@ -28,6 +36,7 @@ pub fn new_lexer(source &Source, ctx &Context) &Lexer {
 	return &Lexer{
 		source: source
 		ctx: ctx
+		status_stack: [LexerStatus.normal]
 	}
 }
 
@@ -86,6 +95,12 @@ fn (lex &Lexer) error(token Token, msg string) IError {
 		token: token
 		msg: msg
 	}
+}
+
+// --
+
+fn (lex &Lexer) status() LexerStatus {
+	return lex.status_stack.last()
 }
 
 // --
