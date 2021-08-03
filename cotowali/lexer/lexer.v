@@ -166,59 +166,6 @@ fn (mut lex Lexer) read_eol() Token {
 	return lex.new_token_with_consume(.eol)
 }
 
-fn (mut lex Lexer) read_single_quote_string_lit_content() ?Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
-	mut unterminated := false
-	for lex.byte() != `\'` {
-		lex.consume()
-		if lex.is_eof() || is_eol(lex.char(0)) {
-			unterminated = true
-			break
-		}
-	}
-
-	tok := lex.new_token(.string_lit_content_text)
-	if unterminated {
-		return lex.unterminated_string_lit_error(tok)
-	}
-	return tok
-}
-
-fn (mut lex Lexer) read_double_quote_string_lit_content() ?Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
-	mut unterminated := false
-	for lex.byte() != `"` {
-		lex.consume()
-		if lex.is_eof() || is_eol(lex.char(0)) {
-			unterminated = true
-			break
-		}
-	}
-
-	tok := lex.new_token(.string_lit_content_text)
-	if unterminated {
-		return lex.unterminated_string_lit_error(tok)
-	}
-	return tok
-}
-
-fn (mut lex Lexer) unterminated_string_lit_error(tok Token) IError {
-	lex.status_stack.pop() // force exit from inside_string status
-	return lex.error(tok, 'unterminated string literal')
-}
-
 fn (mut lex Lexer) read_unknown() Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
