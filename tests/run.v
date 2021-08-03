@@ -238,7 +238,12 @@ fn (t TestCase) result_message() string {
 	}
 }
 
-fn run(paths []string) bool {
+struct TestSuite {
+mut:
+	cases []TestCase
+}
+
+fn new_test_suite(paths []string) TestSuite {
 	dir := os.real_path(@VMODROOT)
 	lic_dir := os.join_path(dir, 'cmd/lic')
 	sources := get_sources(paths)
@@ -255,15 +260,20 @@ fn run(paths []string) bool {
 			'    output:',
 			indent_each_lines(2, err.msg),
 		].join('\n'))
-		return false
+		exit(1)
 	}
 
+	return TestSuite{
+		cases: sources.map(lic.new_test_case(it))
+	}
+}
+
+fn (t TestSuite) run() bool {
 	mut ok := true
-	for path in sources {
-		mut t := lic.new_test_case(path)
-		t.run()
-		ok = ok && t.result.status != .failed
-		println(t.result_message())
+	for mut tt in t.cases {
+		tt.run()
+		ok = ok && tt.result.status != .failed
+		println(tt.result_message())
 	}
 	return ok
 }
@@ -278,5 +288,7 @@ fn main() {
 	} else {
 		['examples', 'tests'].map(os.join_path(@VMODROOT, it))
 	}
-	exit(if run(paths) { 0 } else { 1 })
+
+	t := new_test_suite(paths)
+	exit(if t.run() { 0 } else { 1 })
 }
