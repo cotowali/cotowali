@@ -274,11 +274,15 @@ fn new_test_suite(paths []string) TestSuite {
 fn (t TestSuite) run() bool {
 	mut sw := time.new_stopwatch()
 	sw.start()
-	status_list := t.cases.map(fn (t TestCase) TestResultStatus {
-		res := t.run()
-		println(res.message())
-		return res.status
-	})
+	mut threads := []thread TestResultStatus{}
+	for tt in t.cases {
+		threads << go fn (t TestCase) TestResultStatus {
+			res := t.run()
+			println(res.message())
+			return res.status
+		}(tt)
+	}
+	status_list := threads.wait()
 	sw.stop()
 
 	mut ok_n, mut fixed_n, mut todo_n, mut failed_n := 0, 0, 0, 0
