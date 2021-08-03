@@ -54,14 +54,17 @@ fn (mut e Emitter) sh_command_substitution<T>(f fn (mut Emitter, T), v T) {
 }
 
 fn (mut e Emitter) sh_awk_infix_expr(expr ast.InfixExpr) {
+	mut awk_expr := '\$1 $expr.op.text \$2'
+	if expr.op.kind.@is(.comparsion_op) {
+		awk_expr = '($awk_expr ? 1 : 0)'
+	}
+	awk := "awk '{ print $awk_expr }'"
+
 	e.write(r'"$(echo ')
-	e.expr(expr.left)
-	e.write(' ')
-	e.expr(expr.right)
-	awk := if expr.op.kind.@is(.comparsion_op) {
-		"awk '{ print (\$1 $expr.op.text \$2 ? 1 : 0) }'"
-	} else {
-		"awk '{ print \$1 $expr.op.text \$2 }'"
+	{
+		e.expr(expr.left)
+		e.write(' ')
+		e.expr(expr.right)
 	}
 	e.write(' | $awk )"')
 }
