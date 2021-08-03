@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module lexer
 
-import cotowali.source { Char, CharCond, Pos, Source, pos }
+import cotowali.source { Char, CharClass, CharCond, Pos, Source, pos }
 import cotowali.token { Token, TokenKind }
 import cotowali.context { Context }
 import cotowali.util { min }
@@ -228,6 +228,12 @@ fn (mut lex Lexer) skip_with_assert(cond CharCond) {
 
 fn (mut lex Lexer) consume_for(cond CharCond) {
 	for !lex.is_eof() && cond(lex.char(0)) {
+		lex.consume()
+	}
+}
+
+fn (mut lex Lexer) consume_for_char_is(class CharClass) {
+	for !lex.is_eof() && lex.char(0).@is(class) {
 		lex.consume()
 	}
 }
