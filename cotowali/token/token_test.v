@@ -16,7 +16,7 @@ fn test_eq() {
 	}
 	assert t != Token{
 		...t
-		pos: pos({})
+		pos: pos()
 	}
 	assert t != Token{
 		...t

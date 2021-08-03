@@ -7,12 +7,12 @@ module lexer
 
 import cotowali.context { new_default_context }
 import cotowali.token { Token, TokenKind }
-import cotowali.source { Pos, none_pos }
+import cotowali.source { Pos, new_source, none_pos }
 import cotowali.errors
 
 fn test(code string, tokens []Token) {
 	ctx := new_default_context()
-	lexer := new_lexer({ path: '', code: code }, ctx)
+	lexer := new_lexer(new_source('', code), ctx)
 	mut i := 0
 	for t1 in lexer {
 		if !(i < tokens.len) {
@@ -27,7 +27,7 @@ fn test(code string, tokens []Token) {
 
 fn ktest(code string, kinds []TokenKind) {
 	ctx := new_default_context()
-	lexer := new_lexer({ path: '', code: code }, ctx)
+	lexer := new_lexer(new_source('', code), ctx)
 	mut i := 0
 	for t1 in lexer {
 		if !(i < kinds.len) {
@@ -51,7 +51,7 @@ struct EkTestValue {
 }
 
 fn ek(k TokenKind, s ErrOrOk) EkTestValue {
-	return {
+	return EkTestValue{
 		kind: k
 		status: s
 	}
@@ -69,7 +69,7 @@ fn (mut lex Lexer) e_read() (Token, ErrOrOk) {
 
 fn ektest(code string, values []EkTestValue) {
 	ctx := new_default_context()
-	mut lexer := new_lexer({ path: '', code: code }, ctx)
+	mut lexer := new_lexer(new_source('', code), ctx)
 	mut i := 0
 	for {
 		t1, status := lexer.e_read()

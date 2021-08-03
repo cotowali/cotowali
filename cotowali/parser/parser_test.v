@@ -7,10 +7,11 @@ module parser
 
 import cotowali.context { new_default_context }
 import cotowali.lexer { new_lexer }
+import cotowali.source { new_source }
 
 fn test_consume_token() {
 	ctx := new_default_context()
-	mut p := new_parser(new_lexer({ path: '', code: '0 1 2 3 4' }, ctx))
+	mut p := new_parser(new_lexer(new_source('', '0 1 2 3 4'), ctx))
 	assert p.token(0).text == '0'
 	assert p.token(1).text == '1'
 	assert p.token(2).text == '2'
