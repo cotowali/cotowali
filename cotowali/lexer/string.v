@@ -76,6 +76,30 @@ fn (mut lex Lexer) read_double_quote_string_lit_content() ?Token {
 	return tok
 }
 
+fn (mut lex Lexer) read_raw_string_lit_content(quote byte) ?Token {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN)
+		defer {
+			lex.trace_end()
+		}
+	}
+
+	mut unterminated := false
+	for lex.byte() != quote {
+		lex.consume()
+		if lex.is_eof() || is_eol(lex.char(0)) {
+			unterminated = true
+			break
+		}
+	}
+
+	tok := lex.new_token(.string_lit_content_text)
+	if unterminated {
+		return lex.unterminated_string_lit_error(tok)
+	}
+	return tok
+}
+
 fn (mut lex Lexer) unterminated_string_lit_error(tok Token) IError {
 	lex.status_stack.pop() // force exit from inside_string status
 	return lex.error(tok, 'unterminated string literal')

@@ -37,8 +37,10 @@ pub enum TokenKind {
 	int_lit
 	float_lit
 	bool_lit
-	double_quote
 	single_quote
+	single_quote_with_r_prefix
+	double_quote
+	double_quote_with_r_prefix
 	string_lit_content_text
 	string_lit_content_escaped_back_slash
 	string_lit_content_escaped_single_quote

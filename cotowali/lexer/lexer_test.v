@@ -237,6 +237,19 @@ fn test_string() {
 		ek(.eol, .ok),
 		ek(.ident, .ok),
 	])
+
+	test(r"r'\\\n\''", [
+		t(.single_quote_with_r_prefix, "r'"),
+		t(.string_lit_content_text, '$bs$bs${bs}n$bs'),
+		t(.single_quote, "'"),
+		t(.single_quote, "'"),
+	])
+	test(r'r"\\\n\""', [
+		t(.double_quote_with_r_prefix, 'r"'),
+		t(.string_lit_content_text, '$bs$bs${bs}n$bs'),
+		t(.double_quote, '"'),
+		t(.double_quote, '"'),
+	])
 }
 
 fn test_inline_shell() {
