@@ -44,6 +44,7 @@ pub enum TokenKind {
 	string_lit_content_text
 	string_lit_content_escaped_back_slash
 	string_lit_content_escaped_single_quote
+	string_lit_content_escaped_double_quote
 	l_paren
 	r_paren
 	l_brace
