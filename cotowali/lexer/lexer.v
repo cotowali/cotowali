@@ -44,24 +44,24 @@ pub fn (mut lex Lexer) read() ?Token {
 		// process for string literal
 		match lex.status() {
 			.inside_single_quote {
-				if lex.byte() == `\'` {
+				if lex.byte() == sq {
 					lex.status_stack.pop()
 					return lex.new_token_with_consume(.single_quote)
 				}
 				return lex.read_single_quote_string_lit_content()
 			}
 			.inside_double_quote {
-				if lex.byte() == `"` {
+				if lex.byte() == dq {
 					lex.status_stack.pop()
 					return lex.new_token_with_consume(.double_quote)
 				}
 				return lex.read_double_quote_string_lit_content()
 			}
 			.normal {
-				if lex.byte() == `\'` {
+				if lex.byte() == sq {
 					lex.status_stack << .inside_single_quote
 					return lex.new_token_with_consume(.single_quote)
-				} else if lex.byte() == `"` {
+				} else if lex.byte() == dq {
 					lex.status_stack << .inside_double_quote
 					return lex.new_token_with_consume(.double_quote)
 				}

@@ -61,7 +61,7 @@ fn (mut lex Lexer) read_double_quote_string_lit_content() ?Token {
 	}
 
 	mut unterminated := false
-	for lex.byte() != `"` {
+	for lex.byte() != lexer.dq {
 		lex.consume()
 		if lex.is_eof() || is_eol(lex.char(0)) {
 			unterminated = true
