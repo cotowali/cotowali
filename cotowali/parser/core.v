@@ -80,7 +80,7 @@ pub fn (p &Parser) kind(i int) TokenKind {
 
 fn (mut p Parser) read_token() Token {
 	tok := p.lexer.read() or {
-		if err is errors.ErrWithToken {
+		if err is errors.LexerErr {
 			p.syntax_error(err.msg, err.token.pos)
 			return err.token
 		}

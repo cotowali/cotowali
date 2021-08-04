@@ -7,14 +7,14 @@ module lexer
 
 import cotowali.token { Token }
 import cotowali.source { Char }
-import cotowali.errors { ErrWithToken, unreachable }
+import cotowali.errors { LexerErr, unreachable }
 
 pub fn (mut lex Lexer) next() ?Token {
 	if lex.closed {
 		return none
 	}
 	return lex.read() or {
-		if err is ErrWithToken {
+		if err is LexerErr {
 			return err.token
 		}
 		panic(unreachable(err))

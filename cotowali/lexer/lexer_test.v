@@ -63,7 +63,7 @@ fn ek(k TokenKind, s ErrOrOk) EkTestValue {
 
 fn (mut lex Lexer) e_read() (Token, ErrOrOk) {
 	tok := lex.read() or {
-		if err is errors.ErrWithToken {
+		if err is errors.LexerErr {
 			return err.token, ErrOrOk.err
 		}
 		panic(err)

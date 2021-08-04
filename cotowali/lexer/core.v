@@ -9,7 +9,7 @@ import cotowali.source { Char, CharClass, CharCond, Pos, Source, pos }
 import cotowali.token { Token, TokenKind }
 import cotowali.context { Context }
 import cotowali.util { min }
-import cotowali.errors { ErrWithToken, unreachable }
+import cotowali.errors { LexerErr, unreachable }
 import cotowali.debug { Tracer }
 
 enum LexerStatus {
@@ -92,7 +92,7 @@ fn (mut lex Lexer) error(token Token, msg string) IError {
 			lex.trace_end()
 		}
 	}
-	return &ErrWithToken{
+	return &LexerErr{
 		source: lex.source
 		token: token
 		msg: msg

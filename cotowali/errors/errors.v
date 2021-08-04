@@ -53,7 +53,7 @@ pub fn (lhs Warn) < (rhs Warn) bool {
 	return lhs_path < rhs_path || (lhs_path == rhs_path && lhs.pos.i < rhs.pos.i)
 }
 
-pub struct ErrWithToken {
+pub struct LexerErr {
 pub:
 	source &Source
 	token  Token
@@ -62,7 +62,7 @@ pub:
 	code int
 }
 
-pub fn (err ErrWithToken) to_err() Err {
+pub fn (err LexerErr) to_err() Err {
 	return Err{
 		source: err.source
 		pos: err.token.pos
