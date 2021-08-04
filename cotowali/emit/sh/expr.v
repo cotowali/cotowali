@@ -104,6 +104,12 @@ fn (mut e Emitter) int_literal(expr ast.IntLiteral, opt ExprOpt) {
 
 fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 	e.write_echo_if_command(opt)
+
+	if expr.contents.len == 0 {
+		e.write("''")
+		return
+	}
+
 	match expr.open.kind {
 		.single_quote {
 			for v in expr.contents {
