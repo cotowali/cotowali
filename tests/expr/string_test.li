@@ -2,4 +2,4 @@ assert '10' == '10'
 assert '10' != '11'
 assert '10' + '10' == '1010'
 
-echo('a\\b\'c\d\"')
+assert 'a\\b\'c\d\"' == r"a\b'" + r'c\d\"'

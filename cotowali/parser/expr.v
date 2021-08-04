@@ -418,7 +418,7 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 				token: tok
 			}
 		}
-		.single_quote, .double_quote {
+		.single_quote, .double_quote, .single_quote_with_r_prefix, .double_quote_with_r_prefix {
 			return ast.Expr(p.parse_string_literal() ?)
 		}
 		.bool_lit {
@@ -479,13 +479,36 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_string_literal() ?ast.StringLiteral {
-	tok := p.check(.single_quote, .double_quote) ?
+	tok := p.check(.single_quote, .double_quote, .single_quote_with_r_prefix, .double_quote_with_r_prefix) ?
 	match tok.kind {
 		.single_quote { return p.parse_single_quote_string_literal() }
 		.double_quote { return p.parse_double_quote_string_literal() }
+		.single_quote_with_r_prefix { return p.parse_raw_string_literal(.single_quote) }
+		.double_quote_with_r_prefix { return p.parse_raw_string_literal(.double_quote) }
 		else { panic(unreachable('expected quote')) }
 	}
 	panic(unreachable('expected quote'))
+}
+
+fn (mut p Parser) parse_raw_string_literal(quote TokenKind) ?ast.StringLiteral {
+	open := p.consume_with_assert(.single_quote_with_r_prefix, .double_quote_with_r_prefix)
+
+	if close := p.consume_if_kind_eq(quote) {
+		return ast.StringLiteral{
+			scope: p.scope
+			open: open
+			close: close
+		}
+	}
+
+	content := p.consume_with_check(.string_lit_content_text) ?
+	close := p.consume_with_check(quote) ?
+	return ast.StringLiteral{
+		scope: p.scope
+		open: open
+		contents: [content]
+		close: close
+	}
 }
 
 fn (mut p Parser) parse_single_quote_string_literal() ?ast.StringLiteral {

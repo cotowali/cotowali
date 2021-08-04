@@ -110,6 +110,12 @@ fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 		return
 	}
 
+	if expr.is_raw() {
+		if expr.contents.len > 1 {
+			panic(unreachable('invalid raw string'))
+		}
+	}
+
 	match expr.open.kind {
 		.single_quote {
 			for v in expr.contents {
@@ -136,6 +142,13 @@ fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 		.double_quote {
 			content := expr.contents.map(it.text).join('')
 			e.write('"$content"')
+		}
+		.single_quote_with_r_prefix {
+			e.write("'${expr.contents[0].text}'")
+		}
+		.double_quote_with_r_prefix {
+			text := expr.contents[0].text.replace("'", r"'\''") // r"a'b" -> 'a'\''b'
+			e.write("'$text'")
 		}
 		else {
 			panic(unreachable('not a string'))

@@ -458,6 +458,10 @@ pub fn (s &StringLiteral) is_const() bool {
 	return s.contents.all(it.kind == .string_lit_content_text)
 }
 
+pub fn (s &StringLiteral) is_raw() bool {
+	return s.open.kind in [.single_quote_with_r_prefix, .double_quote_with_r_prefix]
+}
+
 fn (mut r Resolver) string_literal(expr StringLiteral) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
