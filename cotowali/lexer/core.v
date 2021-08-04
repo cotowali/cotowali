@@ -14,10 +14,10 @@ import cotowali.debug { Tracer }
 
 enum LexerStatus {
 	normal
-	inside_single_quote
-	inside_raw_single_quote
-	inside_double_quote
-	inside_raw_double_quote
+	inside_single_quoted_string_lit
+	inside_raw_single_quoted_string_lit
+	inside_double_quoted_string_lit
+	inside_raw_double_quoted_string_lit
 }
 
 pub struct Lexer {

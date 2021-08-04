@@ -43,28 +43,28 @@ pub fn (mut lex Lexer) read() ?Token {
 
 		// process for string literal
 		match lex.status() {
-			.inside_single_quote {
+			.inside_single_quoted_string_lit {
 				if lex.byte() == sq {
 					lex.status_stack.pop()
 					return lex.new_token_with_consume(.single_quote)
 				}
 				return lex.read_single_quote_string_lit_content()
 			}
-			.inside_double_quote {
+			.inside_double_quoted_string_lit {
 				if lex.byte() == dq {
 					lex.status_stack.pop()
 					return lex.new_token_with_consume(.double_quote)
 				}
 				return lex.read_double_quote_string_lit_content()
 			}
-			.inside_raw_single_quote {
+			.inside_raw_single_quoted_string_lit {
 				if lex.byte() == sq {
 					lex.status_stack.pop()
 					return lex.new_token_with_consume(.single_quote)
 				}
 				return lex.read_raw_string_lit_content(sq)
 			}
-			.inside_raw_double_quote {
+			.inside_raw_double_quoted_string_lit {
 				if lex.byte() == dq {
 					lex.status_stack.pop()
 					return lex.new_token_with_consume(.double_quote)
@@ -74,18 +74,18 @@ pub fn (mut lex Lexer) read() ?Token {
 			.normal {
 				b := lex.byte()
 				if b == sq {
-					lex.status_stack << .inside_single_quote
+					lex.status_stack << .inside_single_quoted_string_lit
 					return lex.new_token_with_consume(.single_quote)
 				} else if b == dq {
-					lex.status_stack << .inside_double_quote
+					lex.status_stack << .inside_double_quoted_string_lit
 					return lex.new_token_with_consume(.double_quote)
 				} else if b == `r` {
 					b2 := lex.char(1)[0]
 					if b2 == sq {
-						lex.status_stack << .inside_raw_single_quote
+						lex.status_stack << .inside_raw_single_quoted_string_lit
 						return lex.new_token_with_consume_n(2, .single_quote_with_r_prefix)
 					} else if b2 == dq {
-						lex.status_stack << .inside_raw_double_quote
+						lex.status_stack << .inside_raw_double_quoted_string_lit
 						return lex.new_token_with_consume_n(2, .double_quote_with_r_prefix)
 					}
 				}
