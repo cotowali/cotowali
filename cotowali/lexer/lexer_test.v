@@ -235,6 +235,13 @@ fn test_string() {
 		.single_quote,
 	])
 
+	ktest(@FN, @LINE, r'"a\\"', [
+		.double_quote,
+		.string_lit_content_text,
+		.string_lit_content_escaped_back_slash,
+		.double_quote,
+	])
+
 	ektest(@FN, @LINE, '"a', [ek(.double_quote, .ok), ek(.string_lit_content_text, .err)])
 	ektest(@FN, @LINE, '"a\na', [
 		ek(.double_quote, .ok),

@@ -60,9 +60,21 @@ fn (mut lex Lexer) read_double_quote_string_lit_content() ?Token {
 		}
 	}
 
+	if lex.byte() == lexer.bs {
+		next := lex.char(1).byte()
+		if next == lexer.bs {
+			return lex.new_token_with_consume_n(2, .string_lit_content_escaped_back_slash)
+		}
+	}
+
 	mut unterminated := false
 	for lex.byte() != lexer.dq {
 		lex.consume()
+
+		if lex.byte() == lexer.bs {
+			break
+		}
+
 		if lex.is_eof() || is_eol(lex.char(0)) {
 			unterminated = true
 			break
