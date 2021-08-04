@@ -10,7 +10,9 @@ import cotowali.token { Token, TokenKind }
 import cotowali.source { Pos, new_source, none_pos }
 import cotowali.errors
 
-fn test(code string, tokens []Token) {
+fn test(fn_name string, line string, code string, tokens []Token) {
+	println('@FN: $fn_name, LINE: $line')
+
 	ctx := new_default_context()
 	lexer := new_lexer(new_source('', code), ctx)
 	mut i := 0
@@ -25,7 +27,9 @@ fn test(code string, tokens []Token) {
 	}
 }
 
-fn ktest(code string, kinds []TokenKind) {
+fn ktest(fn_name string, line string, code string, kinds []TokenKind) {
+	println('@FN: $fn_name, LINE: $line')
+
 	ctx := new_default_context()
 	lexer := new_lexer(new_source('', code), ctx)
 	mut i := 0
@@ -67,7 +71,9 @@ fn (mut lex Lexer) e_read() (Token, ErrOrOk) {
 	return tok, ErrOrOk.ok
 }
 
-fn ektest(code string, values []EkTestValue) {
+fn ektest(fn_name string, line string, code string, values []EkTestValue) {
+	println('@FN: $fn_name, LINE: $line')
+
 	ctx := new_default_context()
 	mut lexer := new_lexer(new_source('', code), ctx)
 	mut i := 0
@@ -92,7 +98,7 @@ fn t(kind TokenKind, text string) Token {
 fn test_lexer() {
 	cr, lf := '\r', '\n'
 	crlf := cr + lf
-	test(' "🐈__" a ', [
+	test(@FN, @LINE, ' "🐈__" a ', [
 		// Pos{i, line, col, len, last_line, last_col}
 		Token{.double_quote, '"', Pos{1, 1, 2, 1, 1, 2}},
 		Token{.string_lit_content_text, '🐈__', Pos{2, 1, 3, 6, 1, 6}},
@@ -100,38 +106,42 @@ fn test_lexer() {
 		Token{.ident, 'a', Pos{10, 1, 9, 1, 1, 9}},
 		Token{.eof, '', Pos{12, 1, 11, 1, 1, 11}},
 	])
-	ktest('fn f(a, b){}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren, .l_brace,
-		.r_brace, .eof])
-	ktest('var i = 0', [.key_var, .ident, .assign, .int_lit, .eof])
-	ktest('&a.b |> c', [.amp, .ident, .dot, .ident, .pipe, .ident, .eof])
-	ktest('a && b || c &', [.ident, .logical_and, .ident, .logical_or, .ident, .amp, .eof])
-	ktest('return 0', [.key_return, .int_lit])
-	ktest('assert a == b', [.key_assert, .ident, .eq, .ident])
-	ktest('a < b || c > d', [.ident, .lt, .ident, .logical_or, .ident, .gt, .ident])
-	ktest('a <= b || c >= d', [.ident, .le, .ident, .logical_or, .ident, .ge, .ident])
-	ktest('!cond', [.not, .ident])
-	ktest('a+++++', [.ident, .plus_plus, .plus_plus, .plus])
-	ktest('a-----', [.ident]) // TODO
-	ktest('a -----', [.ident, .minus_minus, .minus_minus, .minus])
-	ktest('struct f { }', [.key_struct, .ident, .l_brace, .r_brace])
-	ktest('{ 0: 0 }', [.l_brace, .int_lit, .colon, .int_lit, .r_brace])
-	ktest('map[string]string', [.key_map, .l_bracket, .ident, .r_bracket, .ident])
-	ktest('0.0 as int', [.float_lit, .key_as, .ident])
-	ktest('#[attr]', [.hash, .l_bracket, .ident, .r_bracket])
-	ktest('.....', [.dotdotdot, .dot, .dot])
-	ktest('require "file.li"', [.key_require, .double_quote, .string_lit_content_text, .double_quote])
-	ktest('yield 0', [.key_yield, .int_lit])
-	ktest('while true { }', [.key_while, .bool_lit, .l_brace, .r_brace])
-	ktest('use PATH', [.key_use, .ident])
-	ktest('export PATH', [.key_export, .ident])
+	ktest(@FN, @LINE, 'fn f(a, b){}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren,
+		.l_brace, .r_brace, .eof])
+	ktest(@FN, @LINE, 'var i = 0', [.key_var, .ident, .assign, .int_lit, .eof])
+	ktest(@FN, @LINE, '&a.b |> c', [.amp, .ident, .dot, .ident, .pipe, .ident, .eof])
+	ktest(@FN, @LINE, 'a && b || c &', [.ident, .logical_and, .ident, .logical_or, .ident, .amp,
+		.eof,
+	])
+	ktest(@FN, @LINE, 'return 0', [.key_return, .int_lit])
+	ktest(@FN, @LINE, 'assert a == b', [.key_assert, .ident, .eq, .ident])
+	ktest(@FN, @LINE, 'a < b || c > d', [.ident, .lt, .ident, .logical_or, .ident, .gt, .ident])
+	ktest(@FN, @LINE, 'a <= b || c >= d', [.ident, .le, .ident, .logical_or, .ident, .ge, .ident])
+	ktest(@FN, @LINE, '!cond', [.not, .ident])
+	ktest(@FN, @LINE, 'a+++++', [.ident, .plus_plus, .plus_plus, .plus])
+	ktest(@FN, @LINE, 'a-----', [.ident]) // TODO
+	ktest(@FN, @LINE, 'a -----', [.ident, .minus_minus, .minus_minus, .minus])
+	ktest(@FN, @LINE, 'struct f { }', [.key_struct, .ident, .l_brace, .r_brace])
+	ktest(@FN, @LINE, '{ 0: 0 }', [.l_brace, .int_lit, .colon, .int_lit, .r_brace])
+	ktest(@FN, @LINE, 'map[string]string', [.key_map, .l_bracket, .ident, .r_bracket, .ident])
+	ktest(@FN, @LINE, '0.0 as int', [.float_lit, .key_as, .ident])
+	ktest(@FN, @LINE, '#[attr]', [.hash, .l_bracket, .ident, .r_bracket])
+	ktest(@FN, @LINE, '.....', [.dotdotdot, .dot, .dot])
+	ktest(@FN, @LINE, 'require "file.li"', [.key_require, .double_quote, .string_lit_content_text,
+		.double_quote,
+	])
+	ktest(@FN, @LINE, 'yield 0', [.key_yield, .int_lit])
+	ktest(@FN, @LINE, 'while true { }', [.key_while, .bool_lit, .l_brace, .r_brace])
+	ktest(@FN, @LINE, 'use PATH', [.key_use, .ident])
+	ktest(@FN, @LINE, 'export PATH', [.key_export, .ident])
 
-	ktest('n += 2', [.ident, .plus_assign, .int_lit])
-	ktest('n -= 2', [.ident, .minus_assign, .int_lit])
-	ktest('n *= 2', [.ident, .mul_assign, .int_lit])
-	ktest('n /= 2', [.ident, .div_assign, .int_lit])
-	ktest('n %= 2', [.ident, .mod_assign, .int_lit])
+	ktest(@FN, @LINE, 'n += 2', [.ident, .plus_assign, .int_lit])
+	ktest(@FN, @LINE, 'n -= 2', [.ident, .minus_assign, .int_lit])
+	ktest(@FN, @LINE, 'n *= 2', [.ident, .mul_assign, .int_lit])
+	ktest(@FN, @LINE, 'n /= 2', [.ident, .div_assign, .int_lit])
+	ktest(@FN, @LINE, 'n %= 2', [.ident, .mod_assign, .int_lit])
 
-	test('if i == 0 { } else if i != 1 {} else {}', [
+	test(@FN, @LINE, 'if i == 0 { } else if i != 1 {} else {}', [
 		t(.key_if, 'if'),
 		t(.ident, 'i'),
 		t(.eq, '=='),
@@ -151,7 +161,7 @@ fn test_lexer() {
 		t(.eof, ''),
 	])
 
-	test('\n\r\n\r', [
+	test(@FN, @LINE, '\n\r\n\r', [
 		t(.eol, '\n'),
 		t(.eol, '\r\n'),
 		t(.eol, '\r'),
@@ -159,7 +169,7 @@ fn test_lexer() {
 		t(.eof, ''),
 	])
 
-	test('{(true + false - 2 * 3 / x) == 0}', [
+	test(@FN, @LINE, '{(true + false - 2 * 3 / x) == 0}', [
 		t(.l_brace, '{'),
 		t(.l_paren, '('),
 		t(.bool_lit, 'true'),
@@ -177,7 +187,7 @@ fn test_lexer() {
 		t(.r_brace, '}'),
 		t(.eof, ''),
 	])
-	test('a//abc' + cr + 'b//xxx' + lf + 'c//cr' + crlf + 'd//eee', [
+	test(@FN, @LINE, 'a//abc' + cr + 'b//xxx' + lf + 'c//cr' + crlf + 'd//eee', [
 		t(.ident, 'a'),
 		t(.eol, cr),
 		t(.ident, 'b'),
@@ -191,25 +201,25 @@ fn test_lexer() {
 fn test_at_ident() {
 	texts := ['@a.a', '@./a.a', '@/usr/local/bin/', '@~/.bin/cmd.py']
 	for text in texts {
-		test(text, [t(.ident, text)])
+		test(@FN, @LINE, text, [t(.ident, text)])
 	}
 
-	ktest('@expr()', [.ident, .l_paren, .r_paren])
+	ktest(@FN, @LINE, '@expr()', [.ident, .l_paren, .r_paren])
 }
 
 fn test_string() {
-	test("$dq'abc'$dq", [
+	test(@FN, @LINE, "$dq'abc'$dq", [
 		t(.double_quote, '"'),
 		t(.string_lit_content_text, "'abc'"),
 		t(.double_quote, '"'),
 	])
-	test('$sq"abc"$sq', [
+	test(@FN, @LINE, '$sq"abc"$sq', [
 		t(.single_quote, "'"),
 		t(.string_lit_content_text, '"abc"'),
 		t(.single_quote, "'"),
 	])
 
-	test("'" + r"a\\\n\'" + r'\"' + "'", [
+	test(@FN, @LINE, "'" + r"a\\\n\'" + r'\"' + "'", [
 		t(.single_quote, "'"),
 		t(.string_lit_content_text, 'a'),
 		t(.string_lit_content_escaped_back_slash, r'\\'),
@@ -218,39 +228,39 @@ fn test_string() {
 		t(.string_lit_content_text, r'\"'),
 		t(.single_quote, "'"),
 	])
-	ktest(r"'\\\\'", [
+	ktest(@FN, @LINE, r"'\\\\'", [
 		.single_quote,
 		.string_lit_content_escaped_back_slash,
 		.string_lit_content_escaped_back_slash,
 		.single_quote,
 	])
 
-	ektest('"a', [ek(.double_quote, .ok), ek(.string_lit_content_text, .err)])
-	ektest('"a\na', [
+	ektest(@FN, @LINE, '"a', [ek(.double_quote, .ok), ek(.string_lit_content_text, .err)])
+	ektest(@FN, @LINE, '"a\na', [
 		ek(.double_quote, .ok),
 		ek(.string_lit_content_text, .err),
 		ek(.eol, .ok),
 		ek(.ident, .ok),
 	])
-	ektest("'a", [
+	ektest(@FN, @LINE, "'a", [
 		ek(.single_quote, .ok),
 		ek(.string_lit_content_text, .err),
 		ek(.eof, .ok),
 	])
-	ektest("'a\na", [
+	ektest(@FN, @LINE, "'a\na", [
 		ek(.single_quote, .ok),
 		ek(.string_lit_content_text, .err),
 		ek(.eol, .ok),
 		ek(.ident, .ok),
 	])
 
-	test(r"r'\\\n\''", [
+	test(@FN, @LINE, r"r'\\\n\''", [
 		t(.single_quote_with_r_prefix, "r'"),
 		t(.string_lit_content_text, '$bs$bs${bs}n$bs'),
 		t(.single_quote, "'"),
 		t(.single_quote, "'"),
 	])
-	test(r'r"\\\n\""', [
+	test(@FN, @LINE, r'r"\\\n\""', [
 		t(.double_quote_with_r_prefix, 'r"'),
 		t(.string_lit_content_text, '$bs$bs${bs}n$bs'),
 		t(.double_quote, '"'),
@@ -259,18 +269,18 @@ fn test_string() {
 }
 
 fn test_inline_shell() {
-	test(r'${echo 1}', [t(.inline_shell, 'echo 1')])
+	test(@FN, @LINE, r'${echo 1}', [t(.inline_shell, 'echo 1')])
 }
 
 fn test_number() {
-	test('1 1.1 1E+9 1e-9', [
+	test(@FN, @LINE, '1 1.1 1E+9 1e-9', [
 		t(.int_lit, '1'),
 		t(.float_lit, '1.1'),
 		t(.float_lit, '1E+9'),
 		t(.float_lit, '1e-9'),
 	])
 
-	ektest('1.1.1', [ek(.float_lit, .err)])
+	ektest(@FN, @LINE, '1.1.1', [ek(.float_lit, .err)])
 }
 
 fn test_multiline() {
@@ -281,7 +291,7 @@ fn test_multiline() {
 		' s5 ',
 	]
 	code := lines.join('\n')
-	test(code, [
+	test(@FN, @LINE, code, [
 		// Pos{i, line, col, len, last_line, last_col}
 		Token{.ident, 's1', Pos{0, 1, 1, 2, 1, 2}},
 		Token{.ident, 's2', Pos{3, 1, 4, 2, 1, 5}},
