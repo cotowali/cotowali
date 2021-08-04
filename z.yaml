@@ -29,6 +29,10 @@ tasks:
   tokens: z run tools tokens $@
   scope: z run tools scope $@
 
+  fix:
+    - z fmt
+    - z test.fix
+
   test:
     run: |
       if [ "$#" -eq "0" ]
@@ -49,6 +53,7 @@ tasks:
     tasks:
       unit: v test ${@:-./cotowali}
       integration: v run tests/run.v $@
+      fix: v -d fix run tests/run.v $@
       hello: z run examples/hello.li
 
   fmt: v fmt -w .
@@ -83,3 +88,4 @@ tasks:
         - z trace lexer {{hello_world}}
         - z trace parser {{hello_world}}
         - z trace resolver {{hello_world}}
+        - z fix

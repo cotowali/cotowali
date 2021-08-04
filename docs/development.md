@@ -49,4 +49,8 @@ See `z test integration --help`
 
 `xxx.todo.li` or `xxx_err.todo.li`
 
-If output matches with `.todo.out`, `.todo` will be removed.
+If output matches with `.todo.out`, `.todo` will be removed by using fix mode.
+
+#### Fix mode
+
+`z test fix` will be update output automatically. You should check that updated output is correct before commit it.
