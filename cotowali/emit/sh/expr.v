@@ -115,7 +115,11 @@ fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 			for v in expr.contents {
 				match v.kind {
 					.string_lit_content_escaped_back_slash {
-						e.write(r'\\\\')
+						if opt.as_command {
+							e.write(r'\\\\')
+						} else {
+							e.write(r'\\')
+						}
 					}
 					.string_lit_content_escaped_single_quote {
 						e.write(r"\'")
