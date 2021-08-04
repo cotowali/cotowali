@@ -1,3 +1,3 @@
-type_mismatch.err.li 1,1: mismatched types: `int` (left) and `string` (right)
+error: type_mismatch.err.li 1,1: mismatched types: `int` (left) and `string` (right)
     1 | 1 + 'a'
       | ^^^^^^^

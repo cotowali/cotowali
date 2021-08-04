@@ -9,29 +9,29 @@ import strings
 import cotowali.source { Source }
 
 pub interface Formatter {
-	format(Err) string
+	format(ErrOrWarn) string
 }
 
 pub struct SimpleFormatter {}
 
-pub fn (p SimpleFormatter) format(err Err) string {
-	s := err.source
-	pos := err.pos
-	return '$s.file_name() $pos.line,$pos.col: $err.msg\n'
+pub fn (p SimpleFormatter) format(e ErrOrWarn) string {
+	s := e.source
+	pos := e.pos
+	return '$e.label(): $s.file_name() $pos.line,$pos.col: $e.msg\n'
 }
 
 pub struct PrettyFormatter {}
 
-pub fn (p PrettyFormatter) format(err Err) string {
-	s := err.source
-	pos := err.pos
+pub fn (p PrettyFormatter) format(e ErrOrWarn) string {
+	s := e.source
+	pos := e.pos
 
 	format_line := fn (s &Source, line int) string {
 		return '${line:5d} | ' + s.line(line)
 	}
 
 	lines := [
-		'$s.file_name() $pos.line,$pos.col: $err.msg',
+		'$e.label(): $s.file_name() $pos.line,$pos.col: $e.msg',
 		format_line(s, pos.line),
 		'      | ' + ' '.repeat(pos.col - 1) + '^'.repeat(pos.last_col - pos.col + 1),
 	]

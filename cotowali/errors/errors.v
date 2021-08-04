@@ -13,6 +13,15 @@ pub fn unreachable<T>(err T) string {
 	return 'unreachable - This is a compiler bug (err: $err).'
 }
 
+pub type ErrOrWarn = Err | Warn
+
+pub fn (e ErrOrWarn) label() string {
+	return match e {
+		Err { 'error' }
+		Warn { 'warning' }
+	}
+}
+
 // Err represents cotowali compile error
 pub struct Err {
 pub:
@@ -25,6 +34,21 @@ pub:
 }
 
 pub fn (lhs Err) < (rhs Err) bool {
+	lhs_path, rhs_path := lhs.source.path, rhs.source.path
+	return lhs_path < rhs_path || (lhs_path == rhs_path && lhs.pos.i < rhs.pos.i)
+}
+
+// Warn represents cotowali compile warning
+pub struct Warn {
+pub:
+	source &Source
+	pos    Pos
+	// Implements IError
+	msg  string
+	code int
+}
+
+pub fn (lhs Warn) < (rhs Warn) bool {
 	lhs_path, rhs_path := lhs.source.path, rhs.source.path
 	return lhs_path < rhs_path || (lhs_path == rhs_path && lhs.pos.i < rhs.pos.i)
 }
