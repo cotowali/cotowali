@@ -218,6 +218,12 @@ fn test_string() {
 		t(.string_lit_content_text, r'\"'),
 		t(.single_quote, "'"),
 	])
+	ktest(r"'\\\\'", [
+		.single_quote,
+		.string_lit_content_escaped_back_slash,
+		.string_lit_content_escaped_back_slash,
+		.single_quote,
+	])
 
 	ektest('"a', [ek(.double_quote, .ok), ek(.string_lit_content_text, .err)])
 	ektest('"a\na', [
