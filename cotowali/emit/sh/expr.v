@@ -306,12 +306,8 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 			}, expr, opt)
 		}
 		.plus {
-			e.sh_command_substitution(fn (mut e Emitter, expr ast.InfixExpr) {
-				e.write("printf '%s%s' ")
-				e.expr(expr.left)
-				e.write(' ')
-				e.expr(expr.right)
-			}, expr)
+			e.expr(expr.left)
+			e.expr(expr.right)
 		}
 		else {
 			panic('unimplemented')
