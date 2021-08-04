@@ -119,7 +119,6 @@ fn (lic Lic) new_test_case(path string) TestCase {
 enum TestResultStatus {
 	ok
 	failed
-	fixed
 	todo
 }
 
@@ -169,28 +168,19 @@ fn (t &TestCase) run() TestResult {
 	}
 
 	correct_exit_code := if t.is_err_test { result.exit_code != 0 } else { result.exit_code == 0 }
-	if t.is_todo_test {
-		result.status = .todo
-	} else {
-		result.status = if result.output == result.expected && correct_exit_code {
-			TestResultStatus.ok
-		} else {
-			TestResultStatus.failed
-		}
-	}
-
-	$if fix ? {
-		if correct_exit_code {
-			if t.is_todo_test {
-				if result.output == result.expected {
-					fix_todo(t.path, .li)
-					fix_todo(t.out_path, .out)
-					result.status = .fixed
-				}
-			} else if result.output != result.expected {
-				os.write_file(t.out_path, result.output) or { panic(err) }
-				result.status = .fixed
+	if correct_exit_code && result.output == result.expected {
+		result.status = .ok
+		if t.is_todo_test {
+			if result.output == result.expected {
+				fix_todo(t.path, .li)
+				fix_todo(t.out_path, .out)
 			}
+		}
+	} else {
+		if t.is_todo_test {
+			result.status = .todo
+		} else {
+			result.status = .failed
 		}
 	}
 
@@ -199,13 +189,12 @@ fn (t &TestCase) run() TestResult {
 
 fn (result TestResult) summary_message(file string) string {
 	status := match result.status {
-		.ok, .fixed { term.ok_message('[ OK ]') }
+		.ok { term.ok_message('[ OK ]') }
 		.todo { term.warn_message('[TODO]') }
 		.failed { term.fail_message('[FAIL]') }
 	}
 	elapsed_ms := f64(result.elapsed.microseconds()) / 1000.0
-	msg := '$status ${elapsed_ms:6.2f} ms $file'
-	return if result.status == .fixed { '$msg (FIXED)' } else { msg }
+	return '$status ${elapsed_ms:6.2f} ms $file'
 }
 
 fn (r TestResult) failed_message(file string) string {
@@ -285,11 +274,10 @@ fn (t TestSuite) run() bool {
 	status_list := threads.wait()
 	sw.stop()
 
-	mut ok_n, mut fixed_n, mut todo_n, mut failed_n := 0, 0, 0, 0
+	mut ok_n, mut todo_n, mut failed_n := 0, 0, 0
 	for s in status_list {
 		match s {
 			.ok { ok_n++ }
-			.fixed { fixed_n++ }
 			.todo { todo_n++ }
 			.failed { failed_n++ }
 		}
@@ -297,9 +285,6 @@ fn (t TestSuite) run() bool {
 
 	println('Total: $t.cases.len, Runtime: ${sw.elapsed().milliseconds()}ms')
 	println(term.ok_message('$ok_n Passed'))
-	if fixed_n > 0 {
-		println(term.ok_message('$fixed_n Fixed'))
-	}
 	if todo_n > 0 {
 		println(term.warn_message('$todo_n Skipped'))
 	}
