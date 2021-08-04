@@ -63,7 +63,7 @@ fn execute_run(cmd Command) ? {
 		eprintln(err)
 		exit(1)
 	}
-	ctx := new_ctx_from_cmd(cmd)
+	mut ctx := new_ctx_from_cmd(cmd)
 	cotowali.run(s, ctx) or {
 		eprint(ctx.errors.format(errors.PrettyFormatter{}))
 		exit(1)
@@ -75,7 +75,7 @@ fn execute_compile(cmd Command) ? {
 		eprintln(err)
 		exit(1)
 	}
-	ctx := new_ctx_from_cmd(cmd)
+	mut ctx := new_ctx_from_cmd(cmd)
 	out := compile(s, ctx) or {
 		eprint(ctx.errors.format(errors.PrettyFormatter{}))
 		exit(1)

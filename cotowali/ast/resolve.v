@@ -54,7 +54,7 @@ fn (mut r Resolver) error(msg string, pos Pos) {
 		}
 	}
 
-	r.ctx.errors.push(
+	r.ctx.errors.push_err(
 		source: r.source
 		msg: msg
 		pos: pos

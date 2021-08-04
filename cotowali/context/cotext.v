@@ -8,7 +8,7 @@ module context
 import cotowali.config { Config }
 import cotowali.symbols { Scope, new_global_scope }
 import cotowali.source { Source }
-import cotowali.errors { Errors }
+import cotowali.errors { ErrorManager }
 
 [heap]
 pub struct Context {
@@ -18,7 +18,7 @@ pub:
 pub mut:
 	std_source &Source = 0
 	sources    map[string]&Source
-	errors     Errors
+	errors     ErrorManager
 }
 
 pub fn new_context(config Config) &Context {

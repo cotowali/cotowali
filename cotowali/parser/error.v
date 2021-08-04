@@ -22,7 +22,7 @@ fn (mut p Parser) error(msg string, pos Pos) IError {
 		}
 	}
 
-	return p.ctx.errors.push(source: p.source(), msg: msg, pos: pos)
+	return p.ctx.errors.push_err(source: p.source(), msg: msg, pos: pos)
 }
 
 fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
@@ -34,7 +34,7 @@ fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
 	}
 
 	p.restore_from_syntax_error()
-	return p.ctx.errors.push(source: p.source(), msg: msg, pos: pos, is_syntax_error: true)
+	return p.ctx.errors.push_err(source: p.source(), msg: msg, pos: pos, is_syntax_error: true)
 }
 
 fn (mut p Parser) restore_from_syntax_error() {

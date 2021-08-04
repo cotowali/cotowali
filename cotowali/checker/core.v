@@ -44,7 +44,7 @@ fn (mut c Checker) error(msg string, pos Pos) ? {
 		}
 	}
 
-	return IError(c.ctx.errors.push(
+	return IError(c.ctx.errors.push_err(
 		source: c.source
 		msg: msg
 		pos: pos
