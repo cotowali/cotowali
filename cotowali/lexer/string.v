@@ -64,6 +64,8 @@ fn (mut lex Lexer) read_double_quote_string_lit_content() ?Token {
 		next := lex.char(1).byte()
 		if next == lexer.bs {
 			return lex.new_token_with_consume_n(2, .string_lit_content_escaped_back_slash)
+		} else if next == `$` {
+			return lex.new_token_with_consume_n(2, .string_lit_content_escaped_dollar)
 		}
 	}
 

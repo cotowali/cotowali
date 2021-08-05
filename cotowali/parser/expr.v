@@ -557,7 +557,7 @@ fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
 	mut contents := []Token{}
 	for {
 		match p.kind(0) {
-			.string_lit_content_text {
+			.string_lit_content_text, .string_lit_content_escaped_dollar {
 				contents << p.consume()
 			}
 			else {
