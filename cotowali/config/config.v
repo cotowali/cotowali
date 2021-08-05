@@ -13,9 +13,22 @@ pub enum Backend {
 	powershell
 }
 
+[flag]
+pub enum Feature {
+	warn_all
+}
+
+pub fn (mut f Feature) set_by_str(s string) ? {
+	match s {
+		'warn_all' { f.set(.warn_all) }
+		else { return error('unknown feature `$s`') }
+	}
+}
+
 pub struct Config {
 pub mut:
 	backend Backend = .sh
+	feature Feature
 	no_emit bool
 	indent  string = '  '
 }
