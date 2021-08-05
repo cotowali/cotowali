@@ -62,6 +62,15 @@ pub:
 	code int
 }
 
+pub struct LexerWarn {
+pub:
+	source &Source
+	token  Token
+	// Implements IError
+	msg  string
+	code int
+}
+
 pub fn (err LexerErr) to_err() Err {
 	return Err{
 		source: err.source

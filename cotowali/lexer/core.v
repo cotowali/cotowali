@@ -9,7 +9,7 @@ import cotowali.source { Char, CharClass, CharCond, Pos, Source, pos }
 import cotowali.token { Token, TokenKind }
 import cotowali.context { Context }
 import cotowali.util { min }
-import cotowali.errors { LexerErr, unreachable }
+import cotowali.errors { LexerErr, LexerWarn, unreachable }
 import cotowali.debug { Tracer }
 
 enum LexerStatus {
@@ -93,6 +93,20 @@ fn (mut lex Lexer) error(token Token, msg string) IError {
 		}
 	}
 	return &LexerErr{
+		source: lex.source
+		token: token
+		msg: msg
+	}
+}
+
+fn (mut lex Lexer) warn(token Token, msg string) IError {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN, '$token', msg)
+		defer {
+			lex.trace_end()
+		}
+	}
+	return &LexerWarn{
 		source: lex.source
 		token: token
 		msg: msg

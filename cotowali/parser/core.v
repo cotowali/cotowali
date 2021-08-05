@@ -80,9 +80,16 @@ pub fn (p &Parser) kind(i int) TokenKind {
 
 fn (mut p Parser) read_token() Token {
 	tok := p.lexer.read() or {
-		if err is errors.LexerErr {
-			p.syntax_error(err.msg, err.token.pos)
-			return err.token
+		match err {
+			errors.LexerErr {
+				p.syntax_error(err.msg, err.token.pos)
+				return err.token
+			}
+			errors.LexerWarn {
+				p.warn(err.msg, err.token.pos)
+				return err.token
+			}
+			else {}
 		}
 		panic(unreachable(err))
 	}
