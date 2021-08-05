@@ -61,6 +61,7 @@ fn (mut lex Lexer) read_double_quote_string_literal_content() ?Token {
 	}
 
 	if lex.byte() == `$` {
+		lex.consume()
 		lex.read_ident_or_keyword()
 		return lex.new_token(.string_literal_content_var)
 	}
@@ -78,7 +79,7 @@ fn (mut lex Lexer) read_double_quote_string_literal_content() ?Token {
 	for lex.byte() != lexer.dq {
 		lex.consume()
 
-		if lex.byte() == lexer.bs {
+		if lex.byte() in [lexer.bs, `$`] {
 			break
 		}
 
