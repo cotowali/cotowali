@@ -14,6 +14,17 @@ enum RestoreStrategy {
 	eol
 }
 
+fn (mut p Parser) warn(msg string, pos Pos) IError {
+	$if trace_parser ? {
+		p.trace_begin(@FN, msg, '$pos')
+		defer {
+			p.trace_end()
+		}
+	}
+
+	return p.ctx.errors.push_warn(source: p.source(), msg: msg, pos: pos)
+}
+
 fn (mut p Parser) error(msg string, pos Pos) IError {
 	$if trace_parser ? {
 		p.trace_begin(@FN, msg, '$pos')
