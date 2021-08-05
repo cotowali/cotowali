@@ -9,7 +9,7 @@ import os
 import cli { Command, Flag }
 import v.vmod
 import cotowali { compile }
-import cotowali.config { backend_from_str }
+import cotowali.config { Feature, backend_from_str }
 import cotowali.context { Context, new_context }
 import cotowali.source { Source }
 import cotowali.errors { unreachable }
@@ -28,7 +28,13 @@ const (
 		name: 'no-emit'
 		global: true
 	}
-	flags = [backend_flag, no_emit_flag]
+	warn_flag = Flag{
+		flag: .string_array
+		name: 'warn'
+		abbrev: 'W'
+		global: true
+	}
+	flags = [backend_flag, no_emit_flag, warn_flag]
 )
 
 fn new_source_from_args(args []string) ?&Source {
@@ -55,7 +61,15 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 		eprintln(err)
 		exit(1)
 	}
-	return new_context(no_emit: no_emit, backend: backend)
+	mut feature := Feature(0)
+	warns := cmd.flags.get_strings(warn_flag.name) or { panic(unreachable('')) }
+	for warn_str in warns {
+		feature.set_by_str('warn_$warn_str') or {
+			eprintln(err)
+			exit(1)
+		}
+	}
+	return new_context(no_emit: no_emit, backend: backend, feature: feature)
 }
 
 fn execute_run(cmd Command) ? {
