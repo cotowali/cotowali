@@ -59,11 +59,11 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 }
 
 fn execute_run(cmd Command) ? {
+	mut ctx := new_ctx_from_cmd(cmd)
 	s := new_source_from_args(cmd.args) or {
 		eprintln(err)
 		exit(1)
 	}
-	mut ctx := new_ctx_from_cmd(cmd)
 	cotowali.run(s, ctx) or {
 		eprint(ctx.errors.format(errors.PrettyFormatter{}))
 		exit(1)
@@ -71,11 +71,11 @@ fn execute_run(cmd Command) ? {
 }
 
 fn execute_compile(cmd Command) ? {
+	mut ctx := new_ctx_from_cmd(cmd)
 	s := new_source_from_args(cmd.args) or {
 		eprintln(err)
 		exit(1)
 	}
-	mut ctx := new_ctx_from_cmd(cmd)
 	out := compile(s, ctx) or {
 		eprint(ctx.errors.format(errors.PrettyFormatter{}))
 		exit(1)
