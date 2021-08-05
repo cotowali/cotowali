@@ -91,10 +91,12 @@ fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	if is_varargs {
 		min_len := params.len - 1
 		if args.len < min_len {
-			c.error('expected $min_len or more arguments, but got $args.len', pos) or { return }
+			c.error('expected $min_len or more arguments, but got $args.len', pos)
+			return
 		}
 	} else if args.len != params.len {
-		c.error('expected $params.len arguments, but got $args.len', pos) or { return }
+		c.error('expected $params.len arguments, but got $args.len', pos)
+		return
 	}
 
 	c.exprs(args)
@@ -142,8 +144,11 @@ fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 	} else if info := left_ts.map_info() {
 		info.key
 	} else {
-		c.error('`$left_ts.name` does not support indexing', expr.pos) or { return }
 		builtin_type(.placeholder)
+	}
+	if want_typ == builtin_type(.placeholder) {
+		c.error('`$left_ts.name` does not support indexing', expr.pos)
+		return
 	}
 
 	c.check_types(

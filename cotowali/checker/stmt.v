@@ -113,7 +113,7 @@ fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {
 	c.expr(stmt.expr)
 	ts := stmt.expr.type_symbol()
 	if ts.kind() != .array {
-		c.error('non-array type `$ts.name` is not iterable', stmt.expr.pos()) or {}
+		c.error('non-array type `$ts.name` is not iterable', stmt.expr.pos())
 	}
 	c.block(stmt.body)
 }
@@ -195,12 +195,13 @@ fn (mut c Checker) yield_stmt(stmt ast.YieldStmt) {
 	}
 
 	if want_typ == builtin_type(.placeholder) {
-		c.error('cannot use yield in function that return non-sequence type', stmt.pos) or {}
-	} else {
-		c.check_types(
-			want: c.current_fn.body.scope.must_lookup_type(want_typ)
-			got: stmt.expr.type_symbol()
-			pos: stmt.expr.pos()
-		) or {}
+		c.error('cannot use yield in function that return non-sequence type', stmt.pos)
+		return
 	}
+
+	c.check_types(
+		want: c.current_fn.body.scope.must_lookup_type(want_typ)
+		got: stmt.expr.type_symbol()
+		pos: stmt.expr.pos()
+	) or {}
 }

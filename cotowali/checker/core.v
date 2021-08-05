@@ -36,7 +36,7 @@ fn (mut p Checker) trace_end() {
 	p.tracer.end_fn()
 }
 
-fn (mut c Checker) error(msg string, pos Pos) ? {
+fn (mut c Checker) error(msg string, pos Pos) IError {
 	$if trace_checker ? {
 		c.trace_begin(@FN, msg, '$pos')
 		defer {
@@ -44,9 +44,9 @@ fn (mut c Checker) error(msg string, pos Pos) ? {
 		}
 	}
 
-	return IError(c.ctx.errors.push_err(
+	return c.ctx.errors.push_err(
 		source: c.source
 		msg: msg
 		pos: pos
-	))
+	)
 }
