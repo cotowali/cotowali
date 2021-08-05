@@ -150,6 +150,13 @@ fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 				for v in expr.contents {
 					if v is Token {
 						e.write(v.text)
+					} else if v is ast.Expr {
+						if v is ast.Var {
+							e.write(r'$')
+							e.var_(v)
+						} else {
+							panic('unimplemented')
+						}
 					}
 				}
 			}
