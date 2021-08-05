@@ -43,49 +43,49 @@ pub fn (mut lex Lexer) read() ?Token {
 
 		// process for string literal
 		match lex.status() {
-			.inside_single_quoted_string_lit {
+			.inside_single_quoted_string_literal {
 				if lex.byte() == sq {
 					lex.status_stack.pop()
 					return lex.new_token_with_consume(.single_quote)
 				}
-				return lex.read_single_quote_string_lit_content()
+				return lex.read_single_quote_string_literal_content()
 			}
-			.inside_double_quoted_string_lit {
+			.inside_double_quoted_string_literal {
 				if lex.byte() == dq {
 					lex.status_stack.pop()
 					return lex.new_token_with_consume(.double_quote)
 				}
-				return lex.read_double_quote_string_lit_content()
+				return lex.read_double_quote_string_literal_content()
 			}
-			.inside_raw_single_quoted_string_lit {
+			.inside_raw_single_quoted_string_literal {
 				if lex.byte() == sq {
 					lex.status_stack.pop()
 					return lex.new_token_with_consume(.single_quote)
 				}
-				return lex.read_raw_string_lit_content(sq)
+				return lex.read_raw_string_literal_content(sq)
 			}
-			.inside_raw_double_quoted_string_lit {
+			.inside_raw_double_quoted_string_literal {
 				if lex.byte() == dq {
 					lex.status_stack.pop()
 					return lex.new_token_with_consume(.double_quote)
 				}
-				return lex.read_raw_string_lit_content(dq)
+				return lex.read_raw_string_literal_content(dq)
 			}
 			.normal {
 				b := lex.byte()
 				if b == sq {
-					lex.status_stack << .inside_single_quoted_string_lit
+					lex.status_stack << .inside_single_quoted_string_literal
 					return lex.new_token_with_consume(.single_quote)
 				} else if b == dq {
-					lex.status_stack << .inside_double_quoted_string_lit
+					lex.status_stack << .inside_double_quoted_string_literal
 					return lex.new_token_with_consume(.double_quote)
 				} else if b == `r` {
 					b2 := lex.char(1)[0]
 					if b2 == sq {
-						lex.status_stack << .inside_raw_single_quoted_string_lit
+						lex.status_stack << .inside_raw_single_quoted_string_literal
 						return lex.new_token_with_consume_n(2, .single_quote_with_r_prefix)
 					} else if b2 == dq {
-						lex.status_stack << .inside_raw_double_quoted_string_lit
+						lex.status_stack << .inside_raw_double_quoted_string_literal
 						return lex.new_token_with_consume_n(2, .double_quote_with_r_prefix)
 					}
 				}
@@ -273,7 +273,7 @@ fn (mut lex Lexer) read_number() ?Token {
 		is_float = true
 	}
 
-	tok := lex.new_token(if is_float { tk(.float_lit) } else { tk(.int_lit) })
+	tok := lex.new_token(if is_float { tk(.float_literal) } else { tk(.int_literal) })
 	return if err_msg.len == 0 { tok } else { lex.error(tok, err_msg) }
 }
 

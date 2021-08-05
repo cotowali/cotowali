@@ -116,23 +116,23 @@ fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 		}
 	}
 
-	invalid := unreachable('invalid string lit')
+	invalid := unreachable('invalid string literal')
 	match expr.open.kind {
 		.single_quote {
 			for v in expr.contents {
 				if v is Token {
 					match v.kind {
-						.string_lit_content_escaped_back_slash {
+						.string_literal_content_escaped_back_slash {
 							if opt.as_command {
 								e.write(r'\\\\')
 							} else {
 								e.write(r'\\')
 							}
 						}
-						.string_lit_content_escaped_single_quote {
+						.string_literal_content_escaped_single_quote {
 							e.write(r"\'")
 						}
-						.string_lit_content_text {
+						.string_literal_content_text {
 							e.write("'$v.text'")
 						}
 						else {
@@ -390,7 +390,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 				left: ast.IntLiteral{
 					scope: expr.scope
 					token: Token{
-						kind: .int_lit
+						kind: .int_literal
 						text: '-1'
 					}
 				}

@@ -34,19 +34,19 @@ pub enum TokenKind {
 	dotdotdot
 	amp
 	question
-	int_lit
-	float_lit
-	bool_lit
+	int_literal
+	float_literal
+	bool_literal
 	single_quote
 	single_quote_with_r_prefix
 	double_quote
 	double_quote_with_r_prefix
-	string_lit_content_text
-	string_lit_content_var
-	string_lit_content_escaped_back_slash
-	string_lit_content_escaped_single_quote
-	string_lit_content_escaped_double_quote
-	string_lit_content_escaped_dollar
+	string_literal_content_text
+	string_literal_content_var
+	string_literal_content_escaped_back_slash
+	string_literal_content_escaped_single_quote
+	string_literal_content_escaped_double_quote
+	string_literal_content_escaped_dollar
 	l_paren
 	r_paren
 	l_brace
@@ -81,10 +81,10 @@ pub enum TokenKind {
 }
 
 [inline]
-fn (k TokenKind) is_string_lit_content_escaped_char() bool {
+fn (k TokenKind) is_string_literal_content_escaped_char() bool {
 	return k in [
-		.string_lit_content_escaped_single_quote,
-		.string_lit_content_escaped_back_slash,
+		.string_literal_content_escaped_single_quote,
+		.string_literal_content_escaped_back_slash,
 	]
 }
 
@@ -149,9 +149,9 @@ fn (k TokenKind) is_infix_op() bool {
 [inline]
 fn (k TokenKind) is_literal() bool {
 	return k in [
-		.int_lit,
-		.float_lit,
-		.bool_lit,
+		.int_literal,
+		.float_literal,
+		.bool_literal,
 	]
 }
 
@@ -187,7 +187,7 @@ pub enum TokenKindClass {
 	postfix_op
 	literal
 	keyword
-	string_lit_content_escaped_char
+	string_literal_content_escaped_char
 }
 
 [inline]
@@ -202,7 +202,7 @@ pub fn (k TokenKind) @is(class TokenKindClass) bool {
 		.postfix_op { k.is_postfix_op() }
 		.literal { k.is_literal() }
 		.keyword { k.is_keyword() }
-		.string_lit_content_escaped_char { k.is_string_lit_content_escaped_char() }
+		.string_literal_content_escaped_char { k.is_string_literal_content_escaped_char() }
 	}
 }
 

@@ -64,7 +64,7 @@ fn test_is() {
 	assert TokenKind.plus_plus.@is(.op)
 	assert !TokenKind.ident.@is(.postfix_op)
 
-	assert TokenKind.bool_lit.@is(.literal)
+	assert TokenKind.bool_literal.@is(.literal)
 	assert !TokenKind.ident.@is(.literal)
 	assert TokenKind.key_if.@is(.keyword)
 	assert !TokenKind.ident.@is(.keyword)

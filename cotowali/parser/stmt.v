@@ -303,13 +303,13 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 
 fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 	key_tok := p.consume_with_assert(.key_require)
-	path_lit := p.parse_string_literal() ?
-	path_pos := ast.Expr(path_lit).pos()
-	if !path_lit.is_const() {
+	path_node := p.parse_string_literal() ?
+	path_pos := ast.Expr(path_node).pos()
+	if !path_node.is_const() {
 		return p.error('cannot require non-constant path', path_pos)
 	}
 	pos := key_tok.pos.merge(path_pos)
-	path := os.real_path(os.join_path(os.dir(p.source().path), path_lit.contents.map((it as Token).text).join('')))
+	path := os.real_path(os.join_path(os.dir(p.source().path), path_node.contents.map((it as Token).text).join('')))
 
 	if path in p.ctx.sources {
 		return none

@@ -52,8 +52,8 @@ const (
 	}
 
 	table_for_keywords = {
-		'true':    tk(.bool_lit)
-		'false':   tk(.bool_lit)
+		'true':    tk(.bool_literal)
+		'false':   tk(.bool_literal)
 		'as':      tk(.key_as)
 		'assert':  tk(.key_assert)
 		'export':  tk(.key_export)

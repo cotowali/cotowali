@@ -449,7 +449,7 @@ fn (mut r Resolver) float_literal(expr FloatLiteral) {
 pub type StringLiteralContent = Expr | Token
 
 pub fn (c StringLiteralContent) is_const() bool {
-	return if c is Token { c.kind == .string_lit_content_text } else { false }
+	return if c is Token { c.kind == .string_literal_content_text } else { false }
 }
 
 pub struct StringLiteral {

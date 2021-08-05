@@ -32,7 +32,7 @@ fn (mut p Parser) parse_raw_string_literal(quote TokenKind) ?ast.StringLiteral {
 		}
 	}
 
-	content := p.consume_with_check(.string_lit_content_text) ?
+	content := p.consume_with_check(.string_literal_content_text) ?
 	close := p.consume_with_check(quote) ?
 	return ast.StringLiteral{
 		scope: p.scope
@@ -56,8 +56,8 @@ fn (mut p Parser) parse_single_quote_string_literal() ?ast.StringLiteral {
 	mut contents := []ast.StringLiteralContent{}
 	for {
 		match p.kind(0) {
-			.string_lit_content_text, .string_lit_content_escaped_back_slash,
-			.string_lit_content_escaped_single_quote {
+			.string_literal_content_text, .string_literal_content_escaped_back_slash,
+			.string_literal_content_escaped_single_quote {
 				contents << p.consume()
 			}
 			else {
@@ -88,10 +88,10 @@ fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
 	mut contents := []ast.StringLiteralContent{}
 	for {
 		match p.kind(0) {
-			.string_lit_content_text, .string_lit_content_escaped_dollar {
+			.string_literal_content_text, .string_literal_content_escaped_dollar {
 				contents << p.consume()
 			}
-			.string_lit_content_var {
+			.string_literal_content_var {
 				contents << p.parse_ident() ?
 			}
 			else {

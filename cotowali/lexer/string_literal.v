@@ -13,7 +13,7 @@ const (
 	bs = `\\`
 )
 
-fn (mut lex Lexer) read_single_quote_string_lit_content() ?Token {
+fn (mut lex Lexer) read_single_quote_string_literal_content() ?Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
 		defer {
@@ -24,9 +24,9 @@ fn (mut lex Lexer) read_single_quote_string_lit_content() ?Token {
 	if lex.byte() == lexer.bs {
 		next := lex.char(1)[0]
 		if next == lexer.bs {
-			return lex.new_token_with_consume_n(2, .string_lit_content_escaped_back_slash)
+			return lex.new_token_with_consume_n(2, .string_literal_content_escaped_back_slash)
 		} else if next == lexer.sq {
-			return lex.new_token_with_consume_n(2, .string_lit_content_escaped_single_quote)
+			return lex.new_token_with_consume_n(2, .string_literal_content_escaped_single_quote)
 		}
 	}
 
@@ -45,14 +45,14 @@ fn (mut lex Lexer) read_single_quote_string_lit_content() ?Token {
 		}
 	}
 
-	tok := lex.new_token(.string_lit_content_text)
+	tok := lex.new_token(.string_literal_content_text)
 	if unterminated {
-		return lex.unterminated_string_lit_error(tok)
+		return lex.unterminated_string_literal_error(tok)
 	}
 	return tok
 }
 
-fn (mut lex Lexer) read_double_quote_string_lit_content() ?Token {
+fn (mut lex Lexer) read_double_quote_string_literal_content() ?Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
 		defer {
@@ -62,15 +62,15 @@ fn (mut lex Lexer) read_double_quote_string_lit_content() ?Token {
 
 	if lex.byte() == `$` {
 		lex.read_ident_or_keyword()
-		return lex.new_token(.string_lit_content_var)
+		return lex.new_token(.string_literal_content_var)
 	}
 
 	if lex.byte() == lexer.bs {
 		next := lex.char(1).byte()
 		if next == lexer.bs {
-			return lex.new_token_with_consume_n(2, .string_lit_content_escaped_back_slash)
+			return lex.new_token_with_consume_n(2, .string_literal_content_escaped_back_slash)
 		} else if next == `$` {
-			return lex.new_token_with_consume_n(2, .string_lit_content_escaped_dollar)
+			return lex.new_token_with_consume_n(2, .string_literal_content_escaped_dollar)
 		}
 	}
 
@@ -88,14 +88,14 @@ fn (mut lex Lexer) read_double_quote_string_lit_content() ?Token {
 		}
 	}
 
-	tok := lex.new_token(.string_lit_content_text)
+	tok := lex.new_token(.string_literal_content_text)
 	if unterminated {
-		return lex.unterminated_string_lit_error(tok)
+		return lex.unterminated_string_literal_error(tok)
 	}
 	return tok
 }
 
-fn (mut lex Lexer) read_raw_string_lit_content(quote byte) ?Token {
+fn (mut lex Lexer) read_raw_string_literal_content(quote byte) ?Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
 		defer {
@@ -112,14 +112,14 @@ fn (mut lex Lexer) read_raw_string_lit_content(quote byte) ?Token {
 		}
 	}
 
-	tok := lex.new_token(.string_lit_content_text)
+	tok := lex.new_token(.string_literal_content_text)
 	if unterminated {
-		return lex.unterminated_string_lit_error(tok)
+		return lex.unterminated_string_literal_error(tok)
 	}
 	return tok
 }
 
-fn (mut lex Lexer) unterminated_string_lit_error(tok Token) IError {
+fn (mut lex Lexer) unterminated_string_literal_error(tok Token) IError {
 	lex.status_stack.pop() // force exit from inside_string status
 	return lex.error(tok, 'unterminated string literal')
 }

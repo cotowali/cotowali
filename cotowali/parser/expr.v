@@ -404,14 +404,14 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 		.ident {
 			return p.parse_ident()
 		}
-		.int_lit {
+		.int_literal {
 			p.consume()
 			return ast.IntLiteral{
 				scope: p.scope
 				token: tok
 			}
 		}
-		.float_lit {
+		.float_literal {
 			p.consume()
 			return ast.FloatLiteral{
 				scope: p.scope
@@ -421,7 +421,7 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 		.single_quote, .double_quote, .single_quote_with_r_prefix, .double_quote_with_r_prefix {
 			return ast.Expr(p.parse_string_literal() ?)
 		}
-		.bool_lit {
+		.bool_literal {
 			p.consume()
 			return ast.BoolLiteral{
 				scope: p.scope
