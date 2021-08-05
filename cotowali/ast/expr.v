@@ -446,16 +446,22 @@ fn (mut r Resolver) float_literal(expr FloatLiteral) {
 	}
 }
 
+pub type StringLiteralContent = Expr | Token
+
+pub fn (c StringLiteralContent) is_const() bool {
+	return if c is Token { c.kind == .string_lit_content_text } else { false }
+}
+
 pub struct StringLiteral {
 pub:
 	scope    &Scope
 	open     Token
-	contents []Token
+	contents []StringLiteralContent
 	close    Token
 }
 
 pub fn (s &StringLiteral) is_const() bool {
-	return s.contents.all(it.kind == .string_lit_content_text)
+	return s.contents.all(it.is_const())
 }
 
 pub fn (s &StringLiteral) is_raw() bool {

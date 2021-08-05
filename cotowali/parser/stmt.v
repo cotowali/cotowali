@@ -309,7 +309,7 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 		return p.error('cannot require non-constant path', path_pos)
 	}
 	pos := key_tok.pos.merge(path_pos)
-	path := os.real_path(os.join_path(os.dir(p.source().path), path_lit.contents.map(it.text).join('')))
+	path := os.real_path(os.join_path(os.dir(p.source().path), path_lit.contents.map((it as Token).text).join('')))
 
 	if path in p.ctx.sources {
 		return none

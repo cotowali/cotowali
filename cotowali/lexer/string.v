@@ -60,6 +60,11 @@ fn (mut lex Lexer) read_double_quote_string_lit_content() ?Token {
 		}
 	}
 
+	if lex.byte() == `$` {
+		lex.read_ident_or_keyword()
+		return lex.new_token(.string_lit_content_var)
+	}
+
 	if lex.byte() == lexer.bs {
 		next := lex.char(1).byte()
 		if next == lexer.bs {

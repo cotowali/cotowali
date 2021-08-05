@@ -116,39 +116,61 @@ fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 		}
 	}
 
+	invalid := unreachable('invalid string lit')
 	match expr.open.kind {
 		.single_quote {
 			for v in expr.contents {
-				match v.kind {
-					.string_lit_content_escaped_back_slash {
-						if opt.as_command {
-							e.write(r'\\\\')
-						} else {
-							e.write(r'\\')
+				if v is Token {
+					match v.kind {
+						.string_lit_content_escaped_back_slash {
+							if opt.as_command {
+								e.write(r'\\\\')
+							} else {
+								e.write(r'\\')
+							}
+						}
+						.string_lit_content_escaped_single_quote {
+							e.write(r"\'")
+						}
+						.string_lit_content_text {
+							e.write("'$v.text'")
+						}
+						else {
+							panic(invalid)
 						}
 					}
-					.string_lit_content_escaped_single_quote {
-						e.write(r"\'")
-					}
-					.string_lit_content_text {
-						e.write("'$v.text'")
-					}
-					else {
-						panic(unreachable('invalid string lit'))
-					}
+				} else {
+					panic(invalid)
 				}
 			}
 		}
 		.double_quote {
-			content := expr.contents.map(it.text).join('')
-			e.write('"$content"')
+			e.write('"')
+			{
+				for v in expr.contents {
+					if v is Token {
+						e.write(v.text)
+					}
+				}
+			}
+			e.write('"')
 		}
 		.single_quote_with_r_prefix {
-			e.write("'${expr.contents[0].text}'")
+			content := expr.contents[0]
+			if content is Token {
+				e.write("'$content.text'")
+			} else {
+				panic(invalid)
+			}
 		}
 		.double_quote_with_r_prefix {
-			text := expr.contents[0].text.replace("'", r"'\''") // r"a'b" -> 'a'\''b'
-			e.write("'$text'")
+			content := expr.contents[0]
+			if content is Token {
+				text := content.text.replace("'", r"'\''") // r"a'b" -> 'a'\''b'
+				e.write("'$text'")
+			} else {
+				panic(invalid)
+			}
 		}
 		else {
 			panic(unreachable('not a string'))

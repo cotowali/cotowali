@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module parser
 
-import cotowali.token { Token, TokenKind }
+import cotowali.token { TokenKind }
 import cotowali.ast
 import cotowali.symbols { builtin_type, new_placeholder_var }
 import cotowali.errors { unreachable }
@@ -506,7 +506,7 @@ fn (mut p Parser) parse_raw_string_literal(quote TokenKind) ?ast.StringLiteral {
 	return ast.StringLiteral{
 		scope: p.scope
 		open: open
-		contents: [content]
+		contents: [ast.StringLiteralContent(content)]
 		close: close
 	}
 }
@@ -522,7 +522,7 @@ fn (mut p Parser) parse_single_quote_string_literal() ?ast.StringLiteral {
 		}
 	}
 
-	mut contents := []Token{}
+	mut contents := []ast.StringLiteralContent{}
 	for {
 		match p.kind(0) {
 			.string_lit_content_text, .string_lit_content_escaped_back_slash,
@@ -554,11 +554,14 @@ fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
 		}
 	}
 
-	mut contents := []Token{}
+	mut contents := []ast.StringLiteralContent{}
 	for {
 		match p.kind(0) {
 			.string_lit_content_text, .string_lit_content_escaped_dollar {
 				contents << p.consume()
+			}
+			.string_lit_content_var {
+				contents << p.parse_ident() ?
 			}
 			else {
 				break
