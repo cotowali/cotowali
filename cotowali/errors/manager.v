@@ -5,9 +5,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module errors
 
-import cotowali.source
-import cotowali.token
-
 pub struct ErrorManager {
 mut:
 	list map[string][]ErrOrWarn
