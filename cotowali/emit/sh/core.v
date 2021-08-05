@@ -37,7 +37,7 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 	language_config := code.LanguageConfig{}
 	return Emitter{
 		out: out
-		codes: map{
+		codes: {
 			CodeKind.builtin: code.new_builder(100, ctx, language_config)
 			CodeKind.main:    code.new_builder(100, ctx, language_config)
 		}

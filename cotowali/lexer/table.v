@@ -6,7 +6,7 @@
 module lexer
 
 const (
-	table_for_one_char_symbols = map{
+	table_for_one_char_symbols = {
 		`(`: tk(.l_paren)
 		`)`: tk(.r_paren)
 		`{`: tk(.l_brace)
@@ -30,7 +30,7 @@ const (
 		`;`: tk(.eol)
 	}
 
-	table_for_two_chars_symbols = map{
+	table_for_two_chars_symbols = {
 		'++': tk(.plus_plus)
 		'--': tk(.minus_minus)
 		'&&': tk(.logical_and)
@@ -47,11 +47,11 @@ const (
 		'|>': tk(.pipe)
 	}
 
-	table_for_three_chars_symbols = map{
+	table_for_three_chars_symbols = {
 		'...': tk(.dotdotdot)
 	}
 
-	table_for_keywords = map{
+	table_for_keywords = {
 		'true':    tk(.bool_lit)
 		'false':   tk(.bool_lit)
 		'as':      tk(.key_as)

@@ -47,7 +47,7 @@ const expr_kind_to_op_table = (fn () map[ExprKind][]TokenKind {
 	v := fn (ops ...TokenKind) []TokenKind {
 		return ops
 	}
-	return map{
+	return {
 		k(.pipeline):    v(.pipe)
 		k(.logical_or):  v(.logical_or)
 		k(.logical_and): v(.logical_and)

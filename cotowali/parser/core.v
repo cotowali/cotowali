@@ -42,7 +42,7 @@ fn (mut p Parser) debug() {
 	for i, _ in tokens {
 		tokens[i] = p.token(i)
 	}
-	p.tracer.write_object('Parser', map{
+	p.tracer.write_object('Parser', {
 		'brace_depth':      p.brace_depth.str()
 		'prev_tok':         p.prev_tok.str()
 		'tokens':           tokens.str()

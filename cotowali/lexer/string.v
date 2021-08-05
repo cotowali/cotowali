@@ -8,7 +8,7 @@ module lexer
 import cotowali.token { Token }
 
 const (
-	sq = `\'`
+	sq = `'`
 	dq = `"`
 	bs = `\\`
 )

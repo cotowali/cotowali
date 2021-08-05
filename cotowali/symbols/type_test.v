@@ -104,7 +104,7 @@ fn test_is_number() ? {
 fn test_struct_type() ? {
 	mut s := new_global_scope()
 	ts := s.register_struct_type('',
-		fields: map{
+		fields: {
 			'n': builtin_type(.int)
 			's': builtin_type(.string)
 		}
