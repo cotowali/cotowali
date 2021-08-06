@@ -208,14 +208,14 @@ fn test_at_ident() {
 }
 
 fn test_string() {
-	test(@FN, @LINE, "$dq'abc'$dq", [
+	test(@FN, @LINE, "$dq'a\nb\nc'$dq", [
 		t(.double_quote, '"'),
-		t(.string_literal_content_text, "'abc'"),
+		t(.string_literal_content_text, "'a\nb\nc'"),
 		t(.double_quote, '"'),
 	])
-	test(@FN, @LINE, '$sq"abc"$sq', [
+	test(@FN, @LINE, '$sq"a\nb\nc"$sq', [
 		t(.single_quote, "'"),
-		t(.string_literal_content_text, '"abc"'),
+		t(.string_literal_content_text, '"a\nb\nc"'),
 		t(.single_quote, "'"),
 	])
 
@@ -242,25 +242,8 @@ fn test_string() {
 		.double_quote,
 	])
 
-	ektest(@FN, @LINE, '"a', [ek(.double_quote, .ok), ek(.string_literal_content_text,
-		.err)])
-	ektest(@FN, @LINE, '"a\na', [
-		ek(.double_quote, .ok),
-		ek(.string_literal_content_text, .err),
-		ek(.eol, .ok),
-		ek(.ident, .ok),
-	])
-	ektest(@FN, @LINE, "'a", [
-		ek(.single_quote, .ok),
-		ek(.string_literal_content_text, .err),
-		ek(.eof, .ok),
-	])
-	ektest(@FN, @LINE, "'a\na", [
-		ek(.single_quote, .ok),
-		ek(.string_literal_content_text, .err),
-		ek(.eol, .ok),
-		ek(.ident, .ok),
-	])
+	ktest(@FN, @LINE, '"a', [.double_quote, .string_literal_content_text])
+	ktest(@FN, @LINE, "'a", [.single_quote, .string_literal_content_text, .eof])
 
 	test(@FN, @LINE, r"r'\\\n\''", [
 		t(.single_quote_with_r_prefix, "r'"),
