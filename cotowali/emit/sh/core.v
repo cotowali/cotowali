@@ -24,6 +24,7 @@ pub struct Emitter {
 mut:
 	cur_file      &File = 0
 	cur_fn        FnDecl
+	ctx           &Context
 	inside_fn     bool
 	tmp_count     int
 	out           io.Writer
@@ -36,6 +37,7 @@ mut:
 pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 	language_config := code.LanguageConfig{}
 	return Emitter{
+		ctx: ctx
 		out: out
 		codes: {
 			CodeKind.builtin: code.new_builder(100, ctx, language_config)
