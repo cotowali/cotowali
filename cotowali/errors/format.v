@@ -30,10 +30,16 @@ pub fn (p PrettyFormatter) format(e ErrOrWarn) string {
 		return '${line:5d} | ' + s.line(line)
 	}
 
+	last_col := if pos.line == pos.last_line {
+		pos.last_col
+	} else {
+		utf8_str_visible_length(s.line(pos.line))
+	}
+
 	lines := [
 		'$e.label(): $s.file_name() $pos.line,$pos.col: $e.msg',
 		format_line(s, pos.line),
-		'      | ' + ' '.repeat(pos.col - 1) + '^'.repeat(pos.last_col - pos.col + 1),
+		'      | ' + ' '.repeat(pos.col - 1) + '^'.repeat(last_col - pos.col + 1),
 	]
 	return lines.map('$it\n').join('')
 }
