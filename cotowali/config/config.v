@@ -26,6 +26,13 @@ pub fn (b Backend) shebang() string {
 [flag]
 pub enum Feature {
 	warn_all
+	shebang
+}
+
+pub fn default_feature() Feature {
+	mut f := Feature(0)
+	f.set(.shebang)
+	return f
 }
 
 pub fn (mut f Feature) set_by_str(s string) ? {

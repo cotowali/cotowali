@@ -9,7 +9,7 @@ import os
 import cli { Command, Flag }
 import v.vmod
 import cotowali { compile }
-import cotowali.config { Feature, backend_from_str }
+import cotowali.config { backend_from_str, default_feature }
 import cotowali.context { Context, new_context }
 import cotowali.source { Source }
 import cotowali.errors { unreachable }
@@ -28,13 +28,18 @@ const (
 		name: 'no-emit'
 		global: true
 	}
+	no_shebang_flag = Flag{
+		flag: .bool
+		name: 'no-shebang'
+		global: true
+	}
 	warn_flag = Flag{
 		flag: .string_array
 		name: 'warn'
 		abbrev: 'W'
 		global: true
 	}
-	flags = [backend_flag, no_emit_flag, warn_flag]
+	flags = [backend_flag, no_emit_flag, no_shebang_flag, warn_flag]
 )
 
 fn new_source_from_args(args []string) ?&Source {
@@ -56,12 +61,18 @@ fn new_source_from_args(args []string) ?&Source {
 
 fn new_ctx_from_cmd(cmd Command) &Context {
 	no_emit := cmd.flags.get_bool(no_emit_flag.name) or { panic(unreachable('')) }
+
 	backend_str := cmd.flags.get_string(backend_flag.name) or { panic(unreachable('')) }
 	backend := backend_from_str(backend_str) or {
 		eprintln(err)
 		exit(1)
 	}
-	mut feature := Feature(0)
+
+	mut feature := default_feature()
+	no_shebang := cmd.flags.get_bool(no_shebang_flag.name) or { panic(unreachable('')) }
+	if no_shebang {
+		feature.clear(.shebang)
+	}
 	warns := cmd.flags.get_strings(warn_flag.name) or { panic(unreachable('')) }
 	for warn_str in warns {
 		feature.set_by_str('warn_$warn_str') or {
@@ -69,6 +80,7 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 			exit(1)
 		}
 	}
+
 	return new_context(no_emit: no_emit, backend: backend, feature: feature)
 }
 

@@ -9,7 +9,9 @@ import cotowali.ast
 import cotowali.util { must_write }
 
 pub fn (mut e Emitter) emit(f &ast.File) {
-	must_write(e.out, e.ctx.config.backend.shebang() + '\n\n')
+	if e.ctx.config.feature.has(.shebang) {
+		must_write(e.out, e.ctx.config.backend.shebang() + '\n\n')
+	}
 
 	e.builtin()
 	e.file(f)
