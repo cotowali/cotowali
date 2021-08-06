@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module parser
 
-import cotowali.lexer { Lexer }
+import cotowali.lexer { Lexer, new_lexer }
 import cotowali.token { Token, TokenCond, TokenKind, TokenKindClass }
 import cotowali.context { Context }
 import cotowali.ast
@@ -179,15 +179,14 @@ fn (mut p Parser) consume_with_assert(kinds ...TokenKind) Token {
 }
 
 [inline]
-pub fn new_parser(lexer Lexer) Parser {
-	ctx := lexer.ctx
+pub fn new_parser(source &Source, ctx &Context) Parser {
 	mut p := Parser{
-		lexer: lexer
+		lexer: new_lexer(source, ctx)
 		ctx: ctx
 		buf: []Token{len: 3}
 		scope: ctx.global_scope
 		file: &ast.File{
-			source: lexer.source
+			source: source
 		}
 	}
 	for _ in 0 .. p.buf.len {

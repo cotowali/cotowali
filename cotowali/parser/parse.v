@@ -7,13 +7,12 @@ module parser
 
 import cotowali.context { Context }
 import cotowali.source
-import cotowali.lexer { new_lexer }
 import cotowali.ast
 
 pub fn (mut p Parser) parse() &ast.File {
 	if !p.ctx.std_loaded() {
 		p.ctx.std_source = source.std
-		mut std_parser := new_parser(new_lexer(p.ctx.std_source, p.ctx))
+		mut std_parser := new_parser(p.ctx.std_source, p.ctx)
 		p.file.stmts << ast.RequireStmt{std_parser.parse()}
 	}
 
@@ -28,6 +27,6 @@ pub fn (mut p Parser) parse() &ast.File {
 
 pub fn parse_file(path string, ctx &Context) ?&ast.File {
 	s := source.read_file(path) ?
-	mut p := new_parser(new_lexer(s, ctx))
+	mut p := new_parser(s, ctx)
 	return p.parse()
 }
