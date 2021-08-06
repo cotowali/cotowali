@@ -475,6 +475,12 @@ fn (mut r Resolver) string_literal(expr StringLiteral) {
 			r.trace_end()
 		}
 	}
+
+	for content in expr.contents {
+		if content is Expr {
+			r.expr(content)
+		}
+	}
 }
 
 pub struct ArrayLiteral {
