@@ -103,10 +103,11 @@ fn (lic Lic) execute(c LicCommand, file string) os.Result {
 	}
 }
 
-fn (lic Lic) new_test_case(path string) TestCase {
+fn (lic Lic) new_test_case(path string, opt TestOption) TestCase {
 	out := out_path(path)
 	return TestCase{
 		lic: lic
+		opt: opt
 		path: path
 		out_path: out
 		is_err_test: is_err_test_file(path)
@@ -114,6 +115,10 @@ fn (lic Lic) new_test_case(path string) TestCase {
 		is_noemit_test: is_noemit_test_file(path)
 		expected: os.read_file(out) or { '' }
 	}
+}
+
+struct TestOption {
+	fix_mode bool
 }
 
 enum TestResultStatus {
@@ -135,6 +140,7 @@ mut:
 
 struct TestCase {
 	lic Lic
+	opt TestOption
 mut:
 	path           string [required]
 	out_path       string [required]
@@ -179,7 +185,7 @@ fn (t &TestCase) run() TestResult {
 		}
 	}
 
-	$if fix ? {
+	if t.opt.fix_mode {
 		if correct_exit_code {
 			if t.is_todo_test {
 				if result.output == result.expected {
@@ -246,7 +252,7 @@ mut:
 	cases []TestCase
 }
 
-fn new_test_suite(paths []string) TestSuite {
+fn new_test_suite(paths []string, opt TestOption) TestSuite {
 	dir := os.real_path(@VMODROOT)
 	lic_dir := os.join_path(dir, 'cmd/lic')
 	sources := get_sources(paths)
@@ -267,7 +273,7 @@ fn new_test_suite(paths []string) TestSuite {
 	}
 
 	return TestSuite{
-		cases: sources.map(lic.new_test_case(it))
+		cases: sources.map(lic.new_test_case(it, opt))
 	}
 }
 
@@ -315,12 +321,15 @@ fn main() {
 		println('Usage: v run tests/run.v [test.li|tests]...')
 		return
 	}
-	paths := if os.args.len > 1 {
+
+	fix_mode := '--fix' in os.args
+	args := os.args.filter(!it.starts_with('-'))
+	paths := if args.len > 1 {
 		os.args[1..]
 	} else {
 		['examples', 'tests'].map(os.join_path(@VMODROOT, it))
 	}
 
-	t := new_test_suite(paths)
+	t := new_test_suite(paths, fix_mode: fix_mode)
 	exit(if t.run() { 0 } else { 1 })
 }
