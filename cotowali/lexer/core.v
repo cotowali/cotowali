@@ -24,21 +24,22 @@ struct LexicalContext {
 	kind LexicalContextKind
 }
 
-struct LexicalContextStack {
+struct LexicalContextStore {
 mut:
-	list []&LexicalContext
+	list []LexicalContext
+pub mut:
+	current LexicalContext
 }
 
-fn (mut stack LexicalContextStack) push(ctx LexicalContext) {
-	stack.list << &ctx
+fn (mut s LexicalContextStore) push(ctx LexicalContext) {
+	s.list << s.current
+	s.current = ctx
 }
 
-fn (mut stack LexicalContextStack) pop() &LexicalContext {
-	return stack.list.pop()
-}
-
-fn (stack &LexicalContextStack) top() &LexicalContext {
-	return stack.list.last()
+fn (mut s LexicalContextStore) pop() LexicalContext {
+	ret := s.current
+	s.current = s.list.pop()
+	return ret
 }
 
 pub struct Lexer {
@@ -50,7 +51,7 @@ mut:
 	pos               Pos
 	closed            bool // for iter
 	in_string_literal bool
-	lex_ctx_stack     LexicalContextStack
+	lex_ctx           LexicalContextStore
 
 	tracer Tracer [if trace_lexer ?]
 }
@@ -60,7 +61,6 @@ pub fn new_lexer(source &Source, ctx &Context) &Lexer {
 		source: source
 		ctx: ctx
 	}
-	lexer.lex_ctx_stack.push(kind: .normal)
 	return lexer
 }
 
@@ -133,12 +133,6 @@ fn (mut lex Lexer) warn(token Token, msg string) IError {
 		token: token
 		msg: msg
 	}
-}
-
-// --
-
-fn (lex &Lexer) lex_ctx() &LexicalContext {
-	return lex.lex_ctx_stack.top()
 }
 
 // --
