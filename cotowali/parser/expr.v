@@ -326,10 +326,17 @@ fn (mut p Parser) parse_paren_expr() ?ast.Expr {
 		for {
 			p.skip_eol()
 			exprs << p.parse_expr(.toplevel) ?
+
 			p.skip_eol()
-			tail := p.consume_with_check(.comma, .r_paren) ?
-			if tail.kind == .r_paren {
-				pos = pos.merge(tail.pos)
+			if r_paren := p.consume_if_kind_eq(.r_paren) {
+				pos = pos.merge(r_paren.pos)
+				break
+			}
+			p.consume_with_check(.comma) ?
+
+			p.skip_eol()
+			if r_paren := p.consume_if_kind_eq(.r_paren) {
+				pos = pos.merge(r_paren.pos)
 				break
 			}
 		}
