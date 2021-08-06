@@ -1,0 +1,16 @@
+assert (0) == (0)
+assert (0) == 0
+assert (
+  0
+) == (
+  0
+)
+
+/* TODO
+var t1 = (0, 1)
+var t2 = (
+  0,
+  1
+)
+assert t1 == t2
+*/

@@ -313,6 +313,7 @@ fn (mut p Parser) parse_map_literal() ?ast.Expr {
 
 fn (mut p Parser) parse_paren_expr() ?ast.Expr {
 	l_paren := p.consume_with_assert(.l_paren)
+	p.skip_eol()
 
 	mut pos := l_paren.pos
 	mut exprs := []ast.Expr{}
@@ -323,7 +324,9 @@ fn (mut p Parser) parse_paren_expr() ?ast.Expr {
 	} else {
 		// `(int)` or `(int, int)`
 		for {
+			p.skip_eol()
 			exprs << p.parse_expr(.toplevel) ?
+			p.skip_eol()
 			tail := p.consume_with_check(.comma, .r_paren) ?
 			if tail.kind == .r_paren {
 				pos = pos.merge(tail.pos)
