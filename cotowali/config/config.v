@@ -13,6 +13,16 @@ pub enum Backend {
 	powershell
 }
 
+pub fn (b Backend) shebang() string {
+	return match b {
+		.sh { '#!/bin/sh' }
+		.dash { '#!/usr/bin/env dash' }
+		.bash { '#!/usr/bin/env dash' }
+		.zsh { '#!/usr/bin/env dash' }
+		.powershell { '#!/usr/bin/env pwsh' }
+	}
+}
+
 [flag]
 pub enum Feature {
 	warn_all

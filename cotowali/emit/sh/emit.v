@@ -9,6 +9,8 @@ import cotowali.ast
 import cotowali.util { must_write }
 
 pub fn (mut e Emitter) emit(f &ast.File) {
+	must_write(e.out, e.ctx.config.backend.shebang() + '\n\n')
+
 	e.builtin()
 	e.file(f)
 	for k in ordered_code_kinds {
