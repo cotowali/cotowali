@@ -82,6 +82,7 @@ struct Lic {
 }
 
 enum LicCommand {
+	shellcheck
 	compile
 	noemit
 	run
@@ -97,6 +98,7 @@ fn (lic Lic) compile() ? {
 
 fn (lic Lic) execute(c LicCommand, file string) os.Result {
 	return match c {
+		.shellcheck { os.execute('$lic.bin $file | shellcheck -') }
 		.compile { os.execute('$lic.bin $file') }
 		.noemit { os.execute('$lic.bin --no-emit $file') }
 		.run { os.execute('$lic.bin run $file') }
@@ -118,7 +120,8 @@ fn (lic Lic) new_test_case(path string, opt TestOption) TestCase {
 }
 
 struct TestOption {
-	fix_mode bool
+	shellcheck bool
+	fix_mode   bool
 }
 
 enum TestResultStatus {
@@ -142,12 +145,17 @@ struct TestCase {
 	lic Lic
 	opt TestOption
 mut:
-	path           string [required]
-	out_path       string [required]
-	is_err_test    bool   [required]
-	is_todo_test   bool   [required]
-	is_noemit_test bool   [required]
-	expected       string [required]
+	path               string [required]
+	out_path           string [required]
+	is_shellcheck_test bool
+	is_err_test        bool   [required]
+	is_todo_test       bool   [required]
+	is_noemit_test     bool   [required]
+	expected           string [required]
+}
+
+fn (t TestCase) is_normal_test() bool {
+	return !(t.is_todo_test || t.is_err_test || t.is_noemit_test)
 }
 
 fn fix_todo(f string, s FileSuffix) {
@@ -158,7 +166,9 @@ fn fix_todo(f string, s FileSuffix) {
 fn (t &TestCase) run() TestResult {
 	mut sw := time.new_stopwatch()
 	sw.start()
-	cmd_res := if t.is_err_test {
+	cmd_res := if t.is_shellcheck_test {
+		t.lic.execute(.shellcheck, t.path)
+	} else if t.is_err_test {
 		t.lic.execute(.compile, t.path)
 	} else if t.is_noemit_test {
 		t.lic.execute(.noemit, t.path)
@@ -185,7 +195,7 @@ fn (t &TestCase) run() TestResult {
 		}
 	}
 
-	if t.opt.fix_mode {
+	if t.opt.fix_mode && !t.is_shellcheck_test {
 		if correct_exit_code {
 			if t.is_todo_test {
 				if result.output == result.expected {
@@ -272,8 +282,19 @@ fn new_test_suite(paths []string, opt TestOption) TestSuite {
 		exit(1)
 	}
 
+	mut cases := []TestCase{}
+	for s in sources {
+		test := lic.new_test_case(s, opt)
+		cases << test
+		if opt.shellcheck && test.is_normal_test() {
+			cases << TestCase{
+				...test
+				is_shellcheck_test: true
+			}
+		}
+	}
 	return TestSuite{
-		cases: sources.map(lic.new_test_case(it, opt))
+		cases: cases
 	}
 }
 
@@ -322,6 +343,7 @@ fn main() {
 		return
 	}
 
+	shellcheck := '--shellcheck' in os.args
 	fix_mode := '--fix' in os.args
 	args := os.args.filter(!it.starts_with('-'))
 	paths := if args.len > 1 {
@@ -330,6 +352,6 @@ fn main() {
 		['examples', 'tests'].map(os.join_path(@VMODROOT, it))
 	}
 
-	t := new_test_suite(paths, fix_mode: fix_mode)
+	t := new_test_suite(paths, shellcheck: shellcheck, fix_mode: fix_mode)
 	exit(if t.run() { 0 } else { 1 })
 }
