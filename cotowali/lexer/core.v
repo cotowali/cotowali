@@ -12,12 +12,33 @@ import cotowali.util { min }
 import cotowali.errors { LexerErr, LexerWarn, unreachable }
 import cotowali.debug { Tracer }
 
-enum LexerStatus {
+enum LexicalContextKind {
 	normal
 	inside_single_quoted_string_literal
 	inside_raw_single_quoted_string_literal
 	inside_double_quoted_string_literal
 	inside_raw_double_quoted_string_literal
+}
+
+struct LexicalContext {
+	kind LexicalContextKind
+}
+
+struct LexicalContextStack {
+mut:
+	list []&LexicalContext
+}
+
+fn (mut stack LexicalContextStack) push(ctx LexicalContext) {
+	stack.list << &ctx
+}
+
+fn (mut stack LexicalContextStack) pop() &LexicalContext {
+	return stack.list.pop()
+}
+
+fn (stack &LexicalContextStack) top() &LexicalContext {
+	return stack.list.last()
 }
 
 pub struct Lexer {
@@ -29,17 +50,18 @@ mut:
 	pos               Pos
 	closed            bool // for iter
 	in_string_literal bool
-	status_stack      []LexerStatus
+	lex_ctx_stack     LexicalContextStack
 
 	tracer Tracer [if trace_lexer ?]
 }
 
 pub fn new_lexer(source &Source, ctx &Context) &Lexer {
-	return &Lexer{
+	mut lexer := &Lexer{
 		source: source
 		ctx: ctx
-		status_stack: [LexerStatus.normal]
 	}
+	lexer.lex_ctx_stack.push(kind: .normal)
+	return lexer
 }
 
 [inline]
@@ -115,8 +137,8 @@ fn (mut lex Lexer) warn(token Token, msg string) IError {
 
 // --
 
-fn (lex &Lexer) status() LexerStatus {
-	return lex.status_stack.last()
+fn (lex &Lexer) lex_ctx() &LexicalContext {
+	return lex.lex_ctx_stack.top()
 }
 
 // --

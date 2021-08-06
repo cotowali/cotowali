@@ -42,31 +42,31 @@ pub fn (mut lex Lexer) read() ?Token {
 		}
 
 		// process for string literal
-		match lex.status() {
+		match lex.lex_ctx().kind {
 			.inside_single_quoted_string_literal {
 				if lex.byte() == sq {
-					lex.status_stack.pop()
+					lex.lex_ctx_stack.pop()
 					return lex.new_token_with_consume(.single_quote)
 				}
 				return lex.read_single_quote_string_literal_content()
 			}
 			.inside_double_quoted_string_literal {
 				if lex.byte() == dq {
-					lex.status_stack.pop()
+					lex.lex_ctx_stack.pop()
 					return lex.new_token_with_consume(.double_quote)
 				}
 				return lex.read_double_quote_string_literal_content()
 			}
 			.inside_raw_single_quoted_string_literal {
 				if lex.byte() == sq {
-					lex.status_stack.pop()
+					lex.lex_ctx_stack.pop()
 					return lex.new_token_with_consume(.single_quote)
 				}
 				return lex.read_raw_string_literal_content(sq)
 			}
 			.inside_raw_double_quoted_string_literal {
 				if lex.byte() == dq {
-					lex.status_stack.pop()
+					lex.lex_ctx_stack.pop()
 					return lex.new_token_with_consume(.double_quote)
 				}
 				return lex.read_raw_string_literal_content(dq)
@@ -74,18 +74,18 @@ pub fn (mut lex Lexer) read() ?Token {
 			.normal {
 				b := lex.byte()
 				if b == sq {
-					lex.status_stack << .inside_single_quoted_string_literal
+					lex.lex_ctx_stack.push(kind: .inside_single_quoted_string_literal)
 					return lex.new_token_with_consume(.single_quote)
 				} else if b == dq {
-					lex.status_stack << .inside_double_quoted_string_literal
+					lex.lex_ctx_stack.push(kind: .inside_double_quoted_string_literal)
 					return lex.new_token_with_consume(.double_quote)
 				} else if b == `r` {
 					b2 := lex.char(1)[0]
 					if b2 == sq {
-						lex.status_stack << .inside_raw_single_quoted_string_literal
+						lex.lex_ctx_stack.push(kind: .inside_raw_single_quoted_string_literal)
 						return lex.new_token_with_consume_n(2, .single_quote_with_r_prefix)
 					} else if b2 == dq {
-						lex.status_stack << .inside_raw_double_quoted_string_literal
+						lex.lex_ctx_stack.push(kind: .inside_raw_double_quoted_string_literal)
 						return lex.new_token_with_consume_n(2, .double_quote_with_r_prefix)
 					}
 				}
