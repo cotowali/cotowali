@@ -6,6 +6,7 @@
 module lexer
 
 import cotowali.token { Token }
+import cotowali.source { Char }
 
 const (
 	sq = `'`
@@ -30,25 +31,19 @@ fn (mut lex Lexer) read_single_quote_string_literal_content() ?Token {
 		}
 	}
 
-	mut unterminated := false
-	for lex.byte() != lexer.sq {
-		lex.consume()
-
+	for !lex.is_eof() {
+		if lex.byte() == lexer.sq {
+			break
+		}
 		if lex.byte() == lexer.bs && lex.char(1).byte() in [lexer.bs, lexer.sq] {
 			// next is \\ or \'
 			break
 		}
 
-		if lex.is_eof() {
-			unterminated = true
-			break
-		}
+		lex.consume()
 	}
 
 	tok := lex.new_token(.string_literal_content_text)
-	if unterminated {
-		return lex.unterminated_string_literal_error(tok)
-	}
 	return tok
 }
 
@@ -77,24 +72,11 @@ fn (mut lex Lexer) read_double_quote_string_literal_content() ?Token {
 		}
 	}
 
-	mut unterminated := false
-	for lex.byte() != lexer.dq {
-		lex.consume()
-
-		if lex.byte() in [lexer.bs, `$`] {
-			break
-		}
-
-		if lex.is_eof() {
-			unterminated = true
-			break
-		}
-	}
+	lex.consume_not_for(fn (c Char) bool {
+		return c.byte() in [lexer.dq, lexer.bs, `$`]
+	})
 
 	tok := lex.new_token(.string_literal_content_text)
-	if unterminated {
-		return lex.unterminated_string_literal_error(tok)
-	}
 	return tok
 }
 
@@ -106,23 +88,9 @@ fn (mut lex Lexer) read_raw_string_literal_content(quote byte) ?Token {
 		}
 	}
 
-	mut unterminated := false
-	for lex.byte() != quote {
+	for !(lex.byte() == quote || lex.is_eof()) {
 		lex.consume()
-		if lex.is_eof() {
-			unterminated = true
-			break
-		}
 	}
 
-	tok := lex.new_token(.string_literal_content_text)
-	if unterminated {
-		return lex.unterminated_string_literal_error(tok)
-	}
-	return tok
-}
-
-fn (mut lex Lexer) unterminated_string_literal_error(tok Token) IError {
-	lex.status_stack.pop() // force exit from inside_string status
-	return lex.error(tok, 'unterminated string literal')
+	return lex.new_token(.string_literal_content_text)
 }
