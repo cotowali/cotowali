@@ -29,6 +29,18 @@ jobs:
       - uses: actions/checkout@v2
       - run: z ci setup-v
       - run: z ci test
+  shellcheck:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cc: [clang, gcc]
+    env:
+      VFLAGS: "-cc ${{ matrix.cc }}"
+    steps:
+      - uses: zakuro9715/setup-z@main
+      - uses: actions/checkout@v2
+      - run: z ci setup-v
+      - run: z ci test shellcheck || true # allow to fail for now
   sanitize:
     runs-on: ubuntu-latest
     strategy:
