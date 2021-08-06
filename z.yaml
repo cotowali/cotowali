@@ -52,6 +52,7 @@ tasks:
     tasks:
       unit: v test ${@:-./cotowali}
       integration: v run tests/run.v $@
+      fix: z run --fix integration $@
       hello: z run examples/hello.li
 
   fmt: v fmt -w .
