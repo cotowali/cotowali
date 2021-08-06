@@ -10,3 +10,15 @@ assert "n=$n" == 'n=10'
 assert '$n' == r'$n'
 assert "\$n" == '$n'
 assert "$n$" == '10$'
+
+assert (
+'
+a
+b
+'
+) == (
+r'
+a
+b
+'
+)

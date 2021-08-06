@@ -39,7 +39,7 @@ fn (mut lex Lexer) read_single_quote_string_literal_content() ?Token {
 			break
 		}
 
-		if lex.is_eof() || is_eol(lex.char(0)) {
+		if lex.is_eof() {
 			unterminated = true
 			break
 		}
@@ -85,7 +85,7 @@ fn (mut lex Lexer) read_double_quote_string_literal_content() ?Token {
 			break
 		}
 
-		if lex.is_eof() || is_eol(lex.char(0)) {
+		if lex.is_eof() {
 			unterminated = true
 			break
 		}
@@ -109,7 +109,7 @@ fn (mut lex Lexer) read_raw_string_literal_content(quote byte) ?Token {
 	mut unterminated := false
 	for lex.byte() != quote {
 		lex.consume()
-		if lex.is_eof() || is_eol(lex.char(0)) {
+		if lex.is_eof() {
 			unterminated = true
 			break
 		}
