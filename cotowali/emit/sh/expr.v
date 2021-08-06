@@ -20,6 +20,7 @@ struct ExprOpt {
 	writeln           bool
 	discard_stdout    bool
 	inside_arithmetic bool
+	quote             bool = true
 }
 
 struct ExprWithOpt<T> {
@@ -152,8 +153,8 @@ fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 						e.write(v.text)
 					} else if v is ast.Expr {
 						if v is ast.Var {
-							e.write(r'$')
-							e.var_(v)
+							v_v := v // store v to another variable because e.expr(v) occurs c error.
+							e.expr(v_v, quote: false)
 						} else {
 							panic('unimplemented')
 						}
@@ -205,8 +206,14 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 			e.map(ident, opt)
 		}
 		else {
-			// '$(( n == 0 ))' or 'echo "$n"'
-			s := if opt.inside_arithmetic { '$ident' } else { '"\$$ident"' }
+			s := if opt.inside_arithmetic {
+				// no need $ in arithmetic. e.g: $(( n == 0 ))
+				'$ident'
+			} else if opt.quote {
+				'"\$$ident"'
+			} else {
+				'\$$ident'
+			}
 			e.write_echo_if_command_then_write(s, opt)
 		}
 	}
