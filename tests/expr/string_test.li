@@ -3,7 +3,9 @@ assert '10' != '11'
 assert '10' + '10' == '1010'
 
 assert 'a\\b\'c\d\"' == r"a\b'" + r'c\d\"'
-assert "\$" == r"$"
+
 
 var n = 10
-assert "n=$n" == "n=10"
+assert "n=$n" == 'n=10'
+assert '$n' == r'$n'
+assert "\$n" == '$n'
