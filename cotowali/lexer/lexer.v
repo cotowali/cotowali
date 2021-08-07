@@ -71,7 +71,7 @@ pub fn (mut lex Lexer) read() ?Token {
 				}
 				return lex.read_raw_string_literal_content(dq)
 			}
-			.normal {
+			.inside_string_literal_expr_substitution, .normal {
 				b := lex.byte()
 				if b == sq {
 					lex.lex_ctx.push(kind: .inside_single_quoted_string_literal)
@@ -129,6 +129,18 @@ pub fn (mut lex Lexer) read() ?Token {
 
 		kind = table_for_one_char_symbols[c.byte()] or { tk(.unknown) }
 		if kind != .unknown {
+			if kind == .l_brace {
+				lex.lex_ctx.current.brace_depth += 1
+			}
+			if kind == .r_brace {
+				if lex.lex_ctx.current.kind == .inside_string_literal_expr_substitution
+					&& lex.lex_ctx.current.brace_depth == 0 {
+					lex.lex_ctx.pop()
+					return lex.new_token_with_consume(.string_literal_content_expr_close)
+				}
+
+				lex.lex_ctx.current.brace_depth -= 1
+			}
 			return lex.new_token_with_consume(kind)
 		}
 

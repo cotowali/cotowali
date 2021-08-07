@@ -43,6 +43,8 @@ pub enum TokenKind {
 	double_quote_with_r_prefix
 	string_literal_content_text
 	string_literal_content_var
+	string_literal_content_expr_open
+	string_literal_content_expr_close
 	string_literal_content_escaped_back_slash
 	string_literal_content_escaped_single_quote
 	string_literal_content_escaped_double_quote

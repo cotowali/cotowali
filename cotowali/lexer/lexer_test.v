@@ -259,6 +259,51 @@ fn test_string() {
 	])
 }
 
+fn test_string_expr_substitution() {
+	ktest(@FN, @LINE, r"'${x}'", [.single_quote, .string_literal_content_text, .single_quote])
+	test(@FN, @LINE, r'"${x}"', [
+		t(.double_quote, '"'),
+		t(.string_literal_content_expr_open, r'${'),
+		t(.ident, 'x'),
+		t(.string_literal_content_expr_close, '}'),
+		t(.double_quote, '"'),
+	])
+
+	test(@FN, @LINE, r'"${ "a" {} "b ${ {} "${ "x" }"} $v" "${ ([ }" }}"', [
+		t(.double_quote, '"'),
+		t(.string_literal_content_expr_open, r'${'),
+		t(.double_quote, '"'),
+		t(.string_literal_content_text, 'a'),
+		t(.double_quote, '"'),
+		t(.l_brace, '{'),
+		t(.r_brace, '}'),
+		t(.double_quote, '"'),
+		t(.string_literal_content_text, 'b '),
+		t(.string_literal_content_expr_open, r'${'),
+		t(.l_brace, '{'),
+		t(.r_brace, '}'),
+		t(.double_quote, '"'),
+		t(.string_literal_content_expr_open, r'${'),
+		t(.double_quote, '"'),
+		t(.string_literal_content_text, 'x'),
+		t(.double_quote, '"'),
+		t(.string_literal_content_expr_close, r'}'),
+		t(.double_quote, '"'),
+		t(.string_literal_content_expr_close, r'}'),
+		t(.string_literal_content_var, r'$v'),
+		t(.double_quote, '"'),
+		t(.double_quote, '"'),
+		t(.string_literal_content_expr_open, r'${'),
+		t(.l_paren, '('),
+		t(.l_bracket, '['),
+		t(.string_literal_content_expr_close, r'}'),
+		t(.double_quote, '"'),
+		t(.string_literal_content_expr_close, r'}'),
+		t(.string_literal_content_text, '}'),
+		t(.double_quote, '"'),
+	])
+}
+
 fn test_inline_shell() {
 	test(@FN, @LINE, r'${echo 1}', [t(.inline_shell, 'echo 1')])
 }

@@ -18,10 +18,13 @@ enum LexicalContextKind {
 	inside_raw_single_quoted_string_literal
 	inside_double_quoted_string_literal
 	inside_raw_double_quoted_string_literal
+	inside_string_literal_expr_substitution
 }
 
 struct LexicalContext {
 	kind LexicalContextKind
+mut:
+	brace_depth int
 }
 
 struct LexicalContextStore {

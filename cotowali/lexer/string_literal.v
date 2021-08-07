@@ -60,6 +60,10 @@ fn (mut lex Lexer) read_double_quote_string_literal_content() ?Token {
 		if is_ident_first_char(lex.char(0)) {
 			lex.read_ident_or_keyword()
 			return lex.new_token(.string_literal_content_var)
+		} else if lex.byte() == `{` {
+			lex.lex_ctx.push(kind: .inside_string_literal_expr_substitution)
+			lex.consume()
+			return lex.new_token(.string_literal_content_expr_open)
 		}
 	}
 
