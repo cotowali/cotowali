@@ -259,6 +259,12 @@ fn (mut c Checker) string_literal(s ast.StringLiteral) {
 			c.trace_end()
 		}
 	}
+
+	for content in s.contents {
+		if content is Expr {
+			c.expr(content)
+		}
+	}
 }
 
 fn (mut c Checker) var_(v ast.Var) {
