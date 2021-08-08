@@ -100,6 +100,11 @@ fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
 			contents << ast.Expr(v)
 			continue
 		}
+		if _ := p.consume_if_kind_eq(.string_literal_content_expr_open) {
+			contents << p.parse_expr(.toplevel) ?
+			p.consume_with_check(.string_literal_content_expr_close) ?
+			continue
+		}
 		match p.kind(0) {
 			.string_literal_content_text, .string_literal_content_escaped_dollar {
 				contents << p.consume()
