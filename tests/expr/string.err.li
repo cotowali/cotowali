@@ -1,1 +1,3 @@
+var a = "a"
 echo("-- $undefined_variable --")
+echo("a = $a; b = $b; c = $c;")

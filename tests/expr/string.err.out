@@ -1,3 +1,9 @@
-error: string.err.li 1,10: undefined variable `undefined_variable`
-    1 | echo("-- $undefined_variable --")
+error: string.err.li 2,10: undefined variable `undefined_variable`
+    2 | echo("-- $undefined_variable --")
       |          ^^^^^^^^^^^^^^^^^^^
+error: string.err.li 3,19: undefined variable `b`
+    3 | echo("a = $a; b = $b; c = $c;")
+      |                   ^^
+error: string.err.li 3,27: undefined variable `c`
+    3 | echo("a = $a; b = $b; c = $c;")
+      |                           ^^
