@@ -1,15 +1,13 @@
 <div align="center">
   <img width="200" src="https://raw.githubusercontent.com/cotowali/design/main/assets/cotowali.svg?sanitize=true">
   <h1>Cotowali</h1>
-  <p>A statically typed script language that transpile into POSIX sh</p>
+  <p>A statically typed scripting language that transpile into POSIX sh</p>
   <a href="http://mozilla.org/MPL/2.0/" rel="nofollow">
     <img  alt="License: MPL 2.0" src="https://img.shields.io/badge/License-MPL%202.0-blue.svg?style=flat-square">
   </a>
 </div>
 
-> This project is a prototyping stage right now.
-> It means that only a few small snippets in `tests` will work.
-> First release is planned for later this year.
+> This project is Work in Progress. First release is planned for later 2021.
 
 ## Concepts of Cotowali
 
