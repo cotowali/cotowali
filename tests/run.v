@@ -250,7 +250,7 @@ fn (r TestResult) failed_message(file string) string {
 }
 
 fn (r TestResult) message() string {
-	file := os.join_path(os.base(os.dir(r.path)), os.base(r.path))
+	file := os.real_path(r.path).trim_prefix(os.real_path(@VMODROOT)).trim_prefix('/')
 	return match r.status {
 		.failed { r.failed_message(file) }
 		else { r.summary_message(file) }
