@@ -152,12 +152,7 @@ fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 					if v is Token {
 						e.write(v.text)
 					} else if v is ast.Expr {
-						if v is ast.Var {
-							v_v := v // store v to another variable because e.expr(v) occurs c error.
-							e.expr(v_v, quote: false)
-						} else {
-							panic('unimplemented')
-						}
+						e.expr(v, quote: false)
 					}
 				}
 			}
