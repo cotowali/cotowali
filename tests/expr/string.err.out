@@ -7,3 +7,24 @@ error: string.err.li 3,19: undefined variable `b`
 error: string.err.li 3,27: undefined variable `c`
     3 | echo("a = $a; b = $b; c = $c;")
       |                           ^^
+error: string.err.li 5,10: mismatched types: `string` (left) and `int` (right)
+    5 | echo("${ a + 1 } ${ x + 1 }")
+      |          ^^^^^
+error: string.err.li 5,21: mismatched types: `unresolved` (left) and `int` (right)
+    5 | echo("${ a + 1 } ${ x + 1 }")
+      |                     ^^^^^
+error: string.err.li 5,21: undefined variable `x`
+    5 | echo("${ a + 1 } ${ x + 1 }")
+      |                     ^
+error: string.err.li 6,10: mismatched types: `int` (left) and `string` (right)
+    6 | echo("${ 1 + "${ a + 1 } $x"} $x")
+      |          ^^^^^^^^^^^^^^^^^^^
+error: string.err.li 6,18: mismatched types: `string` (left) and `int` (right)
+    6 | echo("${ 1 + "${ a + 1 } $x"} $x")
+      |                  ^^^^^
+error: string.err.li 6,26: undefined variable `x`
+    6 | echo("${ 1 + "${ a + 1 } $x"} $x")
+      |                          ^^
+error: string.err.li 6,31: undefined variable `x`
+    6 | echo("${ 1 + "${ a + 1 } $x"} $x")
+      |                               ^^
