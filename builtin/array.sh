@@ -6,19 +6,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-str_to_array() {
-  str_val=$1
-  name=$2
-  eval "${name}_len=0"
-  i=0
-  for v in $str_val
-  do
-    eval "${name}_len=$(( ${name_len} + 1 ))"
-    eval "${name}_$i=$v"
-    i=$(( i + 1 ))
-  done
-}
-
 array_to_str() {
   name=$1
   len="$(eval echo "${name}_len")"
