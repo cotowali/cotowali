@@ -85,18 +85,22 @@ fn (mut e Emitter) destructuring_assign(names []string, expr ast.Expr) {
 	}
 }
 
+fn (mut e Emitter) index_assign(left ast.Expr, index ast.Expr, right ast.Expr) {
+	name := e.ident_for(left)
+	e.write(match left.type_symbol().kind() {
+		.array { 'array_set $name ' }
+		.map { 'map_set $name ' }
+		else { panic_and_value(unreachable('invalid index left'), '') }
+	})
+	e.expr(index)
+	e.write(' ')
+	e.expr(right, writeln: true)
+}
+
 fn (mut e Emitter) assign_stmt(node ast.AssignStmt) {
 	match node.left {
 		ast.IndexExpr {
-			name := e.ident_for(node.left.left)
-			e.write(match node.left.left.type_symbol().kind() {
-				.array { 'array_set $name ' }
-				.map { 'map_set $name ' }
-				else { panic_and_value(unreachable('invalid index left'), '') }
-			})
-			e.expr(node.left.index)
-			e.write(' ')
-			e.expr(node.right, writeln: true)
+			e.index_assign(node.left.left, node.left.index, node.right)
 		}
 		ast.ParenExpr {
 			e.destructuring_assign(node.left.exprs.map(e.ident_for(it)), node.right)
