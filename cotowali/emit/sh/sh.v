@@ -40,7 +40,7 @@ fn (mut e Emitter) sh_test_command_as_bool<T>(f fn (mut Emitter, T), v T) {
 }
 
 fn (mut e Emitter) sh_test_command_for_expr<T>(f fn (mut Emitter, T), v T, opt ExprOpt) {
-	if opt.as_condition {
+	if opt.mode == .condition {
 		e.sh_test_command(f, v)
 	} else {
 		e.sh_test_command_as_bool(f, v)

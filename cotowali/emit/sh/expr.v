@@ -13,14 +13,19 @@ import cotowali.errors { unreachable }
 
 type ExprOrString = ast.Expr | string
 
+enum ExprEmitMode {
+	normal
+	command
+	condition
+	inside_arithmetic
+}
+
 struct ExprOpt {
-	as_command        bool
-	as_condition      bool
-	expand_array      bool
-	writeln           bool
-	discard_stdout    bool
-	inside_arithmetic bool
-	quote             bool = true
+	mode           ExprEmitMode = .normal
+	expand_array   bool
+	writeln        bool
+	discard_stdout bool
+	quote          bool = true
 }
 
 struct ExprWithOpt<T> {
@@ -67,7 +72,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.StringLiteral { e.string_literal(expr, opt) }
 		ast.Var { e.var_(expr, opt) }
 	}
-	if opt.as_command && opt.discard_stdout {
+	if opt.mode == .command && opt.discard_stdout {
 		e.write(' > /dev/null')
 	}
 	if opt.writeln {
@@ -76,7 +81,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) write_echo_if_command(opt ExprOpt) {
-	if opt.as_command {
+	if opt.mode == .command {
 		e.write('echo ')
 	}
 }
@@ -87,7 +92,7 @@ fn (mut e Emitter) write_echo_if_command_then_write(s string, opt ExprOpt) {
 }
 
 fn (mut e Emitter) bool_literal(expr ast.BoolLiteral, opt ExprOpt) {
-	if opt.as_condition {
+	if opt.mode == .condition {
 		e.write(if expr.bool() { 'true' } else { 'false' })
 		return
 	}
@@ -124,7 +129,7 @@ fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 				if v is Token {
 					match v.kind {
 						.string_literal_content_escaped_back_slash {
-							if opt.as_command {
+							if opt.mode == .command {
 								e.write(r'\\\\')
 							} else {
 								e.write(r'\\')
@@ -201,7 +206,7 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 			e.map(ident, opt)
 		}
 		else {
-			s := if opt.inside_arithmetic {
+			s := if opt.mode == .inside_arithmetic {
 				// no need $ in arithmetic. e.g: $(( n == 0 ))
 				'$ident'
 			} else if opt.quote {
@@ -249,7 +254,7 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 		panic(unreachable('not a bool operand'))
 	}
 
-	if opt.as_command {
+	if opt.mode == .command {
 		panic('unimplemented')
 	}
 
@@ -267,9 +272,9 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 		else { panic_and_value(unreachable('invalid op'), '') }
 	}
 
-	e.expr(expr.left, as_condition: true)
+	e.expr(expr.left, mode: .condition)
 	e.write(' $op ')
-	e.expr(expr.right, as_condition: true)
+	e.expr(expr.right, mode: .condition)
 }
 
 fn (mut e Emitter) infix_expr_for_number(expr ast.InfixExpr, opt ExprOpt) {
@@ -324,12 +329,12 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 
 	match expr.op.kind {
 		.plus, .minus, .div, .mul, .mod {
-			open, close := if opt.inside_arithmetic { '', '' } else { '\$(( ', ' ))' }
+			open, close := if opt.mode == .inside_arithmetic { '', '' } else { '\$(( ', ' ))' }
 			e.write(open)
 			{
-				e.expr(expr.left, inside_arithmetic: true)
+				e.expr(expr.left, mode: .inside_arithmetic)
 				e.write(' $expr.op.text ')
-				e.expr(expr.right, inside_arithmetic: true)
+				e.expr(expr.right, mode: .inside_arithmetic)
 			}
 			e.write(close)
 		}
@@ -365,14 +370,14 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
-	open, close := if opt.inside_arithmetic { ' ( ', ' ) ' } else { '', '' }
+	open, close := if opt.mode == .inside_arithmetic { ' ( ', ' ) ' } else { '', '' }
 	e.write(open)
 	{
 		for i, subexpr in expr.exprs {
 			if i > 0 {
 				e.write(' ')
 			}
-			e.expr(subexpr, ExprOpt{ ...opt, as_command: false })
+			e.expr(subexpr)
 		}
 	}
 	e.write(close)
@@ -384,14 +389,14 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		panic(unreachable('not a prefix op'))
 	}
 
-	e.write_echo_if_command(opt)
-	opt_for_expr := ExprOpt{
+	subexpr_opt := ExprOpt{
 		...opt
-		as_command: false
 	}
+
+	e.write_echo_if_command(opt)
 	match op.kind {
 		.plus {
-			e.expr(expr.expr, opt_for_expr)
+			e.expr(expr.expr, subexpr_opt)
 		}
 		.minus {
 			e.expr(ast.InfixExpr{
@@ -408,14 +413,14 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 					kind: .mul
 					text: '*'
 				}
-			}, opt_for_expr)
+			}, subexpr_opt)
 		}
 		.amp {
 			e.reference(expr.expr)
 		}
 		.not {
 			e.write('! { ')
-			e.expr(expr.expr, as_condition: true)
+			e.expr(expr.expr, mode: .condition)
 			e.write(' ; }')
 		}
 		else {
@@ -430,10 +435,10 @@ fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
 			if i > 0 {
 				e.write(' | ')
 			}
-			e.expr(expr, as_command: true)
+			e.expr(expr, mode: .command)
 		}
 	}
-	if opt.as_command {
+	if opt.mode == .command {
 		f(mut e, expr)
 	} else {
 		e.sh_command_substitution(f, expr)

@@ -9,7 +9,7 @@ import cotowali.ast { CallCommandExpr, CallExpr, FnDecl }
 import cotowali.symbols { builtin_fn_id }
 
 fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
-	if !opt.as_command {
+	if opt.mode != .command {
 		e.write('\$(')
 		defer {
 			e.write(')')
@@ -30,13 +30,13 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 			e.write(' ')
 			e.reference(arg)
 		}
-		if !(opt.as_command || opt.as_condition) {
+		if opt.mode !in [.command, .condition] {
 			e.sh_result_to_bool()
 		}
 		return
 	}
 
-	if !opt.as_command {
+	if opt.mode != .command {
 		e.write('\$(')
 		defer {
 			e.write(')')

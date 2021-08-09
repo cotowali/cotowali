@@ -18,7 +18,7 @@ fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 }
 
 fn (mut e Emitter) array(name string, opt ExprOpt) {
-	if opt.as_command {
+	if opt.mode == .command {
 		e.writeln('echo \$(eval echo \$(array_elements $name) )')
 		return
 	}

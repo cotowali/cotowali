@@ -19,7 +19,7 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 					e.write('array_assign "$name"')
 					for elem in value.elements {
 						e.write(' ')
-						e.expr(elem, as_command: false)
+						e.expr(elem)
 					}
 					e.writeln('')
 				}

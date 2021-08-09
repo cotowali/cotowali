@@ -24,7 +24,7 @@ fn (mut e Emitter) map_literal(expr MapLiteral, opt ExprOpt) {
 }
 
 fn (mut e Emitter) map(name string, opt ExprOpt) {
-	if opt.as_command {
+	if opt.mode == .command {
 		panic('unimplemented')
 		return
 	}
