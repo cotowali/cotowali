@@ -61,6 +61,9 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 			}
 		}
 		IndexExpr {}
+		ParenExpr {
+			// todo
+		}
 		else {
 			r.error('invalid left-hand side of assignment', stmt.left.pos())
 		}
