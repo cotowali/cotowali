@@ -74,17 +74,27 @@ fn (mut e Emitter) assign(name string, value ExprOrString, ts TypeSymbol) {
 }
 
 fn (mut e Emitter) assign_stmt(node ast.AssignStmt) {
-	if node.left is ast.IndexExpr {
-		name := e.ident_for(node.left.left)
-		e.write(match node.left.left.type_symbol().kind() {
-			.array { 'array_set $name ' }
-			.map { 'map_set $name ' }
-			else { panic_and_value(unreachable('invalid index left'), '') }
-		})
-		e.expr(node.left.index)
-		e.write(' ')
-		e.expr(node.right, writeln: true)
-	} else {
-		e.assign(e.ident_for(node.left), node.right, node.left.type_symbol())
+	match node.left {
+		ast.IndexExpr {
+			name := e.ident_for(node.left.left)
+			e.write(match node.left.left.type_symbol().kind() {
+				.array { 'array_set $name ' }
+				.map { 'map_set $name ' }
+				else { panic_and_value(unreachable('invalid index left'), '') }
+			})
+			e.expr(node.left.index)
+			e.write(' ')
+			e.expr(node.right, writeln: true)
+		}
+		ast.ParenExpr {
+			e.write('set ')
+			e.expr(node.right, writeln: true)
+			for i, left in node.left.exprs {
+				e.assign(e.ident_for(left), '\$${i + 1}', left.type_symbol())
+			}
+		}
+		else {
+			e.assign(e.ident_for(node.left), node.right, node.left.type_symbol())
+		}
 	}
 }

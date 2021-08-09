@@ -32,6 +32,16 @@ fn test_simple_assign() {
 }
 test_simple_assign()
 
+fn test_destructure_assign() {
+  // TODO
+  // var (a, b) = (0, 1)
+  var a = 1
+  var b = 2
+  (a, b) = (a * 2, b * 2)
+  assert a == 2 && b == 4
+}
+test_destructure_assign()
+
 fn test_composite_assign() {
   var n = 0
   n += 3
