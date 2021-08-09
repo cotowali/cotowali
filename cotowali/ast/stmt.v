@@ -166,7 +166,8 @@ fn (mut r Resolver) fn_decl(decl FnDecl) {
 
 pub struct ForInStmt {
 pub mut:
-	// for var in expr
+	// for key, val in expr
+	key  Var
 	val  Var
 	expr Expr
 	body Block

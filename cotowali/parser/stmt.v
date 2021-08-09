@@ -271,17 +271,37 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 	}
 
 	p.consume_with_assert(.key_for)
-	ident := p.consume_with_check(.ident) ?
+	mut idents := [p.consume_with_check(.ident) ?]
+	if _ := p.consume_if_kind_eq(.comma) {
+		idents << p.consume_with_check(.ident) ?
+	}
+
 	p.consume_with_check(.key_in) ?
 	expr := p.parse_expr(.toplevel) ?
-	body := p.parse_block('for_$p.count', [ident.text]) ?
+	body := p.parse_block('for_$p.count', idents.map(it.text)) ?
 	p.count++
-	return ast.ForInStmt{
-		val: ast.Var{
+
+	mut vars := []ast.Var{cap: idents.len}
+	for ident in idents {
+		vars << ast.Var{
 			scope: body.scope
 			pos: ident.pos
 			sym: body.scope.lookup_var(ident.text) or { panic(unreachable(err)) }
 		}
+	}
+
+	key, val := if vars.len == 1 {
+		ast.Var{
+			scope: body.scope
+			sym: 0
+		}, vars[0]
+	} else {
+		vars[0], vars[1]
+	}
+
+	return ast.ForInStmt{
+		key: key
+		val: val
 		expr: expr
 		body: body
 	}
