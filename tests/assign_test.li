@@ -39,6 +39,9 @@ fn test_destructure_assign() {
   var b = 2
   (a, b) = (a * 2, b * 2)
   assert a == 2 && b == 4
+
+  (a, b) = (b, a)
+  assert a == 4 && b == 2
 }
 test_destructure_assign()
 
