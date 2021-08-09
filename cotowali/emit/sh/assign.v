@@ -73,6 +73,18 @@ fn (mut e Emitter) assign(name string, value ExprOrString, ts TypeSymbol) {
 	}
 }
 
+fn (mut e Emitter) destructuring_assign(names []string, expr ast.Expr) {
+	tuple_info := expr.type_symbol().tuple_info() or {
+		panic(unreachable('destrucuturing not tuple value'))
+	}
+	e.write('set ')
+	e.expr(expr, writeln: true)
+	for i, name in names {
+		ts := expr.scope().must_lookup_type(tuple_info.elements[i])
+		e.assign(name, '\$${i + 1}', ts)
+	}
+}
+
 fn (mut e Emitter) assign_stmt(node ast.AssignStmt) {
 	match node.left {
 		ast.IndexExpr {
@@ -87,11 +99,7 @@ fn (mut e Emitter) assign_stmt(node ast.AssignStmt) {
 			e.expr(node.right, writeln: true)
 		}
 		ast.ParenExpr {
-			e.write('set ')
-			e.expr(node.right, writeln: true)
-			for i, left in node.left.exprs {
-				e.assign(e.ident_for(left), '\$${i + 1}', left.type_symbol())
-			}
+			e.destructuring_assign(node.left.exprs.map(e.ident_for(it)), node.right)
 		}
 		else {
 			e.assign(e.ident_for(node.left), node.right, node.left.type_symbol())
