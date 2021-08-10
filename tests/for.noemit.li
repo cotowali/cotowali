@@ -1,7 +1,0 @@
-for v in seq(3) {
-  echo(v)
-}
-
-for i, v in seq(3) {
-  echo("$i: $v")
-}
