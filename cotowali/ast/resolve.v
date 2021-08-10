@@ -46,7 +46,7 @@ fn (mut r Resolver) trace_end() {
 	r.tracer.end_fn()
 }
 
-fn (mut r Resolver) error(msg string, pos Pos) {
+fn (mut r Resolver) error(msg string, pos Pos) IError {
 	$if trace_resolver ? {
 		r.trace_begin(@FN, msg, '$pos')
 		defer {
@@ -54,7 +54,7 @@ fn (mut r Resolver) error(msg string, pos Pos) {
 		}
 	}
 
-	r.ctx.errors.push_err(
+	return r.ctx.errors.push_err(
 		source: r.source
 		msg: msg
 		pos: pos
