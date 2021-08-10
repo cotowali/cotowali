@@ -1,3 +1,16 @@
+fn swap(a int, b int) (int, int) {
+  return (b, a)
+}
+
+fn test_swap() {
+  var a = 1
+  var b = 2
+  var new_a = a
+  var new_b = a
+  (new_a, new_b) = swap(a, b)
+  assert new_a == b && new_b == a
+}
+
 fn ...int |> sum() |> int {
   var res = 0
   var v int
