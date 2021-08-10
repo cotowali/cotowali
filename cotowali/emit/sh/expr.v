@@ -122,67 +122,79 @@ fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
 		}
 	}
 
-	invalid := unreachable('invalid string literal')
-	match expr.open.kind {
-		.single_quote {
-			for v in expr.contents {
-				if v is Token {
-					match v.kind {
-						.string_literal_content_escaped_back_slash {
-							if opt.mode == .command {
-								e.write(r'\\\\')
-							} else {
+	tmp_var := e.new_tmp_ident()
+	e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, arg ExprWithValue<ast.StringLiteral, string>) {
+		invalid := unreachable('invalid string literal')
+
+		expr := arg.expr
+		tmp_var := arg.value
+		e.write('$tmp_var=')
+		match expr.open.kind {
+			.single_quote {
+				for v in expr.contents {
+					if v is Token {
+						match v.kind {
+							.string_literal_content_escaped_back_slash {
 								e.write(r'\\')
 							}
+							.string_literal_content_escaped_single_quote {
+								e.write(r"\'")
+							}
+							.string_literal_content_text {
+								e.write("'$v.text'")
+							}
+							else {
+								panic(invalid)
+							}
 						}
-						.string_literal_content_escaped_single_quote {
-							e.write(r"\'")
-						}
-						.string_literal_content_text {
-							e.write("'$v.text'")
-						}
-						else {
-							panic(invalid)
+					} else {
+						panic(invalid)
+					}
+				}
+			}
+			.double_quote {
+				e.write('"')
+				{
+					for v in expr.contents {
+						if v is Token {
+							e.write(v.text)
+						} else if v is ast.Expr {
+							e.expr(v, quote: false)
 						}
 					}
+				}
+				e.write('"')
+			}
+			.single_quote_with_r_prefix {
+				content := expr.contents[0]
+				if content is Token {
+					e.write("'$content.text'")
 				} else {
 					panic(invalid)
 				}
 			}
-		}
-		.double_quote {
-			e.write('"')
-			{
-				for v in expr.contents {
-					if v is Token {
-						e.write(v.text)
-					} else if v is ast.Expr {
-						e.expr(v, quote: false)
-					}
+			.double_quote_with_r_prefix {
+				content := expr.contents[0]
+				if content is Token {
+					text := content.text.replace("'", r"'\''") // r"a'b" -> 'a'\''b'
+					e.write("'$text'")
+				} else {
+					panic(invalid)
 				}
 			}
-			e.write('"')
-		}
-		.single_quote_with_r_prefix {
-			content := expr.contents[0]
-			if content is Token {
-				e.write("'$content.text'")
-			} else {
-				panic(invalid)
+			else {
+				panic(unreachable('not a string'))
 			}
 		}
-		.double_quote_with_r_prefix {
-			content := expr.contents[0]
-			if content is Token {
-				text := content.text.replace("'", r"'\''") // r"a'b" -> 'a'\''b'
-				e.write("'$text'")
-			} else {
-				panic(invalid)
-			}
-		}
-		else {
-			panic(unreachable('not a string'))
-		}
+		e.writeln('')
+	}, expr_with_value(expr, tmp_var))
+
+	if opt.quote {
+		e.write('"')
+	}
+	e.write('\$$tmp_var')
+	if opt.quote {
+		e.write('"')
 	}
 }
 
