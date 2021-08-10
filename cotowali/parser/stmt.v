@@ -123,16 +123,8 @@ fn (mut p Parser) parse_var_stmt() ?ast.AssignStmt {
 	}
 
 	p.consume_with_assert(.key_var)
-	ident := p.consume_with_check(.ident) ?
-	name := ident.text
 
-	left := ast.Var{
-		scope: p.scope
-		pos: ident.pos
-		sym: p.scope.register_var(name: name, pos: ident.pos) or {
-			return p.duplicated_error(name, ident.pos)
-		}
-	}
+	left := p.parse_expr(.toplevel) ?
 	right := if _ := p.consume_if_kind_eq(.assign) {
 		expr := p.parse_expr(.toplevel) ?
 		expr
