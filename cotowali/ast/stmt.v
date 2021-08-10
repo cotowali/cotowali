@@ -53,13 +53,22 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 		}
 	}
 
-	r.expr(stmt.left)
+	if !stmt.is_decl {
+		r.expr(stmt.left)
+	}
 	r.expr(stmt.right)
 
 	match mut stmt.left {
 		Var {
 			if stmt.is_decl {
 				r.set_typ(stmt.left, stmt.right.typ())
+
+				sym := stmt.left.sym
+				if registered := stmt.scope.register_var(sym) {
+					stmt.left.sym = registered
+				} else {
+					r.duplicated_error(sym.name, sym.pos)
+				}
 			}
 		}
 		IndexExpr {}
