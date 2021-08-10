@@ -80,7 +80,7 @@ fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
 }
 
 fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
-	e.write('for ${e.ident_for(stmt.val)} in ')
+	e.write('for ${e.ident_for(stmt.var_)} in ')
 	e.expr(stmt.expr, expand_array: true, writeln: true)
 	e.writeln('do')
 	{

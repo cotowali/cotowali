@@ -170,7 +170,7 @@ fn (mut r Resolver) fn_decl(decl FnDecl) {
 pub struct ForInStmt {
 pub mut:
 	// for var in expr
-	val  Var
+	var_ Var
 	expr Expr
 	body Block
 }
@@ -187,7 +187,7 @@ fn (mut r Resolver) for_in_stmt(mut stmt ForInStmt) {
 
 	expr_ts := stmt.expr.type_symbol()
 	if expr_ts.info is ArrayTypeInfo {
-		r.set_typ(stmt.val, expr_ts.info.elem)
+		r.set_typ(stmt.var_, expr_ts.info.elem)
 	}
 
 	r.block(stmt.body)

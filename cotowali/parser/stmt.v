@@ -277,7 +277,7 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 	body := p.parse_block('for_$p.count', [ident.text]) ?
 	p.count++
 	return ast.ForInStmt{
-		val: ast.Var{
+		var_: ast.Var{
 			scope: body.scope
 			pos: ident.pos
 			sym: body.scope.lookup_var(ident.text) or { panic(unreachable(err)) }
