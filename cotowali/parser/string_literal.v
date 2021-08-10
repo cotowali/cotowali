@@ -94,7 +94,7 @@ fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
 			v := ast.Var{
 				scope: p.scope
 				pos: tok.pos
-				sym: new_placeholder_var(name)
+				sym: new_placeholder_var(name, tok.pos)
 			}
 
 			contents << ast.Expr(v)

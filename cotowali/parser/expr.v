@@ -192,7 +192,7 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	return ast.Var{
 		scope: p.scope
 		pos: ident.pos
-		sym: new_placeholder_var(name)
+		sym: new_placeholder_var(name, ident.pos)
 	}
 }
 
