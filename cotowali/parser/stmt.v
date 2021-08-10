@@ -136,6 +136,7 @@ fn (mut p Parser) parse_var_stmt() ?ast.AssignStmt {
 	}
 	return ast.AssignStmt{
 		is_decl: true
+		scope: p.scope
 		left: left
 		right: right
 	}
@@ -161,6 +162,7 @@ fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
 	mut right := p.parse_expr(.toplevel) ?
 	if op.kind == .assign {
 		return ast.AssignStmt{
+			scope: p.scope
 			left: left
 			right: right
 		}
@@ -191,6 +193,7 @@ fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
 		}
 	}
 	return ast.AssignStmt{
+		scope: p.scope
 		left: left
 		right: right
 	}

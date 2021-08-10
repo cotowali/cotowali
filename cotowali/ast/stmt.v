@@ -37,6 +37,8 @@ fn (mut r Resolver) stmt(stmt Stmt) {
 }
 
 pub struct AssignStmt {
+mut:
+	scope &Scope
 pub mut:
 	is_decl bool
 	left    Expr
