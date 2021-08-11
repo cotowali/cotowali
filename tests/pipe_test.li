@@ -5,8 +5,8 @@ fn int |> inc() int {
 }
 
 fn ...int |> sum() int {
-  var n int
-  var v int
+  var n: int
+  var v: int
   while read(&v) {
     n = n + v
   }
@@ -14,7 +14,7 @@ fn ...int |> sum() int {
 }
 
 fn ...int |> twice() |> ...int {
-  var v int
+  var v: int
   while read(&v) {
     yield v * 2
   }

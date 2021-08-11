@@ -1,9 +1,9 @@
-fn echo_arr(arr []int) {
+fn echo_arr(arr: []int) {
   echo('echo_arr')
   arr
 }
 
-fn raw_arr(arr []int) []int {
+fn raw_arr(arr: []int) []int {
   return arr
 }
 

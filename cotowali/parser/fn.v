@@ -34,6 +34,7 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 
 	for {
 		name_tok := p.consume_with_check(.ident) ?
+		p.consume_with_check(.colon) ?
 		ts := p.parse_type() ?
 
 		info.params << FnParamParsingInfo{

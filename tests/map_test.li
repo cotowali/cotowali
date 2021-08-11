@@ -1,4 +1,4 @@
-fn f(m map[string]string) {}
+fn f(m: map[string]string) {}
 
 f(map[string]string{})
 f(map[string]string{ 'key': 'value' })

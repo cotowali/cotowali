@@ -1,13 +1,13 @@
-fn git(command string) string
-fn add(a int, b int) int {
+fn git(command: string) string
+fn add(a: int, b: int) int {
   return a + b
 }
 
-fn div(a float, b float) float {
+fn div(a: float, b: float) float {
   return a / b
 }
 
-fn sum(vals ...int) int {
+fn sum(vals: ...int) int {
   var res = 0
   for v in vals {
     res = res + v

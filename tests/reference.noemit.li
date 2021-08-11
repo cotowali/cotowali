@@ -1,2 +1,2 @@
-fn f(v &int) {
+fn f(v: &int) {
 }

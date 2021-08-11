@@ -1,4 +1,4 @@
-fn f(a int) int {
+fn f(a: int) int {
   return a
 }
 
@@ -22,6 +22,6 @@ x[0]
 fn int |> g() {
   read(&n)
 
-  var s string
+  var s: string
   read(&s)
 }

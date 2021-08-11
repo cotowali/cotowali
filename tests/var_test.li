@@ -1,15 +1,15 @@
 var a = 1
 assert a == 1
-var b int
+var b: int
 assert b == 0
-var c string
+var c: string
 assert c == ''
 // var d int = 0
 // assert d == 0
 
 var tuple_a = (2, 3)
-var tuple_a_1 int
-var tuple_a_2 int
+var tuple_a_1: int
+var tuple_a_2: int
 (tuple_a_1, tuple_a_2) = tuple_a
 assert tuple_a_1 == 2 && tuple_a_2 == 3
 

@@ -19,7 +19,7 @@
 ## Example
 
 ```
-fn fib(n int) int {
+fn fib(n: int) int {
   if n < 2 {
     return n
   }
@@ -36,7 +36,7 @@ assert fib(6) == 8
 assert (fib(6) |> twice()) == 16
 
 fn ...int |> sum() int {
-  var v int
+  var v: int
   var res = 0
   while read(&v) {
     res += v
@@ -45,7 +45,7 @@ fn ...int |> sum() int {
 }
 
 fn ...int |> twice_each() |> ...int {
-  var n int
+  var n: int
   while read(&n) {
     yield n * 2
   }

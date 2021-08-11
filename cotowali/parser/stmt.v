@@ -125,14 +125,18 @@ fn (mut p Parser) parse_var_stmt() ?ast.AssignStmt {
 	p.consume_with_assert(.key_var)
 
 	left := p.parse_expr(.toplevel) ?
-	right := if _ := p.consume_if_kind_eq(.assign) {
-		expr := p.parse_expr(.toplevel) ?
-		expr
-	} else {
-		ast.Expr(ast.DefaultValue{
-			scope: p.scope
-			typ: (p.parse_type() ?).typ
-		})
+	sep := p.consume_with_check(.assign, .colon) ?
+	right := match sep.kind {
+		.assign {
+			expr := p.parse_expr(.toplevel) ?
+			expr
+		}
+		else {
+			ast.Expr(ast.DefaultValue{
+				scope: p.scope
+				typ: (p.parse_type() ?).typ
+			})
+		}
 	}
 	return ast.AssignStmt{
 		is_decl: true

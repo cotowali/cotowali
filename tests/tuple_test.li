@@ -1,4 +1,4 @@
-fn swap(a int, b int) (int, int) {
+fn swap(a: int, b: int) (int, int) {
   return (b, a)
 }
 
@@ -13,7 +13,7 @@ fn test_swap() {
 
 fn ...int |> sum() |> int {
   var res = 0
-  var v int
+  var v: int
   while read(&v) {
     res = res + v
   }
@@ -22,15 +22,15 @@ fn ...int |> sum() |> int {
 
 
 fn ...(int, int) |> add() |> ...int {
-  var v1 int
-  var v2 int
+  var v1: int
+  var v2: int
   while read(&v1, &v2) {
     yield v1 + v2
   }
 }
 
 fn (int) |> twice() |> (int) {
-  var n int
+  var n: int
   read(&n)
   return n * 2
 }
