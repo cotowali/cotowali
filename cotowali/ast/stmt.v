@@ -6,7 +6,7 @@
 module ast
 
 import cotowali.source { Pos }
-import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol }
+import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_type }
 import cotowali.errors { unreachable }
 
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
@@ -41,6 +41,7 @@ mut:
 	scope &Scope
 pub mut:
 	is_decl bool
+	typ     Type = builtin_type(.placeholder)
 	left    Expr
 	right   Expr
 }
@@ -58,10 +59,14 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 	}
 	r.expr(stmt.right)
 
+	if stmt.typ == builtin_type(.placeholder) {
+		stmt.typ = stmt.right.typ()
+	}
+
 	match mut stmt.left {
 		Var {
 			if stmt.is_decl {
-				r.set_typ(stmt.left, stmt.right.typ())
+				r.set_typ(stmt.left, stmt.typ)
 
 				sym := stmt.left.sym
 				if registered := stmt.scope.register_var(sym) {
