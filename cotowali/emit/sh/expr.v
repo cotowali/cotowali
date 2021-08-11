@@ -92,12 +92,12 @@ fn (mut e Emitter) write_echo_if_command_then_write(s string, opt ExprOpt) {
 }
 
 fn (mut e Emitter) bool_literal(expr ast.BoolLiteral, opt ExprOpt) {
-	if opt.mode == .condition {
-		e.write(if expr.bool() { 'true' } else { 'false' })
-		return
-	}
 	v := if expr.bool() { true_value } else { false_value }
-	e.write_echo_if_command_then_write(v, opt)
+	if opt.mode == .condition {
+		e.write(v)
+	} else {
+		e.write_echo_if_command_then_write(v, opt)
+	}
 }
 
 fn (mut e Emitter) float_literal(expr ast.FloatLiteral, opt ExprOpt) {
