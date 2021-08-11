@@ -9,6 +9,7 @@ import cotowali.ast
 import cotowali.errors { unreachable }
 import cotowali.token { Token, TokenKind }
 import cotowali.util { panic_and_value }
+import cotowali.symbols { builtin_type }
 import os
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
@@ -125,22 +126,27 @@ fn (mut p Parser) parse_var_stmt() ?ast.AssignStmt {
 	p.consume_with_assert(.key_var)
 
 	left := p.parse_expr(.toplevel) ?
-	sep := p.consume_with_check(.assign, .colon) ?
-	right := match sep.kind {
-		.assign {
-			expr := p.parse_expr(.toplevel) ?
-			expr
-		}
-		else {
-			ast.Expr(ast.DefaultValue{
-				scope: p.scope
-				typ: (p.parse_type() ?).typ
-			})
-		}
+
+	mut typ := builtin_type(.placeholder)
+	p.check(.assign, .colon) ?
+
+	if _ := p.consume_if_kind_eq(.colon) {
+		typ = (p.parse_type() ?).typ
 	}
+	right := if _ := p.consume_if_kind_eq(.assign) {
+		expr := p.parse_expr(.toplevel) ?
+		expr
+	} else {
+		ast.Expr(ast.DefaultValue{
+			scope: p.scope
+			typ: typ
+		})
+	}
+
 	return ast.AssignStmt{
 		is_decl: true
 		scope: p.scope
+		typ: typ
 		left: left
 		right: right
 	}
