@@ -285,6 +285,9 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
+	need_quote := opt.quote && opt.mode !in [.inside_arithmetic, .command]
+		&& ast.Expr(expr).type_symbol().kind() == .tuple
+	e.write_if(need_quote, '"')
 	e.write_if(opt.mode == .inside_arithmetic, ' (')
 	{
 		for i, subexpr in expr.exprs {
@@ -295,6 +298,7 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 		}
 	}
 	e.write_if(opt.mode == .inside_arithmetic, ' )')
+	e.write_if(need_quote, '"')
 }
 
 fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {

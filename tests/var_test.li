@@ -7,13 +7,11 @@ assert c == ''
 // var d int = 0
 // assert d == 0
 
-/*
 var tuple_a = (2, 3)
 var tuple_a_1 int
 var tuple_a_2 int
 (tuple_a_1, tuple_a_2) = tuple_a
 assert tuple_a_1 == 2 && tuple_a_2 == 3
-*/
 
 /*
 var tuple_b (int, int)
