@@ -13,10 +13,8 @@ var tuple_a_2: int
 (tuple_a_1, tuple_a_2) = tuple_a
 assert tuple_a_1 == 2 && tuple_a_2 == 3
 
-/*
-var tuple_b (int, int)
+var tuple_b: (int, int)
 var tuple_b_1 = -1
 var tuple_b_2 = -1
 (tuple_b_1, tuple_b_2) = tuple_b
 assert tuple_b_1 == 0 && tuple_b_2 == 0
-*/

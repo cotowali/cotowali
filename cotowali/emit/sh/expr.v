@@ -105,6 +105,18 @@ fn (mut e Emitter) int_literal(expr ast.IntLiteral, opt ExprOpt) {
 fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
+	ts := ast.Expr(expr).type_symbol()
+	if tuple_info := ts.tuple_info() {
+		e.paren_expr(ast.ParenExpr{
+			scope: expr.scope
+			exprs: tuple_info.elements.map(ast.Expr(ast.DefaultValue{
+				typ: it
+				scope: expr.scope
+			}))
+		}, opt)
+		return
+	}
+
 	e.write(match expr.typ {
 		builtin_type(.bool) { false_value }
 		builtin_type(.int), builtin_type(.float) { '0' }
