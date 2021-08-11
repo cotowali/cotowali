@@ -72,18 +72,12 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.StringLiteral { e.string_literal(expr, opt) }
 		ast.Var { e.var_(expr, opt) }
 	}
-	if opt.mode == .command && opt.discard_stdout {
-		e.write(' > /dev/null')
-	}
-	if opt.writeln {
-		e.writeln('')
-	}
+	e.write_if(opt.mode == .command && opt.discard_stdout, ' > /dev/null')
+	e.writeln_if(opt.writeln, '')
 }
 
 fn (mut e Emitter) write_echo_if_command(opt ExprOpt) {
-	if opt.mode == .command {
-		e.write('echo ')
-	}
+	e.write_if(opt.mode == .command, 'echo ')
 }
 
 fn (mut e Emitter) write_echo_if_command_then_write(s string, opt ExprOpt) {
@@ -251,14 +245,13 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 
 	match expr.op.kind {
 		.plus, .minus, .div, .mul, .mod {
-			open, close := if opt.mode == .inside_arithmetic { '', '' } else { '\$(( ', ' ))' }
-			e.write(open)
+			e.write_if(opt.mode != .inside_arithmetic, r'$(( ')
 			{
 				e.expr(expr.left, mode: .inside_arithmetic)
 				e.write(' $expr.op.text ')
 				e.expr(expr.right, mode: .inside_arithmetic)
 			}
-			e.write(close)
+			e.write_if(opt.mode != .inside_arithmetic, ' ))')
 		}
 		else {
 			panic('unimplemented')
@@ -292,8 +285,7 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
-	open, close := if opt.mode == .inside_arithmetic { ' ( ', ' ) ' } else { '', '' }
-	e.write(open)
+	e.write_if(opt.mode == .inside_arithmetic, ' (')
 	{
 		for i, subexpr in expr.exprs {
 			if i > 0 {
@@ -302,7 +294,7 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 			e.expr(subexpr)
 		}
 	}
-	e.write(close)
+	e.write_if(opt.mode == .inside_arithmetic, ' )')
 }
 
 fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {

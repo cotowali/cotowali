@@ -124,3 +124,17 @@ fn (mut e Emitter) write(s string) {
 	mut code := e.code()
 	code.write_string(s) or { panic(err) }
 }
+
+fn (mut e Emitter) write_if(cond bool, s string) {
+	if cond {
+		e.write(s)
+	}
+	// return cond
+}
+
+fn (mut e Emitter) writeln_if(cond bool, s string) {
+	if cond {
+		e.writeln(s)
+	}
+	// return cond
+}
