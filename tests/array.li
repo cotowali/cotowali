@@ -1,8 +1,3 @@
-fn echo_arr(arr: []int) {
-  echo('echo_arr')
-  arr
-}
-
 fn raw_arr(arr: []int) []int {
   return arr
 }
@@ -28,8 +23,6 @@ var arr = [0
   n
   ,
 ]
-echo_arr(arr)
-echo_arr([0, 1, 2])
 raw_arr(arr)
 new_arr()
 // assert raw_arr(arr) == arr
