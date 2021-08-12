@@ -89,7 +89,7 @@ enum LicCommand {
 }
 
 fn (lic Lic) compile() ? {
-	res := os.execute('v -cg $lic.source -o $lic.bin')
+	res := os.execute('v -g $lic.source -o $lic.bin')
 	if res.exit_code != 0 {
 		return error_with_code(res.output, res.exit_code)
 	}
