@@ -53,6 +53,10 @@ fn (mut e Emitter) sh_command_substitution<T>(f fn (mut Emitter, T), v T) {
 	e.write(' )')
 }
 
+fn (mut e Emitter) sh_awk_quote_line() {
+	e.write(' | awk \'{printf "\'\\\'\'%s\'\\\'\'", \$0}\'')
+}
+
 fn (mut e Emitter) sh_awk_infix_expr(expr ast.InfixExpr) {
 	mut awk_expr := '\$1 $expr.op.text \$2'
 	mut format := '%lf'
