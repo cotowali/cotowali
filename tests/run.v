@@ -100,7 +100,7 @@ fn (lic Lic) execute(c LicCommand, file string) os.Result {
 	return match c {
 		.shellcheck { os.execute('$lic.bin $file | shellcheck -') }
 		.compile { os.execute('$lic.bin $file') }
-		.noemit { os.execute('$lic.bin --no-emit $file') }
+		.noemit { os.execute('$lic.bin -no-emit $file') }
 		.run { os.execute('$lic.bin run $file') }
 	}
 }
