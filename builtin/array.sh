@@ -25,7 +25,7 @@ array_set() {
   name=$1
   i=$2
   val=$3
-  eval "${name}_$i=$val"
+  eval "${name}_$i='$val'"
 }
 
 array_elements() {

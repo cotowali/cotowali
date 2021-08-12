@@ -1,8 +1,11 @@
 0 1 2
 a b c
-0 1 2
+"$arr_0" "$arr_1" "$arr_2"
 0 1 2
 for
 0
 1
 2
+array of tuple for
+v: 0 1
+v: 2 3
