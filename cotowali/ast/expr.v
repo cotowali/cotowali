@@ -7,7 +7,7 @@ module ast
 
 import cotowali.source { Pos }
 import cotowali.token { Token }
-import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, MapTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id, builtin_type }
+import cotowali.symbols { ArrayTypeInfo, MapTypeInfo, Scope, Type, TypeSymbol, builtin_type }
 import cotowali.errors { unreachable }
 
 pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | DefaultValue |
@@ -182,113 +182,6 @@ fn (mut r Resolver) as_expr(expr AsExpr) {
 	}
 
 	r.expr(expr.expr)
-}
-
-pub struct CallCommandExpr {
-pub:
-	pos     Pos
-	command string
-	args    []Expr
-pub mut:
-	scope &Scope
-}
-
-fn (mut r Resolver) call_command_expr(expr CallCommandExpr) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-	r.exprs(expr.args)
-}
-
-pub struct CallExpr {
-mut:
-	typ Type
-pub:
-	pos Pos
-pub mut:
-	scope   &Scope
-	func_id u64
-	func    Expr
-	args    []Expr
-}
-
-pub fn (e CallExpr) is_varargs() bool {
-	syms := e.function_info().params.map(e.scope.must_lookup_type(it))
-	if syms.len > 0 {
-		last := syms.last()
-		if last.info is ArrayTypeInfo {
-			return last.info.variadic
-		}
-	}
-	return false
-}
-
-pub fn (e CallExpr) function_info() FunctionTypeInfo {
-	return e.func.type_symbol().function_info() or { panic(unreachable(err)) }
-}
-
-fn (mut r Resolver) call_expr(mut expr CallExpr) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
-	r.call_expr_func(mut expr)
-	r.exprs(expr.args)
-}
-
-fn (mut r Resolver) call_expr_func(mut e CallExpr) {
-	if mut e.func is Var {
-		name := e.func.name()
-		sym := e.scope.lookup_var(name) or {
-			r.error('function `$name` is not defined', e.pos)
-			return
-		}
-
-		e.func.sym = sym
-
-		ts := sym.type_symbol()
-		if !sym.is_function() {
-			r.error('`$sym.name` is not function (`$ts.name`)', e.pos)
-			return
-		}
-
-		function_info := e.function_info()
-		e.typ = function_info.ret
-		e.func_id = sym.id
-		if owner := e.scope.owner() {
-			if sym.id == builtin_fn_id(.read) {
-				owner_function_info := owner.type_symbol().function_info() or {
-					panic(unreachable(err))
-				}
-				mut pipe_in := e.scope.must_lookup_type(owner_function_info.pipe_in)
-				if pipe_in_array_info := pipe_in.array_info() {
-					if pipe_in_array_info.variadic {
-						pipe_in = e.scope.must_lookup_type(pipe_in_array_info.elem)
-					}
-				}
-				new_fn_params := if pipe_in_tuple_info := pipe_in.tuple_info() {
-					elements := pipe_in_tuple_info.elements
-					elements.map(e.scope.lookup_or_register_reference_type(target: it).typ)
-				} else {
-					[e.scope.lookup_or_register_reference_type(target: pipe_in.typ).typ]
-				}
-				e.func.sym = if new_fn := e.scope.register_fn(sym.name, params: new_fn_params) {
-					new_fn
-				} else {
-					// already registered
-					e.scope.must_lookup_var(sym.name)
-				}
-			}
-		}
-	} else {
-		r.error('cannot call `$e.func.type_symbol().name`', e.pos)
-	}
 }
 
 pub struct DefaultValue {
