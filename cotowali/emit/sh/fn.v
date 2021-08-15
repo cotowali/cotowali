@@ -44,14 +44,6 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 	}
 
 	match expr.func_id {
-		builtin_fn_id(.call) {
-			e.expr(expr.args[0])
-			for arg in expr.args[1..] {
-				e.write(' ')
-				e.expr(arg)
-			}
-			return
-		}
 		builtin_fn_id(.@typeof) {
 			e.write('echo ${expr.args[0].type_symbol().name}')
 			return
