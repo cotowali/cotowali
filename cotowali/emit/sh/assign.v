@@ -30,7 +30,7 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 			}
 		}
 		string {
-			e.writeln('array_assign "$name" \$(array_elements "$value")')
+			e.writeln('array_assign "$name" \$(eval echo \$(array_elements "$value") )')
 		}
 	}
 }
