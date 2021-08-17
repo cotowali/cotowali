@@ -8,6 +8,13 @@ module ast
 import cotowali.source { Pos }
 import cotowali.symbols { ArrayTypeInfo, Scope, Type, builtin_type }
 
+pub struct Attr {
+pub:
+	// #[name]
+	pos  Pos
+	name string
+}
+
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
 	IfStmt | InlineShell | RequireStmt | ReturnStmt | WhileStmt | YieldStmt
 

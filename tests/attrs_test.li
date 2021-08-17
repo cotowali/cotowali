@@ -1,0 +1,4 @@
+#[mangle]
+fn func() {}
+
+// @which('func')? != 0

@@ -12,6 +12,44 @@ import cotowali.util { panic_and_value }
 import cotowali.symbols { builtin_type }
 import os
 
+fn (mut p Parser) parse_attr() ?ast.Attr {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
+	start := (p.consume_with_check(.hash) ?).pos
+	p.consume_with_check(.l_bracket) ?
+	tok := p.consume()
+	end := (p.consume_with_check(.r_bracket) ?).pos
+	return ast.Attr{
+		pos: start.merge(end)
+		name: tok.text
+	}
+}
+
+fn (mut p Parser) parse_attrs() []ast.Attr {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
+	mut attrs := []ast.Attr{}
+	for p.kind(0) == .hash {
+		if attr := p.parse_attr() {
+			attrs << attr
+		} else {
+			p.skip_until_eol()
+		}
+		p.skip_eol()
+	}
+	return attrs
+}
+
 fn (mut p Parser) parse_stmt() ast.Stmt {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
@@ -20,11 +58,15 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 		}
 	}
 
+	attrs := p.parse_attrs()
 	stmt := p.try_parse_stmt() or {
 		p.skip_until_eol()
 		ast.EmptyStmt{}
 	}
 	p.skip_eol()
+
+	// TODO: handle attrs
+
 	return stmt
 }
 
