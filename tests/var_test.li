@@ -6,6 +6,10 @@ var c: string
 assert c == ''
 var d: int = 0
 assert d == 0
+var (e1, e2) = (1, 2)
+assert e1 == 1 && e2 == 2
+var (f1, f2): (int, int)
+assert f1 == 0 && f2 == 0
 
 var tuple_a = (2, 3)
 var tuple_a_1: int
@@ -18,3 +22,4 @@ var tuple_b_1 = -1
 var tuple_b_2 = -1
 (tuple_b_1, tuple_b_2) = tuple_b
 assert tuple_b_1 == 0 && tuple_b_2 == 0
+

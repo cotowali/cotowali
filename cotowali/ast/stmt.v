@@ -62,6 +62,8 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 		stmt.typ = stmt.right.typ()
 	}
 
+	ts := stmt.scope.must_lookup_type(stmt.typ)
+
 	match mut stmt.left {
 		Var {
 			if stmt.is_decl {
@@ -77,7 +79,27 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 		}
 		IndexExpr {}
 		ParenExpr {
-			// todo
+			if stmt.is_decl {
+				expr_types := if tuple_info := ts.tuple_info() {
+					tuple_info.elements
+				} else {
+					[]Type{}
+				}
+				for i, _ in stmt.left.exprs {
+					if stmt.left.exprs[i] is Var {
+						mut left := unsafe { &stmt.left.exprs[i] as Var }
+						if i < expr_types.len {
+							r.set_typ(left, expr_types[i])
+						}
+
+						if registered := stmt.scope.register_var(left.sym) {
+							left.sym = registered
+						} else {
+							r.duplicated_error(left.sym.name, left.sym.pos)
+						}
+					}
+				}
+			}
 		}
 		else {
 			r.error('invalid left-hand side of assignment', stmt.left.pos())
