@@ -15,6 +15,25 @@ pub:
 	name string
 }
 
+pub enum AttrKind {
+	mangle
+	unknown
+}
+
+const attr_name_kind_table = (fn () map[string]AttrKind {
+	k := fn (k AttrKind) AttrKind {
+		return k
+	}
+
+	return {
+		'mangle': k(.mangle)
+	}
+}())
+
+pub fn (attr Attr) kind() AttrKind {
+	return ast.attr_name_kind_table[attr.name] or { AttrKind.unknown }
+}
+
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
 	IfStmt | InlineShell | RequireStmt | ReturnStmt | WhileStmt | YieldStmt
 

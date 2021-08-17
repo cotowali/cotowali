@@ -50,3 +50,18 @@ fn (mut c Checker) error(msg string, pos Pos) IError {
 		pos: pos
 	)
 }
+
+fn (mut c Checker) warn(msg string, pos Pos) IError {
+	$if trace_checker ? {
+		c.trace_begin(@FN, msg, '$pos')
+		defer {
+			c.trace_end()
+		}
+	}
+
+	return c.ctx.errors.push_warn(
+		source: c.source
+		msg: msg
+		pos: pos
+	)
+}

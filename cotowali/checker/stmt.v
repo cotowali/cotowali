@@ -8,6 +8,25 @@ module checker
 import cotowali.ast
 import cotowali.symbols { builtin_type }
 
+fn (mut c Checker) attrs(attrs []ast.Attr) {
+	for attr in attrs {
+		c.attr(attr)
+	}
+}
+
+fn (mut c Checker) attr(attr ast.Attr) {
+	$if trace_checker ? {
+		c.trace_begin(@FN, attr.name)
+		defer {
+			c.trace_end()
+		}
+	}
+
+	if attr.kind() == .unknown {
+		c.warn('unknown attribute `$attr.name`', attr.pos)
+	}
+}
+
 fn (mut c Checker) stmts(stmts []ast.Stmt) {
 	for stmt in stmts {
 		c.stmt(stmt)
@@ -104,6 +123,7 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 		c.current_fn = old_fn
 	}
 
+	c.attrs(stmt.attrs)
 	c.exprs(stmt.params.map(ast.Expr(it)))
 	c.block(stmt.body)
 }

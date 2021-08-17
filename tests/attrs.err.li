@@ -3,3 +3,6 @@ assert 0 == 0
 
 #[attr]
 if 0 == 0 {}
+
+#[abc]
+fn func() {}
