@@ -1,0 +1,6 @@
+error: attrs.err.li 1,1: cannot use attributes here
+    1 | #[attr]
+      | ^^^^^^^
+error: attrs.err.li 4,1: cannot use attributes here
+    4 | #[attr]
+      | ^^^^^^^

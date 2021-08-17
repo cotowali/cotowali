@@ -68,6 +68,8 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 	if attrs.len > 0 {
 		if mut stmt is ast.FnDecl {
 			stmt.attrs = attrs
+		} else {
+			p.error('cannot use attributes here', attrs.last().pos)
 		}
 	}
 
