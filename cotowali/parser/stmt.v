@@ -59,13 +59,17 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 	}
 
 	attrs := p.parse_attrs()
-	stmt := p.try_parse_stmt() or {
+	mut stmt := p.try_parse_stmt() or {
 		p.skip_until_eol()
 		ast.EmptyStmt{}
 	}
 	p.skip_eol()
 
-	// TODO: handle attrs
+	if attrs.len > 0 {
+		if mut stmt is ast.FnDecl {
+			stmt.attrs = attrs
+		}
+	}
 
 	return stmt
 }

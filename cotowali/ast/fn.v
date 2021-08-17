@@ -17,6 +17,7 @@ pub:
 	has_body     bool
 	typ          Type
 pub mut:
+	attrs  []Attr
 	params []Var
 	body   Block
 }
