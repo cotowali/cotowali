@@ -4,3 +4,6 @@ error: attrs.err.li 1,1: cannot use attributes here
 error: attrs.err.li 4,1: cannot use attributes here
     4 | #[attr]
       | ^^^^^^^
+warning: attrs.err.li 7,1: unknown attribute `abc`
+    7 | #[abc]
+      | ^^^^^^
