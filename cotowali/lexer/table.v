@@ -15,6 +15,7 @@ const (
 		`]`: tk(.r_bracket)
 		`<`: tk(.lt)
 		`>`: tk(.gt)
+		`?`: tk(.question)
 		`#`: tk(.hash)
 		`+`: tk(.plus)
 		`-`: tk(.minus)
