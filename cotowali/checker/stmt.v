@@ -49,28 +49,20 @@ fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 
 	c.expr(stmt.right)
 
-	// if is_decl, left type is set to right type
-	if stmt.is_decl {
-		return
-	}
-
-	match stmt.left {
-		ast.Var {
-			// if left type is placeholder, left is undefined variable.
-			// So error has been reported by resolver.
-			if stmt.left.typ() != builtin_type(.placeholder) {
+	// if left type is placeholder, left is undefined variable.
+	// So error has been reported by resolver.
+	if stmt.left.typ() != builtin_type(.placeholder) {
+		match stmt.left {
+			ast.Var, ast.ParenExpr {
 				c.check_types(
 					want: stmt.left.type_symbol()
 					got: stmt.right.type_symbol()
 					pos: stmt.right.pos()
 				) or {}
 			}
-		}
-		ast.ParenExpr {
-			// TODO
-		}
-		else {
-			// Handled by resolver. Nothing to do
+			else {
+				// Handled by resolver. Nothing to do
+			}
 		}
 	}
 }

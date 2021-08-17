@@ -1,2 +1,7 @@
 var i = 0
 var i = 0
+var n: int = 's'
+n = 's'
+
+var (t1, t2): (int, int) = ('a', 'b')
+(i, n) = ('a', 'b')

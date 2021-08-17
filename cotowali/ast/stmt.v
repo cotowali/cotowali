@@ -73,6 +73,7 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 				if registered := stmt.scope.register_var(sym) {
 					stmt.left.sym = registered
 				} else {
+					stmt.left.sym = stmt.scope.must_lookup_var(sym.name)
 					r.duplicated_error(sym.name, sym.pos)
 				}
 			}
