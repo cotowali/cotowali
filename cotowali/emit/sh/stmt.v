@@ -59,7 +59,11 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 }
 
 fn (mut e Emitter) block(block ast.Block) {
-	e.stmts(block.stmts)
+	if block.stmts.len > 0 {
+		e.stmts(block.stmts)
+	} else {
+		e.writeln(':')
+	}
 }
 
 fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {

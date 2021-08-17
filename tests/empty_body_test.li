@@ -1,0 +1,7 @@
+if true {} else {}
+if false {} else {}
+if 1 == 1 {} else if 1 == 2 {} else {}
+
+for i in [0, 1, 2] {}
+
+fn func() {}
