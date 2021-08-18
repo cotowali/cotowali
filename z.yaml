@@ -7,6 +7,7 @@ var:
   kuqi_path: cmd/kuqi
   hello_world: examples/hello_world.li
   err_source: tests/expr_err.li
+  format_sources: cmd/lic cmd/tools jsonrpc lsp cotowali kuqi
 tasks:
   run: v run {{lic_path}} ${@:- {{hello_world}} }
   run.stdin: v run {{lic_path}}
@@ -65,7 +66,7 @@ tasks:
       fix: z test integration --fix $@
       hello: z run examples/hello.li
 
-  fmt: v fmt -w .
+  fmt: v fmt -w {{format_sources}}
   fmt.c: z fmt && z test && git add . && git commit -m 'fmt'
 
   publish:
@@ -84,7 +85,7 @@ tasks:
   ci:
     tasks:
       setup-v: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
-      format: v fmt -verify .
+      format: v fmt -verify {{format_sources}}
       test: z test
       test.shellcheck: z test --shellcheck
       run-on-all-conditions:

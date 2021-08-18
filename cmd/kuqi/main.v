@@ -6,9 +6,12 @@
 import os
 import cli { Command }
 import v.vmod
+import kuqi
 
 fn execute(cmd Command) ? {
 	println('Hello Kuqi')
+	mut qi := kuqi.new(&Stdio{})
+	qi.serve()
 	return
 }
 
