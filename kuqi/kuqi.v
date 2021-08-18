@@ -23,7 +23,7 @@ mut:
 pub enum ServerStatus {
 	off
 	initialized
-	shutdown
+	shutdowned
 }
 
 pub fn new(io SendReceiver) Kuqi {
@@ -65,7 +65,7 @@ fn (mut q Kuqi) dispatch(payload string) {
 				// TODO
 			}
 			else {
-				q.send(new_error(if q.status == .shutdown {
+				q.send(new_error(if q.status == .shutdowned {
 					jsonrpc.invalid_request
 				} else {
 					jsonrpc.server_not_initialized
