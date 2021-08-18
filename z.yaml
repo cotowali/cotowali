@@ -31,7 +31,7 @@ tasks:
   install: z build && cp {{bin}}/lic {{install_dir}}/lic
 
   kuqi:
-    run: z run kuqi run
+    run: z kuqi build
     tasks:
       run: v run {{kuqi_path}} $@
       build: v {{kuqi_path}} -o {{bin}}/kuqi $@
