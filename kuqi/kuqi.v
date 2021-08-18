@@ -7,6 +7,7 @@ module kuqi
 
 import json
 import jsonrpc
+import lsp
 
 interface SendReceiver {
 	send(string)
@@ -15,7 +16,14 @@ interface SendReceiver {
 
 pub struct Kuqi {
 mut:
-	io SendReceiver
+	io     SendReceiver
+	status ServerStatus = .off
+}
+
+pub enum ServerStatus {
+	off
+	initialized
+	shutdown
 }
 
 pub fn new(io SendReceiver) Kuqi {
@@ -33,12 +41,38 @@ fn (qi &Kuqi) receive() ?string {
 	return qi.io.receive()
 }
 
-fn (mut qi Kuqi) dispatch(payload string) {
+fn (mut q Kuqi) dispatch(payload string) {
 	request := json.decode(jsonrpc.Request, payload) or {
-		qi.send(new_error(jsonrpc.parse_error))
+		q.send(new_error(jsonrpc.parse_error))
 		return
 	}
-	qi.send(new_error(jsonrpc.method_not_found))
+
+	if q.status == .initialized {
+		match request.method {
+			'initialized' { q.log_message('initialized Kuqi', .log) }
+			else {}
+		}
+	} else {
+		match request.method {
+			'initialize' {
+				params := json.decode(lsp.InitializeParams, request.params) or {
+					q.send(new_error(jsonrpc.invalid_request))
+					return
+				}
+				q.initialize(request.id, params)
+			}
+			'exit' {
+				// TODO
+			}
+			else {
+				q.send(new_error(if q.status == .shutdown {
+					jsonrpc.invalid_request
+				} else {
+					jsonrpc.server_not_initialized
+				}))
+			}
+		}
+	}
 }
 
 pub fn (mut qi Kuqi) serve() {
@@ -52,4 +86,16 @@ fn new_error(code int) jsonrpc.ResponseWithError<string> {
 	return jsonrpc.ResponseWithError<string>{
 		error: jsonrpc.new_response_error(code)
 	}
+}
+
+fn (mut qi Kuqi) initialize(id int, params lsp.InitializeParams) {
+	qi.show_message('Welcome to Kuqi', .info)
+	res := jsonrpc.Response<lsp.InitializeResult>{
+		id: id
+		result: lsp.InitializeResult{
+			capabilities: lsp.ServerCapabilities{}
+		}
+	}
+	qi.status = .initialized
+	qi.send(res)
 }
