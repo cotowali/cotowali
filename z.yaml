@@ -4,6 +4,7 @@ var:
   bin: $(pwd)/.bin
   install_dir: /usr/local/bin
   lic_path: cmd/lic
+  kuqi_path: cmd/kuqi
   hello_world: examples/hello_world.li
   err_source: tests/expr_err.li
 tasks:
@@ -27,6 +28,12 @@ tasks:
   build: mkdir -p {{bin}} && v -prod {{lic_path}} -o {{bin}}/lic
   symlink: ln -fs {{bin}}/lic {{install_dir}}/lic
   install: z build && cp {{bin}}/lic {{install_dir}}/lic
+
+  kuqi:
+    run: z run kuqi run
+    tasks:
+      run: v run {{kuqi_path}} $@
+      build: v {{kuqi_path}} -o {{bin}}/kuqi
 
   ast: z run tools ast $@
   tokens: z run tools tokens $@
