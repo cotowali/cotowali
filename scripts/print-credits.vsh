@@ -45,4 +45,9 @@ print_credits([
 		url: 'https://vlang.io'
 		license_url: 'https://raw.githubusercontent.com/vlang/v/master/LICENSE'
 	),
+	license(
+		title: 'V Language Server'
+		url: 'https://github.com/vlang/vls'
+		license_url: 'https://raw.githubusercontent.com/vlang/vls/use-tree-sitter/LICENSE'
+	),
 ])
