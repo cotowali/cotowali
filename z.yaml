@@ -34,7 +34,8 @@ tasks:
     run: z run kuqi run
     tasks:
       run: v run {{kuqi_path}} $@
-      build: v {{kuqi_path}} -o {{bin}}/kuqi
+      build: v {{kuqi_path}} -o {{bin}}/kuqi $@
+      build.gc: z kuqi build -gc boehm $@
       symlink: sudo ln -fs {{bin}}/kuqi {{install_dir}}/kuqi
 
   ast: z run tools ast $@
