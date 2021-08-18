@@ -10,8 +10,6 @@ const (
 fn C.fgetc(stream &C.FILE) int
 
 struct Stdio {
-pub mut:
-	debug bool
 }
 
 pub fn (_ Stdio) send(output string) {
