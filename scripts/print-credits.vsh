@@ -1,11 +1,12 @@
 #!/usr/bin/env -S v run
 
 import arrays
+import net.http
 
 struct License {
-	title string
-	url   string
-	path  string
+	title       string
+	url         string
+	license_url string
 mut:
 	content string
 }
@@ -13,7 +14,7 @@ mut:
 fn license(v License) License {
 	return License{
 		...v
-		content: read_file(v.path) or { panic(err) }
+		content: (http.get(v.license_url) or { panic(err) }).text
 	}
 }
 
@@ -42,6 +43,6 @@ print_credits([
 	license(
 		title: 'The V Programming Language'
 		url: 'https://vlang.io'
-		path: join_path(@VROOT, 'LICENSE')
+		license_url: 'https://raw.githubusercontent.com/vlang/v/master/LICENSE'
 	),
 ])
