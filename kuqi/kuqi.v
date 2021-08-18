@@ -67,7 +67,7 @@ fn (mut q Kuqi) dispatch(payload string) {
 				q.initialize(request.id, params)
 			}
 			'exit' {
-				// TODO
+				exit(if q.status == .shutdowned { 0 } else { 1 })
 			}
 			else {
 				q.send(new_error(if q.status == .shutdowned {
