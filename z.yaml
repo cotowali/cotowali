@@ -35,6 +35,7 @@ tasks:
     tasks:
       run: v run {{kuqi_path}} $@
       build: v {{kuqi_path}} -o {{bin}}/kuqi
+      symlink: sudo ln -fs {{bin}}/kuqi {{install_dir}}/kuqi
 
   ast: z run tools ast $@
   tokens: z run tools tokens $@
