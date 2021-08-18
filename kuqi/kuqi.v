@@ -37,6 +37,10 @@ fn (mut qi Kuqi) send<T>(data T) {
 	qi.io.send(encoded)
 }
 
+fn (mut qi Kuqi) send_null(id int) {
+	qi.io.send('{ "jsonrpc": "2.0", "id": $id, "result": null }')
+}
+
 fn (qi &Kuqi) receive() ?string {
 	return qi.io.receive()
 }
