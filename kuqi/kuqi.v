@@ -54,6 +54,7 @@ fn (mut q Kuqi) dispatch(payload string) {
 	if q.status == .initialized {
 		match request.method {
 			'initialized' { q.log_message('initialized Kuqi', .log) }
+			'shutdown' { q.shutdown(request.id) }
 			else {}
 		}
 	} else {
@@ -102,4 +103,10 @@ fn (mut qi Kuqi) initialize(id int, params lsp.InitializeParams) {
 	}
 	qi.status = .initialized
 	qi.send(res)
+}
+
+fn (mut q Kuqi) shutdown(id int) {
+	q.status = .shutdowned
+	q.log_message('shutdowned Kuqi', .log)
+	q.send_null(id)
 }
