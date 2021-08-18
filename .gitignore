@@ -2,5 +2,6 @@
 /*.sh
 /cmd/lic/lic
 /lic
+/vim-lsp.log
 
 profile.txt
