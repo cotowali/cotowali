@@ -43,7 +43,7 @@ struct ExprWithValue<T, U> {
 }
 
 fn expr_with_value<T, U>(expr T, v U) ExprWithValue<T, U> {
-	return ExprWithValue<T,U>{expr, v}
+	return ExprWithValue<T, U>{expr, v}
 }
 
 fn (mut e Emitter) expr_or_string(expr ExprOrString, opt ExprOpt) {

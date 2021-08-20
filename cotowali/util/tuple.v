@@ -7,7 +7,7 @@ pub mut:
 }
 
 pub fn tuple2<T, U>(v1 T, v2 U) Tuple2<T, U> {
-	return Tuple2<T,U>{v1, v2}
+	return Tuple2<T, U>{v1, v2}
 }
 
 pub fn (t Tuple2<T, U>) str() string {
@@ -21,7 +21,7 @@ pub mut:
 }
 
 pub fn pair<T, U>(v1 T, v2 U) Pair<T, U> {
-	return Pair<T,U>{v1, v2}
+	return Pair<T, U>{v1, v2}
 }
 
 pub fn (p Pair<T, U>) tuple() Tuple2<T, U> {
