@@ -98,7 +98,9 @@ fn (mut qi Kuqi) initialize(id int, params lsp.InitializeParams) {
 	res := jsonrpc.Response<lsp.InitializeResult>{
 		id: id
 		result: lsp.InitializeResult{
-			capabilities: lsp.ServerCapabilities{}
+			capabilities: lsp.ServerCapabilities{
+				text_document_sync: 1
+			}
 		}
 	}
 	qi.status = .initialized
