@@ -18,7 +18,7 @@ fn main() {
 	mod := vmod.decode(@VMOD_FILE) or { panic(err) }
 
 	mut app := Command{
-		name: 'kuqi'
+		name: 'Kuqi'
 		description: 'Kuqi - language server for cotowali'
 		version: mod.version
 		execute: execute
