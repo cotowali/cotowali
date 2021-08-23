@@ -19,3 +19,8 @@ pub const (
 	method_log_message          = 'window/logMessage'
 	method_show_message_request = 'window/showMessageRequest'
 )
+
+// diagnostics.v
+pub const (
+	method_publish_diagnostics = 'textDocument/publishDiagnostics'
+)

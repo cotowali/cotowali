@@ -9,6 +9,7 @@ import lsp
 
 fn (mut q Kuqi) did_open(id int, params lsp.DidOpenTextDocumentParams) {
 	q.log_message('did open: { id: $id, uri: $params.text_document.uri }', .log)
+	q.show_diagnostics(params.text_document.uri)
 }
 
 fn (mut q Kuqi) did_change(id int, params lsp.DidChangeTextDocumentParams) {
