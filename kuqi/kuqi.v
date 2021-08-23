@@ -60,13 +60,7 @@ fn (mut q Kuqi) dispatch(payload string) ? {
 	}
 
 	id, params := request.id, request.params
-	if q.status == .initialized {
-		match request.method {
-			'initialized' { q.log_message('initialized Kuqi', .log) }
-			'shutdown' { q.shutdown(id) }
-			else {}
-		}
-	} else {
+	if q.status != .initialized {
 		match request.method {
 			'initialize' {
 				q.initialize(id, q.decode<lsp.InitializeParams>(params) ?)
@@ -82,6 +76,13 @@ fn (mut q Kuqi) dispatch(payload string) ? {
 				}))
 			}
 		}
+		return
+	}
+
+	match request.method {
+		'initialized' { q.log_message('initialized Kuqi', .log) }
+		'shutdown' { q.shutdown(id) }
+		else {}
 	}
 }
 
