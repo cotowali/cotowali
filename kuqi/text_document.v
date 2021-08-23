@@ -18,3 +18,7 @@ fn (mut q Kuqi) did_change(id int, params lsp.DidChangeTextDocumentParams) {
 fn (mut q Kuqi) did_close(id int, params lsp.DidCloseTextDocumentParams) {
 	q.log_message('did close: { id: $id, uri: $params.text_document.uri }', .log)
 }
+
+fn (mut q Kuqi) did_save(id int, params lsp.DidSaveTextDocumentParams) {
+	q.log_message('did save: { id: $id, uri: $params.text_document.uri }', .log)
+}

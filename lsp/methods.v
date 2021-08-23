@@ -10,6 +10,7 @@ pub const (
 	method_did_open   = 'textDocument/didOpen'
 	method_did_change = 'textDocument/didChange'
 	method_did_close  = 'textDocument/didClose'
+	method_did_save   = 'textDocument/didSave'
 )
 
 // window.v
