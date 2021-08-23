@@ -82,6 +82,7 @@ fn (mut q Kuqi) dispatch(payload string) ? {
 	match request.method {
 		'initialized' { q.log_message('initialized Kuqi', .log) }
 		'shutdown' { q.shutdown(id) }
+		lsp.method_did_open { q.did_open(id, q.decode<lsp.DidOpenTextDocumentParams>(params) ?) }
 		else {}
 	}
 }
