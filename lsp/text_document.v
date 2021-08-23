@@ -1,5 +1,11 @@
 module lsp
 
+pub const (
+	method_did_open   = 'textDocument/didOpen'
+	method_did_change = 'textDocument/didChange'
+	method_did_close  = 'textDocument/didClose'
+)
+
 pub struct Position {
 pub:
 	line      int
