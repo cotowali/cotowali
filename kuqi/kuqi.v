@@ -59,17 +59,17 @@ fn (mut q Kuqi) dispatch(payload string) ? {
 		return
 	}
 
-	params := request.params
+	id, params := request.id, request.params
 	if q.status == .initialized {
 		match request.method {
 			'initialized' { q.log_message('initialized Kuqi', .log) }
-			'shutdown' { q.shutdown(request.id) }
+			'shutdown' { q.shutdown(id) }
 			else {}
 		}
 	} else {
 		match request.method {
 			'initialize' {
-				q.initialize(request.id, q.decode<lsp.InitializeParams>(params) ?)
+				q.initialize(id, q.decode<lsp.InitializeParams>(params) ?)
 			}
 			'exit' {
 				exit(if q.status == .shutdowned { 0 } else { 1 })
