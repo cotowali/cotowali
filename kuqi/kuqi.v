@@ -84,6 +84,7 @@ fn (mut q Kuqi) dispatch(payload string) ? {
 		'shutdown' { q.shutdown(id) }
 		lsp.method_did_open { q.did_open(id, q.decode<lsp.DidOpenTextDocumentParams>(params) ?) }
 		lsp.method_did_change { q.did_change(id, q.decode<lsp.DidChangeTextDocumentParams>(params) ?) }
+		lsp.method_did_close { q.did_close(id, q.decode<lsp.DidCloseTextDocumentParams>(params) ?) }
 		else {}
 	}
 }
