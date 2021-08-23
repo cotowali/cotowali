@@ -37,6 +37,14 @@ fn (mut qi Kuqi) send<T>(data T) {
 	qi.io.send(encoded)
 }
 
+fn (mut q Kuqi) decode<T>(data string) ?T {
+	decoded := json.decode(T, data) or {
+		q.send(new_error(jsonrpc.invalid_request))
+		return none
+	}
+	return decoded
+}
+
 fn (mut qi Kuqi) send_null(id int) {
 	qi.io.send('{ "jsonrpc": "2.0", "id": $id, "result": null }')
 }
@@ -45,12 +53,13 @@ fn (qi &Kuqi) receive() ?string {
 	return qi.io.receive()
 }
 
-fn (mut q Kuqi) dispatch(payload string) {
+fn (mut q Kuqi) dispatch(payload string) ? {
 	request := json.decode(jsonrpc.Request, payload) or {
 		q.send(new_error(jsonrpc.parse_error))
 		return
 	}
 
+	params := request.params
 	if q.status == .initialized {
 		match request.method {
 			'initialized' { q.log_message('initialized Kuqi', .log) }
@@ -60,11 +69,7 @@ fn (mut q Kuqi) dispatch(payload string) {
 	} else {
 		match request.method {
 			'initialize' {
-				params := json.decode(lsp.InitializeParams, request.params) or {
-					q.send(new_error(jsonrpc.invalid_request))
-					return
-				}
-				q.initialize(request.id, params)
+				q.initialize(request.id, q.decode<lsp.InitializeParams>(params) ?)
 			}
 			'exit' {
 				exit(if q.status == .shutdowned { 0 } else { 1 })
@@ -83,7 +88,7 @@ fn (mut q Kuqi) dispatch(payload string) {
 pub fn (mut qi Kuqi) serve() {
 	for {
 		payload := qi.receive() or { continue }
-		qi.dispatch(payload)
+		qi.dispatch(payload) or { continue }
 	}
 }
 
