@@ -1,11 +1,5 @@
 module lsp
 
-pub const (
-	method_show_message         = 'window/showMessage'
-	method_log_message          = 'window/logMessage'
-	method_show_message_request = 'window/showMessageRequest'
-)
-
 // method: ‘window/showMessage’
 // notification
 pub struct ShowMessageParams {
