@@ -8,6 +8,7 @@ module kuqi
 import json
 import jsonrpc
 import lsp
+import cotowali.context { Context }
 
 interface SendReceiver {
 	send(string)
@@ -18,6 +19,7 @@ pub struct Kuqi {
 mut:
 	io     SendReceiver
 	status ServerStatus = .off
+	ctx    &Context
 }
 
 pub enum ServerStatus {
@@ -29,6 +31,7 @@ pub enum ServerStatus {
 pub fn new(io SendReceiver) Kuqi {
 	return Kuqi{
 		io: io
+		ctx: new_context()
 	}
 }
 

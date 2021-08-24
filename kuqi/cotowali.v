@@ -6,6 +6,7 @@
 module kuqi
 
 import cotowali.source { Pos }
+import cotowali.context { Context }
 import lsp
 
 fn pos_to_range(p Pos) lsp.Range {
@@ -19,4 +20,8 @@ fn pos_to_range(p Pos) lsp.Range {
 			character: p.last_col
 		}
 	}
+}
+
+fn new_context() &Context {
+	return context.new_context(no_emit: true, feature: .warn_all)
 }
