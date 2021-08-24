@@ -17,6 +17,11 @@ pub enum DiagnosticSeverity {
 	hint = 4
 }
 
+[inline]
+pub fn severity(s DiagnosticSeverity) DiagnosticSeverity {
+	return s
+}
+
 pub struct DiagnosticRelatedInformation {
 	location Location
 	message  string

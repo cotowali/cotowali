@@ -6,7 +6,10 @@
 module kuqi
 
 import lsp
-import cotowali.source { new_source }
+import cotowali.source { Source, new_source }
+import cotowali.parser { new_parser }
+import cotowali.ast { new_resolver }
+import cotowali.checker { new_checker }
 
 fn (mut q Kuqi) did_open(id int, params lsp.DidOpenTextDocumentParams) {
 	q.log_message('did open: { id: $id, uri: $params.text_document.uri }', .log)
@@ -14,7 +17,7 @@ fn (mut q Kuqi) did_open(id int, params lsp.DidOpenTextDocumentParams) {
 	document := params.text_document
 	path := document.uri.path()
 	if path !in q.ctx.sources {
-		q.ctx.sources[path] = new_source(path, document.text)
+		q.process_source(new_source(path, document.text))
 	}
 }
 
@@ -22,8 +25,8 @@ fn (mut q Kuqi) did_change(id int, params lsp.DidChangeTextDocumentParams) {
 	q.log_message('did change: { id: $id, uri: $params.text_document.uri }', .log)
 
 	path := params.text_document.uri.path()
-	text := params.content_changes[0].text
-	q.ctx.sources[path] = new_source(path, text)
+	text := params.content_changes[0].text // content_changes have just one item that have entire of source text
+	q.process_source(new_source(path, text))
 }
 
 fn (mut q Kuqi) did_close(id int, params lsp.DidCloseTextDocumentParams) {
@@ -35,4 +38,19 @@ fn (mut q Kuqi) did_close(id int, params lsp.DidCloseTextDocumentParams) {
 
 fn (mut q Kuqi) did_save(id int, params lsp.DidSaveTextDocumentParams) {
 	q.log_message('did save: { id: $id, uri: $params.text_document.uri }', .log)
+}
+
+fn (mut q Kuqi) process_source(s &Source) {
+	mut ctx := new_context()
+	q.ctx = ctx
+
+	mut p := new_parser(s, ctx)
+	mut f := p.parse()
+	if !ctx.errors.has_syntax_error() {
+		mut resolver := new_resolver(ctx)
+		resolver.resolve(f)
+		mut checker := new_checker(ctx)
+		checker.check_file(mut f)
+	}
+	q.show_diagnostics(lsp.document_uri_from_path(s.path))
 }

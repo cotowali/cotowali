@@ -7,16 +7,22 @@ module kuqi
 
 import lsp
 import jsonrpc
-import cotowali.source { pos }
+import cotowali.source
+import cotowali.errors { Warn }
 
 [manualfree]
 fn (mut q Kuqi) show_diagnostics(uri lsp.DocumentUri) {
-	mut diagnostics := []lsp.Diagnostic{}
+	path := uri.path()
+	errors := q.ctx.errors.all().filter(it.source.path == path)
 
-	diagnostics << lsp.Diagnostic{
-		range: pos_to_range(pos(i: 0, line: 1, col: 1))
-		severity: .error
-		message: 'dummy error'
+	mut diagnostics := []lsp.Diagnostic{cap: errors.len}
+
+	for e in errors {
+		diagnostics << lsp.Diagnostic{
+			range: pos_to_range(e.pos)
+			severity: if e is Warn { lsp.severity(.warning) } else { lsp.severity(.error) }
+			message: e.msg
+		}
 	}
 
 	q.send(jsonrpc.NotificationMessage<lsp.PublishDiagnosticsParams>{
