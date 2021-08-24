@@ -7,22 +7,14 @@ module kuqi
 
 import lsp
 import jsonrpc
+import cotowali.source { pos }
 
 [manualfree]
 fn (mut q Kuqi) show_diagnostics(uri lsp.DocumentUri) {
 	mut diagnostics := []lsp.Diagnostic{}
 
 	diagnostics << lsp.Diagnostic{
-		range: lsp.Range{
-			start: lsp.Position{
-				line: 0
-				character: 0
-			}
-			end: lsp.Position{
-				line: 0
-				character: 0
-			}
-		}
+		range: pos_to_range(pos(i: 0, line: 1, col: 1))
 		severity: .error
 		message: 'dummy error'
 	}
