@@ -47,7 +47,7 @@ fn (mut q Kuqi) process_source(s &Source) {
 	mut f := parser.parse(s, ctx)
 	if !ctx.errors.has_syntax_error() {
 		mut resolver := new_resolver(ctx)
-		resolver.resolve(f)
+		resolver.resolve(mut f)
 		mut checker := new_checker(ctx)
 		checker.check_file(mut f)
 	}

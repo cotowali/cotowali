@@ -34,7 +34,7 @@ fn execute_ast(cmd Command) ? {
 		eprintln('syntax error')
 	} else {
 		mut resolver := new_resolver(ctx)
-		resolver.resolve(f)
+		resolver.resolve(mut f)
 		mut checker := new_checker(ctx)
 		checker.check_file(mut f)
 		println(f)

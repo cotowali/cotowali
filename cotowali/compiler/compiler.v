@@ -44,7 +44,7 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 
 	if !c.ctx.errors.has_syntax_error() {
 		mut resolver := new_resolver(c.ctx)
-		resolver.resolve(f)
+		resolver.resolve(mut f)
 		mut checker := new_checker(c.ctx)
 		checker.check_file(mut f)
 	}

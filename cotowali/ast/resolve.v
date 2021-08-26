@@ -23,13 +23,13 @@ pub fn new_resolver(ctx &Context) Resolver {
 	}
 }
 
-pub fn resolve(ctx &Context, node Node) {
+pub fn resolve(ctx &Context, mut node Node) {
 	mut r := new_resolver(ctx)
-	r.resolve(node)
+	r.resolve(mut node)
 }
 
-pub fn (mut r Resolver) resolve(node Node) {
-	match node {
+pub fn (mut r Resolver) resolve(mut node Node) {
+	match mut node {
 		File { r.file(node) }
 		Stmt { r.stmt(node) }
 		Expr { r.expr(node) }
