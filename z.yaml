@@ -27,7 +27,7 @@ tasks:
 
   build.c: v {{lic_path}} -o main.c
 
-  build: mkdir -p {{bin}} && v -prod {{lic_path}} -o {{bin}}/lic
+  build: mkdir -p {{bin}} && v {{lic_path}} -o {{bin}}/lic
   build.win: mkdir -p {{bin}} && v {{lic_path}} -o {{bin}}/lic.exe -os windows
   symlink: ln -fs {{bin}}/lic {{install_dir}}/lic
   install: z build && cp {{bin}}/lic {{install_dir}}/lic
