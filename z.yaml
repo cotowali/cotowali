@@ -10,8 +10,13 @@ var:
   format_sources: cmd/lic cmd/tools jsonrpc lsp cotowali kuqi
 tasks:
   default: |
-    z build
-    z kuqi build
+    if [ "$#" -eq 0 ]
+    then
+      z build
+      z kuqi build
+    else
+      z run $@
+    fi
 
   run: v run {{lic_path}} ${@:- {{hello_world}} }
   run.stdin: v run {{lic_path}}
