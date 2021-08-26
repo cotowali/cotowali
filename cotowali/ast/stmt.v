@@ -112,9 +112,8 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 				} else {
 					[]Type{}
 				}
-				for i, _ in stmt.left.exprs {
-					if stmt.left.exprs[i] is Var {
-						mut left := unsafe { &stmt.left.exprs[i] as Var }
+				for i, left in stmt.left.exprs {
+					if mut left is Var {
 						if i < expr_types.len {
 							r.set_typ(left, expr_types[i])
 						}
