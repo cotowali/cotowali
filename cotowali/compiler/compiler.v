@@ -36,19 +36,20 @@ pub fn (c &Compiler) compile() ?string {
 }
 
 pub fn (c &Compiler) compile_to(w io.Writer) ? {
-	config := c.ctx.config
+	ctx := c.ctx
+	config := ctx.config
 	if config.backend != .sh {
 		return error('$config.backend backend is not yet implemented.')
 	}
-	mut f := parser.parse(c.source, c.ctx)
+	mut f := parser.parse(c.source, ctx)
 
-	if !c.ctx.errors.has_syntax_error() {
-		mut resolver := new_resolver(c.ctx)
+	if !ctx.errors.has_syntax_error() {
+		mut resolver := new_resolver(ctx)
 		resolver.resolve(mut f)
-		mut checker := new_checker(c.ctx)
+		mut checker := new_checker(ctx)
 		checker.check_file(mut f)
 	}
-	if c.ctx.errors.len() > 0 {
+	if ctx.errors.len() > 0 {
 		return error('compile error')
 	}
 
@@ -56,6 +57,6 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 		return
 	}
 
-	mut e := sh.new_emitter(w, c.ctx)
+	mut e := sh.new_emitter(w, ctx)
 	e.emit(f)
 }
