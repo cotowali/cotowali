@@ -9,7 +9,7 @@ import lsp
 import cotowali.source { Source, new_source }
 import cotowali.parser
 import cotowali.ast
-import cotowali.checker { new_checker }
+import cotowali.checker
 
 fn (mut q Kuqi) did_open(id int, params lsp.DidOpenTextDocumentParams) {
 	q.log_message('did open: { id: $id, uri: $params.text_document.uri }', .log)
@@ -47,8 +47,7 @@ fn (mut q Kuqi) process_source(s &Source) {
 	mut f := parser.parse(s, ctx)
 	if !ctx.errors.has_syntax_error() {
 		ast.resolve(mut f, ctx)
-		mut checker := new_checker(ctx)
-		checker.check(mut f)
+		checker.check(mut f, ctx)
 	}
 	q.show_diagnostics(lsp.document_uri_from_path(s.path))
 }

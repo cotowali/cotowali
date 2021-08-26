@@ -8,7 +8,7 @@ module tools
 import cli { Command }
 import cotowali.context { new_default_context }
 import cotowali.parser
-import cotowali.checker { new_checker }
+import cotowali.checker
 import cotowali.ast
 
 const (
@@ -34,8 +34,7 @@ fn execute_ast(cmd Command) ? {
 		eprintln('syntax error')
 	} else {
 		ast.resolve(mut f, ctx)
-		mut checker := new_checker(ctx)
-		checker.check(mut f)
+		checker.check(mut f, ctx)
 		println(f)
 		if ctx.errors.len() > 0 {
 			eprintln('checker or resolver error')

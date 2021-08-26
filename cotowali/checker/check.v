@@ -6,6 +6,12 @@
 module checker
 
 import cotowali.ast
+import cotowali.context { Context }
+
+pub fn check(mut f ast.File, ctx &Context) {
+	mut c := new_checker(ctx)
+	c.check(mut f)
+}
 
 pub fn (mut c Checker) check(mut f ast.File) {
 	c.check_file(mut f)
