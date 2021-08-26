@@ -18,6 +18,11 @@ pub mut:
 	elements []Expr
 }
 
+[inline]
+pub fn (expr &ArrayLiteral) children() []Node {
+	return expr.elements.map(Node(it))
+}
+
 fn (mut r Resolver) array_literal(mut expr ArrayLiteral) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
@@ -46,6 +51,15 @@ pub mut:
 	scope     &Scope
 	key_typ   Type
 	value_typ Type
+}
+
+pub fn (expr &MapLiteral) children() []Node {
+	mut children := []Node{cap: expr.entries.len * 2}
+	for e in expr.entries {
+		children << e.key
+		children << e.value
+	}
+	return children
 }
 
 fn (mut r Resolver) map_literal(mut expr MapLiteral) {
@@ -132,6 +146,11 @@ pub fn (s &StringLiteral) is_const() bool {
 
 pub fn (s &StringLiteral) is_raw() bool {
 	return s.open.kind in [.single_quote_with_r_prefix, .double_quote_with_r_prefix]
+}
+
+[inline]
+fn (s &StringLiteral) children() []Node {
+	return s.contents.filter(it is Expr).map(Node(it as Expr))
 }
 
 fn (mut r Resolver) string_literal(expr StringLiteral) {

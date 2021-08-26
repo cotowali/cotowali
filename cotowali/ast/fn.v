@@ -105,6 +105,11 @@ pub mut:
 	scope &Scope
 }
 
+[inline]
+pub fn (expr &CallCommandExpr) children() []Node {
+	return expr.args.map(Node(it))
+}
+
 fn (mut r Resolver) call_command_expr(expr CallCommandExpr) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
@@ -140,6 +145,13 @@ pub fn (e CallExpr) is_varargs() bool {
 
 pub fn (e CallExpr) function_info() FunctionTypeInfo {
 	return e.func.type_symbol().function_info() or { panic(unreachable(err)) }
+}
+
+pub fn (expr &CallExpr) children() []Node {
+	mut children := []Node{cap: expr.args.len + 1}
+	children << expr.func
+	children << expr.args.map(Node(it))
+	return children
 }
 
 fn (mut r Resolver) call_expr(mut expr CallExpr) {

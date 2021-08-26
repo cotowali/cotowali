@@ -14,6 +14,22 @@ pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr
 	FloatLiteral | IndexExpr | InfixExpr | IntLiteral | MapLiteral | ParenExpr | Pipeline |
 	PrefixExpr | StringLiteral | Var
 
+pub fn (expr Expr) children() []Node {
+	return match expr {
+		DefaultValue, BoolLiteral, FloatLiteral, IntLiteral, Var {
+			[]Node{}
+		}
+		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, IndexExpr, InfixExpr, MapLiteral,
+		ParenExpr, Pipeline, PrefixExpr {
+			expr.children()
+		}
+		StringLiteral {
+			// V says, error: method `ast.StringLiteral.children` signature is different
+			expr.children()
+		}
+	}
+}
+
 fn (mut r Resolver) exprs(exprs []Expr) {
 	for expr in exprs {
 		r.expr(expr)
@@ -173,6 +189,10 @@ pub:
 	typ  Type
 }
 
+pub fn (expr &AsExpr) children() []Node {
+	return [Node(expr.expr)]
+}
+
 fn (mut r Resolver) as_expr(expr AsExpr) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
@@ -209,6 +229,11 @@ pub mut:
 	right Expr
 }
 
+[inline]
+pub fn (expr &InfixExpr) children() []Node {
+	return [Node(expr.left), Node(expr.right)]
+}
+
 fn (mut r Resolver) infix_expr(expr InfixExpr) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
@@ -226,6 +251,11 @@ pub:
 	pos   Pos
 	left  Expr
 	index Expr
+}
+
+[inline]
+pub fn (expr &IndexExpr) children() []Node {
+	return [Node(expr.left), Node(expr.index)]
 }
 
 fn (mut r Resolver) index_expr(expr IndexExpr) {
@@ -248,6 +278,11 @@ pub mut:
 	scope &Scope
 }
 
+[inline]
+pub fn (expr &ParenExpr) children() []Node {
+	return expr.exprs.map(Node(it))
+}
+
 fn (mut r Resolver) paren_expr(expr ParenExpr) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
@@ -267,6 +302,11 @@ pub mut:
 	exprs []Expr
 }
 
+[inline]
+pub fn (expr &Pipeline) children() []Node {
+	return expr.exprs.map(Node(it))
+}
+
 fn (mut r Resolver) pipeline(expr Pipeline) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
@@ -284,6 +324,11 @@ pub:
 pub mut:
 	scope &Scope
 	expr  Expr
+}
+
+[inline]
+pub fn (expr &PrefixExpr) children() []Node {
+	return [Node(expr.expr)]
 }
 
 fn (mut r Resolver) prefix_expr(mut expr PrefixExpr) {
@@ -310,6 +355,11 @@ pub mut:
 
 pub fn (v Var) name() string {
 	return v.sym.name
+}
+
+[inline]
+pub fn (_ Var) children() []Node {
+	return []
 }
 
 fn (mut r Resolver) var_(mut v Var) {
