@@ -24,7 +24,6 @@ mut:
 	prev_tok    Token
 	buf         []Token
 	token_idx   int
-	file        &ast.File
 	scope       &Scope
 
 	restore_strategy RestoreStrategy
@@ -185,9 +184,6 @@ pub fn new_parser(source &Source, ctx &Context) Parser {
 		ctx: ctx
 		buf: []Token{len: 3}
 		scope: ctx.global_scope
-		file: &ast.File{
-			source: source
-		}
 	}
 	for _ in 0 .. p.buf.len {
 		p.consume()

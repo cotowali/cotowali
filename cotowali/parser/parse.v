@@ -10,19 +10,23 @@ import cotowali.source
 import cotowali.ast
 
 pub fn (mut p Parser) parse() &ast.File {
+	mut file := &ast.File{
+		source: p.source()
+	}
+
 	if !p.ctx.std_loaded() {
 		p.ctx.std_source = source.std
 		mut std_parser := new_parser(p.ctx.std_source, p.ctx)
-		p.file.stmts << ast.RequireStmt{std_parser.parse()}
+		file.stmts << ast.RequireStmt{std_parser.parse()}
 	}
 
-	p.ctx.sources[p.source().path] = p.source()
+	p.ctx.sources[p.source().path] = file.source
 
 	p.skip_eol()
 	for p.kind(0) != .eof {
-		p.file.stmts << p.parse_stmt()
+		file.stmts << p.parse_stmt()
 	}
-	return p.file
+	return file
 }
 
 pub fn parse_file(path string, ctx &Context) ?&ast.File {
