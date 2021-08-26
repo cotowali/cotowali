@@ -9,7 +9,8 @@ var:
   err_source: tests/expr_err.li
   format_sources: cmd/lic cmd/tools jsonrpc lsp cotowali kuqi
 tasks:
-  default: z no-emit {{hello_world}}
+  default: z build && z kuqi build
+
   run: v run {{lic_path}} ${@:- {{hello_world}} }
   run.stdin: v run {{lic_path}}
   no-emit: v run {{lic_path}} -no-emit $@
