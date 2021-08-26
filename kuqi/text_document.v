@@ -7,7 +7,7 @@ module kuqi
 
 import lsp
 import cotowali.source { Source, new_source }
-import cotowali.parser { new_parser }
+import cotowali.parser
 import cotowali.ast { new_resolver }
 import cotowali.checker { new_checker }
 
@@ -44,8 +44,7 @@ fn (mut q Kuqi) process_source(s &Source) {
 	mut ctx := new_context()
 	q.ctx = ctx
 
-	mut p := new_parser(s, ctx)
-	mut f := p.parse()
+	mut f := parser.parse(s, ctx)
 	if !ctx.errors.has_syntax_error() {
 		mut resolver := new_resolver(ctx)
 		resolver.resolve(f)

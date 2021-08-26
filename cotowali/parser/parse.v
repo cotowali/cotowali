@@ -6,7 +6,7 @@
 module parser
 
 import cotowali.context { Context }
-import cotowali.source
+import cotowali.source { Source }
 import cotowali.ast
 
 pub fn (mut p Parser) parse() &ast.File {
@@ -29,8 +29,11 @@ pub fn (mut p Parser) parse() &ast.File {
 	return file
 }
 
-pub fn parse_file(path string, ctx &Context) ?&ast.File {
-	s := source.read_file(path) ?
+pub fn parse(s &Source, ctx &Context) &ast.File {
 	mut p := new_parser(s, ctx)
 	return p.parse()
+}
+
+pub fn parse_file(path string, ctx &Context) ?&ast.File {
+	return parse(source.read_file(path) ?, ctx)
 }

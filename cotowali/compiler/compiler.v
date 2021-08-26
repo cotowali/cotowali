@@ -9,7 +9,7 @@ import io
 import strings
 import cotowali.context { Context }
 import cotowali.source { Source }
-import cotowali.parser { new_parser }
+import cotowali.parser
 import cotowali.checker { new_checker }
 import cotowali.ast { new_resolver }
 import cotowali.emit.sh
@@ -40,8 +40,7 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	if config.backend != .sh {
 		return error('$config.backend backend is not yet implemented.')
 	}
-	mut p := new_parser(c.source, c.ctx)
-	mut f := p.parse()
+	mut f := parser.parse(c.source, c.ctx)
 
 	if !c.ctx.errors.has_syntax_error() {
 		mut resolver := new_resolver(c.ctx)
