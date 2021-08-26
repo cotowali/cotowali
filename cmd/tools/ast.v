@@ -9,7 +9,7 @@ import cli { Command }
 import cotowali.context { new_default_context }
 import cotowali.parser
 import cotowali.checker { new_checker }
-import cotowali.ast { new_resolver }
+import cotowali.ast
 
 const (
 	ast_command = Command{
@@ -33,8 +33,7 @@ fn execute_ast(cmd Command) ? {
 		println(f)
 		eprintln('syntax error')
 	} else {
-		mut resolver := new_resolver(ctx)
-		resolver.resolve(mut f)
+		ast.resolve(mut f, ctx)
 		mut checker := new_checker(ctx)
 		checker.check_file(mut f)
 		println(f)

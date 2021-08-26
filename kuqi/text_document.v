@@ -8,7 +8,7 @@ module kuqi
 import lsp
 import cotowali.source { Source, new_source }
 import cotowali.parser
-import cotowali.ast { new_resolver }
+import cotowali.ast
 import cotowali.checker { new_checker }
 
 fn (mut q Kuqi) did_open(id int, params lsp.DidOpenTextDocumentParams) {
@@ -46,8 +46,7 @@ fn (mut q Kuqi) process_source(s &Source) {
 
 	mut f := parser.parse(s, ctx)
 	if !ctx.errors.has_syntax_error() {
-		mut resolver := new_resolver(ctx)
-		resolver.resolve(mut f)
+		ast.resolve(mut f, ctx)
 		mut checker := new_checker(ctx)
 		checker.check_file(mut f)
 	}

@@ -11,7 +11,7 @@ import cotowali.context { Context }
 import cotowali.source { Source }
 import cotowali.parser
 import cotowali.checker { new_checker }
-import cotowali.ast { new_resolver }
+import cotowali.ast
 import cotowali.emit.sh
 
 pub struct Compiler {
@@ -44,8 +44,7 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	mut f := parser.parse(c.source, ctx)
 
 	if !ctx.errors.has_syntax_error() {
-		mut resolver := new_resolver(ctx)
-		resolver.resolve(mut f)
+		ast.resolve(mut f, ctx)
 		mut checker := new_checker(ctx)
 		checker.check_file(mut f)
 	}
