@@ -7,7 +7,11 @@ module checker
 
 import cotowali.ast
 
-pub fn (mut c Checker) check_file(mut f ast.File) {
+pub fn (mut c Checker) check(mut f ast.File) {
+	c.check_file(mut f)
+}
+
+fn (mut c Checker) check_file(mut f ast.File) {
 	$if trace_checker ? {
 		c.trace_begin(@FN)
 		defer {

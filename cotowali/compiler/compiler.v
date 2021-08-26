@@ -46,7 +46,7 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	if !ctx.errors.has_syntax_error() {
 		ast.resolve(mut f, ctx)
 		mut checker := new_checker(ctx)
-		checker.check_file(mut f)
+		checker.check(mut f)
 	}
 	if ctx.errors.len() > 0 {
 		return error('compile error')

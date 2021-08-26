@@ -35,7 +35,7 @@ fn execute_ast(cmd Command) ? {
 	} else {
 		ast.resolve(mut f, ctx)
 		mut checker := new_checker(ctx)
-		checker.check_file(mut f)
+		checker.check(mut f)
 		println(f)
 		if ctx.errors.len() > 0 {
 			eprintln('checker or resolver error')

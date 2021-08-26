@@ -48,7 +48,7 @@ fn (mut q Kuqi) process_source(s &Source) {
 	if !ctx.errors.has_syntax_error() {
 		ast.resolve(mut f, ctx)
 		mut checker := new_checker(ctx)
-		checker.check_file(mut f)
+		checker.check(mut f)
 	}
 	q.show_diagnostics(lsp.document_uri_from_path(s.path))
 }
