@@ -23,7 +23,7 @@ pub fn new_resolver(ctx &Context) Resolver {
 	}
 }
 
-pub fn resolve(ctx &Context, mut node Node) {
+pub fn resolve(mut node Node, ctx &Context) {
 	mut r := new_resolver(ctx)
 	r.resolve(mut node)
 }
