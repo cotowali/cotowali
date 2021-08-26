@@ -7,17 +7,20 @@ module parser
 
 import cotowali.context { Context }
 import cotowali.source { Source }
+import cotowali.symbols { Scope }
 import cotowali.ast
 
-pub fn (mut p Parser) parse() &ast.File {
+pub fn (mut p Parser) parse(scope &Scope) &ast.File {
+	p.scope = scope
 	mut file := &ast.File{
 		source: p.source()
 	}
 
-	if !p.ctx.std_loaded() {
-		p.ctx.std_source = source.std
-		mut std_parser := new_parser(p.ctx.std_source, p.ctx)
-		file.stmts << ast.RequireStmt{std_parser.parse()}
+	mut ctx := p.ctx
+	if !ctx.std_loaded() {
+		ctx.std_source = source.std
+		mut std_parser := new_parser(ctx.std_source, ctx)
+		file.stmts << ast.RequireStmt{std_parser.parse(ctx.global_scope)}
 	}
 
 	p.ctx.sources[p.source().path] = file.source
@@ -31,7 +34,7 @@ pub fn (mut p Parser) parse() &ast.File {
 
 pub fn parse(s &Source, ctx &Context) &ast.File {
 	mut p := new_parser(s, ctx)
-	return p.parse()
+	return p.parse(ctx.global_scope)
 }
 
 pub fn parse_file(path string, ctx &Context) ?&ast.File {
