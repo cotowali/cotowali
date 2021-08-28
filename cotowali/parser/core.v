@@ -8,7 +8,6 @@ module parser
 import cotowali.lexer { Lexer, new_lexer }
 import cotowali.token { Token, TokenCond, TokenKind, TokenKindClass }
 import cotowali.context { Context }
-import cotowali.ast
 import cotowali.symbols { Scope }
 import cotowali.debug { Tracer }
 import cotowali.errors { unreachable }
