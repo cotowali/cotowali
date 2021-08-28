@@ -5,3 +5,19 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 echo('Ray tracing example')
+
+// Vec3 (float, float, float)
+fn vec3_add(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
+  var (x1, y1, z1) = v1
+  var (x2, y2, z2) = v2
+  return (x1 + x2, y1 + y2, z1 + z2)
+}
+
+fn test_vec3() {
+  var v1 = (1.0, 2.0, 3.0)
+  var v2 = (1.5, 2.5, 3.5)
+
+  var (sum_x, sum_y, sum_z) = vec3_add(v1, v2)
+  assert sum_x == 2.5 && sum_y == 4.5 && sum_z == 6.5
+}
+test_vec3()
