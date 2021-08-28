@@ -19,6 +19,11 @@ fn vec3_subtract(v1: (float, float, float), v2: (float, float, float)) (float, f
   return (x1 - x2, y1 - y2, z1 - z2)
 }
 
+fn vec3_multiply(v: (float, float, float), n: float) (float, float, float) {
+  var (x, y, z) = v
+  return (x * n, y * n, z * n)
+}
+
 fn test_vec3() {
   var v1 = (1.0, 2.0, 3.0)
   var v2 = (1.5, 2.5, 3.5)
@@ -28,5 +33,8 @@ fn test_vec3() {
 
   var (diff_x, diff_y, diff_z) = vec3_subtract(v2, v1)
   assert diff_x == 0.5 && diff_y == 0.5 && diff_z == 0.5
+
+  var (twice_x2, twice_y2, twice_z2) = vec3_multiply(v2, 2)
+  assert twice_x2 == 3 && twice_y2 == 5 && twice_z2 == 7
 }
 test_vec3()
