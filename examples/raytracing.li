@@ -11,6 +11,15 @@ fn vec3(x: float, y: float, z: float) (float, float, float) {
   return (x, y, z)
 }
 
+fn vec3_length_squared(v: (float, float, float)) float {
+  var (x, y, z) = v
+  return x * x + y * y + z * z
+}
+
+fn vec3_length(v: (float, float, float)) float {
+  return (vec3_length_squared(v) |> @awk('{print sqrt($1)}')) as float
+}
+
 fn vec3_add(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
   var (x1, y1, z1) = v1
   var (x2, y2, z2) = v2
@@ -48,6 +57,10 @@ fn vec3_dot(v1: (float, float, float), v2: (float, float, float)) float {
 fn test_vec3() {
   var v1 = vec3(1.0, 2.0, 3.0)
   var v2 = vec3(4.0, 5.0, 6.0)
+
+  assert vec3_length_squared(v1) == 14
+  var v1_len = vec3_length(v1)
+  assert 3.7 < v1_len && v1_len < 3.8
 
   var (sum_x, sum_y, sum_z) = vec3_add(v1, v2)
   assert sum_x == 5 && sum_y == 7 && sum_z == 9
