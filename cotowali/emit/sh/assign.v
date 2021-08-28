@@ -77,7 +77,7 @@ fn (mut e Emitter) destructuring_assign(names []string, expr ast.Expr) {
 	tuple_info := expr.type_symbol().tuple_info() or {
 		panic(unreachable('destrucuturing not tuple value'))
 	}
-	e.write('set ')
+	e.write('set -- ')
 	e.expr(expr, writeln: true, quote: false)
 	for i, name in names {
 		ts := expr.scope().must_lookup_type(tuple_info.elements[i])

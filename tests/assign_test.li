@@ -33,14 +33,18 @@ fn test_simple_assign() {
 test_simple_assign()
 
 fn test_destructure_assign() {
-  var (a, b) = (1, 2)
-  assert a == 1 && b == 2
+  var (a, b) = (-1, 2)
+  assert a == -1 && b == 2
 
   (a, b) = (a * 2, b * 2)
-  assert a == 2 && b == 4
+  assert a == -2 && b == 4
 
   (a, b) = (b, a)
-  assert a == 4 && b == 2
+  assert a == 4 && b == -2
+
+
+  var (s, ss) = ('-s', '--ss')
+  assert s + ss == '-s--ss'
 }
 test_destructure_assign()
 
