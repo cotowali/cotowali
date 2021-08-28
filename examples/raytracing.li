@@ -35,6 +35,12 @@ fn vec3_cross(v1: (float, float, float), v2: (float, float, float)) (float, floa
   return (y1 * z2 - z1 * y2, z1 * x2 - x1 * z2, x1 * y2 - y1 * x2)
 }
 
+fn vec3_dot(v1: (float, float, float), v2: (float, float, float)) float {
+  var (x1, y1, z1) = v1
+  var (x2, y2, z2) = v2
+  return x1 * x2 + y1 * y2 + z1 * z2
+}
+
 fn test_vec3() {
   var v1 = (1.0, 2.0, 3.0)
   var v2 = (4.0, 5.0, 6.0)
@@ -54,5 +60,9 @@ fn test_vec3() {
   var cross = vec3_cross(v1, v2)
   var (cross_x, cross_y, cross_z) = cross
   assert cross_x == -3 && cross_y == 6 && cross_z == -3
+
+  assert vec3_dot(v1, v2) == 1 * 4 + 2 * 5 + 3 * 6
+  assert vec3_dot(v1, cross) == 0
+  assert vec3_dot(v2, cross) == 0
 }
 test_vec3()
