@@ -24,6 +24,11 @@ fn vec3_multiply(v: (float, float, float), n: float) (float, float, float) {
   return (x * n, y * n, z * n)
 }
 
+fn vec3_divide(v: (float, float, float), n: float) (float, float, float) {
+  var (x, y, z) = v
+  return (x / n, y / n, z / n)
+}
+
 fn test_vec3() {
   var v1 = (1.0, 2.0, 3.0)
   var v2 = (1.5, 2.5, 3.5)
@@ -36,5 +41,8 @@ fn test_vec3() {
 
   var (twice_x2, twice_y2, twice_z2) = vec3_multiply(v2, 2)
   assert twice_x2 == 3 && twice_y2 == 5 && twice_z2 == 7
+
+  var (half_x1, half_y1, half_z1) = vec3_divide(v1, 2)
+  assert half_x1 == 0.5 && half_y1 == 1.0 && half_z1 == 1.5
 }
 test_vec3()
