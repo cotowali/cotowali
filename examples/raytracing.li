@@ -31,16 +31,16 @@ fn vec3_divide(v: (float, float, float), n: float) (float, float, float) {
 
 fn test_vec3() {
   var v1 = (1.0, 2.0, 3.0)
-  var v2 = (1.5, 2.5, 3.5)
+  var v2 = (4.0, 5.0, 6.0)
 
   var (sum_x, sum_y, sum_z) = vec3_add(v1, v2)
-  assert sum_x == 2.5 && sum_y == 4.5 && sum_z == 6.5
+  assert sum_x == 5 && sum_y == 7 && sum_z == 9
 
   var (diff_x, diff_y, diff_z) = vec3_subtract(v2, v1)
-  assert diff_x == 0.5 && diff_y == 0.5 && diff_z == 0.5
+  assert diff_x == 3 && diff_y == 3 && diff_z == 3
 
-  var (twice_x2, twice_y2, twice_z2) = vec3_multiply(v2, 2)
-  assert twice_x2 == 3 && twice_y2 == 5 && twice_z2 == 7
+  var (twice_x1, twice_y1, twice_z1) = vec3_multiply(v1, 2)
+  assert twice_x1 == 2 && twice_y1 == 4 && twice_z1 == 6
 
   var (half_x1, half_y1, half_z1) = vec3_divide(v1, 2)
   assert half_x1 == 0.5 && half_y1 == 1.0 && half_z1 == 1.5
