@@ -22,6 +22,13 @@ pub mut:
 	body   Block
 }
 
+pub fn (f FnDecl) children() []Node {
+	mut children := []Node{cap: f.params.len + 1}
+	children << f.params.map(Node(Expr(it)))
+	children << Stmt(f.body)
+	return children
+}
+
 pub fn (f FnDecl) is_varargs() bool {
 	syms := f.function_info().params.map(f.parent_scope.must_lookup_type(it))
 	if syms.len > 0 {
@@ -67,6 +74,11 @@ pub:
 	expr Expr
 }
 
+[inline]
+pub fn (s &ReturnStmt) children() []Node {
+	return [Node(s.expr)]
+}
+
 fn (mut r Resolver) return_stmt(stmt ReturnStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
@@ -92,6 +104,11 @@ fn (mut r Resolver) yield_stmt(stmt YieldStmt) {
 	}
 
 	r.expr(stmt.expr)
+}
+
+[inline]
+pub fn (s &YieldStmt) children() []Node {
+	return [Node(s.expr)]
 }
 
 // --

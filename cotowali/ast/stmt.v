@@ -37,6 +37,18 @@ pub fn (attr Attr) kind() AttrKind {
 pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
 	IfStmt | InlineShell | RequireStmt | ReturnStmt | WhileStmt | YieldStmt
 
+pub fn (stmt Stmt) children() []Node {
+	return match stmt {
+		EmptyStmt, InlineShell {
+			[]Node{}
+		}
+		AssertStmt, AssignStmt, Block, Expr, FnDecl, ForInStmt, IfStmt, RequireStmt, ReturnStmt,
+		WhileStmt, YieldStmt {
+			stmt.children()
+		}
+	}
+}
+
 fn (mut r Resolver) stmts(stmts []Stmt) {
 	for stmt in stmts {
 		r.stmt(stmt)
@@ -69,6 +81,11 @@ pub mut:
 	typ     Type = builtin_type(.placeholder)
 	left    Expr
 	right   Expr
+}
+
+[inline]
+pub fn (s &AssignStmt) children() []Node {
+	return [Node(s.left), Node(s.right)]
 }
 
 fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
@@ -140,6 +157,10 @@ pub mut:
 	expr Expr
 }
 
+pub fn (s &AssertStmt) children() []Node {
+	return [Node(s.expr)]
+}
+
 fn (mut r Resolver) assert_stmt(stmt AssertStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
@@ -156,6 +177,11 @@ pub:
 	scope &Scope
 pub mut:
 	stmts []Stmt
+}
+
+[inline]
+pub fn (s &Block) children() []Node {
+	return s.stmts.map(Node(it))
 }
 
 fn (mut r Resolver) block(stmt Block) {
@@ -188,6 +214,11 @@ pub mut:
 	body Block
 }
 
+[inline]
+pub fn (s &ForInStmt) children() []Node {
+	return [Node(s.expr), Node(Expr(s.var_)), Node(Stmt(s.body))]
+}
+
 fn (mut r Resolver) for_in_stmt(mut stmt ForInStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
@@ -218,6 +249,15 @@ pub mut:
 	branches []IfBranch
 pub:
 	has_else bool
+}
+
+pub fn (s &IfStmt) children() []Node {
+	mut children := []Node{cap: s.branches.len * 2}
+	for b in s.branches {
+		children << b.cond
+		children << Stmt(b.body)
+	}
+	return children
 }
 
 fn (mut r Resolver) if_stmt(stmt IfStmt) {
@@ -254,6 +294,11 @@ pub mut:
 	file File
 }
 
+[inline]
+pub fn (s &RequireStmt) children() []Node {
+	return [Node(s.file)]
+}
+
 fn (mut r Resolver) require_stmt(stmt RequireStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
@@ -269,6 +314,11 @@ pub struct WhileStmt {
 pub:
 	cond Expr
 	body Block
+}
+
+[inline]
+pub fn (s &WhileStmt) children() []Node {
+	return [Node(s.cond), Node(Stmt(s.body))]
 }
 
 fn (mut r Resolver) while_stmt(stmt WhileStmt) {
