@@ -20,6 +20,10 @@ fn vec3_length(v: (float, float, float)) float {
   return (vec3_length_squared(v) |> @awk('{print sqrt($1)}')) as float
 }
 
+fn vec3_normalize(v: (float, float, float)) (float, float, float) {
+  return vec3_divide(v, vec3_length(v))
+}
+
 fn vec3_add(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
   var (x1, y1, z1) = v1
   var (x2, y2, z2) = v2
@@ -61,6 +65,9 @@ fn test_vec3() {
   assert vec3_length_squared(v1) == 14
   var v1_len = vec3_length(v1)
   assert 3.7 < v1_len && v1_len < 3.8
+
+  var normalized_v1 = vec3_normalize(v1)
+  assert 0.99 < vec3_length(normalized_v1) && vec3_length(normalized_v1) < 1.01
 
   var (sum_x, sum_y, sum_z) = vec3_add(v1, v2)
   assert sum_x == 5 && sum_y == 7 && sum_z == 9
