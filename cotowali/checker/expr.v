@@ -212,6 +212,10 @@ fn (mut c Checker) pipeline(expr ast.Pipeline) {
 
 	for i, e in expr.exprs {
 		if i > 0 {
+			if e is ast.CallCommandExpr {
+				// allow `any_value |> @command()`
+				continue
+			}
 			right := c.expect_function_call(e) or { continue }
 			left := expr.exprs[i - 1]
 
