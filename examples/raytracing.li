@@ -7,32 +7,36 @@
 echo('Ray tracing example')
 
 // Vec3 (float, float, float)
+fn vec3(x: float, y: float, z: float) (float, float, float) {
+  return (x, y, z)
+}
+
 fn vec3_add(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
   var (x1, y1, z1) = v1
   var (x2, y2, z2) = v2
-  return (x1 + x2, y1 + y2, z1 + z2)
+  return vec3(x1 + x2, y1 + y2, z1 + z2)
 }
 
 fn vec3_subtract(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
   var (x1, y1, z1) = v1
   var (x2, y2, z2) = v2
-  return (x1 - x2, y1 - y2, z1 - z2)
+  return vec3(x1 - x2, y1 - y2, z1 - z2)
 }
 
 fn vec3_multiply(v: (float, float, float), n: float) (float, float, float) {
   var (x, y, z) = v
-  return (x * n, y * n, z * n)
+  return vec3(x * n, y * n, z * n)
 }
 
 fn vec3_divide(v: (float, float, float), n: float) (float, float, float) {
   var (x, y, z) = v
-  return (x / n, y / n, z / n)
+  return vec3(x / n, y / n, z / n)
 }
 
 fn vec3_cross(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
   var (x1, y1, z1) = v1
   var (x2, y2, z2) = v2
-  return (y1 * z2 - z1 * y2, z1 * x2 - x1 * z2, x1 * y2 - y1 * x2)
+  return vec3(y1 * z2 - z1 * y2, z1 * x2 - x1 * z2, x1 * y2 - y1 * x2)
 }
 
 fn vec3_dot(v1: (float, float, float), v2: (float, float, float)) float {
@@ -42,8 +46,8 @@ fn vec3_dot(v1: (float, float, float), v2: (float, float, float)) float {
 }
 
 fn test_vec3() {
-  var v1 = (1.0, 2.0, 3.0)
-  var v2 = (4.0, 5.0, 6.0)
+  var v1 = vec3(1.0, 2.0, 3.0)
+  var v2 = vec3(4.0, 5.0, 6.0)
 
   var (sum_x, sum_y, sum_z) = vec3_add(v1, v2)
   assert sum_x == 5 && sum_y == 7 && sum_z == 9
