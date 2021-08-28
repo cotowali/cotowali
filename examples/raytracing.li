@@ -29,6 +29,12 @@ fn vec3_divide(v: (float, float, float), n: float) (float, float, float) {
   return (x / n, y / n, z / n)
 }
 
+fn vec3_cross(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
+  var (x1, y1, z1) = v1
+  var (x2, y2, z2) = v2
+  return (y1 * z2 - z1 * y2, z1 * x2 - x1 * z2, x1 * y2 - y1 * x2)
+}
+
 fn test_vec3() {
   var v1 = (1.0, 2.0, 3.0)
   var v2 = (4.0, 5.0, 6.0)
@@ -44,5 +50,9 @@ fn test_vec3() {
 
   var (half_x1, half_y1, half_z1) = vec3_divide(v1, 2)
   assert half_x1 == 0.5 && half_y1 == 1.0 && half_z1 == 1.5
+
+  var cross = vec3_cross(v1, v2)
+  var (cross_x, cross_y, cross_z) = cross
+  assert cross_x == -3 && cross_y == 6 && cross_z == -3
 }
 test_vec3()
