@@ -49,7 +49,7 @@ fn (mut e Emitter) array_elements(name string) {
 }
 
 fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.type_symbol().kind() != .array {
+	if expr.left.type_symbol().resolved().kind() != .array {
 		panic(unreachable('not a array operand'))
 	}
 

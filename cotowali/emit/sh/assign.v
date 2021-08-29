@@ -51,7 +51,7 @@ fn (mut e Emitter) map_assign(name string, value ExprOrString) {
 }
 
 fn (mut e Emitter) assign(name string, value ExprOrString, ts TypeSymbol) {
-	match ts.kind() {
+	match ts.resolved().kind() {
 		.array {
 			e.array_assign(name, value)
 		}
@@ -87,7 +87,7 @@ fn (mut e Emitter) destructuring_assign(names []string, expr ast.Expr) {
 
 fn (mut e Emitter) index_assign(left ast.Expr, index ast.Expr, right ast.Expr) {
 	name := e.ident_for(left)
-	e.write(match left.type_symbol().kind() {
+	e.write(match left.type_symbol().resolved().kind() {
 		.array { 'array_set $name ' }
 		.map { 'map_set $name ' }
 		else { panic_and_value(unreachable('invalid index left'), '') }

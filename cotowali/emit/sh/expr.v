@@ -117,7 +117,7 @@ fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
 		return
 	}
 
-	e.write(match expr.typ {
+	e.write(match ts.resolved().typ {
 		builtin_type(.bool) { false_value }
 		builtin_type(.int), builtin_type(.float) { '0' }
 		else { '' }
@@ -126,7 +126,7 @@ fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
 
 fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 	ident := e.ident_for(v)
-	match v.type_symbol().kind() {
+	match v.type_symbol().resolved().kind() {
 		.array {
 			e.array(ident, opt)
 		}
@@ -151,7 +151,7 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	e.sh_command_substitution(fn (mut e Emitter, v ExprWithOpt<ast.IndexExpr>) {
-		e.write(match v.expr.left.type_symbol().kind() {
+		e.write(match v.expr.left.type_symbol().resolved().kind() {
 			.array { 'array_get ' }
 			.map { 'map_get ' }
 			else { panic_and_value(unreachable('invalid index left'), '') }
@@ -169,7 +169,7 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 		panic(unreachable('not a infix op'))
 	}
 
-	ts := expr.left.type_symbol()
+	ts := expr.left.type_symbol().resolved()
 	if ts.kind() == .array {
 		e.infix_expr_for_array(expr, opt)
 		return
@@ -184,7 +184,7 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.typ() != builtin_type(.bool) {
+	if expr.left.resolved_typ() != builtin_type(.bool) {
 		panic(unreachable('not a bool operand'))
 	}
 
@@ -240,7 +240,7 @@ fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.typ() != builtin_type(.int) {
+	if expr.left.resolved_typ() != builtin_type(.int) {
 		panic(unreachable('invalid operand'))
 	}
 	e.write_echo_if_command(opt)
@@ -278,7 +278,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.typ() != builtin_type(.string) {
+	if expr.left.resolved_typ() != builtin_type(.string) {
 		panic(unreachable('not a string operand'))
 	}
 
@@ -305,7 +305,7 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	need_quote := opt.quote && opt.mode != .inside_arithmetic
-		&& ast.Expr(expr).type_symbol().kind() == .tuple
+		&& ast.Expr(expr).type_symbol().resolved().kind() == .tuple
 	if need_quote {
 		e.write('"')
 		defer {
