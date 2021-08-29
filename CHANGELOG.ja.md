@@ -12,6 +12,7 @@ monthly.2021.09
 - 文字列リテラルの式展開
 - [変数の分割代入](https://github.com/cotowali/cotowali/blob/4b986ff95b90ce1fbbd2ea0b76480261b2058303/tests/assign_test.li#L35-L44)
 - 属性
+- 型エイリアス
 
 monthly.2021.08
 ---------------
