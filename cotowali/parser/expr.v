@@ -82,11 +82,16 @@ fn (mut p Parser) parse_infix_expr(kind ExprKind) ?ast.Expr {
 
 	mut expr := p.parse_expr(operand) ?
 	for {
+		p.skip_eol()
+
 		op := p.token(0)
 		if op.kind !in op_kinds {
 			break
 		}
 		p.consume_with_assert(...op_kinds)
+
+		p.skip_eol()
+
 		right := p.parse_expr(operand) ?
 		expr = ast.InfixExpr{
 			scope: p.scope
