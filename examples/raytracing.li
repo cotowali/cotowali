@@ -109,3 +109,31 @@ fn test_vec3() {
 test_vec3()
 
 // --------------------
+
+fn sphere(center: (float, float, float), radius: float) (float, float, float, float) {
+  var (x, y, z) = center
+  return (x, y, z, radius)
+}
+
+fn sphere_center(sphere: (float, float, float, float)) (float, float, float) {
+  var (x, y, z, radius) = sphere
+  return vec3(x, y, z)
+}
+
+fn sphere_radius(sphere: (float, float, float, float)) float {
+  var (x, y, z, radius) = sphere
+  return radius
+}
+
+fn test_sphere() {
+  var center = vec3(0, -1, 1)
+  var sp = sphere(center, 3)
+
+  var c = sphere_center(sp)
+  assert
+    vec3_x(c) == 0 &&
+    vec3_y(c) == -1 &&
+    vec3_z(c) == 1
+  assert sphere_radius(sp) == 3
+}
+test_sphere()
