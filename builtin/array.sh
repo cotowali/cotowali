@@ -7,6 +7,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 array_to_str() {
+  name=$1
   echo "$( eval echo $(array_elements $name) )"
 }
 
