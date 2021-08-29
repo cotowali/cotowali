@@ -6,9 +6,8 @@
 
 echo('Ray tracing example')
 
-// ---------------------------------
-// type vec3 = (float, float, float)
-// ---------------------------------
+// --------------------
+
 fn vec3(x: float, y: float, z: float) (float, float, float) {
   return (x, y, z)
 }
@@ -92,3 +91,5 @@ fn test_vec3() {
   assert vec3_dot(v2, cross) == 0
 }
 test_vec3()
+
+// --------------------
