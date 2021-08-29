@@ -22,6 +22,7 @@ pub enum TokenKind {
 	key_require
 	key_return
 	key_struct
+	key_type
 	key_use
 	key_var
 	key_while
@@ -172,6 +173,7 @@ fn (k TokenKind) is_keyword() bool {
 		.key_require,
 		.key_return,
 		.key_struct,
+		.key_type,
 		.key_use,
 		.key_var,
 		.key_while,
