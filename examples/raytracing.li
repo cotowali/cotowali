@@ -8,39 +8,41 @@ echo('Ray tracing example')
 
 // --------------------
 
-fn vec3(x: float, y: float, z: float) (float, float, float) {
+type Vec3 = (float, float, float)
+
+fn vec3(x: float, y: float, z: float) Vec3 {
   return (x, y, z)
 }
 
-fn vec3_x(v: (float, float, float)) float {
+fn vec3_x(v: Vec3) float {
   var (x, y, z) = v
   return x
 }
 
-fn vec3_y(v: (float, float, float)) float {
+fn vec3_y(v: Vec3) float {
   var (x, y, z) = v
   return y
 }
 
-fn vec3_z(v: (float, float, float)) float {
+fn vec3_z(v: Vec3) float {
   var (x, y, z) = v
   return z
 }
 
-fn vec3_length_squared(v: (float, float, float)) float {
+fn vec3_length_squared(v: Vec3) float {
   var (x, y, z) = v
   return x * x + y * y + z * z
 }
 
-fn vec3_length(v: (float, float, float)) float {
+fn vec3_length(v: Vec3) float {
   return (vec3_length_squared(v) |> @awk('{print sqrt($1)}')) as float
 }
 
-fn vec3_normalize(v: (float, float, float)) (float, float, float) {
+fn vec3_normalize(v: Vec3) Vec3 {
   return vec3_divide(v, vec3_length(v))
 }
 
-fn vec3_add(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
+fn vec3_add(v1: Vec3, v2: Vec3) Vec3 {
   return vec3(
     vec3_x(v1) + vec3_x(v2),
     vec3_y(v1) + vec3_y(v2),
@@ -48,7 +50,7 @@ fn vec3_add(v1: (float, float, float), v2: (float, float, float)) (float, float,
   )
 }
 
-fn vec3_subtract(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
+fn vec3_subtract(v1: Vec3, v2: Vec3) Vec3 {
   return vec3(
     vec3_x(v1) - vec3_x(v2),
     vec3_y(v1) - vec3_y(v2),
@@ -56,15 +58,15 @@ fn vec3_subtract(v1: (float, float, float), v2: (float, float, float)) (float, f
   )
 }
 
-fn vec3_multiply(v: (float, float, float), n: float) (float, float, float) {
+fn vec3_multiply(v: Vec3, n: float) Vec3 {
   return vec3(vec3_x(v) * n, vec3_y(v) * n, vec3_z(v) * n)
 }
 
-fn vec3_divide(v: (float, float, float), n: float) (float, float, float) {
+fn vec3_divide(v: Vec3, n: float) Vec3 {
   return vec3(vec3_x(v) / n, vec3_y(v) / n, vec3_z(v) / n)
 }
 
-fn vec3_cross(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
+fn vec3_cross(v1: Vec3, v2: Vec3) Vec3 {
   return vec3(
     vec3_y(v1) * vec3_z(v2) - vec3_z(v1) * vec3_y(v2),
     vec3_z(v1) * vec3_x(v2) - vec3_x(v1) * vec3_z(v2),
@@ -72,7 +74,7 @@ fn vec3_cross(v1: (float, float, float), v2: (float, float, float)) (float, floa
   )
 }
 
-fn vec3_dot(v1: (float, float, float), v2: (float, float, float)) float {
+fn vec3_dot(v1: Vec3, v2: Vec3) float {
   return vec3_x(v1) * vec3_x(v2) + vec3_y(v1) * vec3_y(v2) + vec3_z(v1) * vec3_z(v2)
 }
 
@@ -110,17 +112,19 @@ test_vec3()
 
 // --------------------
 
-fn sphere(center: (float, float, float), radius: float) (float, float, float, float) {
+type Sphere = (float, float, float, float)
+
+fn sphere(center: Vec3, radius: float) Sphere {
   var (x, y, z) = center
   return (x, y, z, radius)
 }
 
-fn sphere_center(sphere: (float, float, float, float)) (float, float, float) {
+fn sphere_center(sphere: Sphere) Vec3 {
   var (x, y, z, radius) = sphere
   return vec3(x, y, z)
 }
 
-fn sphere_radius(sphere: (float, float, float, float)) float {
+fn sphere_radius(sphere: Sphere) float {
   var (x, y, z, radius) = sphere
   return radius
 }
