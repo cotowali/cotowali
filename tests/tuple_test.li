@@ -11,6 +11,8 @@ fn test_swap() {
   assert new_a == b && new_b == a
 }
 
+test_swap()
+
 fn ...int |> sum() |> int {
   var res = 0
   var v: int
