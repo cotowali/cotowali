@@ -18,6 +18,7 @@ fn sum(vals: ...int) int {
 assert add(1, 2) == 3
 assert div(1, 2) == 0.5
 assert sum(1, 2, 3) == 6
+assert sum(1, 2, 3,) == 6
 
 assert @expr('1', '+', '1') == '2'
 assert ((1.1 |> @awk('{print $1 * 2}')) as float) == 2.2
