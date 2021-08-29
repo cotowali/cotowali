@@ -37,9 +37,16 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 	}
 
 	if opt.mode != .command {
-		e.write('\$(')
-		defer {
-			e.write(')')
+		if opt.mode != .inside_arithmetic && opt.quote {
+			e.write('"\$(')
+			defer {
+				e.write(')"')
+			}
+		} else {
+			e.write('\$(')
+			defer {
+				e.write(')')
+			}
 		}
 	}
 

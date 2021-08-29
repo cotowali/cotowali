@@ -86,7 +86,7 @@ fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
 fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
 	tmp := e.new_tmp_ident()
 	e.write('for $tmp in ')
-	e.expr(stmt.expr, expand_array: true, writeln: true)
+	e.expr(stmt.expr, expand_array: true, writeln: true, quote: false)
 	e.writeln('do')
 	{
 		e.assign(e.ident_for(stmt.var_), '\$(eval echo \$$tmp)')
