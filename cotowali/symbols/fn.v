@@ -14,8 +14,9 @@ pub:
 	ret     Type = builtin_type(.void)
 }
 
-pub fn (t TypeSymbol) function_info() ?FunctionTypeInfo {
-	return if t.info is FunctionTypeInfo { t.info } else { none }
+pub fn (ts TypeSymbol) function_info() ?FunctionTypeInfo {
+	resolved := ts.resolved()
+	return if resolved.info is FunctionTypeInfo { resolved.info } else { none }
 }
 
 fn (f FunctionTypeInfo) signature(s &Scope) string {

@@ -20,7 +20,8 @@ fn (info ArrayTypeInfo) typename(s &Scope) string {
 }
 
 pub fn (ts &TypeSymbol) array_info() ?ArrayTypeInfo {
-	return if ts.info is ArrayTypeInfo { ts.info } else { none }
+	resolved := ts.resolved()
+	return if resolved.info is ArrayTypeInfo { resolved.info } else { none }
 }
 
 pub fn (mut s Scope) lookup_or_register_array_type(info ArrayTypeInfo) &TypeSymbol {

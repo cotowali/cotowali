@@ -20,7 +20,8 @@ fn (info MapTypeInfo) typename(s &Scope) string {
 }
 
 pub fn (ts &TypeSymbol) map_info() ?MapTypeInfo {
-	return if ts.info is MapTypeInfo { ts.info } else { none }
+	resolved := ts.resolved()
+	return if resolved.info is MapTypeInfo { resolved.info } else { none }
 }
 
 pub fn (mut s Scope) lookup_or_register_map_type(info MapTypeInfo) &TypeSymbol {

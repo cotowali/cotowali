@@ -13,7 +13,8 @@ pub:
 }
 
 pub fn (ts TypeSymbol) tuple_info() ?TupleTypeInfo {
-	return if ts.info is TupleTypeInfo { ts.info } else { none }
+	resolved := ts.resolved()
+	return if resolved.info is TupleTypeInfo { resolved.info } else { none }
 }
 
 fn (info TupleTypeInfo) typename(s &Scope) string {
