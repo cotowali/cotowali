@@ -67,6 +67,7 @@ const (
 		'require': tk(.key_require)
 		'return':  tk(.key_return)
 		'struct':  tk(.key_struct)
+		'type':    tk(.key_type)
 		'use':     tk(.key_use)
 		'var':     tk(.key_var)
 		'while':   tk(.key_while)
