@@ -8,6 +8,7 @@ module parser
 import cotowali.errors
 import cotowali.source { Pos }
 import cotowali.token { Token, TokenKind }
+import term
 
 enum RestoreStrategy {
 	@none
@@ -16,7 +17,7 @@ enum RestoreStrategy {
 
 fn (mut p Parser) warn(msg string, pos Pos) IError {
 	$if trace_parser ? {
-		p.trace_begin(@FN, msg, '$pos')
+		p.trace_begin(term.warn_message(@FN), msg, '$pos')
 		defer {
 			p.trace_end()
 		}
@@ -27,7 +28,7 @@ fn (mut p Parser) warn(msg string, pos Pos) IError {
 
 fn (mut p Parser) error(msg string, pos Pos) IError {
 	$if trace_parser ? {
-		p.trace_begin(@FN, msg, '$pos')
+		p.trace_begin(term.fail_message(@FN), msg, '$pos')
 		defer {
 			p.trace_end()
 		}
@@ -38,7 +39,7 @@ fn (mut p Parser) error(msg string, pos Pos) IError {
 
 fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
 	$if trace_parser ? {
-		p.trace_begin(@FN, msg, '$pos')
+		p.trace_begin(term.fail_message(@FN), msg, '$pos')
 		defer {
 			p.trace_end()
 		}
