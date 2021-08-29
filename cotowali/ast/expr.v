@@ -155,6 +155,10 @@ pub fn (e Expr) typ() Type {
 	}
 }
 
+pub fn (e Expr) resolved_typ() Type {
+	return e.type_symbol().resolved().typ
+}
+
 [inline]
 pub fn (v Var) type_symbol() &TypeSymbol {
 	return v.sym.type_symbol()
