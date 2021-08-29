@@ -350,6 +350,7 @@ fn (mut p Parser) parse_paren_expr() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_call_args() ?[]ast.Expr {
+	p.skip_eol()
 	if p.kind(0) == .r_paren {
 		return []
 	}
@@ -357,10 +358,14 @@ fn (mut p Parser) parse_call_args() ?[]ast.Expr {
 	mut args := []ast.Expr{cap: 2}
 	for {
 		args << p.parse_expr(.toplevel) ?
+		p.skip_eol()
+
 		if p.kind(0) == .r_paren {
 			break
 		}
+
 		p.consume_with_check(.comma) ?
+		p.skip_eol()
 
 		if p.kind(0) == .r_paren {
 			// ends with trailing comman
