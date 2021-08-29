@@ -11,7 +11,7 @@ import cotowali.context { Context }
 import cotowali.symbols { Scope }
 import cotowali.debug { Tracer }
 import cotowali.errors { unreachable }
-import cotowali.source { Source }
+import cotowali.source { Pos, Source }
 
 pub struct Parser {
 pub mut:
@@ -74,6 +74,11 @@ pub fn (p &Parser) token(i int) Token {
 [inline]
 pub fn (p &Parser) kind(i int) TokenKind {
 	return p.token(i).kind
+}
+
+[inline]
+pub fn (p &Parser) pos(i int) Pos {
+	return p.token(i).pos
 }
 
 fn (mut p Parser) read_token() Token {
