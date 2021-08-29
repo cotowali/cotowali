@@ -41,6 +41,9 @@ fn index_test() {
   assert arr[1] == 11
   arr[2] = 100
   assert arr[2] == 100
+  assert arr[
+    2
+  ] == 100
 
   arr = [10, 11, 12]
   var i = 0

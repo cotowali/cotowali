@@ -404,7 +404,9 @@ fn (mut p Parser) parse_index_expr_with_left(left ast.Expr) ?ast.Expr {
 	}
 
 	p.consume_with_assert(.l_bracket)
+	p.skip_eol()
 	index := p.parse_expr(.toplevel) ?
+	p.skip_eol()
 	r_bracket := p.consume_with_check(.r_bracket) ?
 	return ast.IndexExpr{
 		left: left
