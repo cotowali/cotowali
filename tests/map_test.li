@@ -44,10 +44,10 @@ fn test_complex() {
     }, map[string]string{
       // no comma
       'a': { 'a': 'a2aa' }
-    }]
+    }],
     'b': [{
       'a': { 'a': 'b0aa', /* inline trailing comma */ }
-    }]
+    }],
   }
   assert map_array_map_map['a'][0]['b']['a'] == 'a0ba'
   assert map_array_map_map['a'][1]['a']['a'] == 'a1aa'

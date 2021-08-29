@@ -298,7 +298,7 @@ fn (mut p Parser) parse_map_literal() ?ast.Expr {
 			if p.kind(0) == .r_brace {
 				break
 			}
-			p.consume_with_check(.eol, .comma) ?
+			p.consume_with_check(.comma) ?
 			p.skip_eol()
 			if p.kind(0) == .r_brace {
 				break

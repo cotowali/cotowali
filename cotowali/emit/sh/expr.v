@@ -304,7 +304,7 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
-	need_quote := opt.quote && opt.mode !in [.inside_arithmetic, .command]
+	need_quote := opt.quote && opt.mode != .inside_arithmetic
 		&& ast.Expr(expr).type_symbol().kind() == .tuple
 	if need_quote {
 		e.write('"')
