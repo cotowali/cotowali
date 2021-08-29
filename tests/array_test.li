@@ -2,17 +2,36 @@ fn raw_arr(arr: []int) []int {
   return arr
 }
 
-fn new_arr() []int {
+fn arr_0_1_2() []int {
   return [0, 1, 2]
 }
 
-var n = 2
-var a = 'a'
 
-[0, 1, n]
+fn test_array_fn() {
+  // var arr1 = raw_arr(arr_0_1_2())
+  // var arr2 = arr_0_1_2()
+  // assert arr1 == arr2
+  // assert raw_arr([0, 1, 2]) == arr_0_1_2()
+}
+test_array_fn()
+
+// ---
+
+
+var empty = []int{}
+assert empty == []int{}
+assert empty != [0]
+
+assert [0, 1] == [0, 1]
+assert [0, 1] != [0, 1, 2]
+
+var n = 2
+assert [0, 1, n] == [0, 1, 2]
+
+var a = 'a'
 var v = [a, 'b', 'c']
-v
-v = []string{}
+assert v == v
+assert v == ['a', 'b', 'c']
 
 var arr = [0
   ,
@@ -22,16 +41,16 @@ var arr = [0
 
   n
   ,
-]
-raw_arr(arr)
-new_arr()
-// assert raw_arr(arr) == arr
+] == [0, 1, 2]
+
+// ---
 
 fn for_in_test() {
-  echo('for')
-  for i in [0, 1, 2] {
-    echo(i)
+  var n = 0
+  for i in [1, 2, 3] {
+    n += i
   }
+  assert n == 6
 }
 for_in_test()
 
@@ -66,9 +85,11 @@ fn array_of_array_test() {
 
 fn array_of_tuple_test() {
   var arr = [(0, 1), (2, 3)]
-  echo('array of tuple for')
+  var n = 0
   for v in arr {
-    echo("v: $v")
+    var (a, b) = v
+    n = n + a + b
   }
+  assert n == 6
 }
 array_of_tuple_test()
