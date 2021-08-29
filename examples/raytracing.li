@@ -6,7 +6,9 @@
 
 echo('Ray tracing example')
 
-// Vec3 (float, float, float)
+// ---------------------------------
+// type vec3 = (float, float, float)
+// ---------------------------------
 fn vec3(x: float, y: float, z: float) (float, float, float) {
   return (x, y, z)
 }
