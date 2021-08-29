@@ -350,19 +350,21 @@ fn (mut p Parser) parse_paren_expr() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_call_args() ?[]ast.Expr {
-	mut args := []ast.Expr{}
-	if p.kind(0) != .r_paren {
-		for {
-			args << p.parse_expr(.toplevel) ?
-			if p.kind(0) == .r_paren {
-				break
-			}
-			p.consume_with_check(.comma) ?
+	if p.kind(0) == .r_paren {
+		return []
+	}
 
-			if p.kind(0) == .r_paren {
-				// ends with trailing comman
-				break
-			}
+	mut args := []ast.Expr{cap: 2}
+	for {
+		args << p.parse_expr(.toplevel) ?
+		if p.kind(0) == .r_paren {
+			break
+		}
+		p.consume_with_check(.comma) ?
+
+		if p.kind(0) == .r_paren {
+			// ends with trailing comman
+			break
 		}
 	}
 	return args
