@@ -46,6 +46,21 @@ fn () |> zero() int {
 }
 assert (() |> zero()) == 0
 
+fn tuple_add(a: (int, int), b: (int, int)) (int, int) {
+  var (a1, a2) = a
+  var (b1, b2) = b
+  return (a1 + b1, a2 + b2)
+}
+
+fn test_tuple_args() {
+  var a = (1, 2)
+  var b = (5, 6)
+  var (c1, c2) = tuple_add(a, b)
+  assert c1 == 6 && c2 == 8
+  var (d1, d2) = tuple_add((2, 3), (8, 9))
+  assert d1 == 10 && d2 == 12
+}
+test_tuple_args()
 
 /*
 fn ((int, int), (int, int)) |> pair_sub() (int, int) {
