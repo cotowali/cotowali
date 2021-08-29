@@ -169,7 +169,13 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 		panic(unreachable('not a infix op'))
 	}
 
-	match expr.left.typ() {
+	ts := expr.left.type_symbol()
+	if ts.kind() == .array {
+		e.infix_expr_for_array(expr, opt)
+		return
+	}
+
+	match ts.typ {
 		builtin_type(.int), builtin_type(.float) { e.infix_expr_for_number(expr, opt) }
 		builtin_type(.string) { e.infix_expr_for_string(expr, opt) }
 		builtin_type(.bool) { e.infix_expr_for_bool(expr, opt) }

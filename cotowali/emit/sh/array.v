@@ -6,6 +6,7 @@
 module sh
 
 import cotowali.ast
+import cotowali.errors { unreachable }
 
 fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 	ident := e.ident_for(expr)
@@ -17,9 +18,23 @@ fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 	e.array(ident, opt)
 }
 
+fn (mut e Emitter) array_to_str(value ExprOrString) {
+	match value {
+		string {
+			e.write('"\$(array_to_str $value)"')
+		}
+		ast.Expr {
+			e.write('"\$(array_to_str ')
+			e.expr(value)
+			e.write(')"')
+		}
+	}
+}
+
 fn (mut e Emitter) array(name string, opt ExprOpt) {
 	if opt.mode == .command {
-		e.write('echo \$(array_to_str $name)')
+		e.write('echo ')
+		e.array_to_str(name)
 		return
 	}
 	if opt.expand_array {
@@ -31,4 +46,23 @@ fn (mut e Emitter) array(name string, opt ExprOpt) {
 
 fn (mut e Emitter) array_elements(name string) {
 	e.write('\$(array_elements $name)')
+}
+
+fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
+	if expr.left.type_symbol().kind() != .array {
+		panic(unreachable('not a array operand'))
+	}
+
+	match expr.op.kind {
+		.eq, .ne {
+			e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
+				e.array_to_str(expr.left)
+				e.write(if expr.op.kind == .eq { ' = ' } else { ' != ' })
+				e.array_to_str(expr.right)
+			}, expr, opt)
+		}
+		else {
+			panic(unreachable('invalid operator'))
+		}
+	}
 }
