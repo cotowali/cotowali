@@ -12,6 +12,21 @@ fn vec3(x: float, y: float, z: float) (float, float, float) {
   return (x, y, z)
 }
 
+fn vec3_x(v: (float, float, float)) float {
+  var (x, y, z) = v
+  return x
+}
+
+fn vec3_y(v: (float, float, float)) float {
+  var (x, y, z) = v
+  return y
+}
+
+fn vec3_z(v: (float, float, float)) float {
+  var (x, y, z) = v
+  return z
+}
+
 fn vec3_length_squared(v: (float, float, float)) float {
   var (x, y, z) = v
   return x * x + y * y + z * z
@@ -26,37 +41,39 @@ fn vec3_normalize(v: (float, float, float)) (float, float, float) {
 }
 
 fn vec3_add(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
-  var (x1, y1, z1) = v1
-  var (x2, y2, z2) = v2
-  return vec3(x1 + x2, y1 + y2, z1 + z2)
+  return vec3(
+    vec3_x(v1) + vec3_x(v2),
+    vec3_y(v1) + vec3_y(v2),
+    vec3_z(v1) + vec3_z(v2),
+  )
 }
 
 fn vec3_subtract(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
-  var (x1, y1, z1) = v1
-  var (x2, y2, z2) = v2
-  return vec3(x1 - x2, y1 - y2, z1 - z2)
+  return vec3(
+    vec3_x(v1) - vec3_x(v2),
+    vec3_y(v1) - vec3_y(v2),
+    vec3_z(v1) - vec3_z(v2),
+  )
 }
 
 fn vec3_multiply(v: (float, float, float), n: float) (float, float, float) {
-  var (x, y, z) = v
-  return vec3(x * n, y * n, z * n)
+  return vec3(vec3_x(v) * n, vec3_y(v) * n, vec3_z(v) * n)
 }
 
 fn vec3_divide(v: (float, float, float), n: float) (float, float, float) {
-  var (x, y, z) = v
-  return vec3(x / n, y / n, z / n)
+  return vec3(vec3_x(v) / n, vec3_y(v) / n, vec3_z(v) / n)
 }
 
 fn vec3_cross(v1: (float, float, float), v2: (float, float, float)) (float, float, float) {
-  var (x1, y1, z1) = v1
-  var (x2, y2, z2) = v2
-  return vec3(y1 * z2 - z1 * y2, z1 * x2 - x1 * z2, x1 * y2 - y1 * x2)
+  return vec3(
+    vec3_y(v1) * vec3_z(v2) - vec3_z(v1) * vec3_y(v2),
+    vec3_z(v1) * vec3_x(v2) - vec3_x(v1) * vec3_z(v2),
+    vec3_x(v1) * vec3_y(v2) - vec3_y(v1) * vec3_x(v2),
+  )
 }
 
 fn vec3_dot(v1: (float, float, float), v2: (float, float, float)) float {
-  var (x1, y1, z1) = v1
-  var (x2, y2, z2) = v2
-  return x1 * x2 + y1 * y2 + z1 * z2
+  return vec3_x(v1) * vec3_x(v2) + vec3_y(v1) * vec3_y(v2) + vec3_z(v1) * vec3_z(v2)
 }
 
 fn test_vec3() {
@@ -70,21 +87,20 @@ fn test_vec3() {
   var normalized_v1 = vec3_normalize(v1)
   assert 0.99 < vec3_length(normalized_v1) && vec3_length(normalized_v1) < 1.01
 
-  var (sum_x, sum_y, sum_z) = vec3_add(v1, v2)
-  assert sum_x == 5 && sum_y == 7 && sum_z == 9
+  var added = vec3_add(v1, v2)
+  assert vec3_x(added) == 5 && vec3_y(added) == 7 && vec3_z(added) == 9
 
-  var (diff_x, diff_y, diff_z) = vec3_subtract(v2, v1)
-  assert diff_x == 3 && diff_y == 3 && diff_z == 3
+  var diff = vec3_subtract(v2, v1)
+  assert vec3_x(diff) == 3 && vec3_x(diff) == 3 && vec3_x(diff) == 3
 
-  var (twice_x1, twice_y1, twice_z1) = vec3_multiply(v1, 2)
-  assert twice_x1 == 2 && twice_y1 == 4 && twice_z1 == 6
+  var twice_v1 = vec3_multiply(v1, 2)
+  assert vec3_x(twice_v1) == 2 && vec3_y(twice_v1) == 4 && vec3_z(twice_v1) == 6
 
-  var (half_x1, half_y1, half_z1) = vec3_divide(v1, 2)
-  assert half_x1 == 0.5 && half_y1 == 1.0 && half_z1 == 1.5
+  var half_v1 = vec3_divide(v1, 2)
+  assert vec3_x(half_v1) == 0.5 && vec3_y(half_v1) == 1.0 && vec3_z(half_v1) == 1.5
 
   var cross = vec3_cross(v1, v2)
-  var (cross_x, cross_y, cross_z) = cross
-  assert cross_x == -3 && cross_y == 6 && cross_z == -3
+  assert vec3_x(cross) == -3 && vec3_y(cross) == 6 && vec3_z(cross) == -3
 
   assert vec3_dot(v1, v2) == 1 * 4 + 2 * 5 + 3 * 6
   assert vec3_dot(v1, cross) == 0
