@@ -103,7 +103,7 @@ pub fn (e InfixExpr) typ() Type {
 }
 
 pub fn (e IndexExpr) typ() Type {
-	left_info := e.left.type_symbol().info
+	left_info := e.left.type_symbol().resolved().info
 	return match left_info {
 		ArrayTypeInfo { left_info.elem }
 		MapTypeInfo { left_info.value }
