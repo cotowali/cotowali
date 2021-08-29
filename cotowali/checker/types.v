@@ -23,6 +23,10 @@ fn can_promote(want TypeSymbol, got TypeSymbol) bool {
 		return true
 	}
 
+	if want.kind() == .alias || got.kind() == .alias {
+		return can_promote(want.resolved(), got.resolved())
+	}
+
 	if want.typ == builtin_type(.any) {
 		return true
 	}
