@@ -6,6 +6,7 @@
 module parser
 
 import cotowali.symbols { Type, TypeSymbol }
+import cotowali.ast
 
 fn (mut p Parser) parse_array_type() ?&TypeSymbol {
 	$if trace_parser ? {
@@ -119,4 +120,28 @@ fn (mut p Parser) parse_type() ?&TypeSymbol {
 		.l_paren { return p.parse_tuple_type() }
 		else { return p.parse_ident_type() }
 	}
+}
+
+fn (mut p Parser) parse_type_decl() ?ast.Stmt {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
+	mut pos := p.pos(0)
+
+	p.consume_with_assert(.key_type)
+	ident := p.consume_with_check(.ident) ?
+	p.consume_with_check(.assign) ?
+	target := (p.parse_type() ?).typ
+
+	pos = pos.merge(p.pos(-1))
+
+	p.scope.register_alias_type(name: ident.text, target: target) or {
+		return p.duplicated_error(ident.text, pos)
+	}
+
+	return ast.EmptyStmt{}
 }

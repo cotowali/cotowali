@@ -107,6 +107,9 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_require {
 			return ast.Stmt(p.parse_require_stmt() ?)
 		}
+		.key_type {
+			return p.parse_type_decl()
+		}
 		.key_while {
 			return ast.Stmt(p.parse_while_stmt() ?)
 		}
