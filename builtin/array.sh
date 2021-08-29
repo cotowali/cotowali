@@ -7,12 +7,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 array_to_str() {
-  name=$1
-  len="$(eval echo "${name}_len")"
-  for i in $(seq 0 $(( len - 1 )) )
-  do
-    eval echo "\$${name}_$i"
-  done
+  echo "$( eval echo $(array_elements $name) )"
 }
 
 array_get() {

@@ -19,7 +19,7 @@ fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 
 fn (mut e Emitter) array(name string, opt ExprOpt) {
 	if opt.mode == .command {
-		e.write('echo \$(eval echo \$(array_elements $name) )')
+		e.write('echo \$(array_to_str $name)')
 		return
 	}
 	if opt.expand_array {
