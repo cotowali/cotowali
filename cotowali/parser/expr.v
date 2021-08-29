@@ -129,6 +129,8 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 		}
 	}
 
+	p.skip_eol()
+
 	match kind {
 		.toplevel { return p.parse_expr(kind.inner()) }
 		.pipeline { return p.parse_pipeline() }
