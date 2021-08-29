@@ -115,3 +115,13 @@ fn test_struct_type() ? {
 		assert false
 	}
 }
+
+fn test_resolved() ? {
+	mut s := new_global_scope()
+	int_ := builtin_type(.int)
+	int2_ts := s.register_alias_type(name: 'int2', target: int_) ?
+	int3_ts := s.register_alias_type(name: 'int3', target: int2_ts.typ) ?
+	assert int2_ts.resolved().typ == int_
+	assert int3_ts.resolved().typ == int_
+	assert s.must_lookup_type(int_).resolved().typ == int_
+}
