@@ -175,9 +175,7 @@ fn (mut lex Lexer) new_token_with_consume(kind TokenKind) Token {
 }
 
 fn (mut lex Lexer) new_token_with_consume_n(n int, kind TokenKind) Token {
-	for _ in 0 .. n {
-		lex.consume()
-	}
+	lex.consume_n(n)
 	return lex.new_token(kind)
 }
 
@@ -263,6 +261,20 @@ fn (mut lex Lexer) skip() Char {
 	c := lex.consume()
 	lex.start_pos()
 	return c
+}
+
+fn (mut lex Lexer) consume_n(n int) []Char {
+	mut chars := []Char{len: n}
+	for i in 0 .. n {
+		chars[i] = lex.consume()
+	}
+	return chars
+}
+
+fn (mut lex Lexer) skip_n(n int) []Char {
+	chars := lex.consume_n(n)
+	lex.start_pos()
+	return chars
 }
 
 fn (mut lex Lexer) consume_with_assert(cond CharCond) Char {
