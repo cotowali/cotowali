@@ -6,6 +6,18 @@
 module lexer
 
 import cotowali.source { Char }
+import cotowali.util { Unit }
+
+fn (mut lex Lexer) skip_comment() ?Unit {
+	cc := '${lex.char(0)}${lex.char(1)}'
+	match cc {
+		'//' { lex.skip_line_comment() }
+		'/*' { lex.skip_block_comment() }
+		else { return none }
+	}
+
+	return Unit{}
+}
 
 fn (mut lex Lexer) skip_line_comment() {
 	$if trace_lexer ? {

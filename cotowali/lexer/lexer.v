@@ -92,6 +92,10 @@ pub fn (mut lex Lexer) read() ?Token {
 			}
 		}
 
+		if _ := lex.skip_comment() {
+			continue
+		}
+
 		c := lex.char(0)
 		if is_ident_first_char(c) {
 			return lex.read_ident_or_keyword()
@@ -111,15 +115,6 @@ pub fn (mut lex Lexer) read() ?Token {
 		}
 
 		cc := ccc[..2]
-
-		if cc == '//' {
-			lex.skip_line_comment()
-			continue
-		}
-		if cc == '/*' {
-			lex.skip_block_comment()
-			continue
-		}
 
 		kind = table_for_two_chars_symbols[cc] or { tk(.unknown) }
 		if kind != .unknown {
