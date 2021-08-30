@@ -234,14 +234,12 @@ fn (lex &Lexer) text() string {
 
 // --
 
-[inline]
 fn (mut lex Lexer) skip() Char {
 	c := lex.consume()
 	lex.start_pos()
 	return c
 }
 
-[inline]
 fn (mut lex Lexer) consume() Char {
 	c := lex.char(0)
 	lex.prev_char = c
