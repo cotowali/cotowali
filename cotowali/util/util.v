@@ -5,6 +5,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module util
 
+pub struct Unit {}
+
 pub fn @in<T>(v T, low T, high T) bool {
 	return low <= v && v <= high
 }
