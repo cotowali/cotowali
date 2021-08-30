@@ -85,6 +85,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 	}
 
 	e.writeln('${node.name}() {')
+	e.indent()
 	{
 		for i, param in node.params {
 			value := if i == node.params.len - 1 && node.is_varargs() {
@@ -99,5 +100,6 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 		}
 		e.block(node.body)
 	}
+	e.unindent()
 	e.writeln('}')
 }
