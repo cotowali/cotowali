@@ -8,7 +8,7 @@ module lexer
 import cotowali.source { Char, CharClass, CharCond, Pos, Source, pos }
 import cotowali.token { Token, TokenKind }
 import cotowali.context { Context }
-import cotowali.util { min }
+import cotowali.util { Unit, min }
 import cotowali.errors { LexerErr, LexerWarn, unreachable }
 import cotowali.debug { Tracer }
 
@@ -244,7 +244,7 @@ fn (lex Lexer) @assert(cond CharCond) {
 
 // --
 
-fn (mut lex Lexer) consume() Char {
+fn (mut lex Lexer) consume() {
 	c := lex.char(0)
 	lex.prev_char = c
 	lex.pos.len += c.len
@@ -253,54 +253,50 @@ fn (mut lex Lexer) consume() Char {
 		lex.pos.last_col = 1
 		lex.pos.last_line++
 	}
-
-	return c
 }
 
-fn (mut lex Lexer) skip() Char {
-	c := lex.consume()
+fn (mut lex Lexer) skip() {
+	lex.consume()
 	lex.start_pos()
-	return c
 }
 
-fn (mut lex Lexer) consume_n(n int) []Char {
-	mut chars := []Char{len: n}
-	for i in 0 .. n {
-		chars[i] = lex.consume()
+fn (mut lex Lexer) consume_n(n int) {
+	for _ in 0 .. n {
+		lex.consume()
 	}
-	return chars
 }
 
-fn (mut lex Lexer) skip_n(n int) []Char {
-	chars := lex.consume_n(n)
+fn (mut lex Lexer) skip_n(n int) {
+	lex.consume_n(n)
 	lex.start_pos()
-	return chars
 }
 
-fn (mut lex Lexer) consume_with_assert(cond CharCond) Char {
+fn (mut lex Lexer) consume_with_assert(cond CharCond) {
 	$if debug {
 		lex.@assert(cond)
 	}
-	return lex.consume()
+	lex.consume()
 }
 
-fn (mut lex Lexer) skip_with_assert(cond CharCond) Char {
+fn (mut lex Lexer) skip_with_assert(cond CharCond) {
 	$if debug {
 		lex.@assert(cond)
 	}
-	return lex.skip()
+	lex.skip()
 }
 
-fn (mut lex Lexer) consume_if(cond CharCond) ?Char {
+fn (mut lex Lexer) consume_if(cond CharCond) ?Unit {
 	if cond(lex.char(0)) {
-		return lex.consume()
+		lex.consume()
+		return Unit{}
 	}
 	return none
 }
 
-fn (mut lex Lexer) skip_if(cond CharCond) ?Char {
+fn (mut lex Lexer) skip_if(cond CharCond) ?Unit {
 	if cond(lex.char(0)) {
-		return lex.skip()
+		lex.skip()
+		return Unit{}
 	}
 	return none
 }
