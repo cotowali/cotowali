@@ -50,11 +50,14 @@ pub fn (mut lex Lexer) read() ?Token {
 			continue
 		}
 
+		// --
+
 		c0, c1, c2 := lex.char(0), lex.char(1), lex.char(2)
 		mut kind := tk(.unknown)
 
 		// --
-		ccc := '${lex.char(0)}${lex.char(1)}${lex.char(2)}'
+
+		ccc := '$c0$c1$c2'
 
 		kind = table_for_three_chars_symbols[ccc] or { tk(.unknown) }
 		if kind != .unknown {
@@ -62,7 +65,8 @@ pub fn (mut lex Lexer) read() ?Token {
 		}
 
 		// --
-		cc := ccc[..2]
+
+		cc := '$c0$c1'
 
 		kind = table_for_two_chars_symbols[cc] or { tk(.unknown) }
 		if kind != .unknown {
@@ -70,6 +74,7 @@ pub fn (mut lex Lexer) read() ?Token {
 		}
 
 		// --
+
 		c := c0
 
 		kind = table_for_one_char_symbols[c.byte()] or { tk(.unknown) }
