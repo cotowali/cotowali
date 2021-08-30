@@ -46,15 +46,22 @@ fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
 fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 	e.write('if ')
 	e.expr(stmt.expr, mode: .condition, writeln: true)
+
 	e.writeln('then')
+	e.indent()
 	{
 		e.writeln(':')
 	}
+	e.unindent()
+
 	e.writeln('else')
+
+	e.indent()
 	{
 		e.writeln("echo 'LINE $stmt.key_pos.line: assertion failed' >&2")
 		e.writeln('exit 1')
 	}
+	e.unindent()
 	e.writeln('fi')
 }
 
@@ -88,10 +95,12 @@ fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
 	e.write('for $tmp in ')
 	e.expr(stmt.expr, expand_array: true, writeln: true, quote: false)
 	e.writeln('do')
+	e.indent()
 	{
 		e.assign(e.ident_for(stmt.var_), '\$(eval echo \$$tmp)')
 		e.block(stmt.body)
 	}
+	e.unindent()
 	e.writeln('done')
 }
 
@@ -108,9 +117,11 @@ fn (mut e Emitter) while_stmt(stmt ast.WhileStmt) {
 	e.write('while ')
 	e.expr(stmt.cond, mode: .condition, writeln: true)
 	e.writeln('do')
+	e.indent()
 	{
 		e.block(stmt.body)
 	}
+	e.unindent()
 	e.writeln('done')
 }
 
