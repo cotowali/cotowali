@@ -50,6 +50,7 @@ pub enum TokenKind {
 	string_literal_content_escaped_single_quote
 	string_literal_content_escaped_double_quote
 	string_literal_content_escaped_dollar
+	doc_comment
 	l_paren
 	r_paren
 	l_brace
