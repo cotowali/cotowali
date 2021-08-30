@@ -49,17 +49,10 @@ pub fn (mut lex Lexer) read() ?Token {
 			continue
 		}
 
-		c := lex.char(0)
-		if is_ident_first_char(c) {
-			return lex.read_ident_or_keyword()
-		} else if is_digit(c) {
-			return lex.read_number()
-		} else if lex.is_eol() {
-			return lex.read_eol()
-		}
-
+		c0, c1, c2 := lex.char(0), lex.char(1), lex.char(2)
 		mut kind := tk(.unknown)
 
+		// --
 		ccc := '${lex.char(0)}${lex.char(1)}${lex.char(2)}'
 
 		kind = table_for_three_chars_symbols[ccc] or { tk(.unknown) }
@@ -67,12 +60,16 @@ pub fn (mut lex Lexer) read() ?Token {
 			return lex.new_token_with_consume_n(3, kind)
 		}
 
+		// --
 		cc := ccc[..2]
 
 		kind = table_for_two_chars_symbols[cc] or { tk(.unknown) }
 		if kind != .unknown {
 			return lex.new_token_with_consume_n(2, kind)
 		}
+
+		// --
+		c := c0
 
 		kind = table_for_one_char_symbols[c.byte()] or { tk(.unknown) }
 		if kind != .unknown {
@@ -89,6 +86,16 @@ pub fn (mut lex Lexer) read() ?Token {
 				lex.lex_ctx.current.brace_depth -= 1
 			}
 			return lex.new_token_with_consume(kind)
+		}
+
+		// --
+
+		if is_ident_first_char(c) {
+			return lex.read_ident_or_keyword()
+		} else if is_digit(c) {
+			return lex.read_number()
+		} else if lex.is_eol() {
+			return lex.read_eol()
 		}
 
 		match c.byte() {
