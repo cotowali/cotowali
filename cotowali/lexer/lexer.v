@@ -45,7 +45,8 @@ pub fn (mut lex Lexer) read() ?Token {
 			return tok
 		}
 
-		if _ := lex.skip_comment() {
+		if _ := lex.try_skip_comment() {
+			// found comment
 			continue
 		}
 

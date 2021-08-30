@@ -8,7 +8,7 @@ module lexer
 import cotowali.source { Char }
 import cotowali.util { Unit }
 
-fn (mut lex Lexer) skip_comment() ?Unit {
+fn (mut lex Lexer) try_skip_comment() ?Unit {
 	cc := '${lex.char(0)}${lex.char(1)}'
 	match cc {
 		'//' { lex.skip_line_comment() }
