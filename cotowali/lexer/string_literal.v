@@ -98,3 +98,56 @@ fn (mut lex Lexer) read_raw_string_literal_content(quote byte) ?Token {
 
 	return lex.new_token(.string_literal_content_text)
 }
+
+pub fn (mut lex Lexer) read_for_string_literal() ?Token {
+	match lex.lex_ctx.current.kind {
+		.inside_single_quoted_string_literal {
+			if lex.byte() == lexer.sq {
+				lex.lex_ctx.pop()
+				return lex.new_token_with_consume(.single_quote)
+			}
+			return lex.read_single_quote_string_literal_content()
+		}
+		.inside_double_quoted_string_literal {
+			if lex.byte() == lexer.dq {
+				lex.lex_ctx.pop()
+				return lex.new_token_with_consume(.double_quote)
+			}
+			return lex.read_double_quote_string_literal_content()
+		}
+		.inside_raw_single_quoted_string_literal {
+			if lex.byte() == lexer.sq {
+				lex.lex_ctx.pop()
+				return lex.new_token_with_consume(.single_quote)
+			}
+			return lex.read_raw_string_literal_content(lexer.sq)
+		}
+		.inside_raw_double_quoted_string_literal {
+			if lex.byte() == lexer.dq {
+				lex.lex_ctx.pop()
+				return lex.new_token_with_consume(.double_quote)
+			}
+			return lex.read_raw_string_literal_content(lexer.dq)
+		}
+		.inside_string_literal_expr_substitution, .normal {
+			b := lex.byte()
+			if b == lexer.sq {
+				lex.lex_ctx.push(kind: .inside_single_quoted_string_literal)
+				return lex.new_token_with_consume(.single_quote)
+			} else if b == lexer.dq {
+				lex.lex_ctx.push(kind: .inside_double_quoted_string_literal)
+				return lex.new_token_with_consume(.double_quote)
+			} else if b == `r` {
+				b2 := lex.char(1)[0]
+				if b2 == lexer.sq {
+					lex.lex_ctx.push(kind: .inside_raw_single_quoted_string_literal)
+					return lex.new_token_with_consume_n(2, .single_quote_with_r_prefix)
+				} else if b2 == lexer.dq {
+					lex.lex_ctx.push(kind: .inside_raw_double_quoted_string_literal)
+					return lex.new_token_with_consume_n(2, .double_quote_with_r_prefix)
+				}
+			}
+		}
+	}
+	return none
+}
