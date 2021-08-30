@@ -234,11 +234,17 @@ fn (lex &Lexer) text() string {
 
 // --
 
-fn (mut lex Lexer) skip() Char {
-	c := lex.consume()
-	lex.start_pos()
-	return c
+[inline]
+fn (lex Lexer) @assert(cond CharCond) {
+	$if debug {
+		if !cond(lex.char(0)) {
+			dump(lex.char(0))
+			panic(unreachable(''))
+		}
+	}
 }
+
+// --
 
 fn (mut lex Lexer) consume() Char {
 	c := lex.char(0)
@@ -253,14 +259,10 @@ fn (mut lex Lexer) consume() Char {
 	return c
 }
 
-[inline]
-fn (lex Lexer) @assert(cond CharCond) {
-	$if debug {
-		if !cond(lex.char(0)) {
-			dump(lex.char(0))
-			panic(unreachable(''))
-		}
-	}
+fn (mut lex Lexer) skip() Char {
+	c := lex.consume()
+	lex.start_pos()
+	return c
 }
 
 fn (mut lex Lexer) consume_with_assert(cond CharCond) Char {
