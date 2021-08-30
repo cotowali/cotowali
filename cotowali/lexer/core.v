@@ -235,13 +235,14 @@ fn (lex &Lexer) text() string {
 // --
 
 [inline]
-fn (mut lex Lexer) skip() {
-	lex.consume()
+fn (mut lex Lexer) skip() Char {
+	c := lex.consume()
 	lex.start_pos()
+	return c
 }
 
 [inline]
-fn (mut lex Lexer) consume() {
+fn (mut lex Lexer) consume() Char {
 	c := lex.char(0)
 	lex.prev_char = c
 	lex.pos.len += c.len
@@ -250,6 +251,8 @@ fn (mut lex Lexer) consume() {
 		lex.pos.last_col = 1
 		lex.pos.last_line++
 	}
+
+	return c
 }
 
 [inline]
@@ -262,18 +265,18 @@ fn (lex Lexer) @assert(cond CharCond) {
 	}
 }
 
-fn (mut lex Lexer) consume_with_assert(cond CharCond) {
+fn (mut lex Lexer) consume_with_assert(cond CharCond) Char {
 	$if debug {
 		lex.@assert(cond)
 	}
-	lex.consume()
+	return lex.consume()
 }
 
-fn (mut lex Lexer) skip_with_assert(cond CharCond) {
+fn (mut lex Lexer) skip_with_assert(cond CharCond) Char {
 	$if debug {
 		lex.@assert(cond)
 	}
-	lex.skip()
+	return lex.skip()
 }
 
 fn (mut lex Lexer) consume_for(cond CharCond) {
