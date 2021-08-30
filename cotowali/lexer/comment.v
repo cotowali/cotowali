@@ -7,6 +7,17 @@ module lexer
 
 import cotowali.source { Char }
 
+fn (mut lex Lexer) skip_line_comment() {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN)
+		defer {
+			lex.trace_end()
+		}
+	}
+
+	lex.skip_not_for(is_eol)
+}
+
 fn (mut lex Lexer) skip_block_comment() {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)

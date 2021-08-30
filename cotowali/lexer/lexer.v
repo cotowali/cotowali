@@ -113,8 +113,7 @@ pub fn (mut lex Lexer) read() ?Token {
 		cc := ccc[..2]
 
 		if cc == '//' {
-			// comment
-			lex.skip_not_for(is_eol)
+			lex.skip_line_comment()
 			continue
 		}
 		if cc == '/*' {
