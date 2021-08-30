@@ -113,6 +113,11 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_while {
 			return ast.Stmt(p.parse_while_stmt() ?)
 		}
+		.doc_comment {
+			return ast.DocComment{
+				token: p.consume()
+			}
+		}
 		.inline_shell {
 			tok := p.consume()
 			return ast.InlineShell{

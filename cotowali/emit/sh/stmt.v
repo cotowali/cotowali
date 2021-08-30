@@ -67,15 +67,25 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 }
 
 fn (mut e Emitter) block(block ast.Block) {
-	if block.stmts.len > 0 {
-		e.stmts(block.stmts)
-	} else {
+	mut blank := true
+
+	for stmt in block.stmts {
+		e.stmt(stmt)
+		match stmt {
+			ast.EmptyStmt, ast.DocComment {}
+			else { blank = false }
+		}
+	}
+
+	if blank {
 		e.writeln(':')
 	}
 }
 
 fn (mut e Emitter) doc_comment(comment ast.DocComment) {
-	// TODO
+	for line in comment.lines() {
+		e.writeln('#$line')
+	}
 }
 
 fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
