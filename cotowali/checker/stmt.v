@@ -46,7 +46,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 		ast.AssertStmt { c.assert_stmt(stmt) }
 		ast.Block { c.block(stmt) }
 		ast.Expr { c.expr(stmt) }
-		ast.EmptyStmt {}
+		ast.DocComment, ast.EmptyStmt {}
 		ast.FnDecl { c.fn_decl(stmt) }
 		ast.ForInStmt { c.for_in_stmt(mut stmt) }
 		ast.IfStmt { c.if_stmt(stmt) }

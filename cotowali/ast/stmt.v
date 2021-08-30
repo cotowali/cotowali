@@ -5,6 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module ast
 
+import cotowali.token { Token }
 import cotowali.source { Pos }
 import cotowali.symbols { ArrayTypeInfo, Scope, Type, builtin_type }
 
@@ -34,12 +35,12 @@ pub fn (attr Attr) kind() AttrKind {
 	return ast.attr_name_kind_table[attr.name] or { AttrKind.unknown }
 }
 
-pub type Stmt = AssertStmt | AssignStmt | Block | EmptyStmt | Expr | FnDecl | ForInStmt |
-	IfStmt | InlineShell | RequireStmt | ReturnStmt | WhileStmt | YieldStmt
+pub type Stmt = AssertStmt | AssignStmt | Block | DocComment | EmptyStmt | Expr | FnDecl |
+	ForInStmt | IfStmt | InlineShell | RequireStmt | ReturnStmt | WhileStmt | YieldStmt
 
 pub fn (stmt Stmt) children() []Node {
 	return match stmt {
-		EmptyStmt, InlineShell {
+		DocComment, EmptyStmt, InlineShell {
 			[]Node{}
 		}
 		AssertStmt, AssignStmt, Block, Expr, FnDecl, ForInStmt, IfStmt, RequireStmt, ReturnStmt,
@@ -60,6 +61,7 @@ fn (mut r Resolver) stmt(stmt Stmt) {
 		AssertStmt { r.assert_stmt(stmt) }
 		AssignStmt { r.assign_stmt(mut stmt) }
 		Block { r.block(stmt) }
+		DocComment { r.doc_comment(stmt) }
 		EmptyStmt { r.empty_stmt(stmt) }
 		Expr { r.expr(stmt) }
 		FnDecl { r.fn_decl(stmt) }
@@ -193,6 +195,28 @@ fn (mut r Resolver) block(stmt Block) {
 	}
 
 	r.stmts(stmt.stmts)
+}
+
+pub struct DocComment {
+	token Token
+}
+
+[inline]
+pub fn (doc DocComment) text() string {
+	return doc.token.text
+}
+
+pub fn (doc DocComment) lines() []string {
+	return doc.text().split_into_lines()
+}
+
+fn (mut r Resolver) doc_comment(stmt DocComment) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
 }
 
 pub struct EmptyStmt {}

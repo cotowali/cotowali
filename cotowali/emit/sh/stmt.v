@@ -26,6 +26,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 		ast.Block { e.block(stmt) }
 		ast.Expr { e.expr_stmt(stmt) }
 		ast.AssignStmt { e.assign_stmt(stmt) }
+		ast.DocComment { e.doc_comment(stmt) }
 		ast.EmptyStmt { e.writeln('') }
 		ast.ForInStmt { e.for_in_stmt(stmt) }
 		ast.IfStmt { e.if_stmt(stmt) }
@@ -71,6 +72,10 @@ fn (mut e Emitter) block(block ast.Block) {
 	} else {
 		e.writeln(':')
 	}
+}
+
+fn (mut e Emitter) doc_comment(comment ast.DocComment) {
+	// TODO
 }
 
 fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
