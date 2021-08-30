@@ -279,6 +279,20 @@ fn (mut lex Lexer) skip_with_assert(cond CharCond) Char {
 	return lex.skip()
 }
 
+fn (mut lex Lexer) consume_if(cond CharCond) ?Char {
+	if cond(lex.char(0)) {
+		return lex.consume()
+	}
+	return none
+}
+
+fn (mut lex Lexer) skip_if(cond CharCond) ?Char {
+	if cond(lex.char(0)) {
+		return lex.skip()
+	}
+	return none
+}
+
 fn (mut lex Lexer) consume_for(cond CharCond) {
 	for !lex.is_eof() && cond(lex.char(0)) {
 		lex.consume()
