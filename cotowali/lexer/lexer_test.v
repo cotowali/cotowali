@@ -96,8 +96,6 @@ fn t(kind TokenKind, text string) Token {
 }
 
 fn test_lexer() {
-	cr, lf := '\r', '\n'
-	crlf := cr + lf
 	test(@FN, @LINE, ' "🐈__" a ', [
 		// Pos{i, line, col, len, last_line, last_col}
 		Token{.double_quote, '"', Pos{1, 1, 2, 1, 1, 2}},
@@ -188,6 +186,12 @@ fn test_lexer() {
 		t(.r_brace, '}'),
 		t(.eof, ''),
 	])
+}
+
+fn test_comment() {
+	cr, lf := '\r', '\n'
+	crlf := cr + lf
+
 	test(@FN, @LINE, 'a//abc' + cr + 'b//xxx' + lf + 'c//cr' + crlf + 'd//eee', [
 		t(.ident, 'a'),
 		t(.eol, cr),
@@ -196,6 +200,10 @@ fn test_lexer() {
 		t(.ident, 'c'),
 		t(.eol, crlf),
 		t(.ident, 'd'),
+	])
+	test(@FN, @LINE, 'a/* /* xx */ */b', [
+		t(.ident, 'a'),
+		t(.ident, 'b'),
 	])
 }
 
