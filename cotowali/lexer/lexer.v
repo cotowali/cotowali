@@ -157,37 +157,6 @@ fn (lex Lexer) is_eol() bool {
 	return is_eol(lex.char(0))
 }
 
-fn (mut lex Lexer) skip_block_comment() {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
-	lex.skip_with_assert(fn (c Char) bool {
-		return c[0] == `/`
-	})
-	lex.skip_with_assert(fn (c Char) bool {
-		return c[0] == `*`
-	})
-
-	mut depth := 1
-	for depth > 0 {
-		// '/*'
-		if lex.byte() == `/` && lex.char(1).byte() == `*` {
-			depth++
-		}
-
-		// '*/'
-		if lex.prev_char[0] == `*` && lex.byte() == `/` {
-			depth--
-		}
-
-		lex.skip()
-	}
-}
-
 fn (mut lex Lexer) read_eol() Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
