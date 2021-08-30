@@ -205,6 +205,13 @@ fn test_comment() {
 		t(.ident, 'a'),
 		t(.ident, 'b'),
 	])
+
+	test(@FN, @LINE, 'a/// comment // comment' + lf + 'b', [
+		t(.ident, 'a'),
+		t(.doc_comment, ' comment // comment'),
+		t(.eol, lf),
+		t(.ident, 'b'),
+	])
 }
 
 fn test_at_ident() {

@@ -5,8 +5,14 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module lexer
 
+import cotowali.token { Token }
 import cotowali.source { Char }
 import cotowali.util { Unit }
+
+[inline]
+fn is_slash(c Char) bool {
+	return c.byte() == `/`
+}
 
 fn (mut lex Lexer) try_skip_comment() ?Unit {
 	cc := '${lex.char(0)}${lex.char(1)}'
@@ -19,6 +25,18 @@ fn (mut lex Lexer) try_skip_comment() ?Unit {
 	return Unit{}
 }
 
+fn (mut lex Lexer) read_doc_comment() ?Token {
+	ccc := '${lex.char(0)}${lex.char(1)}${lex.char(2)}'
+	if ccc == '///' {
+		lex.skip_n(3)
+		lex.consume_not_for(is_eol)
+		return lex.new_token(.doc_comment)
+	}
+	return none
+}
+
+// --
+
 fn (mut lex Lexer) skip_line_comment() {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
@@ -30,6 +48,24 @@ fn (mut lex Lexer) skip_line_comment() {
 	lex.skip_not_for(is_eol)
 }
 
+fn (mut lex Lexer) read_line_doc_comment() ?Token {
+	$if trace_lexer ? {
+		lex.trace_begin(@FN)
+		defer {
+			lex.trace_end()
+		}
+	}
+
+	lex.skip_with_assert(is_slash)
+	lex.skip_with_assert(is_slash)
+	lex.skip_with_assert(is_slash)
+
+	lex.consume_not_for(is_eol)
+	return lex.new_token(.doc_comment)
+}
+
+// --
+
 fn (mut lex Lexer) skip_block_comment() {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
@@ -38,9 +74,7 @@ fn (mut lex Lexer) skip_block_comment() {
 		}
 	}
 
-	lex.skip_with_assert(fn (c Char) bool {
-		return c[0] == `/`
-	})
+	lex.skip_with_assert(is_slash)
 	lex.skip_with_assert(fn (c Char) bool {
 		return c[0] == `*`
 	})
