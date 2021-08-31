@@ -77,15 +77,13 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 
 	mut elements := []Type{}
 	for {
-		mut pos := p.pos(0) // TODO: set TypeSymbol.pos correcly, then use it
 		ts := p.parse_type() ?
 		elements << ts.typ
-		pos = pos.merge(p.pos(-1))
 
 		if array_info := ts.array_info() {
 			if array_info.variadic {
 				// report error, then continue to parse
-				p.error('cannot use variadic type as tuple element', pos)
+				p.error('cannot use variadic type as tuple element', ts.pos)
 			}
 		}
 
@@ -123,14 +121,22 @@ fn (mut p Parser) parse_type() ?&TypeSymbol {
 		}
 	}
 
-	match p.kind(0) {
-		.l_bracket { return p.parse_array_type() }
-		.key_map { return p.parse_map_type() }
-		.amp { return p.parse_reference_type() }
-		.dotdotdot { return p.parse_variadic_type() }
-		.l_paren { return p.parse_tuple_type() }
-		else { return p.parse_ident_type() }
+	start_pos := p.pos(0)
+
+	// workaround for V's bug of match expr
+	f := fn (mut p Parser) ?&TypeSymbol {
+		match p.kind(0) {
+			.l_bracket { return p.parse_array_type() }
+			.key_map { return p.parse_map_type() }
+			.amp { return p.parse_reference_type() }
+			.dotdotdot { return p.parse_variadic_type() }
+			.l_paren { return p.parse_tuple_type() }
+			else { return p.parse_ident_type() }
+		}
 	}
+	mut ts := f(mut p) ?
+	ts.pos = start_pos.merge(p.pos(-1))
+	return ts
 }
 
 fn (mut p Parser) parse_type_decl() ?ast.Stmt {

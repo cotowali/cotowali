@@ -22,8 +22,9 @@ pub type TypeInfo = AliasTypeInfo | ArrayTypeInfo | FunctionTypeInfo | MapTypeIn
 pub struct TypeSymbol {
 mut:
 	scope &Scope = 0
+pub mut:
+	pos Pos
 pub:
-	pos  Pos
 	typ  Type
 	name string
 	info TypeInfo = TypeInfo(PlaceholderTypeInfo{})
