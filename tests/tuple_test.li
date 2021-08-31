@@ -62,6 +62,25 @@ fn test_tuple_args() {
 }
 test_tuple_args()
 
+fn test_tuple_type_expand() {
+  type int_int = (int, int)
+  var a: (...(int, int), int, int)
+  assert typeof(a) == '(int, int, int, int)'
+
+  var b: (...(int, int), ...(int, int))
+  assert typeof(b) == '(int, int, int, int)'
+
+  var c: (...int_int, ...(int, int))
+  assert typeof(c) == '(int, int, int, int)'
+
+  var d: (...int_int, ...int_int)
+  assert typeof(d) == '(int, int, int, int)'
+
+  var e: (...(...int_int, ...(int, int)))
+  assert typeof(e) == '(int, int, int, int)'
+}
+test_tuple_type_expand()
+
 /*
 fn ((int, int), (int, int)) |> pair_sub() (int, int) {
   var left (int, int)

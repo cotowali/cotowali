@@ -78,13 +78,23 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 	mut elements := []Type{}
 	for {
 		ts := p.parse_type() ?
-		elements << ts.typ
+
+		mut element_pushed := false
 
 		if array_info := ts.array_info() {
 			if array_info.variadic {
-				// report error, then continue to parse
-				p.error('cannot use variadic type as tuple element', ts.pos)
+				if elem_tuple := p.scope.must_lookup_type(array_info.elem).tuple_info() {
+					elements << elem_tuple.elements
+					element_pushed = true
+				} else {
+					// report error, then continue to parse
+					p.error('cannot use variadic type as tuple element', ts.pos)
+				}
 			}
+		}
+
+		if !element_pushed {
+			elements << ts.typ
 		}
 
 		if _ := p.consume_if_kind_eq(.r_paren) {
