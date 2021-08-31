@@ -16,3 +16,6 @@ error: tuple.err.li 14,1: mismatched types: `int` (left) and `()` (pipe in of ri
 error: tuple.err.li 15,1: mismatched types: `(int, int)` (left) and `()` (pipe in of right)
    15 | (1, 2) |> zero()
       | ^^^^^^^^^^^^^^^^
+error: tuple.err.li 17,9: cannot use variadic type as tuple element
+   17 | var v: (...int)
+      |         ^^^^^^

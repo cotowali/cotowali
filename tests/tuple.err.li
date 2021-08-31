@@ -13,3 +13,5 @@ fn () |> zero() int {
 
 0 |> zero()
 (1, 2) |> zero()
+
+var v: (...int)

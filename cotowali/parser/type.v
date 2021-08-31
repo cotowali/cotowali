@@ -77,7 +77,18 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 
 	mut elements := []Type{}
 	for {
-		elements << (p.parse_type() ?).typ
+		mut pos := p.pos(0) // TODO: set TypeSymbol.pos correcly, then use it
+		ts := p.parse_type() ?
+		elements << ts.typ
+		pos = pos.merge(p.pos(-1))
+
+		if array_info := ts.array_info() {
+			if array_info.variadic {
+				// report error, then continue to parse
+				p.error('cannot use variadic type as tuple element', pos)
+			}
+		}
+
 		if _ := p.consume_if_kind_eq(.r_paren) {
 			break
 		}
