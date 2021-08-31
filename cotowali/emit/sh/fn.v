@@ -52,7 +52,7 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 
 	match expr.func_id {
 		builtin_fn_id(.@typeof) {
-			e.write('echo ${expr.args[0].type_symbol().name}')
+			e.write("echo '${expr.args[0].type_symbol().name}'")
 			return
 		}
 		else {}
