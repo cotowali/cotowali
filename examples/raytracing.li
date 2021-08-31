@@ -112,7 +112,7 @@ test_vec3()
 
 // --------------------
 
-type Sphere = (float, float, float, float)
+type Sphere = (...Vec3, float)
 
 fn sphere(center: Vec3, radius: float) Sphere {
   var (x, y, z) = center
