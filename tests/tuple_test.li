@@ -80,22 +80,3 @@ fn test_tuple_type_expand() {
   assert typeof(e) == '(int, int, int, int)'
 }
 test_tuple_type_expand()
-
-/*
-fn ((int, int), (int, int)) |> pair_sub() (int, int) {
-  var left (int, int)
-  var right (int, int)
-  read(&left, &right)
-  var left_a int
-  var left_b int
-  (left_a, left_b) = left
-  var right_a int
-  var right_b int
-  (right_a, right_b) = right
-
-  return (left_a - left_b, right_a - right_b)
-}
-
-// (5 - 2) + (1 - 2) == 2
-assert (((5, 2), (1, 2)) |> pair_sub() |> add() |> sum()) == 2
-*/

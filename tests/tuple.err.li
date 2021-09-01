@@ -15,3 +15,4 @@ fn () |> zero() int {
 (1, 2) |> zero()
 
 var v: (...int)
+var nested: ((int, int))
