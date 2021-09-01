@@ -62,6 +62,11 @@ fn (mut p Parser) parse_reference_type() ?&TypeSymbol {
 	return p.scope.lookup_or_register_reference_type(target: target.typ)
 }
 
+[inline]
+fn tuple_element_error_msg(name string) string {
+	return 'cannot use $name as tuple element'
+}
+
 fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
@@ -88,7 +93,7 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 					element_pushed = true
 				} else {
 					// report error, then continue to parse
-					p.error('cannot use variadic type as tuple element', ts.pos)
+					p.error(tuple_element_error_msg('variadic type'), ts.pos)
 				}
 			}
 		}
