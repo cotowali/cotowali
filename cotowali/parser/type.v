@@ -86,13 +86,14 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 
 		mut element_pushed := false
 
+		// Check element types. If element is invalid, report error but dont stop to parse
 		if array_info := ts.array_info() {
 			if array_info.variadic {
 				if elem_tuple := p.scope.must_lookup_type(array_info.elem).tuple_info() {
+					// expand tuple element like `(...(int, int))`
 					elements << elem_tuple.elements
 					element_pushed = true
 				} else {
-					// report error, then continue to parse
 					p.error(tuple_element_error_msg('variadic type'), ts.pos)
 				}
 			}
