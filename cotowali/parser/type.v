@@ -98,7 +98,7 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 				}
 			}
 		}
-		if tuple_info := ts.tuple_info() {
+		if _ := ts.tuple_info() {
 			p.error(tuple_element_error_msg('tuple'), ts.pos)
 		}
 
