@@ -22,9 +22,15 @@ error: tuple.err.li 17,1: mismatched types: `(int, int)` (left) and `int` (right
 error: tuple.err.li 18,1: mismatched types: `(int, int)` (left) and `(string, string)` (right)
    18 | (0, 0) == ('a', 'b')
       | ^^^^^^^^^^^^^^^^^^^^
-error: tuple.err.li 20,9: cannot use variadic type as tuple element
-   20 | var v: (...int)
+error: tuple.err.li 19,1: invalid operation: `(int, int)` * `(int, int)`
+   19 | (0, 0) * (0, 0)
+      | ^^^^^^^^^^^^^^^
+error: tuple.err.li 20,1: invalid operation: `(int, int)` / `(int, int)`
+   20 | (0, 0) / (0, 0)
+      | ^^^^^^^^^^^^^^^
+error: tuple.err.li 22,9: cannot use variadic type as tuple element
+   22 | var v: (...int)
       |         ^^^^^^
-error: tuple.err.li 21,14: cannot use tuple as tuple element
-   21 | var nested: ((int, int))
+error: tuple.err.li 23,14: cannot use tuple as tuple element
+   23 | var nested: ((int, int))
       |              ^^^^^^^^^^

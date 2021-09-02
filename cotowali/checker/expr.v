@@ -6,7 +6,8 @@
 module checker
 
 import cotowali.ast { Expr }
-import cotowali.symbols { ArrayTypeInfo, TypeSymbol, builtin_type }
+import cotowali.symbols { ArrayTypeInfo, TypeSymbol, TypeSymbol, builtin_type }
+import cotowali.source { Pos }
 
 fn (mut c Checker) exprs(exprs []Expr) {
 	for expr in exprs {
@@ -158,6 +159,10 @@ fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 	) or {}
 }
 
+fn (mut c Checker) infix_expr_invalid_operation(op string, left TypeSymbol, right TypeSymbol, pos Pos) IError {
+	return c.error('invalid operation: `$left.name` $op `$right.name`', pos)
+}
+
 fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 	$if trace_checker ? {
 		c.trace_begin(@FN)
@@ -170,8 +175,18 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 	c.expr(expr.right)
 
 	pos := expr.pos()
+	op := expr.op
 	left_ts := expr.left.type_symbol()
+	left_kind := left_ts.kind()
 	right_ts := expr.right.type_symbol()
+	right_kind := right_ts.kind()
+
+	if left_kind == .tuple && right_kind == .tuple {
+		if op.kind !in [.eq, .ne] {
+			c.infix_expr_invalid_operation(op.text, left_ts, right_ts, pos)
+			return
+		}
+	}
 
 	c.check_types(
 		want: left_ts
