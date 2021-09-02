@@ -170,16 +170,24 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	}
 
 	ts := expr.left.type_symbol().resolved()
-	if ts.kind() == .array {
-		e.infix_expr_for_array(expr, opt)
-		return
-	}
 
 	match ts.typ {
-		builtin_type(.int), builtin_type(.float) { e.infix_expr_for_number(expr, opt) }
-		builtin_type(.string) { e.infix_expr_for_string(expr, opt) }
-		builtin_type(.bool) { e.infix_expr_for_bool(expr, opt) }
-		else { panic('infix_expr for `$expr.left.type_symbol().name` is unimplemented') }
+		builtin_type(.int), builtin_type(.float) {
+			e.infix_expr_for_number(expr, opt)
+		}
+		builtin_type(.string) {
+			e.infix_expr_for_string(expr, opt)
+		}
+		builtin_type(.bool) {
+			e.infix_expr_for_bool(expr, opt)
+		}
+		else {
+			if ts.kind() == .array {
+				e.infix_expr_for_array(expr, opt)
+				return
+			}
+			panic('infix_expr for `$ts.name` is unimplemented')
+		}
 	}
 }
 
