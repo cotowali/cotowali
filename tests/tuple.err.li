@@ -14,5 +14,8 @@ fn () |> zero() int {
 0 |> zero()
 (1, 2) |> zero()
 
+(0, 0) == (1)
+(0, 0) == ('a', 'b')
+
 var v: (...int)
 var nested: ((int, int))
