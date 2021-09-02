@@ -168,12 +168,17 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 
 	c.expr(expr.left)
 	c.expr(expr.right)
+
+	pos := expr.pos()
+	left_ts := expr.left.type_symbol()
+	right_ts := expr.right.type_symbol()
+
 	c.check_types(
-		want: expr.left.type_symbol()
+		want: left_ts
 		want_label: 'left'
-		got: expr.right.type_symbol()
+		got: right_ts
 		got_label: 'right'
-		pos: expr.pos()
+		pos: pos
 		synmetric: true
 	) or { return }
 }
