@@ -1,4 +1,5 @@
 assert (0) == (0)
+assert (0) == (0,)
 assert (0) == 0
 assert (
   0
@@ -6,6 +7,8 @@ assert (
   0
   ,
 )
+
+assert (0,) != (1,)
 
 /* TODO
 var t1 = (0, 1)
