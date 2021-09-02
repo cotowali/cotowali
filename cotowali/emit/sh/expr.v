@@ -182,11 +182,11 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 			e.infix_expr_for_bool(expr, opt)
 		}
 		else {
-			if ts.kind() == .array {
-				e.infix_expr_for_array(expr, opt)
-				return
+			match ts.kind() {
+				.array { e.infix_expr_for_array(expr, opt) }
+				.tuple { e.infix_expr_for_tuple(expr, opt) }
+				else { panic('infix_expr for `$ts.name` is unimplemented') }
 			}
-			panic('infix_expr for `$ts.name` is unimplemented')
 		}
 	}
 }
@@ -302,6 +302,26 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 		.plus {
 			e.expr(expr.left)
 			e.expr(expr.right)
+		}
+		else {
+			panic('unimplemented')
+		}
+	}
+}
+
+fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
+	if expr.left.type_symbol().resolved().kind() != .tuple {
+		panic(unreachable('not a string operand'))
+	}
+
+	e.write_echo_if_command(opt)
+
+	match expr.op.kind {
+		.eq, .ne {
+			e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
+				op := if expr.op.kind == .eq { ' = ' } else { ' != ' }
+				e.sh_test_cond_infix(expr.left, op, expr.right)
+			}, expr, opt)
 		}
 		else {
 			panic('unimplemented')

@@ -7,14 +7,14 @@ assert (
   0
   ,
 )
-
 assert (0,) != (1,)
 
-/* TODO
+assert (0, 1) == (0, 1,)
+assert (0, 0) != (0, 1)
+
 var t1 = (0, 1)
 var t2 = (
   0,
   1
 )
 assert t1 == t2
-*/
