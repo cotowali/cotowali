@@ -7,9 +7,14 @@ module symbols
 
 import cotowali.errors { unreachable }
 
+pub struct TupleElement {
+pub:
+	typ Type [required]
+}
+
 pub struct TupleTypeInfo {
 pub:
-	elements []Type
+	elements []TupleElement
 }
 
 pub fn (ts TypeSymbol) tuple_info() ?TupleTypeInfo {
@@ -18,7 +23,7 @@ pub fn (ts TypeSymbol) tuple_info() ?TupleTypeInfo {
 }
 
 fn (info TupleTypeInfo) typename(s &Scope) string {
-	return '(${info.elements.map(s.must_lookup_type(it).name).join(', ')})'
+	return '(${info.elements.map(s.must_lookup_type(it.typ).name).join(', ')})'
 }
 
 pub fn (mut s Scope) lookup_or_register_tuple_type(info TupleTypeInfo) &TypeSymbol {

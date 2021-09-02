@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module parser
 
-import cotowali.symbols { Type, TypeSymbol }
+import cotowali.symbols { TupleElement, TypeSymbol }
 import cotowali.ast
 
 fn (mut p Parser) parse_array_type() ?&TypeSymbol {
@@ -80,7 +80,7 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 		return p.scope.lookup_or_register_tuple_type(elements: [])
 	}
 
-	mut elements := []Type{}
+	mut elements := []TupleElement{}
 	for {
 		ts := p.parse_type() ?
 
@@ -91,7 +91,7 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 			if array_info.variadic {
 				if elem_tuple := p.scope.must_lookup_type(array_info.elem).tuple_info() {
 					// expand tuple element like `(...(int, int))`
-					elements << elem_tuple.elements
+					elements << elem_tuple.elements.map(it)
 					element_pushed = true
 				} else {
 					p.error(tuple_element_error_msg('variadic type'), ts.pos)
@@ -103,7 +103,9 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 		}
 
 		if !element_pushed {
-			elements << ts.typ
+			elements << TupleElement{
+				typ: ts.typ
+			}
 		}
 
 		if _ := p.consume_if_kind_eq(.r_paren) {
@@ -113,7 +115,7 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 	}
 	return if elements.len == 1 {
 		// treat single value tuple as element type
-		p.scope.must_lookup_type(elements[0])
+		p.scope.must_lookup_type(elements[0].typ)
 	} else {
 		p.scope.lookup_or_register_tuple_type(elements: elements)
 	}

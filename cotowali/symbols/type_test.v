@@ -92,9 +92,9 @@ fn test_is_number() ? {
 	assert !builtin_type(.string).is_number()
 
 	mut s := new_global_scope()
-	int_int := s.lookup_or_register_tuple_type(elements: [int_t, int_t])
+	int_int := s.lookup_or_register_tuple_type(elements: [int_t, int_t].map(TupleElement{ typ: it }))
 	assert !int_int.typ.is_number()
-	assert (int_int.tuple_info() ?).elements[0].is_number()
+	assert (int_int.tuple_info() ?).elements[0].typ.is_number()
 
 	int_arr := s.lookup_or_register_array_type(elem: int_t)
 	assert !int_arr.typ.is_number()

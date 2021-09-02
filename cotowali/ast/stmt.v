@@ -127,7 +127,7 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 		ParenExpr {
 			if stmt.is_decl {
 				expr_types := if tuple_info := ts.tuple_info() {
-					tuple_info.elements
+					tuple_info.elements.map(it.typ)
 				} else {
 					[]Type{}
 				}

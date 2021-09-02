@@ -215,7 +215,7 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr) {
 				}
 				new_fn_params := if pipe_in_tuple_info := pipe_in.tuple_info() {
 					elements := pipe_in_tuple_info.elements
-					elements.map(e.scope.lookup_or_register_reference_type(target: it).typ)
+					elements.map(e.scope.lookup_or_register_reference_type(target: it.typ).typ)
 				} else {
 					[e.scope.lookup_or_register_reference_type(target: pipe_in.typ).typ]
 				}

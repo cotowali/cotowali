@@ -38,7 +38,7 @@ fn can_promote(want TypeSymbol, got TypeSymbol) bool {
 	if want_tuple_info := want.tuple_info() {
 		unsafe {
 			elements := &want_tuple_info.elements
-			if elements.len == 1 && elements[0] == got.typ {
+			if elements.len == 1 && elements[0].typ == got.typ {
 				return true
 			}
 		}

@@ -110,7 +110,7 @@ fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
 		e.paren_expr(ast.ParenExpr{
 			scope: expr.scope
 			exprs: tuple_info.elements.map(ast.Expr(ast.DefaultValue{
-				typ: it
+				typ: it.typ
 				scope: expr.scope
 			}))
 		}, opt)

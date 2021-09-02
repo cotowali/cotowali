@@ -7,7 +7,7 @@ module ast
 
 import cotowali.source { Pos }
 import cotowali.token { Token }
-import cotowali.symbols { ArrayTypeInfo, MapTypeInfo, Scope, Type, TypeSymbol, builtin_type }
+import cotowali.symbols { ArrayTypeInfo, MapTypeInfo, Scope, TupleElement, Type, TypeSymbol, builtin_type }
 import cotowali.errors { unreachable }
 
 pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | DefaultValue |
@@ -113,9 +113,17 @@ pub fn (e IndexExpr) typ() Type {
 
 pub fn (mut e ParenExpr) typ() Type {
 	return match e.exprs.len {
-		0 { e.scope.lookup_or_register_tuple_type().typ }
-		1 { e.exprs[0].typ() }
-		else { e.scope.lookup_or_register_tuple_type(elements: e.exprs.map(it.typ())).typ }
+		0 {
+			e.scope.lookup_or_register_tuple_type().typ
+		}
+		1 {
+			e.exprs[0].typ()
+		}
+		else {
+			e.scope.lookup_or_register_tuple_type(
+				elements: e.exprs.map(TupleElement{ typ: it.typ() })
+			).typ
+		}
 	}
 }
 
