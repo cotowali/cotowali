@@ -182,9 +182,18 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 	right_kind := right_ts.kind()
 
 	if left_kind == .tuple && right_kind == .tuple {
-		if op.kind !in [.eq, .ne] {
-			c.infix_expr_invalid_operation(op.text, left_ts, right_ts, pos)
-			return
+		match op.kind {
+			.eq, .ne {
+				// don't return. continue to normal type check
+			}
+			.plus {
+				// any of `tuple` + `tuple` is valid. end type checking.
+				return
+			}
+			else {
+				c.infix_expr_invalid_operation(op.text, left_ts, right_ts, pos)
+				return
+			}
 		}
 	}
 

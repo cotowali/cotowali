@@ -323,8 +323,13 @@ fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
 				e.sh_test_cond_infix(expr.left, op, expr.right)
 			}, expr, opt)
 		}
+		.plus {
+			e.expr(expr.left)
+			e.write("' '")
+			e.expr(expr.right)
+		}
 		else {
-			panic('unimplemented')
+			panic(unreachable('invalid operation'))
 		}
 	}
 }

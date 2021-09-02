@@ -7,7 +7,15 @@ module ast
 
 import cotowali.source { Pos }
 import cotowali.token { Token }
-import cotowali.symbols { ArrayTypeInfo, MapTypeInfo, Scope, TupleElement, Type, TypeSymbol, builtin_type }
+import cotowali.symbols {
+	ArrayTypeInfo,
+	MapTypeInfo,
+	Scope,
+	TupleElement,
+	Type,
+	TypeSymbol,
+	builtin_type,
+}
 import cotowali.errors { unreachable }
 
 pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | DefaultValue |
@@ -92,14 +100,26 @@ pub fn (expr Expr) pos() Pos {
 	}
 }
 
-pub fn (e InfixExpr) typ() Type {
-	return if e.op.kind.@is(.comparsion_op) || e.op.kind.@is(.logical_infix_op) {
-		builtin_type(.bool)
+pub fn (mut e InfixExpr) typ() Type {
+	if e.op.kind.@is(.comparsion_op) || e.op.kind.@is(.logical_infix_op) {
+		return builtin_type(.bool)
 	} else if e.left.typ() == builtin_type(.float) || e.right.typ() == builtin_type(.float) {
-		builtin_type(.float)
-	} else {
-		e.right.typ()
+		return builtin_type(.float)
 	}
+
+	left_ts := e.left.type_symbol().resolved()
+	right_ts := e.right.type_symbol().resolved()
+
+	if left_ts.kind() == .tuple && right_ts.kind() == .tuple && e.op.kind == .plus {
+		left_elements := (left_ts.tuple_info() or { panic(unreachable('')) }).elements
+		right_elements := (right_ts.tuple_info() or { panic(unreachable('')) }).elements
+		mut elements := []TupleElement{cap: left_elements.len + right_elements.len}
+		elements << left_elements
+		elements << right_elements
+		return e.scope.lookup_or_register_tuple_type(elements: elements).typ
+	}
+
+	return right_ts.typ
 }
 
 pub fn (e IndexExpr) typ() Type {
@@ -234,9 +254,9 @@ fn (mut r Resolver) default_value(expr DefaultValue) {
 
 pub struct InfixExpr {
 pub:
-	scope &Scope
-	op    Token
+	op Token
 pub mut:
+	scope &Scope
 	left  Expr
 	right Expr
 }
