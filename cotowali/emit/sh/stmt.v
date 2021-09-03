@@ -67,7 +67,11 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 	e.writeln('fi')
 }
 
-fn (mut e Emitter) block(block ast.Block) {
+struct BlockOpt {
+	allow_blank bool
+}
+
+fn (mut e Emitter) block(block ast.Block, opt BlockOpt) {
 	mut blank := true
 
 	for stmt in block.stmts {
@@ -78,7 +82,7 @@ fn (mut e Emitter) block(block ast.Block) {
 		}
 	}
 
-	if blank {
+	if blank && !opt.allow_blank {
 		e.writeln(':')
 	}
 }
@@ -121,7 +125,7 @@ fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
 }
 
 fn (mut e Emitter) namespace_decl(ns ast.NamespaceDecl) {
-	e.stmts(ns.stmts)
+	e.block(ns.block, allow_blank: true)
 }
 
 fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {

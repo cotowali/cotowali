@@ -172,7 +172,7 @@ fn (mut c Checker) namespace_decl(ns ast.NamespaceDecl) {
 		}
 	}
 
-	c.stmts(ns.stmts)
+	c.block(ns.block)
 }
 
 fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {

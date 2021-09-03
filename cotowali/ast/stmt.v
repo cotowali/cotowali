@@ -317,13 +317,12 @@ fn (mut r Resolver) inline_shell(stmt InlineShell) {
 
 pub struct NamespaceDecl {
 pub mut:
-	scope &Scope
-	stmts []Stmt
+	block Block
 }
 
 [inline]
 pub fn (ns &NamespaceDecl) children() []Node {
-	return ns.stmts.map(Node(it))
+	return [Node(Stmt(ns.block))]
 }
 
 fn (mut r Resolver) namespace_decl(ns NamespaceDecl) {
@@ -334,7 +333,7 @@ fn (mut r Resolver) namespace_decl(ns NamespaceDecl) {
 		}
 	}
 
-	r.stmts(ns.stmts)
+	r.block(ns.block)
 }
 
 pub struct RequireStmt {
