@@ -166,6 +166,50 @@ test_ray()
 
 // --------------------
 
+type RayHit = (...Vec3, ...Vec3, float) // (point, normal, distance)
+
+fn ray_hit(point: Vec3, normal: Vec3, distance: float) RayHit {
+  var (p_x, p_y, p_z) = point
+  var (n_x, n_y, n_z) = vec3_normalize(normal)
+  return (
+    p_x, p_y, p_z,
+    n_x, n_y, n_z,
+    distance,
+  )
+}
+
+fn ray_hit_point(hit: RayHit) Vec3 {
+  var (p_x, p_y, p_z, n_x, n_y, n_z, distance) = hit
+  return vec3(p_x, p_y, p_z)
+}
+
+fn ray_hit_normal(hit: RayHit) Vec3 {
+  var (p_x, p_y, p_z, n_x, n_y, n_z, distance) = hit
+  return vec3(n_x, n_y, n_z)
+}
+
+fn ray_hit_distance(hit: RayHit) float {
+  var (p_x, p_y, p_z, n_x, n_y, n_z, distance) = hit
+  return distance
+}
+
+fn test_ray_hit() {
+  var p = vec3(0, 0, 0)
+  var normal = vec3(1, 1, 0)
+  var distance = 10
+  var rh = ray_hit(p, normal, distance)
+
+  var rh_p = ray_hit_point(rh)
+  var rh_n = ray_hit_normal(rh)
+  var rh_distance = ray_hit_distance(rh)
+  assert rh_p == p
+  assert eps_eq(vec3_length(rh_n), 1)
+  assert eps_eq(vec3_x(rh_n), vec3_x(normal))
+  assert rh_distance == distance
+}
+
+// --------------------
+
 type Sphere = (...Vec3, float)
 
 fn sphere(center: Vec3, radius: float) Sphere {
