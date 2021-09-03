@@ -63,6 +63,7 @@ pub enum TokenKind {
 	div
 	mul
 	mod
+	pow
 	logical_and
 	logical_or
 	assign
@@ -71,6 +72,7 @@ pub enum TokenKind {
 	mul_assign
 	div_assign
 	mod_assign
+	pow_assign
 	not
 	eq
 	ne
@@ -147,7 +149,7 @@ fn (k TokenKind) is_postfix_op() bool {
 [inline]
 fn (k TokenKind) is_infix_op() bool {
 	return k.is_comparsion_op() || k.is_logical_infix_op()
-		|| k in [.pipe, .plus, .minus, .mul, .div, .mod]
+		|| k in [.pipe, .plus, .minus, .mul, .div, .mod, .pow]
 }
 
 [inline]

@@ -36,6 +36,7 @@ const (
 		'--': tk(.minus_minus)
 		'&&': tk(.logical_and)
 		'||': tk(.logical_or)
+		'**': tk(.pow)
 		'+=': tk(.plus_assign)
 		'-=': tk(.minus_assign)
 		'*=': tk(.mul_assign)
@@ -50,6 +51,7 @@ const (
 
 	table_for_three_chars_symbols = {
 		'...': tk(.dotdotdot)
+		'**=': tk(.pow_assign)
 	}
 
 	table_for_keywords = {

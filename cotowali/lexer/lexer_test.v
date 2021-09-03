@@ -119,6 +119,7 @@ fn test_lexer() {
 	ktest(@FN, @LINE, 'a+++++', [.ident, .plus_plus, .plus_plus, .plus])
 	ktest(@FN, @LINE, 'a-----', [.ident]) // TODO
 	ktest(@FN, @LINE, 'a -----', [.ident, .minus_minus, .minus_minus, .minus])
+	ktest(@FN, @LINE, 'a*****', [.ident, .pow, .pow, .mul])
 	ktest(@FN, @LINE, 'struct f { }', [.key_struct, .ident, .l_brace, .r_brace])
 	ktest(@FN, @LINE, '{ 0: 0 }', [.l_brace, .int_literal, .colon, .int_literal, .r_brace])
 	ktest(@FN, @LINE, 'map[string]string', [.key_map, .l_bracket, .ident, .r_bracket, .ident])
@@ -139,6 +140,7 @@ fn test_lexer() {
 	ktest(@FN, @LINE, 'n *= 2', [.ident, .mul_assign, .int_literal])
 	ktest(@FN, @LINE, 'n /= 2', [.ident, .div_assign, .int_literal])
 	ktest(@FN, @LINE, 'n %= 2', [.ident, .mod_assign, .int_literal])
+	ktest(@FN, @LINE, 'n **= 2', [.ident, .pow_assign, .int_literal])
 
 	test(@FN, @LINE, 'if i == 0 { } else if i != 1 {} else {}', [
 		t(.key_if, 'if'),
