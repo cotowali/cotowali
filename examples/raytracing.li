@@ -22,9 +22,15 @@ fn abs(v: float) float {
   }
 }
 
+fn sqrt(v: float) float {
+  return (v |> @awk('{printf "%lf", sqrt($1)}')) as float
+}
+
 fn test_math() {
   assert abs(1) == 1
   assert abs(-1) == 1.0
+
+  assert sqrt(4) == 2
 }
 test_math()
 
@@ -57,7 +63,7 @@ fn vec3_length_squared(v: Vec3) float {
 }
 
 fn vec3_length(v: Vec3) float {
-  return (vec3_length_squared(v) |> @awk('{printf "%lf", sqrt($1)}')) as float
+  return sqrt(vec3_length_squared(v))
 }
 
 fn vec3_normalize(v: Vec3) Vec3 {
