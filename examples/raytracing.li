@@ -8,6 +8,12 @@ echo('Ray tracing example')
 
 // --------------------
 
+var eps = 1e-5
+
+fn eps_eq(a: float, b: float) bool {
+  return a - b < eps
+}
+
 fn abs(v: float) float {
   if v < 0 {
     return -v
@@ -103,7 +109,7 @@ fn test_vec3() {
   assert 3.7 < v1_len && v1_len < 3.8
 
   var normalized_v1 = vec3_normalize(v1)
-  assert 0.99 < vec3_length(normalized_v1) && vec3_length(normalized_v1) < 1.01
+  assert eps_eq(abs(vec3_length(normalized_v1)), 1)
 
   var added = vec3_add(v1, v2)
   assert vec3_x(added) == 5 && vec3_y(added) == 7 && vec3_z(added) == 9
