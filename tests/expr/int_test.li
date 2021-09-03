@@ -5,6 +5,9 @@ assert 6 / 2 % 2 == 1
 assert 1 / 2 == 0
 assert 3 / 2 == 1
 
+assert 2 ** 2 == 4
+assert typeof(2 ** 2) == 'int'
+
 var v = 1
 v = 10
 assert -v == -10

@@ -6,6 +6,8 @@
 module sh
 
 import cotowali.ast
+import cotowali.symbols { builtin_type }
+import cotowali.token { Token }
 
 const (
 	true_value  = "'true'"
@@ -57,9 +59,15 @@ fn (mut e Emitter) sh_awk_quote_line() {
 	e.write(' | awk \'{printf "\'\\\'\'%s\'\\\'\'", \$0}\'')
 }
 
+[inline]
+fn op_to_awk_op(op Token) string {
+	return if op.kind == .pow { '^' } else { op.text }
+}
+
 fn (mut e Emitter) sh_awk_infix_expr(expr ast.InfixExpr) {
-	mut awk_expr := '\$1 $expr.op.text \$2'
-	mut format := '%lf'
+	mut awk_expr := '\$1 ${op_to_awk_op(expr.op)} \$2'
+	typ := ast.Expr(expr).resolved_typ()
+	mut format := if typ == builtin_type(.float) { '%lf' } else { '%d' }
 	if expr.op.kind.@is(.comparsion_op) {
 		awk_expr = '($awk_expr ? 1 : 0)'
 		format = '%g'

@@ -280,6 +280,9 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 			}
 			e.write_if(opt.mode != .inside_arithmetic, ' ))')
 		}
+		.pow {
+			e.sh_awk_infix_expr(expr)
+		}
 		else {
 			panic('unimplemented')
 		}
