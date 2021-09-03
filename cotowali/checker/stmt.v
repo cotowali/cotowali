@@ -51,6 +51,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 		ast.ForInStmt { c.for_in_stmt(mut stmt) }
 		ast.IfStmt { c.if_stmt(stmt) }
 		ast.InlineShell {}
+		ast.NamespaceDecl { c.namespace_decl(stmt) }
 		ast.ReturnStmt { c.return_stmt(stmt) }
 		ast.RequireStmt { c.require_stmt(mut stmt) }
 		ast.WhileStmt { c.while_stmt(stmt) }
@@ -161,6 +162,17 @@ fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 		c.expect_bool_expr(branch.cond, 'if condition') or {}
 		c.block(branch.body)
 	}
+}
+
+fn (mut c Checker) namespace_decl(ns ast.NamespaceDecl) {
+	$if trace_checker ? {
+		c.trace_begin(@FN, stmt.scope.name)
+		defer {
+			c.trace_end()
+		}
+	}
+
+	c.stmts(ns.stmts)
 }
 
 fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {

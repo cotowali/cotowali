@@ -36,15 +36,16 @@ pub fn (attr Attr) kind() AttrKind {
 }
 
 pub type Stmt = AssertStmt | AssignStmt | Block | DocComment | EmptyStmt | Expr | FnDecl |
-	ForInStmt | IfStmt | InlineShell | RequireStmt | ReturnStmt | WhileStmt | YieldStmt
+	ForInStmt | IfStmt | InlineShell | NamespaceDecl | RequireStmt | ReturnStmt | WhileStmt |
+	YieldStmt
 
 pub fn (stmt Stmt) children() []Node {
 	return match stmt {
 		DocComment, EmptyStmt, InlineShell {
 			[]Node{}
 		}
-		AssertStmt, AssignStmt, Block, Expr, FnDecl, ForInStmt, IfStmt, RequireStmt, ReturnStmt,
-		WhileStmt, YieldStmt {
+		AssertStmt, AssignStmt, Block, Expr, FnDecl, ForInStmt, IfStmt, NamespaceDecl, RequireStmt,
+		ReturnStmt, WhileStmt, YieldStmt {
 			stmt.children()
 		}
 	}
@@ -68,6 +69,7 @@ fn (mut r Resolver) stmt(stmt Stmt) {
 		ForInStmt { r.for_in_stmt(mut stmt) }
 		IfStmt { r.if_stmt(stmt) }
 		InlineShell { r.inline_shell(stmt) }
+		NamespaceDecl { r.namespace_decl(stmt) }
 		RequireStmt { r.require_stmt(stmt) }
 		ReturnStmt { r.return_stmt(stmt) }
 		WhileStmt { r.while_stmt(stmt) }
@@ -311,6 +313,28 @@ fn (mut r Resolver) inline_shell(stmt InlineShell) {
 			r.trace_end()
 		}
 	}
+}
+
+pub struct NamespaceDecl {
+pub mut:
+	scope &Scope
+	stmts []Stmt
+}
+
+[inline]
+pub fn (ns &NamespaceDecl) children() []Node {
+	return ns.stmts.map(Node(it))
+}
+
+fn (mut r Resolver) namespace_decl(ns NamespaceDecl) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+
+	r.stmts(ns.stmts)
 }
 
 pub struct RequireStmt {
