@@ -35,6 +35,7 @@ enum ExprKind {
 	comparsion
 	term
 	factor
+	pow
 	as_cast
 	prefix
 	value
@@ -54,6 +55,7 @@ const expr_kind_to_op_table = (fn () map[ExprKind][]TokenKind {
 		k(.comparsion):  v(.eq, .ne, .gt, .ge, .lt, .le)
 		k(.term):        v(.plus, .minus)
 		k(.factor):      v(.mul, .div, .mod)
+		k(.pow):         v(.pow)
 	}
 }())
 
@@ -134,7 +136,7 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 	match kind {
 		.toplevel { return p.parse_expr(kind.inner()) }
 		.pipeline { return p.parse_pipeline() }
-		.logical_or, .logical_and, .comparsion, .term, .factor { return p.parse_infix_expr(kind) }
+		.logical_or, .logical_and, .comparsion, .term, .factor, .pow { return p.parse_infix_expr(kind) }
 		.as_cast { return p.parse_as_expr() }
 		.prefix { return p.parse_prefix_expr() }
 		.value { return p.parse_value() }
