@@ -134,6 +134,38 @@ test_vec3()
 
 // --------------------
 
+type Ray = (...Vec3, ...Vec3)
+
+fn ray(origin: Vec3, dir: Vec3) Ray {
+  return origin + vec3_normalize(dir)
+}
+
+fn ray_origin(ray: Ray) Vec3 {
+  var (origin_x, origin_y, origin_z, dir_x, dir_y, dir_z) = ray
+  return vec3(origin_x, origin_y, origin_z)
+}
+
+fn ray_dir(ray: Ray) Vec3 {
+  var (origin_x, origin_y, origin_z, dir_x, dir_y, dir_z) = ray
+  return vec3(dir_x, dir_y, dir_z)
+}
+
+fn test_ray() {
+  var origin = vec3(0, 0, 0)
+  var dir = vec3(1, 1, 0)
+  var r = ray(origin, dir)
+
+  var r_origin = ray_origin(r)
+  var r_dir = ray_dir(r)
+  assert r_origin == origin
+  assert eps_eq(vec3_length(r_dir), 1)
+  assert eps_eq(vec3_x(r_dir), vec3_y(r_dir))
+
+}
+test_ray()
+
+// --------------------
+
 type Sphere = (...Vec3, float)
 
 fn sphere(center: Vec3, radius: float) Sphere {
