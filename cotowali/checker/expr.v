@@ -181,6 +181,13 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 	right_ts := expr.right.type_symbol()
 	right_kind := right_ts.kind()
 
+	if op.kind == .pow {
+		if !(left_ts.typ.is_number() && right_ts.typ.is_number()) {
+			c.infix_expr_invalid_operation(op.text, left_ts, right_ts, pos)
+		}
+		return
+	}
+
 	if left_kind == .tuple && right_kind == .tuple {
 		match op.kind {
 			.eq, .ne {

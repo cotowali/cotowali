@@ -25,3 +25,6 @@ fn int |> g() {
   var s: string
   read(&s)
 }
+
+"2" ** 2
+2 ** "2"
