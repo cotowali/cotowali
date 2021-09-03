@@ -80,7 +80,7 @@ fn test_lookup_var_with_pos() ? {
 
 fn test_register_fn() ? {
 	mut s := new_global_scope()
-	f := s.register_fn('f', params: [builtin_type(.int)], ret: builtin_type(.void)) ?
+	f := s.register_fn(name: 'f', params: [builtin_type(.int)], ret: builtin_type(.void)) ?
 	assert f.id != 0
 	assert f.is_function()
 }

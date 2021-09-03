@@ -7,6 +7,11 @@ module symbols
 
 import cotowali.errors { unreachable }
 
+pub struct RegisterFnArgs {
+	Var
+	FunctionTypeInfo
+}
+
 pub struct FunctionTypeInfo {
 pub:
 	pipe_in Type = builtin_type(.void)
@@ -44,10 +49,11 @@ pub fn (s Scope) lookup_fn_type(info FunctionTypeInfo) ?&TypeSymbol {
 	return s.lookup_type(typename)
 }
 
-pub fn (mut s Scope) register_fn(name string, info FunctionTypeInfo) ?&Var {
-	return s.register_var(name: name, typ: s.lookup_or_register_fn_type(info).typ)
+pub fn (mut s Scope) register_fn(f RegisterFnArgs) ?&Var {
+	typ := s.lookup_or_register_fn_type(f.FunctionTypeInfo).typ
+	return s.register_var(Var{ ...f.Var, typ: typ })
 }
 
-fn (mut s Scope) must_register_fn(name string, info FunctionTypeInfo) &Var {
-	return s.register_fn(name, info) or { panic(unreachable(err)) }
+fn (mut s Scope) must_register_fn(f RegisterFnArgs) &Var {
+	return s.register_fn(f) or { panic(unreachable(err)) }
 }

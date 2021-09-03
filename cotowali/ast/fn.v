@@ -219,7 +219,7 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr) {
 				} else {
 					[e.scope.lookup_or_register_reference_type(target: pipe_in.typ).typ]
 				}
-				e.func.sym = if new_fn := e.scope.register_fn(sym.name, params: new_fn_params) {
+				e.func.sym = if new_fn := e.scope.register_fn(name: sym.name, params: new_fn_params) {
 					new_fn
 				} else {
 					// already registered
