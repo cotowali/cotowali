@@ -21,6 +21,7 @@ enum ExprEmitMode {
 }
 
 struct ExprOpt {
+mut:
 	mode           ExprEmitMode = .normal
 	expand_array   bool
 	writeln        bool
@@ -366,8 +367,11 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		panic(unreachable('not a prefix op'))
 	}
 
-	subexpr_opt := ExprOpt{
+	mut subexpr_opt := ExprOpt{
 		...opt
+	}
+	if subexpr_opt.mode == .command {
+		subexpr_opt.mode = .normal
 	}
 
 	e.write_echo_if_command(opt)
