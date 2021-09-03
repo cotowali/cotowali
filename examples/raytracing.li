@@ -8,6 +8,22 @@ echo('Ray tracing example')
 
 // --------------------
 
+fn abs(v: float) float {
+  if v < 0 {
+    return -v
+  } else {
+    return v
+  }
+}
+
+fn test_math() {
+  assert abs(1) == 1
+  assert abs(-1) == 1.0
+}
+test_math()
+
+// --------------------
+
 type Vec3 = (float, float, float)
 
 fn vec3(x: float, y: float, z: float) Vec3 {
