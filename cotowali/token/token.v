@@ -19,6 +19,7 @@ pub enum TokenKind {
 	key_if
 	key_in
 	key_map
+	key_namespace
 	key_require
 	key_return
 	key_struct

@@ -104,6 +104,7 @@ fn test_lexer() {
 		Token{.ident, 'a', Pos{10, 1, 9, 1, 1, 9}},
 		Token{.eof, '', Pos{12, 1, 11, 1, 1, 11}},
 	])
+	ktest(@FN, @LINE, 'namespace x {}', [.key_namespace, .ident, .l_brace, .r_brace])
 	ktest(@FN, @LINE, 'fn f(a, b){}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren,
 		.l_brace, .r_brace, .eof])
 	ktest(@FN, @LINE, 'var i = 0', [.key_var, .ident, .assign, .int_literal, .eof])
