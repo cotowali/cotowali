@@ -1,0 +1,35 @@
+var global = 0
+var n = 0
+fn f() int {
+  return 0
+}
+
+namespace ns2 {
+  var n = 1
+  assert n == 1
+
+  fn f() string {
+    return '10'
+  }
+  assert f() == '10'
+
+  assert global == 0
+  global = 1
+  assert global == 1
+
+  namespace ns2_1 {
+    fn f() string {
+      return 'ns2_1'
+    }
+    assert f() == 'ns2_1'
+
+    assert global == 1
+    global = 2
+    assert global == 2
+  }
+  assert global == 2
+}
+assert global == 2
+
+assert n == 0
+assert f() == 0

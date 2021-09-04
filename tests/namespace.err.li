@@ -1,0 +1,7 @@
+namespace ns {
+  var n = 0
+  fn f() {}
+}
+
+echo(n)
+f()

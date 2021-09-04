@@ -1,0 +1,6 @@
+error: namespace.err.li 6,6: undefined variable `n`
+    6 | echo(n)
+      |      ^
+error: namespace.err.li 7,1: function `f` is not defined
+    7 | f()
+      | ^^^

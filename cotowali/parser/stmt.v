@@ -101,6 +101,9 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_for {
 			return ast.Stmt(p.parse_for_in_stmt() ?)
 		}
+		.key_namespace {
+			return ast.Stmt(p.parse_namespace() ?)
+		}
 		.key_return {
 			return ast.Stmt(p.parse_return_stmt() ?)
 		}
