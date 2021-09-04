@@ -22,7 +22,11 @@ pub fn (mut lex Lexer) next() ?Token {
 }
 
 fn (mut lex Lexer) prepare_to_read() {
-	lex.skip_whitespaces()
+	// " $v " should be ['"', ' ' '$v', ' ', '"']. So don't skip whitespace inside double quote literal
+	if lex.lex_ctx.current.kind in [.normal, .inside_string_literal_expr_substitution] {
+		lex.skip_whitespaces()
+	}
+
 	lex.start_pos()
 }
 
