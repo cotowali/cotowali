@@ -29,3 +29,22 @@ assert add(
 
 assert @expr('1', '+', '1') == '2'
 assert ((1.1 |> @awk('{print $1 * 2}')) as float) == 2.2
+
+fn f() int{
+  return 0
+}
+
+fn test_nested_func() {
+  fn f(x: string) string {
+    fn f(v: int) int {
+      return 1 + v
+    }
+    var v = f(10)
+    assert v == 11
+    return "$x $v"
+  }
+
+  var v = f('v')
+  assert v == 'v 11'
+}
+test_nested_func()
