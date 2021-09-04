@@ -12,10 +12,8 @@ import cotowali.errors { unreachable }
 pub struct FnDecl {
 pub:
 	parent_scope &Scope
-	name_pos     Pos
-	name         string
+	sym          &symbols.Var
 	has_body     bool
-	typ          Type
 pub mut:
 	attrs  []Attr
 	params []Var
@@ -45,7 +43,7 @@ pub fn (f FnDecl) function_info() FunctionTypeInfo {
 }
 
 pub fn (f FnDecl) type_symbol() &TypeSymbol {
-	return f.parent_scope.must_lookup_type(f.typ)
+	return f.sym.type_symbol()
 }
 
 pub fn (f FnDecl) signature() string {

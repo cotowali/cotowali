@@ -127,26 +127,22 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		}
 	}
 
-	typ := outer_scope.lookup_or_register_fn_type(
+	sym := outer_scope.register_fn(
+		name: info.name.text
+		pos: info.name.pos
 		params: params.map(it.sym.typ)
 		pipe_in: info.pipe_in
 		ret: info.ret_typ
-	).typ
-	func := outer_scope.register_var(
-		name: info.name.text
-		pos: info.name.pos
-		typ: typ
 	) or { return p.duplicated_error(info.name.text, info.name.pos) }
 
-	p.scope.owner = func
+	p.scope.owner = sym
 
 	has_body := p.kind(0) == .l_brace
 	mut node := ast.FnDecl{
 		parent_scope: outer_scope
-		name: info.name.text
+		sym: sym
 		params: params
 		has_body: has_body
-		typ: typ
 	}
 	if has_body {
 		node.body = p.parse_block_without_new_scope() ?
