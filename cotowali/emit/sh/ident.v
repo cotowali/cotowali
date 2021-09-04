@@ -5,19 +5,19 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module sh
 
-import cotowali.ast { ArrayLiteral, Expr, MapLiteral }
+import cotowali.ast { ArrayLiteral, Expr, FnDecl, MapLiteral }
 import cotowali.symbols
 import cotowali.errors { unreachable }
 import cotowali.util { panic_and_value }
 
-type IdentForValue = ArrayLiteral | Expr | MapLiteral | ast.Var | symbols.Var
+type IdentForValue = ArrayLiteral | Expr | FnDecl | MapLiteral | ast.Var | symbols.Var
 
 fn (mut e Emitter) ident_for(v IdentForValue) string {
 	return match v {
 		symbols.Var {
 			v.full_name()
 		}
-		ast.Var {
+		ast.Var, FnDecl {
 			e.ident_for(v.sym)
 		}
 		ArrayLiteral, MapLiteral {

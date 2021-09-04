@@ -70,7 +70,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 	if !node.has_body {
 		e.writeln('')
 		params_str := node.params.map('$it.sym.name').join(', ')
-		e.writeln('# info: fn ${node.sym.full_name()}($params_str)')
+		e.writeln('# info: fn ${e.ident_for(node)}($params_str)')
 		e.writeln('')
 		return
 	}
@@ -84,7 +84,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 		e.cur_fn = old_cur_fn
 	}
 
-	e.writeln('${node.sym.full_name()}() {')
+	e.writeln('${e.ident_for(node)}() {')
 	e.indent()
 	{
 		for i, param in node.params {
