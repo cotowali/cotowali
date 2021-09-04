@@ -104,7 +104,7 @@ fn test_lexer() {
 		Token{.ident, 'a', Pos{10, 1, 9, 1, 1, 9}},
 		Token{.eof, '', Pos{12, 1, 11, 1, 1, 11}},
 	])
-	ktest(@FN, @LINE, 'namespace x {}', [.key_namespace, .ident, .l_brace, .r_brace])
+	ktest(@FN, @LINE, 'namespace x::y', [.key_namespace, .ident, .coloncolon, .ident])
 	ktest(@FN, @LINE, 'fn f(a, b){}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren,
 		.l_brace, .r_brace, .eof])
 	ktest(@FN, @LINE, 'var i = 0', [.key_var, .ident, .assign, .int_literal, .eof])
@@ -128,6 +128,7 @@ fn test_lexer() {
 	ktest(@FN, @LINE, '#[attr]', [.hash, .l_bracket, .ident, .r_bracket])
 	ktest(@FN, @LINE, 'f()?', [.ident, .l_paren, .r_paren, .question])
 	ktest(@FN, @LINE, '.....', [.dotdotdot, .dot, .dot])
+	ktest(@FN, @LINE, ':::::', [.coloncolon, .coloncolon, .colon])
 	ktest(@FN, @LINE, 'require "file.li"', [.key_require, .double_quote, .string_literal_content_text,
 		.double_quote,
 	])

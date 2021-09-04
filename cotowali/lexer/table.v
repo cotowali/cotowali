@@ -47,6 +47,7 @@ const (
 		'<=': tk(.le)
 		'>=': tk(.ge)
 		'|>': tk(.pipe)
+		'::': tk(.coloncolon)
 	}
 
 	table_for_three_chars_symbols = {

@@ -30,6 +30,7 @@ pub enum TokenKind {
 	key_yield
 	inline_shell
 	colon
+	coloncolon
 	comma
 	hash
 	dot
