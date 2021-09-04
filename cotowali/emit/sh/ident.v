@@ -5,14 +5,38 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module sh
 
-import cotowali.ast { ArrayLiteral, Expr, MapLiteral, Var }
+import cotowali.ast { ArrayLiteral, Expr, MapLiteral }
+import cotowali.symbols
 import cotowali.errors { unreachable }
 import cotowali.util { panic_and_value }
 
-fn (mut e Emitter) ident_for(expr Expr) string {
-	return match expr {
-		Var { expr.sym.full_name() }
-		ArrayLiteral, MapLiteral { e.new_tmp_ident() }
-		else { panic_and_value(unreachable('cannot take ident'), '') }
+type IdentForValue = ArrayLiteral | Expr | MapLiteral | ast.Var | symbols.Var
+
+fn (mut e Emitter) ident_for(v IdentForValue) string {
+	return match v {
+		symbols.Var {
+			v.full_name()
+		}
+		ast.Var {
+			e.ident_for(v.sym)
+		}
+		ArrayLiteral, MapLiteral {
+			e.new_tmp_ident()
+		}
+		Expr {
+			match v {
+				ast.Var {
+					e.ident_for(v.sym)
+				}
+				ArrayLiteral, MapLiteral {
+					e.new_tmp_ident()
+				}
+				// v bug: Segfault
+				// ast.Var, ArrayLiteral, MapLiteral { e.ident_for(v) }
+				else {
+					panic_and_value(unreachable('cannot take ident'), '')
+				}
+			}
+		}
 	}
 }

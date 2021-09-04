@@ -11,26 +11,25 @@ import cotowali.errors { unreachable }
 import cotowali.util { panic_and_value }
 
 fn (mut e Emitter) array_assign(name string, value ExprOrString) {
-	match value {
-		ast.Expr {
-			ident := e.ident_for(value)
-			match value {
-				ast.ArrayLiteral {
-					e.write('array_assign "$name"')
-					for elem in value.elements {
-						e.write(' ')
-						e.expr(elem)
-					}
-					e.writeln('')
+	// v bug: `match value` occurs c error at `e.ident_for`
+	if value is string {
+		e.writeln('array_assign "$name" \$(eval echo \$(array_elements "$value") )')
+	} else {
+		expr := value as ast.Expr
+		ident := e.ident_for(expr)
+		match expr {
+			ast.ArrayLiteral {
+				e.write('array_assign "$name"')
+				for elem in expr.elements {
+					e.write(' ')
+					e.expr(elem)
 				}
-				ast.Var {
-					e.array_assign(name, ident)
-				}
-				else {}
+				e.writeln('')
 			}
-		}
-		string {
-			e.writeln('array_assign "$name" \$(eval echo \$(array_elements "$value") )')
+			ast.Var {
+				e.array_assign(name, ident)
+			}
+			else {}
 		}
 	}
 }
