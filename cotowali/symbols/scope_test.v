@@ -22,7 +22,7 @@ fn test_scope() ? {
 	}
 	mut child := s.create_child('child')
 	assert (child.parent() ?).id == s.id
-	assert s.children.len == 1
+	assert s.children().len == 1
 	assert s.children()[0].id == child.id
 
 	assert (s.get_child(child.name) ?).id == child.id
@@ -31,4 +31,10 @@ fn test_scope() ? {
 	} else {
 		assert true
 	}
+
+	assert s.children().len == 1
+	assert s.get_or_create_child(child.name).id == child.id
+	assert s.children().len == 1
+	assert s.get_or_create_child('new').name == 'new'
+	assert s.children().len == 2
 }

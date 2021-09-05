@@ -123,6 +123,13 @@ pub fn (mut s Scope) get_child(key NameOrID) ?&Scope {
 	}
 }
 
+pub fn (mut s Scope) get_or_create_child(name string) &Scope {
+	if found := s.get_child(name) {
+		return found
+	}
+	return s.create_child(name)
+}
+
 pub fn (mut s Scope) create_child(name string) &Scope {
 	child := new_scope(name, s)
 	if name.len > 0 {
