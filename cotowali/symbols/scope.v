@@ -17,11 +17,12 @@ pub:
 pub mut:
 	owner &Var = 0
 mut:
-	parent       &Scope
-	children     []&Scope
-	vars         map[string]&Var
-	type_symbols map[u64]&TypeSymbol // map[Type]&TypeSymbol
-	name_to_type map[string]Type
+	parent           &Scope
+	children         map[u64]&Scope // map[ID]&Scope
+	name_to_child_id map[string]ID
+	vars             map[string]&Var
+	type_symbols     map[u64]&TypeSymbol // map[Type]&TypeSymbol
+	name_to_type     map[string]Type
 }
 
 pub fn (s &Scope) owner() ?&Var {
@@ -39,7 +40,7 @@ pub fn (s &Scope) str() string {
 }
 
 pub fn (s &Scope) debug_str() string {
-	children_str := s.children.map(it.debug_str()).join('\n').split_into_lines().map('        $it').join('\n')
+	children_str := s.children().map(it.debug_str()).join('\n').split_into_lines().map('        $it').join('\n')
 	vars_str := s.vars.keys().map("        '$it': ${s.vars[it]}").join('\n')
 	types_str := s.type_symbols.keys().map('        ${s.type_symbols[it]}').join(',\n')
 	return [
@@ -104,12 +105,30 @@ pub fn (s &Scope) parent() ?&Scope {
 }
 
 pub fn (s &Scope) children() []&Scope {
-	return s.children
+	ids := s.children.keys()
+	return ids.map(s.children[it])
+}
+
+type NameOrID = ID | string
+
+pub fn (mut s Scope) get_child(key NameOrID) ?&Scope {
+	match key {
+		string {
+			id := s.name_to_child_id[key] or { return none }
+			return s.get_child(id)
+		}
+		ID {
+			return s.children[key] or { return none }
+		}
+	}
 }
 
 pub fn (mut s Scope) create_child(name string) &Scope {
 	child := new_scope(name, s)
-	s.children << child
+	if name.len > 0 {
+		s.name_to_child_id[name] = child.id
+	}
+	s.children[child.id] = child
 	return child
 }
 
