@@ -5,7 +5,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module parser
 
-import cotowali.symbols
 import cotowali.ast
 
 fn (mut p Parser) parse_namespace() ?ast.NamespaceDecl {
@@ -17,9 +16,32 @@ fn (mut p Parser) parse_namespace() ?ast.NamespaceDecl {
 	}
 
 	p.consume_with_assert(.key_namespace)
-	ident := p.consume_with_check(.ident) ?
-	block := p.parse_block(ident.text, []) ?
-	return ast.NamespaceDecl{
-		block: block
+
+	mut depth := 1
+	defer {
+		for _ in 0 .. depth {
+			p.close_scope()
+		}
 	}
+
+	mut ident := p.consume_with_check(.ident) ?
+	mut ns := ast.NamespaceDecl{
+		block: ast.Block{
+			scope: p.open_scope(ident.text)
+		}
+	}
+	for p.kind(0) == .coloncolon {
+		p.consume_with_assert(.coloncolon)
+
+		depth += 1
+		ident = p.consume_with_check(.ident) ?
+		ns = ast.NamespaceDecl{
+			block: ast.Block{
+				scope: p.open_scope(ident.text)
+			}
+		}
+	}
+
+	ns.block = p.parse_block_without_new_scope() ?
+	return ns
 }
