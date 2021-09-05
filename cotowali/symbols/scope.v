@@ -7,10 +7,12 @@ module symbols
 
 import cotowali.util { nil_to_none }
 
+pub type ID = u64
+
 [heap]
 pub struct Scope {
 pub:
-	id   u64
+	id   ID
 	name string
 pub mut:
 	owner &Var = 0
