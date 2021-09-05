@@ -112,10 +112,21 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	info := p.parse_fn_signature_info() ?
 	mut outer_scope := p.scope
+
+	sym := outer_scope.register_fn(
+		name: info.name.text
+		pos: info.name.pos
+		params: info.params.map(it.typ)
+		pipe_in: info.pipe_in
+		ret: info.ret_typ
+	) or { return p.duplicated_error(info.name.text, info.name.pos) }
+
 	p.open_scope(info.name.text)
 	defer {
 		p.close_scope()
 	}
+	p.scope.owner = sym
+
 	mut params := []ast.Var{len: info.params.len}
 	for i, param in info.params {
 		params[i] = ast.Var{
@@ -126,16 +137,6 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 			}
 		}
 	}
-
-	sym := outer_scope.register_fn(
-		name: info.name.text
-		pos: info.name.pos
-		params: params.map(it.sym.typ)
-		pipe_in: info.pipe_in
-		ret: info.ret_typ
-	) or { return p.duplicated_error(info.name.text, info.name.pos) }
-
-	p.scope.owner = sym
 
 	has_body := p.kind(0) == .l_brace
 	mut node := ast.FnDecl{
