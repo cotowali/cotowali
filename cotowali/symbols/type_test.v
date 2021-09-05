@@ -30,7 +30,7 @@ fn test_fn_signature() ? {
 
 fn test_lookup_type_and_register_type() ? {
 	mut parent := new_global_scope()
-	mut child := parent.create_child('child')
+	mut child := parent.must_create_child('child')
 
 	name_t := 't'
 

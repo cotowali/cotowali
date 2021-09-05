@@ -181,7 +181,6 @@ fn (mut p Parser) consume_with_assert(kinds ...TokenKind) Token {
 	return p.consume()
 }
 
-[inline]
 pub fn new_parser(source &Source, ctx &Context) Parser {
 	mut p := Parser{
 		lexer: new_lexer(source, ctx)
@@ -196,13 +195,11 @@ pub fn new_parser(source &Source, ctx &Context) Parser {
 	return p
 }
 
-[inline]
 fn (mut p Parser) open_scope(name string) &Scope {
-	p.scope = p.scope.create_child(name)
+	p.scope = p.scope.get_or_create_child(name)
 	return p.scope
 }
 
-[inline]
 fn (mut p Parser) close_scope() &Scope {
 	p.scope = p.scope.parent() or { panic(err) }
 	return p.scope

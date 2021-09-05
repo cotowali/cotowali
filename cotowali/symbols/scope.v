@@ -6,6 +6,7 @@
 module symbols
 
 import cotowali.util { nil_to_none }
+import cotowali.errors { unreachable }
 
 pub type ID = u64
 
@@ -123,20 +124,27 @@ pub fn (mut s Scope) get_child(key NameOrID) ?&Scope {
 	}
 }
 
-pub fn (mut s Scope) get_or_create_child(name string) &Scope {
-	if found := s.get_child(name) {
-		return found
-	}
-	return s.create_child(name)
-}
-
-pub fn (mut s Scope) create_child(name string) &Scope {
+pub fn (mut s Scope) create_child(name string) ?&Scope {
 	child := new_scope(name, s)
 	if name.len > 0 {
+		if name in s.name_to_child_id {
+			return error('$name is exists')
+		}
 		s.name_to_child_id[name] = child.id
 	}
 	s.children[child.id] = child
 	return child
+}
+
+pub fn (mut s Scope) get_or_create_child(name string) &Scope {
+	if found := s.get_child(name) {
+		return found
+	}
+	return s.must_create_child(name)
+}
+
+pub fn (mut s Scope) must_create_child(name string) &Scope {
+	return s.create_child(name) or { panic(unreachable(err.msg)) }
 }
 
 pub fn (s &Scope) ident_for(v Var) string {

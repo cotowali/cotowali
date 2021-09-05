@@ -9,7 +9,7 @@ import cotowali.source { none_pos, pos }
 
 fn test_lookup_and_register_var() ? {
 	mut parent := new_global_scope()
-	mut child := parent.create_child('child')
+	mut child := parent.must_create_child('child')
 
 	name_v := 'v'
 
@@ -40,7 +40,7 @@ fn test_lookup_and_register_var() ? {
 
 fn test_lookup_var_with_pos() ? {
 	mut parent := new_global_scope()
-	mut child := parent.create_child('child')
+	mut child := parent.must_create_child('child')
 
 	name_v := 'v'
 	name_v_none := 'vnone'

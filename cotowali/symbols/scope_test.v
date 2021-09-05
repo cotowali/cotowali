@@ -12,7 +12,7 @@ fn test_global_scope() {
 	s.must_lookup_type(builtin_type(.void))
 	s.must_lookup_type('string')
 	assert s.must_lookup_var('echo').is_function()
-	assert !s.create_child('s').is_global()
+	assert !s.must_create_child('s').is_global()
 }
 
 fn test_scope() ? {
@@ -20,10 +20,16 @@ fn test_scope() ? {
 	if _ := s.parent() {
 		assert false
 	}
-	mut child := s.create_child('child')
+
+	mut child := s.must_create_child('child')
 	assert (child.parent() ?).id == s.id
 	assert s.children().len == 1
 	assert s.children()[0].id == child.id
+	if _ := s.create_child('child') {
+		assert false
+	} else {
+		assert true
+	}
 
 	assert (s.get_child(child.name) ?).id == child.id
 	if _ := s.get_child('none') {
