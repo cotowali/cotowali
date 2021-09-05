@@ -7,6 +7,8 @@ module util
 
 pub struct Unit {}
 
+pub type Either<T, U> = T | U
+
 pub fn @in<T>(v T, low T, high T) bool {
 	return low <= v && v <= high
 }
