@@ -35,6 +35,7 @@ fn (mut c Checker) expr(expr Expr) {
 		ast.InfixExpr { c.infix_expr(expr) }
 		ast.IntLiteral {}
 		ast.MapLiteral { c.map_literal(expr) }
+		ast.NamespaceItem { c.namespace_item(expr) }
 		ast.ParenExpr { c.paren_expr(expr) }
 		ast.Pipeline { c.pipeline(expr) }
 		ast.PrefixExpr { c.prefix_expr(expr) }
@@ -223,6 +224,21 @@ fn (mut c Checker) map_literal(expr ast.MapLiteral) {
 	}
 
 	// TODO
+}
+
+fn (mut c Checker) namespace_item(expr ast.NamespaceItem) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
+	if !expr.is_resolved() {
+		return
+	}
+
+	c.expr(expr.item)
 }
 
 fn (mut c Checker) paren_expr(expr ast.ParenExpr) {

@@ -32,6 +32,8 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 		}
 		Expr {
 			match v {
+				// v bug: Segfault
+				// ast.Var, ArrayLiteral, MapLiteral { e.ident_for(v) }
 				ast.Var {
 					if sym := v.sym() {
 						e.ident_for(sym)
@@ -42,8 +44,9 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 				ArrayLiteral, MapLiteral {
 					e.new_tmp_ident()
 				}
-				// v bug: Segfault
-				// ast.Var, ArrayLiteral, MapLiteral { e.ident_for(v) }
+				ast.NamespaceItem {
+					e.ident_for(v.item)
+				}
 				else {
 					panic_and_value(unreachable('cannot take ident'), '')
 				}

@@ -19,8 +19,8 @@ import cotowali.symbols {
 import cotowali.errors { unreachable }
 
 pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | DefaultValue |
-	FloatLiteral | IndexExpr | InfixExpr | IntLiteral | MapLiteral | ParenExpr | Pipeline |
-	PrefixExpr | StringLiteral | Var
+	FloatLiteral | IndexExpr | InfixExpr | IntLiteral | MapLiteral | NamespaceItem | ParenExpr |
+	Pipeline | PrefixExpr | StringLiteral | Var
 
 pub fn (expr Expr) children() []Node {
 	return match expr {
@@ -28,7 +28,7 @@ pub fn (expr Expr) children() []Node {
 			[]Node{}
 		}
 		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, IndexExpr, InfixExpr, MapLiteral,
-		ParenExpr, Pipeline, PrefixExpr {
+		NamespaceItem, ParenExpr, Pipeline, PrefixExpr {
 			expr.children()
 		}
 		StringLiteral {
@@ -57,6 +57,7 @@ fn (mut r Resolver) expr(expr Expr) {
 		InfixExpr { r.infix_expr(expr) }
 		IntLiteral { r.int_literal(expr) }
 		MapLiteral { r.map_literal(mut expr) }
+		NamespaceItem { r.namespace_item(mut expr) }
 		ParenExpr { r.paren_expr(expr) }
 		Pipeline { r.pipeline(expr) }
 		PrefixExpr { r.prefix_expr(mut expr) }
@@ -79,6 +80,9 @@ pub fn (expr Expr) pos() Pos {
 			expr.pos()
 		}
 		Var {
+			expr.pos()
+		}
+		NamespaceItem {
 			expr.pos()
 		}
 		Pipeline {
@@ -169,6 +173,7 @@ pub fn (e Expr) typ() Type {
 		FloatLiteral { builtin_type(.float) }
 		StringLiteral { builtin_type(.string) }
 		IntLiteral { builtin_type(.int) }
+		NamespaceItem { e.typ() }
 		ParenExpr { e.typ() }
 		Pipeline { e.exprs.last().typ() }
 		PrefixExpr { e.typ() }
@@ -196,6 +201,9 @@ pub fn (e Expr) scope() &Scope {
 			e.left.scope()
 		}
 		Var {
+			e.scope()
+		}
+		NamespaceItem {
 			e.scope()
 		}
 		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, FloatLiteral,
@@ -293,6 +301,57 @@ fn (mut r Resolver) index_expr(expr IndexExpr) {
 	r.expr(expr.index)
 }
 
+pub struct NamespaceItem {
+mut:
+	is_resolved bool
+pub mut:
+	namespace Ident
+	item      Expr
+}
+
+[inline]
+pub fn (expr &NamespaceItem) is_resolved() bool {
+	return expr.is_resolved
+}
+
+pub fn (expr &NamespaceItem) typ() Type {
+	return expr.item.typ()
+}
+
+pub fn (expr &NamespaceItem) scope() &Scope {
+	return expr.item.scope()
+}
+
+pub fn (expr &NamespaceItem) pos() Pos {
+	return expr.namespace.pos.merge(expr.item.pos())
+}
+
+[inline]
+pub fn (expr &NamespaceItem) children() []Node {
+	return [Node(expr.namespace), Node(expr.item)]
+}
+
+fn (mut r Resolver) namespace_item(mut expr NamespaceItem) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+
+	if child := expr.namespace.scope.get_child(expr.namespace.text) {
+		match mut expr.item {
+			NamespaceItem { expr.item.namespace.scope = child }
+			Var { expr.item.ident.scope = child }
+			else { panic(unreachable('invalid item of namespace')) }
+		}
+		expr.is_resolved = true
+		r.expr(expr.item)
+	} else {
+		r.error('undefined namespace `$expr.namespace.text`', expr.namespace.pos)
+	}
+}
+
 pub struct ParenExpr {
 pub:
 	pos   Pos
@@ -379,7 +438,7 @@ pub:
 pub struct Var {
 mut:
 	sym &symbols.Var = 0
-pub:
+pub mut:
 	ident Ident
 }
 

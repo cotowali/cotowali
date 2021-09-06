@@ -196,13 +196,21 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 		}
 	}
 
-	ident := p.consume()
-	return ast.Var{
-		ident: ast.Ident{
-			scope: p.scope
-			pos: ident.pos
-			text: ident.text
+	tok := p.consume_with_check(.ident) ?
+	ident := ast.Ident{
+		scope: p.scope
+		pos: tok.pos
+		text: tok.text
+	}
+
+	if _ := p.consume_if_kind_eq(.coloncolon) {
+		return ast.NamespaceItem{
+			namespace: ident
+			item: p.parse_ident() ?
 		}
+	}
+	return ast.Var{
+		ident: ident
 	}
 }
 

@@ -68,6 +68,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.InfixExpr { e.infix_expr(expr, opt) }
 		ast.IndexExpr { e.index_expr(expr, opt) }
 		ast.MapLiteral { e.map_literal(expr, opt) }
+		ast.NamespaceItem { e.namespace_item(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
 		ast.StringLiteral { e.string_literal(expr, opt) }
@@ -336,6 +337,13 @@ fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
 			panic(unreachable('invalid operation'))
 		}
 	}
+}
+
+fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {
+	if !expr.is_resolved() {
+		panic(unreachable('unresolved namespace item'))
+	}
+	e.expr(expr.item, opt)
 }
 
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {

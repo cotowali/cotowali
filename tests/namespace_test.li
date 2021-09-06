@@ -29,6 +29,7 @@ namespace ns1::child {
 namespace ns1::child::deep {
   assert n == 3
 }
+assert ns1::child::deep::n == 3
 
 namespace ns2 {
   var n = 1
@@ -58,4 +59,6 @@ namespace ns2 {
 assert global == 2
 
 assert n == 0
+assert ns2::n == 1
 assert f() == 0
+assert ns2::f() == '10'

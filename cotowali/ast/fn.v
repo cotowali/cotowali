@@ -177,55 +177,67 @@ fn (mut r Resolver) call_expr(mut expr CallExpr) {
 		}
 	}
 
-	r.call_expr_func(mut expr)
+	r.call_expr_func(mut expr, mut &expr.func)
 	r.exprs(expr.args)
 }
 
-fn (mut r Resolver) call_expr_func(mut e CallExpr) {
-	if mut e.func is Var {
-		name := e.func.name()
-		sym := e.scope.lookup_var(name) or {
-			r.error('function `$name` is not defined', e.pos)
-			return
+fn (mut r Resolver) call_expr_func(mut e CallExpr, mut func Expr) {
+	match mut func {
+		Var {
+			r.call_expr_func_var(mut e, mut func)
 		}
-
-		e.func.sym = sym
-
-		ts := sym.type_symbol()
-		if !sym.is_function() {
-			r.error('`$sym.name` is not function (`$ts.name`)', e.pos)
-			return
+		NamespaceItem {
+			r.namespace_item(mut func)
+			r.call_expr_func(mut e, mut &func.item)
 		}
+		else {
+			r.error('cannot call `$e.func.type_symbol().name`', e.pos)
+		}
+	}
+}
 
-		function_info := e.function_info()
-		e.typ = function_info.ret
-		e.func_id = sym.id
-		if owner := e.scope.owner() {
-			if sym.id == builtin_fn_id(.read) {
-				owner_function_info := owner.type_symbol().function_info() or {
-					panic(unreachable(err))
-				}
-				mut pipe_in := e.scope.must_lookup_type(owner_function_info.pipe_in)
-				if pipe_in_array_info := pipe_in.array_info() {
-					if pipe_in_array_info.variadic {
-						pipe_in = e.scope.must_lookup_type(pipe_in_array_info.elem)
-					}
-				}
-				new_fn_params := if pipe_in_tuple_info := pipe_in.tuple_info() {
-					elements := pipe_in_tuple_info.elements
-					elements.map(e.scope.lookup_or_register_reference_type(target: it.typ).typ)
-				} else {
-					[e.scope.lookup_or_register_reference_type(target: pipe_in.typ).typ]
-				}
-				e.func.sym = if new_fn := e.scope.register_fn(name: sym.name, params: new_fn_params) {
-					new_fn
-				} else {
-					// already registered
-					e.scope.must_lookup_var(sym.name)
+// TODO: Refactor
+fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
+	name := func.name()
+	sym := func.scope().lookup_var(name) or {
+		r.error('function `$name` is not defined', e.pos)
+		return
+	}
+
+	func.sym = sym
+
+	ts := sym.type_symbol()
+	if !sym.is_function() {
+		r.error('`$sym.name` is not function (`$ts.name`)', e.pos)
+		return
+	}
+
+	function_info := e.function_info()
+	e.typ = function_info.ret
+	e.func_id = sym.id
+	if owner := e.scope.owner() {
+		if sym.id == builtin_fn_id(.read) {
+			owner_function_info := owner.type_symbol().function_info() or {
+				panic(unreachable(err))
+			}
+			mut pipe_in := e.scope.must_lookup_type(owner_function_info.pipe_in)
+			if pipe_in_array_info := pipe_in.array_info() {
+				if pipe_in_array_info.variadic {
+					pipe_in = e.scope.must_lookup_type(pipe_in_array_info.elem)
 				}
 			}
+			new_fn_params := if pipe_in_tuple_info := pipe_in.tuple_info() {
+				elements := pipe_in_tuple_info.elements
+				elements.map(e.scope.lookup_or_register_reference_type(target: it.typ).typ)
+			} else {
+				[e.scope.lookup_or_register_reference_type(target: pipe_in.typ).typ]
+			}
+			func.sym = if new_fn := e.scope.register_fn(name: sym.name, params: new_fn_params) {
+				new_fn
+			} else {
+				// already registered
+				e.scope.must_lookup_var(sym.name)
+			}
 		}
-	} else {
-		r.error('cannot call `$e.func.type_symbol().name`', e.pos)
 	}
 }
