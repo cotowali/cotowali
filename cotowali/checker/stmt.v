@@ -112,7 +112,7 @@ fn (mut c Checker) block(block ast.Block) {
 
 fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 	$if trace_checker ? {
-		c.trace_begin(@FN, stmt.name, stmt.signature())
+		c.trace_begin(@FN, stmt.sym.name, stmt.signature())
 		defer {
 			c.trace_end()
 		}
@@ -166,7 +166,7 @@ fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 
 fn (mut c Checker) namespace_decl(ns ast.NamespaceDecl) {
 	$if trace_checker ? {
-		c.trace_begin(@FN, stmt.scope.name)
+		c.trace_begin(@FN, ns.block.scope.name)
 		defer {
 			c.trace_end()
 		}
