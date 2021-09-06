@@ -7,7 +7,7 @@ module ast
 
 import cotowali.source { Source }
 
-pub type Node = Expr | File | Stmt
+pub type Node = Expr | File | Ident | Stmt
 
 [heap]
 pub struct File {

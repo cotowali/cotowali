@@ -377,6 +377,14 @@ fn (mut r Resolver) prefix_expr(mut expr PrefixExpr) {
 	}
 }
 
+pub struct Ident {
+pub mut:
+	scope &Scope
+pub:
+	pos  Pos
+	text string
+}
+
 pub struct Var {
 pub:
 	scope &Scope
