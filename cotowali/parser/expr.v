@@ -7,7 +7,7 @@ module parser
 
 import cotowali.token { TokenKind }
 import cotowali.ast
-import cotowali.symbols { builtin_type, new_placeholder_var }
+import cotowali.symbols { builtin_type }
 import cotowali.errors { unreachable }
 import cotowali.util { struct_name }
 
@@ -197,11 +197,12 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	}
 
 	ident := p.consume()
-	name := ident.text
 	return ast.Var{
-		scope: p.scope
-		pos: ident.pos
-		sym: new_placeholder_var(name, ident.pos)
+		ident: ast.Ident{
+			scope: p.scope
+			pos: ident.pos
+			text: ident.text
+		}
 	}
 }
 

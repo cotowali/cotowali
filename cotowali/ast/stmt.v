@@ -7,7 +7,7 @@ module ast
 
 import cotowali.token { Token }
 import cotowali.source { Pos }
-import cotowali.symbols { ArrayTypeInfo, Scope, Type, builtin_type }
+import cotowali.symbols { Scope, Type, builtin_type }
 
 pub struct Attr {
 pub:
@@ -114,14 +114,12 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 	match mut stmt.left {
 		Var {
 			if stmt.is_decl {
-				r.set_typ(stmt.left, stmt.typ)
-
-				sym := stmt.left.sym
-				if registered := stmt.scope.register_var(sym) {
+				name, pos, typ := stmt.left.ident.text, stmt.left.ident.pos, stmt.typ
+				if registered := stmt.scope.register_var(name: name, pos: pos, typ: typ) {
 					stmt.left.sym = registered
 				} else {
-					stmt.left.sym = stmt.scope.must_lookup_var(sym.name)
-					r.duplicated_error(sym.name, sym.pos)
+					stmt.left.sym = stmt.scope.must_lookup_var(name)
+					r.duplicated_error(name, pos)
 				}
 			}
 		}
@@ -135,14 +133,12 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 				}
 				for i, left in stmt.left.exprs {
 					if mut left is Var {
-						if i < expr_types.len {
-							r.set_typ(left, expr_types[i])
-						}
-
-						if registered := stmt.scope.register_var(left.sym) {
+						name, pos, typ := left.ident.text, left.ident.pos, expr_types[i]
+						if registered := stmt.scope.register_var(name: name, pos: pos, typ: typ) {
 							left.sym = registered
 						} else {
-							r.duplicated_error(left.sym.name, left.sym.pos)
+							left.sym = stmt.scope.must_lookup_var(name)
+							r.duplicated_error(name, pos)
 						}
 					}
 				}
@@ -177,9 +173,8 @@ fn (mut r Resolver) assert_stmt(stmt AssertStmt) {
 }
 
 pub struct Block {
-pub:
-	scope &Scope
 pub mut:
+	scope &Scope
 	stmts []Stmt
 }
 
@@ -255,9 +250,10 @@ fn (mut r Resolver) for_in_stmt(mut stmt ForInStmt) {
 
 	r.expr(stmt.expr)
 
-	expr_ts := stmt.expr.type_symbol()
-	if expr_ts.info is ArrayTypeInfo {
-		r.set_typ(stmt.var_, expr_ts.info.elem)
+	if array_info := stmt.expr.type_symbol().array_info() {
+		name, pos, typ := stmt.var_.ident.text, stmt.var_.ident.pos, array_info.elem
+		stmt.var_.sym = stmt.body.scope.must_register_var(name: name, pos: pos, typ: typ)
+		r.var_(mut stmt.var_)
 	}
 
 	r.block(stmt.body)

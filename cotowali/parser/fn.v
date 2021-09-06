@@ -130,8 +130,11 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	mut params := []ast.Var{len: info.params.len}
 	for i, param in info.params {
 		params[i] = ast.Var{
-			scope: p.scope
-			pos: param.pos
+			ident: ast.Ident{
+				scope: p.scope
+				pos: param.pos
+				text: param.name
+			}
 			sym: p.scope.register_var(name: param.name, pos: param.pos, typ: param.typ) or {
 				return p.duplicated_error(param.name, param.pos)
 			}

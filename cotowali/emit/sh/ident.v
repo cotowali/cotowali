@@ -17,8 +17,15 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 		symbols.Var {
 			v.full_name()
 		}
-		ast.Var, FnDecl {
+		FnDecl {
 			e.ident_for(v.sym)
+		}
+		ast.Var {
+			if sym := v.sym() {
+				e.ident_for(sym)
+			} else {
+				panic_and_value(unreachable('sym is nil'), '')
+			}
 		}
 		ArrayLiteral, MapLiteral {
 			e.new_tmp_ident()
@@ -26,7 +33,11 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 		Expr {
 			match v {
 				ast.Var {
-					e.ident_for(v.sym)
+					if sym := v.sym() {
+						e.ident_for(sym)
+					} else {
+						panic_and_value(unreachable('sym is nil'), '')
+					}
 				}
 				ArrayLiteral, MapLiteral {
 					e.new_tmp_ident()

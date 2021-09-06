@@ -338,13 +338,15 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 	ident := p.consume_with_check(.ident) ?
 	p.consume_with_check(.key_in) ?
 	expr := p.parse_expr(.toplevel) ?
-	body := p.parse_block('for_$p.count', [ident.text]) ?
+	body := p.parse_block('for_$p.count', []) ?
 	p.count++
 	return ast.ForInStmt{
 		var_: ast.Var{
-			scope: body.scope
-			pos: ident.pos
-			sym: body.scope.lookup_var(ident.text) or { panic(unreachable(err)) }
+			ident: ast.Ident{
+				scope: body.scope
+				pos: ident.pos
+				text: ident.text
+			}
 		}
 		expr: expr
 		body: body

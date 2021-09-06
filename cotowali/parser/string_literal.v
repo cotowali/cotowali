@@ -7,7 +7,6 @@ module parser
 
 import cotowali.ast
 import cotowali.token { TokenKind }
-import cotowali.symbols { new_placeholder_var }
 import cotowali.errors { unreachable }
 
 fn (mut p Parser) parse_string_literal() ?ast.StringLiteral {
@@ -92,9 +91,11 @@ fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
 		if tok := p.consume_if_kind_eq(.string_literal_content_var) {
 			name := tok.text[1..] // trim $ prefix
 			v := ast.Var{
-				scope: p.scope
-				pos: tok.pos
-				sym: new_placeholder_var(name, tok.pos)
+				ident: ast.Ident{
+					scope: p.scope
+					text: name
+					pos: tok.pos
+				}
 			}
 
 			contents << ast.Expr(v)

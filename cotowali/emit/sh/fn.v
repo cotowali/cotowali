@@ -69,7 +69,7 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 fn (mut e Emitter) fn_decl(node FnDecl) {
 	if !node.has_body {
 		e.writeln('')
-		params_str := node.params.map('$it.sym.name').join(', ')
+		params_str := node.params.map('$it.ident.text').join(', ')
 		e.writeln('# info: fn ${e.ident_for(node)}($params_str)')
 		e.writeln('')
 		return
@@ -95,7 +95,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			} else {
 				'\$1'
 			}
-			e.assign(e.ident_for(param), value, param.type_symbol())
+			e.assign(e.ident_for(param), value, ast.Expr(param).type_symbol())
 			e.writeln('shift')
 		}
 		e.block(node.body)

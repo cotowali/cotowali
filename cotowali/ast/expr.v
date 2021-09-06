@@ -65,24 +65,20 @@ fn (mut r Resolver) expr(expr Expr) {
 	}
 }
 
-fn (mut r Resolver) set_typ(e Expr, typ Type) {
-	match mut e {
-		Var { e.sym.typ = typ }
-		else { panic(unreachable(error('cannot set type'))) }
-	}
-}
-
 pub fn (e InfixExpr) pos() Pos {
 	return e.left.pos().merge(e.right.pos())
 }
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
-		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DefaultValue, Var, ParenExpr, IndexExpr,
+		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DefaultValue, ParenExpr, IndexExpr,
 		MapLiteral {
 			expr.pos
 		}
 		InfixExpr {
+			expr.pos()
+		}
+		Var {
 			expr.pos()
 		}
 		Pipeline {
@@ -179,7 +175,7 @@ pub fn (e Expr) typ() Type {
 		InfixExpr { e.typ() }
 		IndexExpr { e.typ() }
 		MapLiteral { e.scope.lookup_or_register_map_type(key: e.key_typ, value: e.value_typ).typ }
-		Var { e.sym.typ }
+		Var { e.typ() }
 	}
 }
 
@@ -187,16 +183,8 @@ pub fn (e Expr) resolved_typ() Type {
 	return e.type_symbol().resolved().typ
 }
 
-[inline]
-pub fn (v Var) type_symbol() &TypeSymbol {
-	return v.sym.type_symbol()
-}
-
 pub fn (e Expr) type_symbol() &TypeSymbol {
-	return match e {
-		Var { e.type_symbol() }
-		else { e.scope().must_lookup_type(e.typ()) }
-	}
+	return e.scope().must_lookup_type(e.typ())
 }
 
 pub fn (e Expr) scope() &Scope {
@@ -207,8 +195,11 @@ pub fn (e Expr) scope() &Scope {
 		IndexExpr {
 			e.left.scope()
 		}
+		Var {
+			e.scope()
+		}
 		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, FloatLiteral,
-		InfixExpr, IntLiteral, MapLiteral, ParenExpr, Pipeline, PrefixExpr, StringLiteral, Var {
+		InfixExpr, IntLiteral, MapLiteral, ParenExpr, Pipeline, PrefixExpr, StringLiteral {
 			e.scope
 		}
 	}
@@ -386,20 +377,35 @@ pub:
 }
 
 pub struct Var {
+mut:
+	sym &symbols.Var = 0
 pub:
-	scope &Scope
-	pos   Pos
-pub mut:
-	sym &symbols.Var
+	ident Ident
+}
+
+pub fn (v Var) pos() Pos {
+	return v.ident.pos
+}
+
+pub fn (v Var) scope() &Scope {
+	return v.ident.scope
+}
+
+pub fn (v Var) typ() Type {
+	return if sym := v.sym() { sym.typ } else { builtin_type(.placeholder) }
+}
+
+pub fn (v Var) sym() ?&symbols.Var {
+	return if isnil(v.sym) { none } else { v.sym }
 }
 
 pub fn (v Var) name() string {
-	return v.sym.name
+	return v.ident.text
 }
 
 [inline]
-pub fn (_ Var) children() []Node {
-	return []
+pub fn (v Var) children() []Node {
+	return [Node(v.ident)]
 }
 
 fn (mut r Resolver) var_(mut v Var) {
@@ -410,12 +416,18 @@ fn (mut r Resolver) var_(mut v Var) {
 		}
 	}
 
-	if v.sym.typ == builtin_type(.placeholder) {
-		name := v.sym.name
-		if sym := v.scope.lookup_var_with_pos(name, v.pos) {
+	$if !prod {
+		if !isnil(v.sym) && v.sym.name != v.ident.text {
+			panic(unreachable('mismatched name: sym.name = $v.sym.name, ident.text = $v.ident.text'))
+		}
+	}
+
+	if v.typ() == builtin_type(.placeholder) {
+		name := if isnil(v.sym) { v.ident.text } else { v.sym.name }
+		if sym := v.scope().lookup_var_with_pos(name, v.pos()) {
 			v.sym = sym
 		} else {
-			r.error('undefined variable `$name`', v.pos)
+			r.error('undefined variable `$name`', v.pos())
 		}
 	}
 }

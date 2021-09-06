@@ -127,7 +127,7 @@ fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
 
 fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 	ident := e.ident_for(v)
-	match v.type_symbol().resolved().kind() {
+	match ast.Expr(v).type_symbol().resolved().kind() {
 		.array {
 			e.array(ident, opt)
 		}
