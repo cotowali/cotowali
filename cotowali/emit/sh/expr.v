@@ -8,7 +8,7 @@ module sh
 import cotowali.ast
 import cotowali.token { Token }
 import cotowali.symbols { builtin_type }
-import cotowali.util { panic_and_value }
+import cotowali.util { Pair, pair, panic_and_value }
 import cotowali.errors { unreachable }
 
 type ExprOrString = ast.Expr | string
@@ -98,7 +98,19 @@ fn (mut e Emitter) bool_literal(expr ast.BoolLiteral, opt ExprOpt) {
 }
 
 fn (mut e Emitter) float_literal(expr ast.FloatLiteral, opt ExprOpt) {
-	e.write_echo_if_command_then_write(expr.token.text, opt)
+	e.write_echo_if_command(opt)
+
+	tmp_var := e.new_tmp_ident()
+	e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, v Pair<string, string>) {
+		tmp_var, text := v.v1, v.v2
+		e.write('$tmp_var="\$(')
+		{
+			awk_code := '{printf "$printf_format_float", \$1 }'
+			e.write("echo $text | awk '$awk_code'")
+		}
+		e.writeln(')"')
+	}, pair(tmp_var, expr.token.text))
+	e.write('\$$tmp_var')
 }
 
 fn (mut e Emitter) int_literal(expr ast.IntLiteral, opt ExprOpt) {
