@@ -157,7 +157,7 @@ fn test_ray() {
   var r_dir = ray_dir(r)
   assert r_origin == origin
   assert eps_eq(vec3_length(r_dir), 1)
-  assert eps_eq(vec3_x(r_dir), vec3_y(dir))
+  assert eps_eq(vec3_x(r_dir), vec3_y(r_dir))
 
 }
 test_ray()
