@@ -8,7 +8,7 @@ echo('Ray tracing example')
 
 // --------------------
 
-var eps = 1e-5
+var eps = 1e-4
 
 fn eps_eq(a: float, b: float) bool {
   return abs(a - b) < eps
@@ -235,6 +235,49 @@ fn sphere_radius(sphere: Sphere) float {
   var (x, y, z, radius) = sphere
   return radius
 }
+
+fn sphere_intersect(sphere: Sphere, ray: Ray) RayHit {
+  var center = sphere_center(sphere)
+  var radius = sphere_radius(sphere)
+  var origin = ray_origin(ray)
+  var dir    = ray_dir(ray)
+
+  var center_o = vec3_subtract(center, origin)
+
+  var b = vec3_dot(center_o, dir)
+  var d4 = b * b - vec3_dot(center_o, center_o) + radius * radius
+  var sqrt_d4 = sqrt(d4)
+
+  var (t1, t2) = (b - sqrt_d4, b + sqrt_d4)
+  if t1 < eps && t2 < eps {
+    return ray_hit_null()
+  }
+
+  var distance = t1
+  if t1 < eps {
+    distance = t2
+  }
+
+  var hit_p = vec3_add(origin, vec3_multiply(dir, distance))
+  var hit_normal = vec3_normalize(vec3_subtract(hit_p, center))
+  return ray_hit(hit_p, hit_normal, distance)
+}
+
+fn test_sphere_intersect() {
+  var radius = 3.0
+  var sp = sphere(vec3(0, 0, 0), radius)
+  var hit1 = sphere_intersect(sp, ray(vec3(10, 0, 0), vec3(-1, 0, 0)))
+  assert !ray_hit_is_null(hit1)
+  assert hit1 == (...vec3(3.0, 0.0, 0.0), ...vec3(1.0, 0.0, 0.0), 10 - radius)
+
+  var hit2 = sphere_intersect(sp, ray(vec3(10, 10, 10), vec3(-1, -1, -1)))
+  var hit2_p = ray_hit_point(hit2)
+  var hit2_n = ray_hit_normal(hit2)
+  assert eps_eq(vec3_x(hit2_p), vec3_y(hit2_p))
+  assert eps_eq(vec3_x(hit2_n), vec3_y(hit2_n))
+  assert eps_eq(ray_hit_distance(hit2), sqrt(10.0 ** 2 + 10.0 ** 2 + 10.0 ** 2) - radius)
+}
+test_sphere_intersect()
 
 fn test_sphere() {
   var center = vec3(0, -1, 1)
