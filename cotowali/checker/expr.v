@@ -143,7 +143,7 @@ fn (mut c Checker) decompose_expr(expr ast.DecomposeExpr) {
 	ts := expr.expr.type_symbol()
 	if _ := ts.tuple_info() {
 	} else {
-		c.error('cannot decompose non-tuple type `$ts.name`')
+		c.error('cannot decompose non-tuple type `$ts.name`', expr.pos)
 	}
 }
 
