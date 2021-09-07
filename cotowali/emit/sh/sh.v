@@ -64,10 +64,12 @@ fn op_to_awk_op(op Token) string {
 	return if op.kind == .pow { '^' } else { op.text }
 }
 
+const printf_format_float = '%lf'
+
 fn (mut e Emitter) sh_awk_infix_expr(expr ast.InfixExpr) {
 	mut awk_expr := '\$1 ${op_to_awk_op(expr.op)} \$2'
 	typ := ast.Expr(expr).resolved_typ()
-	mut format := if typ == builtin_type(.float) { '%lf' } else { '%d' }
+	mut format := if typ == builtin_type(.float) { sh.printf_format_float } else { '%d' }
 	if expr.op.kind.@is(.comparsion_op) {
 		awk_expr = '($awk_expr ? 1 : 0)'
 		format = '%g'
