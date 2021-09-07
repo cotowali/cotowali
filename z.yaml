@@ -78,6 +78,14 @@ tasks:
       integration: v run tests/run.v $@
       fix: z test integration --fix $@
       hello: z run examples/hello.li
+      watch: |
+        watch=""
+        for f in "$@"
+        do
+          watch="$watch -w $f"
+        done
+        watch="${watch:- -e li}"
+        watchexec -r $watch z test $@
 
   fmt: v fmt -w {{format_sources}}
   fmt.c: z fmt && z test && git add . && git commit -m 'fmt'
