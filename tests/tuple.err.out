@@ -37,3 +37,15 @@ error: tuple.err.li 23,9: cannot use variadic type as tuple element
 error: tuple.err.li 24,14: cannot use tuple as tuple element
    24 | var nested: ((int, int))
       |              ^^^^^^^^^^
+error: tuple.err.li 29,8: cannot decompose non-tuple type `int`
+   29 |   v = (...n, ...n)
+      |        ^^^^
+error: tuple.err.li 29,14: cannot decompose non-tuple type `int`
+   29 |   v = (...n, ...n)
+      |              ^^^^
+error: tuple.err.li 30,8: cannot decompose non-tuple type `int`
+   30 |   v = (...0, ...0)
+      |        ^^^^
+error: tuple.err.li 30,14: cannot decompose non-tuple type `int`
+   30 |   v = (...0, ...0)
+      |              ^^^^

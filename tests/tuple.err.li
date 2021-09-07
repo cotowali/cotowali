@@ -22,3 +22,10 @@ fn () |> zero() int {
 
 var v: (...int)
 var nested: ((int, int))
+
+fn non_tuple_decompose() {
+  var n = 10
+  var v: (int, int)
+  v = (...n, ...n)
+  v = (...0, ...0)
+}
