@@ -172,7 +172,7 @@ test_ray()
 
 // --------------------
 
-type RayHit = (...Vec3, ...Vec3, float) // (point, normal, distance)
+type RayHit = (...Vec3, ...Vec3, float) // (point, normal, distance); if not hit, distance == 0
 
 fn ray_hit(point: Vec3, normal: Vec3, distance: float) RayHit {
   var (p_x, p_y, p_z) = point
@@ -182,6 +182,10 @@ fn ray_hit(point: Vec3, normal: Vec3, distance: float) RayHit {
     n_x, n_y, n_z,
     distance,
   )
+}
+
+fn ray_hit_null() RayHit {
+  return (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 }
 
 fn ray_hit_point(hit: RayHit) Vec3 {
@@ -199,6 +203,10 @@ fn ray_hit_distance(hit: RayHit) float {
   return distance
 }
 
+fn ray_hit_is_null(hit: RayHit) bool {
+  return eps_eq(ray_hit_distance(hit), 0)
+}
+
 fn test_ray_hit() {
   var p = vec3(0, 0, 0)
   var normal = vec3(1, 1, 0)
@@ -212,6 +220,9 @@ fn test_ray_hit() {
   assert eps_eq(vec3_length(rh_n), 1)
   assert eps_eq(vec3_x(rh_n), vec3_x(normal))
   assert rh_distance == distance
+
+  assert !ray_hit_is_null(rh)
+  assert ray_hit_is_null(ray_hit_null())
 }
 
 // --------------------
