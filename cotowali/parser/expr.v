@@ -343,7 +343,15 @@ fn (mut p Parser) parse_paren_expr() ?ast.Expr {
 		// `(int)` or `(int, int)`
 		for {
 			p.skip_eol()
-			exprs << p.parse_expr(.toplevel) ?
+			if dotdotdot := p.consume_if_kind_eq(.dotdotdot) {
+				expr := p.parse_expr(.toplevel) ?
+				exprs << ast.DecomposeExpr{
+					pos: dotdotdot.pos.merge(expr.pos())
+					expr: expr
+				}
+			} else {
+				exprs << p.parse_expr(.toplevel) ?
+			}
 
 			p.skip_eol()
 			if r_paren := p.consume_if_kind_eq(.r_paren) {

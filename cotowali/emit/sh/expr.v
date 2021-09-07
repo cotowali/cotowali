@@ -61,6 +61,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.CallCommandExpr { e.call_command_expr(expr, opt) }
 		ast.CallExpr { e.call_expr(expr, opt) }
 		ast.DefaultValue { e.default_value(expr, opt) }
+		ast.DecomposeExpr { e.decompose_expr(expr, opt) }
 		ast.FloatLiteral { e.float_literal(expr, opt) }
 		ast.IntLiteral { e.int_literal(expr, opt) }
 		ast.ParenExpr { e.paren_expr(expr, opt) }
@@ -102,6 +103,10 @@ fn (mut e Emitter) float_literal(expr ast.FloatLiteral, opt ExprOpt) {
 
 fn (mut e Emitter) int_literal(expr ast.IntLiteral, opt ExprOpt) {
 	e.write_echo_if_command_then_write(expr.token.text, opt)
+}
+
+fn (mut e Emitter) decompose_expr(expr ast.DecomposeExpr, opt ExprOpt) {
+	e.expr(expr.expr, ExprOpt{ ...opt, quote: false })
 }
 
 fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
