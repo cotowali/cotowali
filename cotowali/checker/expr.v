@@ -29,6 +29,7 @@ fn (mut c Checker) expr(expr Expr) {
 		ast.BoolLiteral {}
 		ast.CallCommandExpr { c.call_command_expr(expr) }
 		ast.CallExpr { c.call_expr(expr) }
+		ast.DecomposeExpr { c.decompose_expr(expr) }
 		ast.DefaultValue {}
 		ast.FloatLiteral {}
 		ast.IndexExpr { c.index_expr(expr) }
@@ -127,6 +128,22 @@ fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	}
 	if !call_args_types_ok {
 		return
+	}
+}
+
+fn (mut c Checker) decompose_expr(expr ast.DecomposeExpr) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
+	c.expr(expr.expr)
+	ts := expr.expr.type_symbol()
+	if _ := ts.tuple_info() {
+	} else {
+		c.error('cannot decompose non-tuple type `$ts.name`', expr.pos)
 	}
 }
 

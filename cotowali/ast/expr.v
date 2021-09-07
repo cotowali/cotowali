@@ -18,17 +18,17 @@ import cotowali.symbols {
 }
 import cotowali.errors { unreachable }
 
-pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | DefaultValue |
-	FloatLiteral | IndexExpr | InfixExpr | IntLiteral | MapLiteral | NamespaceItem | ParenExpr |
-	Pipeline | PrefixExpr | StringLiteral | Var
+pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | DecomposeExpr |
+	DefaultValue | FloatLiteral | IndexExpr | InfixExpr | IntLiteral | MapLiteral | NamespaceItem |
+	ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
 
 pub fn (expr Expr) children() []Node {
 	return match expr {
 		DefaultValue, BoolLiteral, FloatLiteral, IntLiteral, Var {
 			[]Node{}
 		}
-		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, IndexExpr, InfixExpr, MapLiteral,
-		NamespaceItem, ParenExpr, Pipeline, PrefixExpr {
+		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DecomposeExpr, IndexExpr, InfixExpr,
+		MapLiteral, NamespaceItem, ParenExpr, Pipeline, PrefixExpr {
 			expr.children()
 		}
 		StringLiteral {
@@ -51,6 +51,7 @@ fn (mut r Resolver) expr(expr Expr) {
 		BoolLiteral { r.bool_literal(expr) }
 		CallCommandExpr { r.call_command_expr(expr) }
 		CallExpr { r.call_expr(mut expr) }
+		DecomposeExpr { r.decompose_expr(expr) }
 		DefaultValue { r.default_value(expr) }
 		FloatLiteral { r.float_literal(expr) }
 		IndexExpr { r.index_expr(expr) }
@@ -72,8 +73,8 @@ pub fn (e InfixExpr) pos() Pos {
 
 pub fn (expr Expr) pos() Pos {
 	return match expr {
-		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DefaultValue, ParenExpr, IndexExpr,
-		MapLiteral {
+		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DecomposeExpr, DefaultValue, ParenExpr,
+		IndexExpr, MapLiteral {
 			expr.pos
 		}
 		InfixExpr {
@@ -132,17 +133,27 @@ pub fn (e IndexExpr) typ() Type {
 }
 
 pub fn (mut e ParenExpr) typ() Type {
-	return match e.exprs.len {
+	match e.exprs.len {
 		0 {
-			e.scope.lookup_or_register_tuple_type().typ
+			return e.scope.lookup_or_register_tuple_type().typ
 		}
 		1 {
-			e.exprs[0].typ()
+			return e.exprs[0].typ()
 		}
 		else {
-			e.scope.lookup_or_register_tuple_type(
-				elements: e.exprs.map(TupleElement{ typ: it.typ() })
-			).typ
+			mut elems := []TupleElement{cap: e.exprs.len}
+			for expr in e.exprs {
+				if expr is DecomposeExpr {
+					if tuple_info := Expr(expr).type_symbol().tuple_info() {
+						elems << tuple_info.elements
+						continue
+					}
+				}
+				elems << TupleElement{
+					typ: expr.typ()
+				}
+			}
+			return e.scope.lookup_or_register_tuple_type(elements: elems).typ
 		}
 	}
 }
@@ -169,6 +180,7 @@ pub fn (e Expr) typ() Type {
 		BoolLiteral { builtin_type(.bool) }
 		CallCommandExpr { builtin_type(.string) }
 		CallExpr { e.typ }
+		DecomposeExpr { e.expr.typ() }
 		DefaultValue { e.typ }
 		FloatLiteral { builtin_type(.float) }
 		StringLiteral { builtin_type(.string) }
@@ -194,7 +206,7 @@ pub fn (e Expr) type_symbol() &TypeSymbol {
 
 pub fn (e Expr) scope() &Scope {
 	return match e {
-		AsExpr {
+		AsExpr, DecomposeExpr {
 			e.expr.scope()
 		}
 		IndexExpr {
@@ -225,6 +237,27 @@ pub fn (expr &AsExpr) children() []Node {
 }
 
 fn (mut r Resolver) as_expr(expr AsExpr) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+
+	r.expr(expr.expr)
+}
+
+pub struct DecomposeExpr {
+pub:
+	pos  Pos
+	expr Expr
+}
+
+pub fn (expr &DecomposeExpr) children() []Node {
+	return [Node(expr.expr)]
+}
+
+fn (mut r Resolver) decompose_expr(expr DecomposeExpr) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {

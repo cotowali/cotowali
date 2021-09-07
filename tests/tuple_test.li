@@ -99,3 +99,15 @@ fn test_tuple_type_expand() {
   assert typeof(e) == '(int, int, int, int)'
 }
 test_tuple_type_expand()
+
+fn test_decompose() {
+  assert (...(0, 1), ...(2, 3)) == (0, 1, 2, 3)
+  assert (...(0, 1), ...(...(2, 3), ...(4, 5))) == (0, 1, 2, 3, 4, 5)
+  assert (...swap(1, 0), ...swap(3, 2)) == (0, 1, 2, 3)
+  var (a, b, c, d) = (...(1, 2), ...(3, 4))
+  assert (a, b, c, d) == (1, 2, 3, 4)
+
+  var tup = (1, 2)
+  assert (...tup, ...tup) == (1, 2, 1, 2)
+}
+test_decompose()
