@@ -117,21 +117,13 @@ fn test_vec3() {
   var normalized_v1 = vec3_normalize(v1)
   assert eps_eq(abs(vec3_length(normalized_v1)), 1)
 
-  var added = vec3_add(v1, v2)
-  assert vec3_x(added) == 5 && vec3_y(added) == 7 && vec3_z(added) == 9
-
-  var diff = vec3_subtract(v2, v1)
-  assert vec3_x(diff) == 3 && vec3_x(diff) == 3 && vec3_x(diff) == 3
-
-  var twice_v1 = vec3_multiply(v1, 2)
-  assert vec3_x(twice_v1) == 2 && vec3_y(twice_v1) == 4 && vec3_z(twice_v1) == 6
-
-  var half_v1 = vec3_divide(v1, 2)
-  assert vec3_x(half_v1) == 0.5 && vec3_y(half_v1) == 1.0 && vec3_z(half_v1) == 1.5
+  assert vec3_add(v1, v2)      == (5.0, 7.0, 9.0)
+  assert vec3_subtract(v2, v1) == (3.0, 3.0, 3.0)
+  assert vec3_multiply(v1, 2)  == (2.0, 4.0, 6.0)
+  assert vec3_divide(v1, 2)    == (0.5, 1.0, 1.5)
 
   var cross = vec3_cross(v1, v2)
   assert vec3_x(cross) == -3 && vec3_y(cross) == 6 && vec3_z(cross) == -3
-
   assert vec3_dot(v1, v2) == 1 * 4 + 2 * 5 + 3 * 6
   assert vec3_dot(v1, cross) == 0
   assert vec3_dot(v2, cross) == 0
