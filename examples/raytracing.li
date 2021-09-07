@@ -11,7 +11,7 @@ echo('Ray tracing example')
 var eps = 1e-5
 
 fn eps_eq(a: float, b: float) bool {
-  return a - b < eps
+  return abs(a - b) < eps
 }
 
 fn abs(v: float) float {
