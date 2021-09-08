@@ -280,11 +280,18 @@ fn (mut c Checker) pipeline(expr ast.Pipeline) {
 	c.exprs(expr.exprs)
 
 	for i, e in expr.exprs {
+		is_last := i == expr.exprs.len - 1
+		if is_last && expr.has_redirect() {
+			// f() |> g() |> 'out_file'
+			break
+		}
+
 		if i > 0 {
 			if e is ast.CallCommandExpr {
 				// allow `any_value |> @command()`
 				continue
 			}
+
 			right := c.expect_function_call(e) or { continue }
 			left := expr.exprs[i - 1]
 
@@ -295,7 +302,8 @@ fn (mut c Checker) pipeline(expr ast.Pipeline) {
 				}
 			}
 
-			mut pipe_in := right.scope.must_lookup_type(right.function_info().pipe_in)
+			fn_info := right.function_info()
+			mut pipe_in := right.scope.must_lookup_type(fn_info.pipe_in)
 			if pipe_in_array_info := pipe_in.array_info() {
 				if pipe_in_array_info.variadic {
 					pipe_in = right.scope.must_lookup_type(pipe_in_array_info.elem)

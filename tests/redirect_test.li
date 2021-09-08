@@ -1,0 +1,32 @@
+fn test_redirect_with_literal() {
+  "hello" |> "tmp.txt"
+  assert(cat("tmp.txt") == "hello")
+  @rm("tmp.txt")
+}
+test_redirect_with_literal()
+
+fn test_redirect_with_var_and_func() {
+  fn hello(msg: string) string {
+    return "hello $msg"
+  }
+
+  fn tmp_file() string {
+    return "/tmp/cotowali_tmp.txt"
+  }
+
+  var f = "tmp.txt"
+  var msg = "hello"
+  msg |> f
+  cat(f) == msg
+  @rm(f)
+
+  hello(msg) |> tmp_file()
+  assert(cat(tmp_file()) == hello(msg))
+  @rm(tmp_file())
+}
+test_redirect_with_var_and_func()
+
+fn test_redirect_dev_null() {
+  "garbage" |> "/dev/null"
+}
+test_redirect_dev_null()

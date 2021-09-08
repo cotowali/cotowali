@@ -417,6 +417,15 @@ pub mut:
 	exprs []Expr
 }
 
+pub fn (expr &Pipeline) has_redirect() bool {
+	last := expr.exprs.last()
+	return if last is CallExpr {
+		last.function_info().ret == builtin_type(.string)
+	} else {
+		last.resolved_typ() == builtin_type(.string)
+	}
+}
+
 [inline]
 pub fn (expr &Pipeline) children() []Node {
 	return expr.exprs.map(Node(it))
