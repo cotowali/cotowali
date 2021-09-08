@@ -26,11 +26,21 @@ fn sqrt(v: float) float {
   return (v |> @awk('{printf "%lf", sqrt($1)}')) as float
 }
 
+fn rand() float {
+  // NOTE: /dev/urandom exists in most environments. but it is not POSIX compliant.
+  return (@od('-vAn', '-N4', '-tu4', '/dev/urandom') |> @awk('{printf "%lf", $1 / 4294967295}')) as float
+}
+
 fn test_math() {
   assert(abs(1) == 1)
   assert(abs(-1) == 1.0)
 
   assert(sqrt(4) == 2)
+
+  for i in seq(10) {
+    assert(0 <= rand() && rand() < 1)
+    assert(rand() != rand())
+  }
 }
 test_math()
 
