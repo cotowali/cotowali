@@ -324,6 +324,6 @@ fn color_b(color: Color) float {
 }
 
 fn test_color() {
-  var c = color(255, 128, 0)
-  assert(color_r(c) == 255 && color_g(c) == 128 && color_b(c) == 0)
+  var c = color(1.0, 0.5, 0)
+  assert(color_r(c) == 1.0 && color_g(c) == 0.5 && color_b(c) == 0)
 }
