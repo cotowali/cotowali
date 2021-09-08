@@ -420,7 +420,8 @@ pub mut:
 pub fn (expr &Pipeline) has_redirect() bool {
 	last := expr.exprs.last()
 	return if last is CallExpr {
-		last.function_info().ret == builtin_type(.string)
+		fn_info := last.function_info()
+		fn_info.pipe_in == builtin_type(.void) && fn_info.ret == builtin_type(.string)
 	} else {
 		last.resolved_typ() == builtin_type(.string)
 	}
