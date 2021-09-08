@@ -302,3 +302,28 @@ fn test_sphere() {
   assert(sphere_radius(sp) == 3)
 }
 test_sphere()
+
+// --------------------
+
+type Color = Vec3
+
+fn color(r: float, g: float, b: float) Color {
+  return vec3(r, g, b)
+}
+
+fn color_r(color: Color) float {
+  return vec3_x(color)
+}
+
+fn color_g(color: Color) float {
+  return vec3_y(color)
+}
+
+fn color_b(color: Color) float {
+  return vec3_y(color)
+}
+
+fn test_color() {
+  var c = color(255, 128, 0)
+  assert(color_r(c) == 255 && color_g(c) == 128 && color_b(c) == 0)
+}
