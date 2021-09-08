@@ -86,8 +86,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 
 	match p.kind(0) {
 		.key_assert {
-			tok := p.consume()
-			return ast.AssertStmt{tok.pos, p.parse_expr(.toplevel) ?}
+			return ast.Stmt(p.parse_assert_stmt() ?)
 		}
 		.key_fn {
 			return ast.Stmt(p.parse_fn_decl() ?)
@@ -208,6 +207,17 @@ fn (mut p Parser) parse_var_stmt() ?ast.AssignStmt {
 		typ: typ
 		left: left
 		right: right
+	}
+}
+
+fn (mut p Parser) parse_assert_stmt() ?ast.AssertStmt {
+	tok := p.consume()
+	p.consume_with_check(.l_paren) ?
+	args := p.parse_call_args() ?
+	r_paren := p.consume_with_check(.r_paren) ?
+	return ast.AssertStmt{
+		pos: tok.pos.merge(r_paren.pos)
+		args: args
 	}
 }
 

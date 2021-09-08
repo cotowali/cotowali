@@ -8,7 +8,7 @@ fn test_swap() {
   var new_a = a
   var new_b = a
   (new_a, new_b) = swap(a, b)
-  assert new_a == b && new_b == a
+  assert(new_a == b && new_b == a)
 }
 
 test_swap()
@@ -37,14 +37,14 @@ fn (int) |> twice() |> (int) {
   return n * 2
 }
 
-assert ((1, 2) |> add() |> sum()) == 3
-assert ((3) |> twice()) == 6
-assert (3 |> twice()) == (6)
+assert(((1, 2) |> add() |> sum()) == 3)
+assert(((3) |> twice()) == 6)
+assert((3 |> twice()) == (6))
 
 fn () |> zero() int {
   return 0
 }
-assert (() |> zero()) == 0
+assert((() |> zero()) == 0)
 
 fn tuple_add(a: (int, int), b: (int, int)) (int, int) {
   var (a1, a2) = a
@@ -56,15 +56,15 @@ fn test_tuple_args() {
   var a = (1, 2)
   var b = (5, 6)
   var (c1, c2) = tuple_add(a, b)
-  assert c1 == 6 && c2 == 8
+  assert(c1 == 6 && c2 == 8)
   var (d1, d2) = tuple_add((2, 3), (8, 9))
-  assert d1 == 10 && d2 == 12
+  assert(d1 == 10 && d2 == 12)
 }
 test_tuple_args()
 
 fn test_tuple_ret_as_args() {
   var (a, b) = tuple_add(tuple_add((1, 2), (3, 4)), (5, 6))
-  assert a == 9 && b == 12
+  assert(a == 9 && b == 12)
 
   var (c, d) = tuple_add(
     tuple_add(
@@ -76,38 +76,38 @@ fn test_tuple_ret_as_args() {
       tuple_add((2, 4), (6, 8)),
     ),
   )
-  assert c == (1 + 3 + 5 + 7) + (3 + 7 + 2 + 6)
-  assert d == (2 + 4 + 6 + 8) + (5 + 9 + 4 + 8)
+  assert(c == (1 + 3 + 5 + 7) + (3 + 7 + 2 + 6))
+  assert(d == (2 + 4 + 6 + 8) + (5 + 9 + 4 + 8))
 }
 test_tuple_ret_as_args()
 
 fn test_tuple_type_expand() {
   type int_int = (int, int)
   var a: (...(int, int), int, int)
-  assert typeof(a) == '(int, int, int, int)'
+  assert(typeof(a) == '(int, int, int, int)')
 
   var b: (...(int, int), ...(int, int))
-  assert typeof(b) == '(int, int, int, int)'
+  assert(typeof(b) == '(int, int, int, int)')
 
   var c: (...int_int, ...(int, int))
-  assert typeof(c) == '(int, int, int, int)'
+  assert(typeof(c) == '(int, int, int, int)')
 
   var d: (...int_int, ...int_int)
-  assert typeof(d) == '(int, int, int, int)'
+  assert(typeof(d) == '(int, int, int, int)')
 
   var e: (...(...int_int, ...(int, int)))
-  assert typeof(e) == '(int, int, int, int)'
+  assert(typeof(e) == '(int, int, int, int)')
 }
 test_tuple_type_expand()
 
 fn test_decompose() {
-  assert (...(0, 1), ...(2, 3)) == (0, 1, 2, 3)
-  assert (...(0, 1), ...(...(2, 3), ...(4, 5))) == (0, 1, 2, 3, 4, 5)
-  assert (...swap(1, 0), ...swap(3, 2)) == (0, 1, 2, 3)
+  assert((...(0, 1), ...(2, 3)) == (0, 1, 2, 3))
+  assert((...(0, 1), ...(...(2, 3), ...(4, 5))) == (0, 1, 2, 3, 4, 5))
+  assert((...swap(1, 0), ...swap(3, 2)) == (0, 1, 2, 3))
   var (a, b, c, d) = (...(1, 2), ...(3, 4))
-  assert (a, b, c, d) == (1, 2, 3, 4)
+  assert((a, b, c, d) == (1, 2, 3, 4))
 
   var tup = (1, 2)
-  assert (...tup, ...tup) == (1, 2, 1, 2)
+  assert((...tup, ...tup) == (1, 2, 1, 2))
 }
 test_decompose()

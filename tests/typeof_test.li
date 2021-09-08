@@ -1,12 +1,12 @@
-assert typeof(0) == 'int'
-assert typeof(0.0) == 'float'
-assert typeof((0, 0)) == '(int, int)'
-assert typeof([0]) == '[]int'
-assert typeof({ 'k': 0 }) == 'map[string]int'
-assert typeof([
+assert(typeof(0) == 'int')
+assert(typeof(0.0) == 'float')
+assert(typeof((0, 0)) == '(int, int)')
+assert(typeof([0]) == '[]int')
+assert(typeof({ 'k': 0 }) == 'map[string]int')
+assert(typeof([
   [
     {
       'k': [{ 'k': map[string][]int{} }]
     }
   ]
-]) == '[][]map[string][]map[string]map[string][]int'
+]) == '[][]map[string][]map[string]map[string][]int')

@@ -1,14 +1,14 @@
 type name_t = string
 var name: name_t = 'bob'
-assert name == 'bob'
-assert (name as string) == 'bob'
-assert name == ('bob' as name_t)
+assert(name == 'bob')
+assert((name as string) == 'bob')
+assert(name == ('bob' as name_t))
 
 fn i_am(name: name_t) string {
   return "I am $name"
 }
 
-assert i_am('bob') == 'I am bob'
+assert(i_am('bob') == 'I am bob')
 
 // --
 
@@ -32,14 +32,14 @@ fn vec_add(v1: vec, v2: vec) vec {
 var v1 = vec2(1, 2)
 var v2 = vec2(3, 4)
 var (added_x, added_y) = vec2_add(v1, v2)
-assert added_x == 4 && added_y == 6
+assert(added_x == 4 && added_y == 6)
 
 var vv: vec = v1
-assert typeof(vv) == 'vec' && typeof(v1) == 'vec2'
+assert(typeof(vv) == 'vec' && typeof(v1) == 'vec2')
 
 // --
 
 type NameList = []string
 var names: NameList = ['bob', 'alice']
-assert typeof(names) == 'NameList'
-assert names[1] == 'alice'
+assert(typeof(names) == 'NameList')
+assert(names[1] == 'alice')

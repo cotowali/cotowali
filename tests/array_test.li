@@ -10,8 +10,8 @@ fn arr_0_1_2() []int {
 fn test_array_fn() {
   // var arr1 = raw_arr(arr_0_1_2())
   // var arr2 = arr_0_1_2()
-  // assert arr1 == arr2
-  // assert raw_arr([0, 1, 2]) == arr_0_1_2()
+  // assert(arr1 == arr2)
+  // assert(raw_arr([0, 1, 2]) == arr_0_1_2())
 }
 test_array_fn()
 
@@ -19,19 +19,19 @@ test_array_fn()
 
 
 var empty = []int{}
-assert empty == []int{}
-assert empty != [0]
+assert(empty == []int{})
+assert(empty != [0])
 
-assert [0, 1] == [0, 1]
-assert [0, 1] != [0, 1, 2]
+assert([0, 1] == [0, 1])
+assert([0, 1] != [0, 1, 2])
 
 var n = 2
-assert [0, 1, n] == [0, 1, 2]
+assert([0, 1, n] == [0, 1, 2])
 
 var a = 'a'
 var v = [a, 'b', 'c']
-assert v == v
-assert v == ['a', 'b', 'c']
+assert(v == v)
+assert(v == ['a', 'b', 'c'])
 
 var arr = [0
   ,
@@ -50,37 +50,37 @@ fn for_in_test() {
   for i in [1, 2, 3] {
     n += i
   }
-  assert n == 6
+  assert(n == 6)
 }
 for_in_test()
 
 fn index_test() {
   var arr = [10, 11, 12]
-  assert arr[0] == 10
-  assert arr[1] == 11
+  assert(arr[0] == 10)
+  assert(arr[1] == 11)
   arr[2] = 100
-  assert arr[2] == 100
-  assert arr[
+  assert(arr[2] == 100)
+  assert(arr[
     2
-  ] == 100
+  ] == 100)
 
   arr = [10, 11, 12]
   var i = 0
-  assert arr[i] == 10
+  assert(arr[i] == 10)
   i = 2
-  assert arr[i] == 12
+  assert(arr[i] == 12)
   arr[i] = 0
-  assert arr[i] == 0
+  assert(arr[i] == 0)
 }
 index_test()
 
 fn array_of_array_test() {
   var v1 = [[1, 2], [3, 4]]
-  assert v1[0][0] == 1
-  assert v1[1][1] == 4
+  assert(v1[0][0] == 1)
+  assert(v1[1][1] == 4)
 
   var v2 = [[['a']]]
-  assert v2[0][0][0] == 'a'
+  assert(v2[0][0][0] == 'a')
 }
 
 fn array_of_tuple_test() {
@@ -90,6 +90,6 @@ fn array_of_tuple_test() {
     var (a, b) = v
     n = n + a + b
   }
-  assert n == 6
+  assert(n == 6)
 }
 array_of_tuple_test()

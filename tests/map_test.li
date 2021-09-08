@@ -14,23 +14,23 @@ fn test_simple() {
     1: 'a'
   }
 
-  assert m_str_int['a'] == 1
-  assert m_int_str[1] == 'a'
+  assert(m_str_int['a'] == 1)
+  assert(m_int_str[1] == 'a')
 
   m_str_int['a'] = m_str_int['a'] + 1
   m_int_str[1] = m_int_str[1] + 'a'
-  assert m_str_int['a'] == 2
-  assert m_int_str[1] == 'aa'
+  assert(m_str_int['a'] == 2)
+  assert(m_int_str[1] == 'aa')
 
   m_str_int['b'] = 10
   m_int_str[10] = 'b'
-  assert m_str_int['b'] == 10
-  assert m_int_str[10] == 'b'
+  assert(m_str_int['b'] == 10)
+  assert(m_int_str[10] == 'b')
 
   m_str_int['c'] = m_str_int['a'] + m_str_int['b']
   m_int_str[100] = m_int_str[1] + m_int_str[10]
-  assert m_str_int['c'] == 12
-  assert m_int_str[100] == 'aab'
+  assert(m_str_int['c'] == 12)
+  assert(m_int_str[100] == 'aab')
 }
 test_simple()
 
@@ -49,7 +49,7 @@ fn test_complex() {
       'a': { 'a': 'b0aa', /* inline trailing comma */ }
     }],
   }
-  assert map_array_map_map['a'][0]['b']['a'] == 'a0ba'
-  assert map_array_map_map['a'][1]['a']['a'] == 'a1aa'
-  assert map_array_map_map['b'][0]['a']['a'] == 'b0aa'
+  assert(map_array_map_map['a'][0]['b']['a'] == 'a0ba')
+  assert(map_array_map_map['a'][1]['a']['a'] == 'a1aa')
+  assert(map_array_map_map['b'][0]['a']['a'] == 'b0aa')
 }
