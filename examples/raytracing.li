@@ -27,12 +27,13 @@ fn sqrt(v: float) float {
 }
 
 fn test_math() {
-  assert abs(1) == 1
-  assert abs(-1) == 1.0
+  assert(abs(1) == 1)
+  assert(abs(-1) == 1.0)
 
-  assert sqrt(4) == 2
+  assert(sqrt(4) == 2)
 }
 test_math()
+
 
 // --------------------
 
@@ -110,23 +111,23 @@ fn test_vec3() {
   var v1 = vec3(1.0, 2.0, 3.0)
   var v2 = vec3(4.0, 5.0, 6.0)
 
-  assert vec3_length_squared(v1) == 14
+  assert(vec3_length_squared(v1) == 14)
   var v1_len = vec3_length(v1)
-  assert 3.7 < v1_len && v1_len < 3.8
+  assert(3.7 < v1_len && v1_len < 3.8)
 
   var normalized_v1 = vec3_normalize(v1)
-  assert eps_eq(abs(vec3_length(normalized_v1)), 1)
+  assert(eps_eq(abs(vec3_length(normalized_v1)), 1))
 
-  assert vec3_add(v1, v2)      == (5.0, 7.0, 9.0)
-  assert vec3_subtract(v2, v1) == (3.0, 3.0, 3.0)
-  assert vec3_multiply(v1, 2)  == (2.0, 4.0, 6.0)
-  assert vec3_divide(v1, 2)    == (0.5, 1.0, 1.5)
+  assert(vec3_add(v1, v2)      == (5.0, 7.0, 9.0))
+  assert(vec3_subtract(v2, v1) == (3.0, 3.0, 3.0))
+  assert(vec3_multiply(v1, 2)  == (2.0, 4.0, 6.0))
+  assert(vec3_divide(v1, 2)    == (0.5, 1.0, 1.5))
 
   var cross = vec3_cross(v1, v2)
-  assert vec3_x(cross) == -3 && vec3_y(cross) == 6 && vec3_z(cross) == -3
-  assert vec3_dot(v1, v2) == 1 * 4 + 2 * 5 + 3 * 6
-  assert vec3_dot(v1, cross) == 0
-  assert vec3_dot(v2, cross) == 0
+  assert(vec3_x(cross) == -3 && vec3_y(cross) == 6 && vec3_z(cross) == -3)
+  assert(vec3_dot(v1, v2) == 1 * 4 + 2 * 5 + 3 * 6)
+  assert(vec3_dot(v1, cross) == 0)
+  assert(vec3_dot(v2, cross) == 0)
 }
 test_vec3()
 
@@ -155,10 +156,9 @@ fn test_ray() {
 
   var r_origin = ray_origin(r)
   var r_dir = ray_dir(r)
-  assert r_origin == origin
-  assert eps_eq(vec3_length(r_dir), 1)
-  assert eps_eq(vec3_x(r_dir), vec3_y(r_dir))
-
+  assert(r_origin == origin)
+  assert(eps_eq(vec3_length(r_dir), 1))
+  assert(eps_eq(vec3_x(r_dir), vec3_y(r_dir)))
 }
 test_ray()
 
@@ -208,13 +208,13 @@ fn test_ray_hit() {
   var rh_p = ray_hit_point(rh)
   var rh_n = ray_hit_normal(rh)
   var rh_distance = ray_hit_distance(rh)
-  assert rh_p == p
-  assert eps_eq(vec3_length(rh_n), 1)
-  assert eps_eq(vec3_x(rh_n), vec3_x(normal))
-  assert rh_distance == distance
+  assert(rh_p == p)
+  assert(eps_eq(vec3_length(rh_n), 1))
+  assert(eps_eq(vec3_x(rh_n), vec3_x(normal)))
+  assert(rh_distance == distance)
 
-  assert !ray_hit_is_null(rh)
-  assert ray_hit_is_null(ray_hit_null())
+  assert(!ray_hit_is_null(rh))
+  assert(ray_hit_is_null(ray_hit_null()))
 }
 
 // --------------------
@@ -267,15 +267,15 @@ fn test_sphere_intersect() {
   var radius = 3.0
   var sp = sphere(vec3(0, 0, 0), radius)
   var hit1 = sphere_intersect(sp, ray(vec3(10, 0, 0), vec3(-1, 0, 0)))
-  assert !ray_hit_is_null(hit1)
-  assert hit1 == (...vec3(3.0, 0.0, 0.0), ...vec3(1.0, 0.0, 0.0), 10 - radius)
+  assert(!ray_hit_is_null(hit1))
+  assert(hit1 == (...vec3(3.0, 0.0, 0.0), ...vec3(1.0, 0.0, 0.0), 10 - radius))
 
   var hit2 = sphere_intersect(sp, ray(vec3(10, 10, 10), vec3(-1, -1, -1)))
   var hit2_p = ray_hit_point(hit2)
   var hit2_n = ray_hit_normal(hit2)
-  assert eps_eq(vec3_x(hit2_p), vec3_y(hit2_p))
-  assert eps_eq(vec3_x(hit2_n), vec3_y(hit2_n))
-  assert eps_eq(ray_hit_distance(hit2), sqrt(10.0 ** 2 + 10.0 ** 2 + 10.0 ** 2) - radius)
+  assert(eps_eq(vec3_x(hit2_p), vec3_y(hit2_p)))
+  assert(eps_eq(vec3_x(hit2_n), vec3_y(hit2_n)))
+  assert(eps_eq(ray_hit_distance(hit2), sqrt(10.0 ** 2 + 10.0 ** 2 + 10.0 ** 2) - radius))
 }
 test_sphere_intersect()
 
@@ -284,10 +284,11 @@ fn test_sphere() {
   var sp = sphere(center, 3)
 
   var c = sphere_center(sp)
-  assert
+  assert(
     vec3_x(c) == 0 &&
     vec3_y(c) == -1 &&
     vec3_z(c) == 1
-  assert sphere_radius(sp) == 3
+  )
+  assert(sphere_radius(sp) == 3)
 }
 test_sphere()
