@@ -375,52 +375,6 @@ fn (mut p Parser) parse_paren_expr() ?ast.Expr {
 	}
 }
 
-fn (mut p Parser) parse_call_args() ?[]ast.Expr {
-	p.skip_eol()
-	if p.kind(0) == .r_paren {
-		return []
-	}
-
-	mut args := []ast.Expr{cap: 2}
-	for {
-		args << p.parse_expr(.toplevel) ?
-		p.skip_eol()
-
-		if p.kind(0) == .r_paren {
-			break
-		}
-
-		p.consume_with_check(.comma) ?
-		p.skip_eol()
-
-		if p.kind(0) == .r_paren {
-			// ends with trailing comman
-			break
-		}
-	}
-	return args
-}
-
-fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN, '${struct_name(left)}{...}')
-		defer {
-			p.trace_end()
-		}
-	}
-
-	p.consume_with_assert(.l_paren)
-
-	mut args := p.parse_call_args() ?
-	r_paren := p.consume_with_check(.r_paren) ?
-	return ast.CallExpr{
-		scope: p.scope
-		pos: left.pos().merge(r_paren.pos)
-		func: left
-		args: args
-	}
-}
-
 fn (mut p Parser) parse_index_expr_with_left(left ast.Expr) ?ast.Expr {
 	$if trace_parser ? {
 		p.trace_begin(@FN, '${struct_name(left)}{...}')
