@@ -21,7 +21,7 @@ tasks:
   run: v run {{lic_path}} ${@:- {{hello_world}} }
   run.stdin: v run {{lic_path}}
   no-emit: v run {{lic_path}} -no-emit $@
-  debug: v -cg run {{lic_path}} $@
+  debug: v -cg -g run {{lic_path}} $@
   watch: v watch --add $@ run {{lic_path}} $@
   profile: v -profile profile.txt run {{lic_path}} $@
   trace:
