@@ -327,3 +327,27 @@ fn test_color() {
   var c = color(1.0, 0.5, 0)
   assert(color_r(c) == 1.0 && color_g(c) == 0.5 && color_b(c) == 0)
 }
+
+// --------------------
+
+type Material = (...Color, ...Color) // color, emission
+
+fn material(color: Color, emission: Color) Material {
+  return (...color, ...emission)
+}
+
+fn material_color(mat: Material) Color {
+  var (color_r, color_g, color_b, emission_r, emission_g, emission_b) = mat
+  return color(color_r, color_b, color_g)
+}
+
+fn material_emission(mat: Material) Color {
+  var (color_r, color_g, color_b, emission_r, emission_g, emission_b) = mat
+  return color(emission_r, emission_g, emission_b)
+}
+
+fn test_material() {
+  var mat = material(color(1.0, 0.5, 0), color(1, 1, 1))
+  assert(material_color(mat) == color(1.0, 0.5, 0))
+  assert(material_emission(mat) == color(1, 1, 1))
+}
