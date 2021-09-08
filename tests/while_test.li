@@ -5,4 +5,4 @@ while i < 10 {
   i = i + 1
 }
 
-assert n == 1024
+assert(n == 1024)

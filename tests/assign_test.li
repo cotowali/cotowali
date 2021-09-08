@@ -7,56 +7,56 @@ fn test_var_without_init() {
   var float_var: float
   var string_var: string
   var bool_var: bool
-  assert int_var == 0
-  assert float_var == 0.0
-  assert string_var == ''
-  assert !bool_var
+  assert(int_var == 0)
+  assert(float_var == 0.0)
+  assert(string_var == '')
+  assert(!bool_var)
 }
 test_var_without_init()
 
 fn test_simple_assign() {
   var n = 0
-  assert n == 0
+  assert(n == 0)
   n = 1
-  assert n == 1
+  assert(n == 1)
 
   n = 1 + 2
-  assert n == 3
+  assert(n == 3)
   n = n + 2
-  assert n == 5
+  assert(n == 5)
 
   n = add(1, 2)
-  assert n == 3
+  assert(n == 3)
   n = add(n, 2)
-  assert n == 5
+  assert(n == 5)
 }
 test_simple_assign()
 
 fn test_destructure_assign() {
   var (a, b) = (-1, 2)
-  assert a == -1 && b == 2
+  assert(a == -1 && b == 2)
 
   (a, b) = (a * 2, b * 2)
-  assert a == -2 && b == 4
+  assert(a == -2 && b == 4)
 
   (a, b) = (b, a)
-  assert a == 4 && b == -2
+  assert(a == 4 && b == -2)
 
 
   var (s, ss) = ('-s', '--ss')
-  assert s + ss == '-s--ss'
+  assert(s + ss == '-s--ss')
 }
 test_destructure_assign()
 
 fn test_composite_assign() {
   var n = 0
   n += 3
-  assert n == 3
+  assert(n == 3)
   n *= 3
-  assert n == 9
+  assert(n == 9)
   n /= 3
-  assert n == 3
+  assert(n == 3)
   n %= 2
-  assert n == 1
+  assert(n == 1)
 }
 test_composite_assign()

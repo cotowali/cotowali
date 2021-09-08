@@ -1,23 +1,23 @@
-assert '10' == '10'
-assert '10' != '11'
-assert '10' + '10' == '1010'
+assert('10' == '10')
+assert('10' != '11')
+assert('10' + '10' == '1010')
 
-assert 'a\\b\'c\d\"' == r"a\b'" + r'c\d\"'
+assert('a\\b\'c\d\"' == r"a\b'" + r'c\d\"')
 
 
 var n = 10
-assert "n=$n" == 'n=10'
-assert '$n' == r'$n'
-assert "\$n" == '$n'
-assert "$n$" == '10$'
-assert " $n  $n " == " 10  10 "
+assert("n=$n" == 'n=10')
+assert('$n' == r'$n')
+assert("\$n" == '$n')
+assert("$n$" == '10$')
+assert(" $n  $n " == " 10  10 ")
 
-assert (
+assert(
 '
 a
 b
 '
-) == (
+==
 r'
 a
 b

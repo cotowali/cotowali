@@ -9,6 +9,6 @@ fn int |> twice() int {
 }
 
 var n = 3
-assert "1 + 1 = ${ 1 + 1 }" == '1 + 1 = 2'
-assert "n = $n; n |> twice = ${ n |> twice() }" == 'n = 3; n |> twice = 6'
-assert "a${ "b${ "c" + "d${ "e" }" }" }" == "abcde"
+assert("1 + 1 = ${ 1 + 1 }" == '1 + 1 = 2')
+assert("n = $n; n |> twice = ${ n |> twice() }" == 'n = 3; n |> twice = 6')
+assert("a${ "b${ "c" + "d${ "e" }" }" }" == "abcde")

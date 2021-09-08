@@ -152,13 +152,13 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 
 pub struct AssertStmt {
 pub:
-	key_pos Pos
+	pos Pos
 pub mut:
-	expr Expr
+	args []Expr
 }
 
 pub fn (s &AssertStmt) children() []Node {
-	return [Node(s.expr)]
+	return s.args.map(Node(it))
 }
 
 fn (mut r Resolver) assert_stmt(stmt AssertStmt) {
@@ -169,7 +169,7 @@ fn (mut r Resolver) assert_stmt(stmt AssertStmt) {
 		}
 	}
 
-	r.expr(stmt.expr)
+	r.exprs(stmt.args)
 }
 
 pub struct Block {

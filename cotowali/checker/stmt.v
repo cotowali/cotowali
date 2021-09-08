@@ -95,8 +95,14 @@ fn (mut c Checker) assert_stmt(stmt ast.AssertStmt) {
 		}
 	}
 
-	c.expr(stmt.expr)
-	c.expect_bool_expr(stmt.expr, 'assert condition') or {}
+	c.exprs(stmt.args)
+
+	args_count := stmt.args.len
+	if args_count != 1 {
+		c.error('expect 1 arguments, but got $args_count', stmt.pos)
+		return
+	}
+	c.expect_bool_expr(stmt.args[0], 'assert condition') or {}
 }
 
 fn (mut c Checker) block(block ast.Block) {

@@ -1,6 +1,6 @@
 // inline-comment
 // ==============
-assert 1 == 1 // comment
+assert(1 == 1) // comment
 
 // /*
 echo('this is not a block comment')
@@ -15,11 +15,11 @@ echo('this is not a block comment')
  * comment
  */
 
-/* comment */ assert /* comment */ 1 /* comment */ == /* comment */ 1 /* comment */
-assert 1 /* comment */ /* /* comment */ */ == 1
+/* comment */ assert(/* comment */ 1 /* comment */ == /* comment */ 1 /* comment */)
+assert(1 /* comment */ /* /* comment */ */ == 1)
 
 /* comment
-// line comment in block comment */ assert 1 == 1
+// line comment in block comment */ assert(1 == 1)
 
 /*
  * /* nested-1

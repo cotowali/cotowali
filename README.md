@@ -32,8 +32,8 @@ fn int |> twice() int {
    return n * 2
 }
 
-assert fib(6) == 8
-assert (fib(6) |> twice()) == 16
+assert(fib(6) == 8)
+assert((fib(6) |> twice()) == 16)
 
 fn ...int |> sum() int {
   var v: int
@@ -51,8 +51,8 @@ fn ...int |> twice_each() |> ...int {
   }
 }
 
-assert (seq(3) |> sum()) == 6
-assert (seq(3) |> twice_each() |> sum()) == 12
+assert((seq(3) |> sum()) == 6)
+assert((seq(3) |> twice_each() |> sum()) == 12)
 ```
 
 [There is more examples](./examples)
