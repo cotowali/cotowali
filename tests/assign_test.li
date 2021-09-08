@@ -14,6 +14,15 @@ fn test_var_without_init() {
 }
 test_var_without_init()
 
+fn test_assign_with_promote() {
+  var num: float = 1
+  assert(num == 1)
+
+  var (a, b): (float, float) = (1, 2)
+  assert(a == 1.0 && b == 2.0)
+}
+test_assign_with_promote()
+
 fn test_simple_assign() {
   var n = 0
   assert(n == 0)

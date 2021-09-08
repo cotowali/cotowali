@@ -8,6 +8,7 @@ module checker
 import cotowali.ast { Expr }
 import cotowali.symbols { Type, TypeSymbol, builtin_type }
 import cotowali.source { Pos }
+import cotowali.errors { unreachable }
 
 struct TypeCheckingConfig {
 	want       TypeSymbol [required]
@@ -31,6 +32,10 @@ fn can_promote(want TypeSymbol, got TypeSymbol) bool {
 		return true
 	}
 
+	if want.kind() == .tuple && got.kind() == .tuple {
+		return can_promote_tuple(want, got)
+	}
+
 	if want.typ.is_number() && got.typ.is_number() {
 		return can_promote_number(want.typ, got.typ)
 	}
@@ -45,6 +50,27 @@ fn can_promote(want TypeSymbol, got TypeSymbol) bool {
 	}
 
 	return false
+}
+
+fn can_promote_tuple(want TypeSymbol, got TypeSymbol) bool {
+	want_tuple := want.tuple_info() or { panic(unreachable('not a tuple')) }
+	got_tuple := got.tuple_info() or { panic(unreachable('not a tuple')) }
+	if want_tuple.elements.len != got_tuple.elements.len {
+		return false
+	}
+	for i, want_elem in want_tuple.elements {
+		want_elem_ts := (want.scope() or { return false }).lookup_type(want_elem.typ) or {
+			return false
+		}
+		got_elem_ts := (got.scope() or { return false }).lookup_type(got_tuple.elements[i].typ) or {
+			return false
+		}
+		if !can_promote(want_elem_ts, got_elem_ts) {
+			return false
+		}
+	}
+
+	return true
 }
 
 fn can_promote_number(want Type, got Type) bool {
