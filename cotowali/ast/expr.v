@@ -423,7 +423,7 @@ pub fn (expr &Pipeline) has_redirect() bool {
 		fn_info := last.function_info()
 		fn_info.pipe_in == builtin_type(.void) && fn_info.ret == builtin_type(.string)
 	} else {
-		last.resolved_typ() == builtin_type(.string)
+		last !is CallCommandExpr && last.resolved_typ() == builtin_type(.string)
 	}
 }
 
