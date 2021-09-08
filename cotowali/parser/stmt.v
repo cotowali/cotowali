@@ -168,6 +168,9 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 		if _ := p.consume_if_kind_eq(.r_brace) {
 			return node
 		}
+		if p.kind(0) == .eof {
+			return p.unexpected_token_error(p.token(0), .r_brace)
+		}
 		node.stmts << p.parse_stmt()
 	}
 	panic(unreachable(''))

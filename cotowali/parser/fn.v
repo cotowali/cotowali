@@ -10,6 +10,7 @@ import cotowali.source { Pos }
 import cotowali.token { Token }
 import cotowali.symbols { Type, builtin_type }
 import cotowali.errors { unreachable }
+import cotowali.util { struct_name }
 
 struct FnParamParsingInfo {
 mut:
