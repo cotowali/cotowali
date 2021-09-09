@@ -157,9 +157,9 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 				// no need $ in arithmetic. e.g: $(( n == 0 ))
 				'$ident'
 			} else if opt.quote {
-				'"\$$ident"'
+				'"\${$ident}"'
 			} else {
-				'\$$ident'
+				'\${$ident}'
 			}
 			e.write_echo_if_command_then_write(s, opt)
 		}
