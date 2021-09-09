@@ -7,6 +7,7 @@ module checker
 
 import cotowali.ast
 import cotowali.symbols { builtin_type }
+import cotowali.errors { unreachable }
 
 fn (mut c Checker) attrs(attrs []ast.Attr) {
 	for attr in attrs {
@@ -59,6 +60,22 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 	}
 }
 
+fn is_assignment_to_outside_of_fn(current_fn &ast.FnDecl, left ast.Expr) bool {
+	if left is ast.ParenExpr {
+		return left.exprs.any(is_assignment_to_outside_of_fn(current_fn, it))
+	}
+	if left is ast.Var {
+		sym := left.sym() or { return false }
+		scope := sym.scope() or { return false }
+		return if owner := scope.owner() {
+			owner.id != current_fn.sym.id
+		} else {
+			!isnil(current_fn)
+		}
+	}
+	panic(unreachable('invalid left'))
+}
+
 fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 	$if trace_checker ? {
 		c.trace_begin(@FN)
@@ -75,11 +92,16 @@ fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 		match stmt.left {
 			ast.Var, ast.ParenExpr {
 				pos := stmt.left.pos().merge(stmt.right.pos())
-				c.check_types(
-					want: stmt.left.type_symbol()
-					got: stmt.right.type_symbol()
-					pos: pos
-				) or {}
+				if !stmt.is_decl && is_assignment_to_outside_of_fn(c.current_fn, stmt.left) {
+					c.error('cannot assign to variables outside of current function',
+						pos)
+				} else {
+					c.check_types(
+						want: stmt.left.type_symbol()
+						got: stmt.right.type_symbol()
+						pos: pos
+					) or {}
+				}
 			}
 			else {
 				// Handled by resolver. Nothing to do
@@ -134,7 +156,7 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 	}
 
 	old_fn := c.current_fn
-	c.current_fn = stmt
+	c.current_fn = &stmt
 	defer {
 		c.current_fn = old_fn
 	}

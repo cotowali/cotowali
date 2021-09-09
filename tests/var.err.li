@@ -8,3 +8,8 @@ var (t1, t2): (int, int) = ('a', 'b')
 
 var _ = 10
 echo(_)
+
+fn f() {
+  n = '10'
+  (i, n) = ('a', 'b')
+}

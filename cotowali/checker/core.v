@@ -13,8 +13,8 @@ import cotowali.debug { Tracer }
 
 pub struct Checker {
 mut:
-	source     &Source = 0
-	current_fn ast.FnDecl
+	source     &Source     = 0
+	current_fn &ast.FnDecl = 0
 	ctx        &Context
 
 	tracer Tracer [if trace_checker ?]
