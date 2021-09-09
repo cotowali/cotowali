@@ -12,6 +12,9 @@ assert("\$n" == '$n')
 assert("$n$" == '10$')
 assert(" $n  $n " == " 10  10 ")
 
+var nx = "nx"
+assert("${n}x$nx" == "10xnx")
+
 assert(
 '
 a
