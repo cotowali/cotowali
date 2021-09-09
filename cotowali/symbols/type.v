@@ -34,6 +34,10 @@ pub fn (v TypeSymbol) scope() ?&Scope {
 	return Symbol(v).scope()
 }
 
+fn (v TypeSymbol) must_scope() &Scope {
+	return v.scope() or { panic(unreachable('socpe not set')) }
+}
+
 fn (v TypeSymbol) scope_str() string {
 	return Symbol(v).scope_str()
 }

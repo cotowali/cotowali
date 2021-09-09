@@ -18,11 +18,12 @@ pub:
 pub mut:
 	owner &Var = 0
 mut:
-	parent           &Scope
+	parent           &Scope = 0
 	children         map[u64]&Scope // map[ID]&Scope
 	name_to_child_id map[string]ID
 	vars             map[string]&Var
-	type_symbols     map[u64]&TypeSymbol // map[Type]&TypeSymbol
+	type_symbols     map[u64]&TypeSymbol     // map[Type]&TypeSymbol
+	methods          map[u64]map[string]&Var // map[receiverType]map[name]&Var
 	name_to_type     map[string]Type
 }
 
