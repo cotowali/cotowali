@@ -74,10 +74,11 @@ fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 	if stmt.left.typ() != builtin_type(.placeholder) {
 		match stmt.left {
 			ast.Var, ast.ParenExpr {
+				pos := stmt.left.pos().merge(stmt.right.pos())
 				c.check_types(
 					want: stmt.left.type_symbol()
 					got: stmt.right.type_symbol()
-					pos: stmt.right.pos()
+					pos: pos
 				) or {}
 			}
 			else {
