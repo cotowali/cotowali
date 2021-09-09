@@ -101,7 +101,7 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 	}
 
 	if !stmt.is_decl {
-		r.expr(stmt.left)
+		r.expr(stmt.left, is_left_of_assignment: true)
 	}
 	r.expr(stmt.right)
 
