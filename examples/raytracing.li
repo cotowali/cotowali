@@ -353,7 +353,28 @@ fn test_material() {
 
 // --------------------
 
+// TODO: escpape sequence
+var ln = "
+"
+
+fn render(width: int, height: int) string {
+  var out =
+    "P3$ln" +
+    "$width $height$ln" +
+    "255$ln"
+  for y in seq(height) {
+    for x in seq(width) {
+      out="${out}${x * 255 / width} ${y * 255 / height} 0 "
+    }
+    out="$out$ln"
+  }
+  return out
+}
+
 fn main() {
   echo('Ray tracing example')
+
+  var (width, height) = (120, 90)
+  render(width, height) |> 'image.ppm'
 }
 main()

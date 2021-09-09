@@ -33,6 +33,10 @@ tasks:
   time: |
     /usr/bin/time -f 'Time: %es, Memory: %M: KB ' v run {{lic_path}}
 
+  raytracing: |
+    z examples/raytracing.li | sh
+    convert image.ppm image.png
+
   build.c: v {{lic_path}} -o main.c
 
   build: mkdir -p {{bin}} && v {{lic_path}} -o {{bin}}/lic
