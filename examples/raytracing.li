@@ -353,6 +353,91 @@ fn test_material() {
 
 // --------------------
 
+// pos, dir, up, screen_dist, screen_width screen_height
+type Camera = (...Vec3, ...Vec3, ...Vec3, float, float, float)
+
+fn camera(pos: Vec3, dir: Vec3, up: Vec3, dist: float, width: float, height: float) Camera {
+  return (...pos, ...vec3_normalize(dir), ...vec3_normalize(up), dist, width, height)
+}
+
+fn camera_pos(camera: Camera) Vec3 {
+  var (
+    pos_x, pos_y, pos_z,
+    dir_x, dir_y, dir_z,
+    up_x, up_y, up_z,
+    dist, width, height
+  ) = camera
+  return vec3(pos_x, pos_y, pos_z)
+}
+
+fn camera_dir(camera: Camera) Vec3 {
+  var (
+    pos_x, pos_y, pos_z,
+    dir_x, dir_y, dir_z,
+    up_x, up_y, up_z,
+    dist, width, height
+  ) = camera
+  return vec3(dir_x, dir_y, dir_z)
+}
+
+fn camera_up(camera: Camera) Vec3 {
+  var (
+    pos_x, pos_y, pos_z,
+    dir_x, dir_y, dir_z,
+    up_x, up_y, up_z,
+    dist, width, height
+  ) = camera
+  return vec3(up_x, up_y, up_z)
+}
+
+fn camera_screen_dist(camera: Camera) float {
+  var (
+    pos_x, pos_y, pos_z,
+    dir_x, dir_y, dir_z,
+    up_x, up_y, up_z,
+    dist, width, height
+  ) = camera
+  return dist
+}
+
+fn camera_screen_width(camera: Camera) float {
+  var (
+    pos_x, pos_y, pos_z,
+    dir_x, dir_y, dir_z,
+    up_x, up_y, up_z,
+    dist, width, height
+  ) = camera
+  return width
+}
+
+fn camera_screen_height(camera: Camera) float {
+  var (
+    pos_x, pos_y, pos_z,
+    dir_x, dir_y, dir_z,
+    up_x, up_y, up_z,
+    dist, width, height
+  ) = camera
+  return height
+}
+
+fn camera_test() {
+  var pos = vec3(0, 10, -10)
+  var dir = vec3(0, 0, 2)
+  var up = vec3(0, 2, 0)
+  var dist = 10
+  var width = 120
+  var height = 90
+
+  var cam = camera(pos, dir, up, dist, width, height)
+  assert(camera_pos(cam) == pos)
+  assert(camera_dir(cam) == vec3_normalize(dir))
+  assert(camera_up(cam) == vec3_normalize(up))
+  assert(camera_screen_dist(cam) == dist)
+  assert(camera_screen_width(cam) == width)
+  assert(camera_screen_height(cam) == height)
+}
+camera_test()
+
 // TODO: escpape sequence
 var ln = "
 "
