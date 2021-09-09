@@ -115,7 +115,12 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 		Var {
 			if stmt.is_decl {
 				name, pos, typ := stmt.left.ident.text, stmt.left.ident.pos, stmt.typ
-				if registered := stmt.scope.register_var(name: name, pos: pos, typ: typ) {
+				if name == '_' {
+					stmt.left.sym = &symbols.Var{
+						name: '_'
+						typ: builtin_type(.any)
+					}
+				} else if registered := stmt.scope.register_var(name: name, pos: pos, typ: typ) {
 					stmt.left.sym = registered
 				} else {
 					stmt.left.sym = stmt.scope.must_lookup_var(name)
@@ -134,7 +139,17 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 				for i, left in stmt.left.exprs {
 					if mut left is Var {
 						name, pos, typ := left.ident.text, left.ident.pos, expr_types[i]
-						if registered := stmt.scope.register_var(name: name, pos: pos, typ: typ) {
+						if name == '_' {
+							left.sym = &symbols.Var{
+								name: '_'
+								typ: builtin_type(.any)
+							}
+						} else if registered := stmt.scope.register_var(
+							name: name
+							pos: pos
+							typ: typ
+						)
+						{
 							left.sym = registered
 						} else {
 							left.sym = stmt.scope.must_lookup_var(name)

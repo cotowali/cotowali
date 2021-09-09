@@ -13,3 +13,6 @@ error: var.err.li 6,28: mismatched types: `(int, int)` (expected) and `(string, 
 error: var.err.li 7,10: mismatched types: `(int, int)` (expected) and `(string, string)` (found)
     7 | (i, n) = ('a', 'b')
       |          ^^^^^^^^^^
+error: var.err.li 10,6: undefined variable `_`
+   10 | echo(_)
+      |      ^

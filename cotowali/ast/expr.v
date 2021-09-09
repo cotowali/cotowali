@@ -530,7 +530,12 @@ fn (mut r Resolver) var_(mut v Var, opt ResolveExprOpt) {
 
 	if v.typ() == builtin_type(.placeholder) {
 		name := if isnil(v.sym) { v.ident.text } else { v.sym.name }
-		if sym := v.scope().lookup_var_with_pos(name, v.pos()) {
+		if name == '_' && opt.is_left_of_assignment {
+			v.sym = &symbols.Var{
+				name: name
+				typ: builtin_type(.any)
+			}
+		} else if sym := v.scope().lookup_var_with_pos(name, v.pos()) {
 			v.sym = sym
 		} else {
 			r.error('undefined variable `$name`', v.pos())

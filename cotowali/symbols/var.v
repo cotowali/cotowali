@@ -79,6 +79,9 @@ pub fn (mut s Scope) must_register_var(v Var) &Var {
 }
 
 pub fn (s &Scope) lookup_var(name string) ?&Var {
+	if name == '_' {
+		return none
+	}
 	if name in s.vars {
 		return s.vars[name]
 	}

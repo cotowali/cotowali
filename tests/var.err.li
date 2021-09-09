@@ -5,3 +5,6 @@ n = 's'
 
 var (t1, t2): (int, int) = ('a', 'b')
 (i, n) = ('a', 'b')
+
+var _ = 10
+echo(_)

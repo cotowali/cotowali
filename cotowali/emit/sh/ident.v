@@ -15,7 +15,11 @@ type IdentForValue = ArrayLiteral | Expr | FnDecl | MapLiteral | ast.Var | symbo
 fn (mut e Emitter) ident_for(v IdentForValue) string {
 	return match v {
 		symbols.Var {
-			v.full_name()
+			if v.name == '_' {
+				e.ident_to_discard
+			} else {
+				v.full_name()
+			}
 		}
 		FnDecl {
 			e.ident_for(v.sym)
