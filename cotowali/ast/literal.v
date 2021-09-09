@@ -23,7 +23,7 @@ pub fn (expr &ArrayLiteral) children() []Node {
 	return expr.elements.map(Node(it))
 }
 
-fn (mut r Resolver) array_literal(mut expr ArrayLiteral) {
+fn (mut r Resolver) array_literal(mut expr ArrayLiteral, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -31,7 +31,7 @@ fn (mut r Resolver) array_literal(mut expr ArrayLiteral) {
 		}
 	}
 
-	r.exprs(expr.elements)
+	r.exprs(expr.elements, opt)
 	if expr.elements.len > 0 && expr.elem_typ == builtin_type(.placeholder) {
 		expr.elem_typ = expr.elements[0].typ()
 	}
@@ -62,7 +62,7 @@ pub fn (expr &MapLiteral) children() []Node {
 	return children
 }
 
-fn (mut r Resolver) map_literal(mut expr MapLiteral) {
+fn (mut r Resolver) map_literal(mut expr MapLiteral, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -71,8 +71,8 @@ fn (mut r Resolver) map_literal(mut expr MapLiteral) {
 	}
 
 	for entry in expr.entries {
-		r.expr(entry.key)
-		r.expr(entry.value)
+		r.expr(entry.key, opt)
+		r.expr(entry.value, opt)
 	}
 	if expr.entries.len > 0 {
 		entry := expr.entries[0]
@@ -99,7 +99,7 @@ pub fn (e BoolLiteral) bool() bool {
 	return e.token.text != 'false'
 }
 
-fn (mut r Resolver) bool_literal(expr BoolLiteral) {
+fn (mut r Resolver) bool_literal(expr BoolLiteral, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -108,7 +108,7 @@ fn (mut r Resolver) bool_literal(expr BoolLiteral) {
 	}
 }
 
-fn (mut r Resolver) int_literal(expr IntLiteral) {
+fn (mut r Resolver) int_literal(expr IntLiteral, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -117,7 +117,7 @@ fn (mut r Resolver) int_literal(expr IntLiteral) {
 	}
 }
 
-fn (mut r Resolver) float_literal(expr FloatLiteral) {
+fn (mut r Resolver) float_literal(expr FloatLiteral, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -153,7 +153,7 @@ fn (s &StringLiteral) children() []Node {
 	return s.contents.filter(it is Expr).map(Node(it as Expr))
 }
 
-fn (mut r Resolver) string_literal(expr StringLiteral) {
+fn (mut r Resolver) string_literal(expr StringLiteral, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -163,7 +163,7 @@ fn (mut r Resolver) string_literal(expr StringLiteral) {
 
 	for content in expr.contents {
 		if content is Expr {
-			r.expr(content)
+			r.expr(content, opt)
 		}
 	}
 }

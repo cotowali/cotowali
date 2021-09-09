@@ -38,32 +38,36 @@ pub fn (expr Expr) children() []Node {
 	}
 }
 
-fn (mut r Resolver) exprs(exprs []Expr) {
+fn (mut r Resolver) exprs(exprs []Expr, opt ResolveExprOpt) {
 	for expr in exprs {
-		r.expr(expr)
+		r.expr(expr, opt)
 	}
 }
 
-fn (mut r Resolver) expr(expr Expr) {
+struct ResolveExprOpt {
+	is_left_of_assignment bool
+}
+
+fn (mut r Resolver) expr(expr Expr, opt ResolveExprOpt) {
 	match mut expr {
-		ArrayLiteral { r.array_literal(mut expr) }
-		AsExpr { r.as_expr(expr) }
-		BoolLiteral { r.bool_literal(expr) }
-		CallCommandExpr { r.call_command_expr(expr) }
-		CallExpr { r.call_expr(mut expr) }
-		DecomposeExpr { r.decompose_expr(expr) }
-		DefaultValue { r.default_value(expr) }
-		FloatLiteral { r.float_literal(expr) }
-		IndexExpr { r.index_expr(expr) }
-		InfixExpr { r.infix_expr(expr) }
-		IntLiteral { r.int_literal(expr) }
-		MapLiteral { r.map_literal(mut expr) }
-		NamespaceItem { r.namespace_item(mut expr) }
-		ParenExpr { r.paren_expr(expr) }
-		Pipeline { r.pipeline(expr) }
-		PrefixExpr { r.prefix_expr(mut expr) }
-		StringLiteral { r.string_literal(expr) }
-		Var { r.var_(mut expr) }
+		ArrayLiteral { r.array_literal(mut expr, opt) }
+		AsExpr { r.as_expr(expr, opt) }
+		BoolLiteral { r.bool_literal(expr, opt) }
+		CallCommandExpr { r.call_command_expr(expr, opt) }
+		CallExpr { r.call_expr(mut expr, opt) }
+		DecomposeExpr { r.decompose_expr(expr, opt) }
+		DefaultValue { r.default_value(expr, opt) }
+		FloatLiteral { r.float_literal(expr, opt) }
+		IndexExpr { r.index_expr(expr, opt) }
+		InfixExpr { r.infix_expr(expr, opt) }
+		IntLiteral { r.int_literal(expr, opt) }
+		MapLiteral { r.map_literal(mut expr, opt) }
+		NamespaceItem { r.namespace_item(mut expr, opt) }
+		ParenExpr { r.paren_expr(expr, opt) }
+		Pipeline { r.pipeline(expr, opt) }
+		PrefixExpr { r.prefix_expr(mut expr, opt) }
+		StringLiteral { r.string_literal(expr, opt) }
+		Var { r.var_(mut expr, opt) }
 	}
 }
 
@@ -236,7 +240,7 @@ pub fn (expr &AsExpr) children() []Node {
 	return [Node(expr.expr)]
 }
 
-fn (mut r Resolver) as_expr(expr AsExpr) {
+fn (mut r Resolver) as_expr(expr AsExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -244,7 +248,7 @@ fn (mut r Resolver) as_expr(expr AsExpr) {
 		}
 	}
 
-	r.expr(expr.expr)
+	r.expr(expr.expr, opt)
 }
 
 pub struct DecomposeExpr {
@@ -257,7 +261,7 @@ pub fn (expr &DecomposeExpr) children() []Node {
 	return [Node(expr.expr)]
 }
 
-fn (mut r Resolver) decompose_expr(expr DecomposeExpr) {
+fn (mut r Resolver) decompose_expr(expr DecomposeExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -265,7 +269,7 @@ fn (mut r Resolver) decompose_expr(expr DecomposeExpr) {
 		}
 	}
 
-	r.expr(expr.expr)
+	r.expr(expr.expr, opt)
 }
 
 pub struct DefaultValue {
@@ -275,7 +279,7 @@ pub:
 	pos   Pos
 }
 
-fn (mut r Resolver) default_value(expr DefaultValue) {
+fn (mut r Resolver) default_value(expr DefaultValue, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -298,7 +302,7 @@ pub fn (expr &InfixExpr) children() []Node {
 	return [Node(expr.left), Node(expr.right)]
 }
 
-fn (mut r Resolver) infix_expr(expr InfixExpr) {
+fn (mut r Resolver) infix_expr(expr InfixExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -306,8 +310,8 @@ fn (mut r Resolver) infix_expr(expr InfixExpr) {
 		}
 	}
 
-	r.expr(expr.left)
-	r.expr(expr.right)
+	r.expr(expr.left, opt)
+	r.expr(expr.right, opt)
 }
 
 pub struct IndexExpr {
@@ -322,7 +326,7 @@ pub fn (expr &IndexExpr) children() []Node {
 	return [Node(expr.left), Node(expr.index)]
 }
 
-fn (mut r Resolver) index_expr(expr IndexExpr) {
+fn (mut r Resolver) index_expr(expr IndexExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -330,8 +334,8 @@ fn (mut r Resolver) index_expr(expr IndexExpr) {
 		}
 	}
 
-	r.expr(expr.left)
-	r.expr(expr.index)
+	r.expr(expr.left, opt)
+	r.expr(expr.index, opt)
 }
 
 pub struct NamespaceItem {
@@ -364,7 +368,7 @@ pub fn (expr &NamespaceItem) children() []Node {
 	return [Node(expr.namespace), Node(expr.item)]
 }
 
-fn (mut r Resolver) namespace_item(mut expr NamespaceItem) {
+fn (mut r Resolver) namespace_item(mut expr NamespaceItem, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -379,7 +383,7 @@ fn (mut r Resolver) namespace_item(mut expr NamespaceItem) {
 			else { panic(unreachable('invalid item of namespace')) }
 		}
 		expr.is_resolved = true
-		r.expr(expr.item)
+		r.expr(expr.item, opt)
 	} else {
 		r.error('undefined namespace `$expr.namespace.text`', expr.namespace.pos)
 	}
@@ -398,7 +402,7 @@ pub fn (expr &ParenExpr) children() []Node {
 	return expr.exprs.map(Node(it))
 }
 
-fn (mut r Resolver) paren_expr(expr ParenExpr) {
+fn (mut r Resolver) paren_expr(expr ParenExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -406,7 +410,7 @@ fn (mut r Resolver) paren_expr(expr ParenExpr) {
 		}
 	}
 
-	r.exprs(expr.exprs)
+	r.exprs(expr.exprs, opt)
 }
 
 // expr |> expr |> expr
@@ -432,7 +436,7 @@ pub fn (expr &Pipeline) children() []Node {
 	return expr.exprs.map(Node(it))
 }
 
-fn (mut r Resolver) pipeline(expr Pipeline) {
+fn (mut r Resolver) pipeline(expr Pipeline, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -440,7 +444,7 @@ fn (mut r Resolver) pipeline(expr Pipeline) {
 		}
 	}
 
-	r.exprs(expr.exprs)
+	r.exprs(expr.exprs, opt)
 }
 
 pub struct PrefixExpr {
@@ -456,7 +460,7 @@ pub fn (expr &PrefixExpr) children() []Node {
 	return [Node(expr.expr)]
 }
 
-fn (mut r Resolver) prefix_expr(mut expr PrefixExpr) {
+fn (mut r Resolver) prefix_expr(mut expr PrefixExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -464,7 +468,7 @@ fn (mut r Resolver) prefix_expr(mut expr PrefixExpr) {
 		}
 	}
 
-	r.expr(expr.expr)
+	r.expr(expr.expr, opt)
 	if expr.op.kind == .amp && expr.expr.typ() != builtin_type(.placeholder) {
 		expr.scope.lookup_or_register_reference_type(target: expr.expr.typ())
 	}
@@ -510,7 +514,7 @@ pub fn (v Var) children() []Node {
 	return [Node(v.ident)]
 }
 
-fn (mut r Resolver) var_(mut v Var) {
+fn (mut r Resolver) var_(mut v Var, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -526,7 +530,12 @@ fn (mut r Resolver) var_(mut v Var) {
 
 	if v.typ() == builtin_type(.placeholder) {
 		name := if isnil(v.sym) { v.ident.text } else { v.sym.name }
-		if sym := v.scope().lookup_var_with_pos(name, v.pos()) {
+		if name == '_' && opt.is_left_of_assignment {
+			v.sym = &symbols.Var{
+				name: name
+				typ: builtin_type(.any)
+			}
+		} else if sym := v.scope().lookup_var_with_pos(name, v.pos()) {
 			v.sym = sym
 		} else {
 			r.error('undefined variable `$name`', v.pos())

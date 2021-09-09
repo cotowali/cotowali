@@ -1,15 +1,24 @@
 error: var.err.li 2,5: `i` is duplicated
     2 | var i = 0
       |     ^
-error: var.err.li 3,14: mismatched types: `int` (expected) and `string` (found)
+error: var.err.li 3,5: mismatched types: `int` (expected) and `string` (found)
     3 | var n: int = 's'
-      |              ^^^
-error: var.err.li 4,5: mismatched types: `int` (expected) and `string` (found)
+      |     ^^^^^^^^^^^^
+error: var.err.li 4,1: mismatched types: `int` (expected) and `string` (found)
     4 | n = 's'
-      |     ^^^
-error: var.err.li 6,28: mismatched types: `(int, int)` (expected) and `(string, string)` (found)
+      | ^^^^^^^
+error: var.err.li 6,5: mismatched types: `(int, int)` (expected) and `(string, string)` (found)
     6 | var (t1, t2): (int, int) = ('a', 'b')
-      |                            ^^^^^^^^^^
-error: var.err.li 7,10: mismatched types: `(int, int)` (expected) and `(string, string)` (found)
+      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: var.err.li 7,1: mismatched types: `(int, int)` (expected) and `(string, string)` (found)
     7 | (i, n) = ('a', 'b')
-      |          ^^^^^^^^^^
+      | ^^^^^^^^^^^^^^^^^^^
+error: var.err.li 10,6: undefined variable `_`
+   10 | echo(_)
+      |      ^
+error: var.err.li 13,3: cannot assign to variables outside of current function
+   13 |   n = '10'
+      |   ^^^^^^^^
+error: var.err.li 14,3: cannot assign to variables outside of current function
+   14 |   (i, n) = ('a', 'b')
+      |   ^^^^^^^^^^^^^^^^^^^

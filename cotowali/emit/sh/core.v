@@ -21,6 +21,7 @@ const ordered_code_kinds = [
 ]
 
 pub struct Emitter {
+	ident_to_discard string = '__cotowali_dummy'
 mut:
 	cur_file      &File = 0
 	cur_fn        FnDecl
@@ -74,6 +75,8 @@ fn (mut e Emitter) new_tmp_ident() string {
 	}
 	return '_cotowali_tmp_$e.tmp_count'
 }
+
+fn (mut e Emitter) ident_to_discard()
 
 [inline]
 fn (mut e Emitter) seek(pos int) ? {

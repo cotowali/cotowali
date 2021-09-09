@@ -125,14 +125,14 @@ pub fn (expr &CallCommandExpr) children() []Node {
 	return expr.args.map(Node(it))
 }
 
-fn (mut r Resolver) call_command_expr(expr CallCommandExpr) {
+fn (mut r Resolver) call_command_expr(expr CallCommandExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
 			r.trace_end()
 		}
 	}
-	r.exprs(expr.args)
+	r.exprs(expr.args, opt)
 }
 
 pub struct CallExpr {
@@ -169,7 +169,7 @@ pub fn (expr &CallExpr) children() []Node {
 	return children
 }
 
-fn (mut r Resolver) call_expr(mut expr CallExpr) {
+fn (mut r Resolver) call_expr(mut expr CallExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -178,7 +178,7 @@ fn (mut r Resolver) call_expr(mut expr CallExpr) {
 	}
 
 	r.call_expr_func(mut expr, mut &expr.func)
-	r.exprs(expr.args)
+	r.exprs(expr.args, opt)
 }
 
 fn (mut r Resolver) call_expr_func(mut e CallExpr, mut func Expr) {

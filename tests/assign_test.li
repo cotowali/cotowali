@@ -14,6 +14,15 @@ fn test_var_without_init() {
 }
 test_var_without_init()
 
+fn test_assign_with_promote() {
+  var num: float = 1
+  assert(num == 1)
+
+  var (a, b): (float, float) = (1, 2)
+  assert(a == 1.0 && b == 2.0)
+}
+test_assign_with_promote()
+
 fn test_simple_assign() {
   var n = 0
   assert(n == 0)
@@ -60,3 +69,25 @@ fn test_composite_assign() {
   assert(n == 1)
 }
 test_composite_assign()
+
+fn test_discard_value() {
+  var _ = 10
+  var _ = '100'
+  var _ = true
+  var _ = [0, 1, 2]
+  var (_, _) = (1.0, 1.5)
+  _ = 100
+  (_, _) = ('a', 'b')
+
+  var tmp = '/tmp/cotowali_tmp.txt'
+  var msg = 'hello'
+  fn mktemp() string {
+    msg |> tmp
+    return tmp
+  }
+  var _ = mktemp() // right of assignment to _ is evaluated
+  var tmp_content = cat(tmp)
+  rm(tmp)
+  assert(tmp_content == msg)
+}
+test_discard_value()

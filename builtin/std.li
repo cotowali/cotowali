@@ -6,3 +6,4 @@
 
 fn string |> cat(files: ...string) string
 fn seq(n: int) ...int
+fn rm(paths: ...string) void
