@@ -4,7 +4,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-echo('Ray tracing example')
 
 // --------------------
 
@@ -351,3 +350,10 @@ fn test_material() {
   assert(material_color(mat) == color(1.0, 0.5, 0))
   assert(material_emission(mat) == color(1, 1, 1))
 }
+
+// --------------------
+
+fn main() {
+  echo('Ray tracing example')
+}
+main()
