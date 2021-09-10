@@ -95,7 +95,8 @@ fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 				if !stmt.is_decl && is_assignment_to_outside_of_fn(c.current_fn, stmt.left) {
 					c.error('cannot assign to variables outside of current function',
 						pos)
-				} else {
+				} else if stmt.right !is ast.DefaultValue {
+					// if stmt.right is DefaultValue, no need to check because it is decl without init expr.
 					c.check_types(
 						want: stmt.left.type_symbol()
 						got: stmt.right.type_symbol()
