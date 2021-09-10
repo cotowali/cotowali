@@ -84,9 +84,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 		e.cur_fn = old_cur_fn
 	}
 
-	e.writeln('${e.ident_for(node)}() {')
-	e.indent()
-	{
+	e.sh_define_function(e.ident_for(node), fn (mut e Emitter, node FnDecl) {
 		for i, param in node.params {
 			value := if i == node.params.len - 1 && node.is_varargs() {
 				name := e.new_tmp_ident()
@@ -99,7 +97,5 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			e.writeln('shift')
 		}
 		e.block(node.body)
-	}
-	e.unindent()
-	e.writeln('}')
+	}, node)
 }
