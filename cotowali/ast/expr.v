@@ -17,6 +17,7 @@ import cotowali.symbols {
 	builtin_type,
 }
 import cotowali.errors { unreachable }
+import cotowali.util { nil_to_none }
 
 pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | DecomposeExpr |
 	DefaultValue | FloatLiteral | IndexExpr | InfixExpr | IntLiteral | MapLiteral | NamespaceItem |
@@ -502,7 +503,7 @@ pub fn (v Var) typ() Type {
 }
 
 pub fn (v Var) sym() ?&symbols.Var {
-	return if isnil(v.sym) { none } else { v.sym }
+	return nil_to_none(v.sym)
 }
 
 pub fn (v Var) name() string {
