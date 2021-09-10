@@ -14,6 +14,7 @@ pub:
 	parent_scope &Scope
 	sym          &symbols.Var
 	has_body     bool
+	is_method    bool
 pub mut:
 	attrs  []Attr
 	params []Var

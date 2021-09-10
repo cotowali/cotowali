@@ -1,0 +1,9 @@
+type Num = int
+
+fn (n: Num) twice() Num {
+  return n * 2
+}
+
+var n: Num = 2
+// TODO:
+// assert(n.twice() == 4)
