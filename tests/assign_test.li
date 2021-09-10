@@ -91,3 +91,12 @@ fn test_discard_value() {
   assert(tmp_content == msg)
 }
 test_discard_value()
+
+fn test_assign_fn() {
+  fn f() int {
+    return 42
+  }
+  var aliased_f = f
+  assert(aliased_f() == 42)
+}
+test_assign_fn()

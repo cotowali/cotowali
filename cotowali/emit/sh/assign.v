@@ -49,6 +49,13 @@ fn (mut e Emitter) map_assign(name string, value ExprOrString) {
 	}
 }
 
+fn (mut e Emitter) fn_assign(name string, value ExprOrString) {
+	e.sh_define_function(name, fn (mut e Emitter, value ExprOrString) {
+		target := if value is string { value } else { e.ident_for(value as ast.Expr) }
+		e.writeln(target + r' "$@"') // passthrough arguments
+	}, value)
+}
+
 fn (mut e Emitter) assign(name string, value ExprOrString, ts TypeSymbol) {
 	match ts.resolved().kind() {
 		.array {
@@ -56,6 +63,9 @@ fn (mut e Emitter) assign(name string, value ExprOrString, ts TypeSymbol) {
 		}
 		.map {
 			e.map_assign(name, value)
+		}
+		.function {
+			e.fn_assign(name, value)
 		}
 		else {
 			match value {
