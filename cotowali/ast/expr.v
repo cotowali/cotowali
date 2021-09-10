@@ -112,19 +112,19 @@ pub fn (mut e InfixExpr) typ() Type {
 		return builtin_type(.float)
 	}
 
-	left_ts := e.left.type_symbol().resolved()
-	right_ts := e.right.type_symbol().resolved()
+	left_ts_resolved := e.left.type_symbol().resolved()
+	right_ts_resolved := e.right.type_symbol().resolved()
 
-	if left_ts.kind() == .tuple && right_ts.kind() == .tuple && e.op.kind == .plus {
-		left_elements := (left_ts.tuple_info() or { panic(unreachable('')) }).elements
-		right_elements := (right_ts.tuple_info() or { panic(unreachable('')) }).elements
+	if left_ts_resolved.kind() == .tuple && right_ts_resolved.kind() == .tuple && e.op.kind == .plus {
+		left_elements := (left_ts_resolved.tuple_info() or { panic(unreachable('')) }).elements
+		right_elements := (right_ts_resolved.tuple_info() or { panic(unreachable('')) }).elements
 		mut elements := []TupleElement{cap: left_elements.len + right_elements.len}
 		elements << left_elements
 		elements << right_elements
 		return e.scope.lookup_or_register_tuple_type(elements: elements).typ
 	}
 
-	return right_ts.typ
+	return e.right.typ()
 }
 
 pub fn (e IndexExpr) typ() Type {
