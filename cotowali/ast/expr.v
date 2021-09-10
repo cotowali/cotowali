@@ -19,9 +19,24 @@ import cotowali.symbols {
 import cotowali.errors { unreachable }
 import cotowali.util { nil_to_none }
 
-pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | DecomposeExpr |
-	DefaultValue | FloatLiteral | IndexExpr | InfixExpr | IntLiteral | MapLiteral | NamespaceItem |
-	ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
+pub type Expr = ArrayLiteral
+	| AsExpr
+	| BoolLiteral
+	| CallCommandExpr
+	| CallExpr
+	| DecomposeExpr
+	| DefaultValue
+	| FloatLiteral
+	| IndexExpr
+	| InfixExpr
+	| IntLiteral
+	| MapLiteral
+	| NamespaceItem
+	| ParenExpr
+	| Pipeline
+	| PrefixExpr
+	| StringLiteral
+	| Var
 
 pub fn (expr Expr) children() []Node {
 	return match expr {

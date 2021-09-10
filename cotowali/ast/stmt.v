@@ -35,9 +35,21 @@ pub fn (attr Attr) kind() AttrKind {
 	return ast.attr_name_kind_table[attr.name] or { AttrKind.unknown }
 }
 
-pub type Stmt = AssertStmt | AssignStmt | Block | DocComment | EmptyStmt | Expr | FnDecl |
-	ForInStmt | IfStmt | InlineShell | NamespaceDecl | RequireStmt | ReturnStmt | WhileStmt |
-	YieldStmt
+pub type Stmt = AssertStmt
+	| AssignStmt
+	| Block
+	| DocComment
+	| EmptyStmt
+	| Expr
+	| FnDecl
+	| ForInStmt
+	| IfStmt
+	| InlineShell
+	| NamespaceDecl
+	| RequireStmt
+	| ReturnStmt
+	| WhileStmt
+	| YieldStmt
 
 pub fn (stmt Stmt) children() []Node {
 	return match stmt {

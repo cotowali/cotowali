@@ -16,8 +16,16 @@ pub struct PrimitiveTypeInfo {}
 
 pub struct PlaceholderTypeInfo {}
 
-pub type TypeInfo = AliasTypeInfo | ArrayTypeInfo | FunctionTypeInfo | MapTypeInfo | PlaceholderTypeInfo |
-	PrimitiveTypeInfo | ReferenceTypeInfo | StructTypeInfo | TupleTypeInfo | UnknownTypeInfo
+pub type TypeInfo = AliasTypeInfo
+	| ArrayTypeInfo
+	| FunctionTypeInfo
+	| MapTypeInfo
+	| PlaceholderTypeInfo
+	| PrimitiveTypeInfo
+	| ReferenceTypeInfo
+	| StructTypeInfo
+	| TupleTypeInfo
+	| UnknownTypeInfo
 
 pub struct TypeSymbol {
 mut:
