@@ -79,6 +79,7 @@ pub fn (mut s Scope) register_method(f RegisterFnArgs) ?&Var {
 		...f.Var
 		id: if f.Var.id == 0 { auto_id() } else { f.Var.id }
 		typ: typ
+		receiver_typ: f.FunctionTypeInfo.receiver
 		scope: s
 	}
 	if v.name in s.methods[typ] {

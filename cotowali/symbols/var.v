@@ -16,7 +16,12 @@ pub:
 	id   u64
 	pos  Pos = none_pos()
 pub mut:
-	typ Type = builtin_type(.placeholder)
+	typ          Type = builtin_type(.placeholder)
+	receiver_typ Type = builtin_type(.placeholder)
+}
+
+pub fn (v Var) is_member() bool {
+	return v.receiver_typ != builtin_type(.placeholder)
 }
 
 pub fn (v Var) is_function() bool {
@@ -36,12 +41,20 @@ fn (v Var) scope_str() string {
 }
 
 pub fn (v Var) full_name() string {
-	return Symbol(v).full_name()
+	name := Symbol(v).full_name()
+	return if v.is_member() { v.receiver_type_symbol().full_name() + '__$name' } else { name }
 }
 
 pub fn (v Var) type_symbol() &TypeSymbol {
 	if scope := v.scope() {
 		return scope.lookup_type(v.typ) or { unresolved_type_symbol }
+	}
+	return unresolved_type_symbol
+}
+
+pub fn (v Var) receiver_type_symbol() &TypeSymbol {
+	if scope := v.scope() {
+		return scope.lookup_type(v.receiver_typ) or { unresolved_type_symbol }
 	}
 	return unresolved_type_symbol
 }
