@@ -239,11 +239,11 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) infix_expr_for_number(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.typ() !in [builtin_type(.int), builtin_type(.float)] {
+	if expr.left.resolved_typ() !in [builtin_type(.int), builtin_type(.float)] {
 		panic(unreachable('invalid operand'))
 	}
 
-	if expr.left.typ() == builtin_type(.float) || expr.right.typ() == builtin_type(.float) {
+	if builtin_type(.float) in [expr.left.resolved_typ(), expr.right.resolved_typ()] {
 		e.infix_expr_for_float(expr, opt)
 	} else {
 		e.infix_expr_for_int(expr, opt)
@@ -251,7 +251,7 @@ fn (mut e Emitter) infix_expr_for_number(expr ast.InfixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.typ() !in [builtin_type(.float), builtin_type(.int)] {
+	if expr.left.resolved_typ() !in [builtin_type(.float), builtin_type(.int)] {
 		panic(unreachable('invalid operand'))
 	}
 	e.write_echo_if_command(opt)

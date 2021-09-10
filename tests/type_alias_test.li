@@ -12,6 +12,22 @@ assert(i_am('bob') == 'I am bob')
 
 // --
 
+fn test_infix_for_alias_type() {
+  type Num = float
+  var (a, b, c): (Num, Num, Num) = (1.5, 2.5, 4.0)
+  assert(typeof(a + b) == 'Num')
+  assert(a + b == c)
+  assert(2 + 2 == c)
+  assert(a + b == 4)
+
+  type Name = string
+  var s1: Name = 'ab'
+  assert(s1 + s1 == 'abab')
+}
+test_infix_for_alias_type()
+
+// --
+
 type vec2 = (int, int)
 type vec = vec2
 
