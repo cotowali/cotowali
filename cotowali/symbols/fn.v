@@ -82,10 +82,10 @@ pub fn (mut s Scope) register_method(f RegisterFnArgs) ?&Var {
 		receiver_typ: f.FunctionTypeInfo.receiver
 		scope: s
 	}
-	if v.name in s.methods[typ] {
+	if v.name in s.methods[v.receiver_typ] {
 		return error('duplicated method $v.name')
 	}
-	s.methods[typ][v.name] = s
+	s.methods[v.receiver_typ][v.name] = v
 	return v
 }
 

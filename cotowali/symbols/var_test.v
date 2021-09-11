@@ -117,6 +117,8 @@ fn test_method() ? {
 	assert method1.id != 0
 	if found := s.lookup_method(t1, method1.name) {
 		assert found.id == method1.id
+	} else {
+		assert false
 	}
 
 	// same name, different receiver
@@ -126,6 +128,8 @@ fn test_method() ? {
 	assert method1.id != method2.id
 	if found := s.lookup_method(t2, method2.name) {
 		assert found.id != method2.id
+	} else {
+		assert false
 	}
 
 	assert (method2.type_symbol().fn_signature() ?) == 'fn (Type2) int | (int) void'
