@@ -90,5 +90,10 @@ pub fn (mut s Scope) register_method(f RegisterFnArgs) ?&Var {
 }
 
 pub fn (s &Scope) lookup_method(typ Type, name string) ?&Var {
-	return (s.methods[typ] or { return none })[name] or { return none }
+	return (s.methods[typ] or { return none })[name] or {
+		if p := s.parent() {
+			return p.lookup_method(typ, name)
+		}
+		return none
+	}
 }
