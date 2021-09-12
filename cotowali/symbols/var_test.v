@@ -127,7 +127,7 @@ fn test_method() ? {
 	assert method2.id != 0
 	assert method1.id != method2.id
 	if found := s.lookup_method(t2, method2.name) {
-		assert found.id != method2.id
+		assert found.id == method2.id
 	} else {
 		assert false
 	}
