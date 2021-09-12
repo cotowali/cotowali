@@ -79,7 +79,7 @@ fn test_discard_value() {
   _ = 100
   (_, _) = ('a', 'b')
 
-  var tmp = '/tmp/cotowali_tmp.txt'
+  var tmp = '/tmp/cotowali_discrad_value_tmp.txt'
   var msg = 'hello'
   fn mktemp() string {
     msg |> tmp
