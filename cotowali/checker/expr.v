@@ -40,6 +40,7 @@ fn (mut c Checker) expr(expr Expr) {
 		ast.ParenExpr { c.paren_expr(expr) }
 		ast.Pipeline { c.pipeline(expr) }
 		ast.PrefixExpr { c.prefix_expr(expr) }
+		ast.SelectorExpr { c.selector_expr(expr) }
 		ast.StringLiteral { c.string_literal(expr) }
 		ast.Var { c.var_(expr) }
 	}
@@ -331,6 +332,18 @@ fn (mut c Checker) prefix_expr(expr ast.PrefixExpr) {
 	}
 
 	c.expr(expr.expr)
+}
+
+fn (mut c Checker) selector_expr(expr ast.SelectorExpr) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
+	c.expr(expr.left)
+	c.expr(expr.ident)
 }
 
 fn (mut c Checker) string_literal(s ast.StringLiteral) {

@@ -71,6 +71,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.MapLiteral { e.map_literal(expr, opt) }
 		ast.NamespaceItem { e.namespace_item(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
+		ast.SelectorExpr { e.selector_expr(expr, opt) }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
 		ast.StringLiteral { e.string_literal(expr, opt) }
 		ast.Var { e.var_(expr, opt) }
@@ -458,4 +459,9 @@ fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
 	} else {
 		e.sh_command_substitution(f, expr)
 	}
+}
+
+fn (mut e Emitter) selector_expr(expr ast.SelectorExpr, opt ExprOpt) {
+	// selector expr is used for only method call now.
+	// method call is handled by call_expr. Nothing to do
 }

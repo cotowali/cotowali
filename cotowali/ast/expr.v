@@ -35,6 +35,7 @@ pub type Expr = ArrayLiteral
 	| ParenExpr
 	| Pipeline
 	| PrefixExpr
+	| SelectorExpr
 	| StringLiteral
 	| Var
 
@@ -44,7 +45,7 @@ pub fn (expr Expr) children() []Node {
 			[]Node{}
 		}
 		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DecomposeExpr, IndexExpr, InfixExpr,
-		MapLiteral, NamespaceItem, ParenExpr, Pipeline, PrefixExpr {
+		MapLiteral, NamespaceItem, ParenExpr, Pipeline, PrefixExpr, SelectorExpr {
 			expr.children()
 		}
 		StringLiteral {
@@ -82,6 +83,7 @@ fn (mut r Resolver) expr(expr Expr, opt ResolveExprOpt) {
 		ParenExpr { r.paren_expr(expr, opt) }
 		Pipeline { r.pipeline(expr, opt) }
 		PrefixExpr { r.prefix_expr(mut expr, opt) }
+		SelectorExpr { r.selector_expr(expr, opt) }
 		StringLiteral { r.string_literal(expr, opt) }
 		Var { r.var_(mut expr, opt) }
 	}
@@ -103,7 +105,7 @@ pub fn (expr Expr) pos() Pos {
 		Var {
 			expr.pos()
 		}
-		NamespaceItem {
+		NamespaceItem, SelectorExpr {
 			expr.pos()
 		}
 		Pipeline {
@@ -209,6 +211,7 @@ pub fn (e Expr) typ() Type {
 		ParenExpr { e.typ() }
 		Pipeline { e.exprs.last().typ() }
 		PrefixExpr { e.typ() }
+		SelectorExpr { e.typ() }
 		InfixExpr { e.typ() }
 		IndexExpr { e.typ() }
 		MapLiteral { e.scope.lookup_or_register_map_type(key: e.key_typ, value: e.value_typ).typ }
@@ -236,6 +239,9 @@ pub fn (e Expr) scope() &Scope {
 			e.scope()
 		}
 		NamespaceItem {
+			e.scope()
+		}
+		SelectorExpr {
 			e.scope()
 		}
 		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, FloatLiteral,
@@ -490,12 +496,46 @@ fn (mut r Resolver) prefix_expr(mut expr PrefixExpr, opt ResolveExprOpt) {
 	}
 }
 
+// TODO: merge Var to Ident
 pub struct Ident {
 pub mut:
 	scope &Scope
 pub:
 	pos  Pos
 	text string
+}
+
+pub struct SelectorExpr {
+pub mut:
+	left  Expr
+	ident Var
+}
+
+pub fn (expr &SelectorExpr) typ() Type {
+	return expr.ident.typ()
+}
+
+pub fn (expr &SelectorExpr) scope() &Scope {
+	return expr.ident.scope()
+}
+
+pub fn (expr &SelectorExpr) pos() Pos {
+	return expr.left.pos().merge(expr.ident.pos())
+}
+
+pub fn (expr &SelectorExpr) children() []Node {
+	return [Node(expr.left), Node(Expr(expr.ident))]
+}
+
+fn (mut r Resolver) selector_expr(expr SelectorExpr, opt ResolveExprOpt) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+
+	r.expr(expr.left)
 }
 
 pub struct Var {
