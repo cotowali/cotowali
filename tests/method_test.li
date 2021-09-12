@@ -1,9 +1,15 @@
 type Num = int
 
+fn (n: Num) multiply(x: Num) Num {
+  return n * x
+}
+
 fn (n: Num) twice() Num {
   return n * 2
 }
 
-var n: Num = 2
-// TODO:
-// assert(n.twice() == 4)
+var two: Num = 2
+assert(two.twice() == 4)
+assert(two.twice().twice() == 8)
+assert(two.multiply(3) == 6)
+assert(two.multiply(two.multiply(3)) == 12)
