@@ -49,3 +49,21 @@ error: tuple.err.li 30,8: cannot decompose non-tuple type `int`
 error: tuple.err.li 30,14: cannot decompose non-tuple type `int`
    30 |   v = (...0, ...0)
       |              ^^^^
+error: tuple.err.li 36,17: index -1 out of bounds for `(int, string)` (2 elements tuple)
+   36 |   _ = (0, "10")[-1]
+      |                 ^^
+error: tuple.err.li 37,17: index 2 out of bounds for `(int, string)` (2 elements tuple)
+   37 |   _ = (0, "10")[2]
+      |                 ^
+error: tuple.err.li 38,17: index of tuple must be int literal.
+   38 |   _ = (0, "10")[n]
+      |                 ^
+error: tuple.err.li 43,15: index -1 out of bounds for `IntStr` (2 elements tuple)
+   43 |   _ = int_str[-1]
+      |               ^^
+error: tuple.err.li 44,15: index 2 out of bounds for `IntStr` (2 elements tuple)
+   44 |   _ = int_str[2]
+      |               ^
+error: tuple.err.li 45,15: index of tuple must be int literal.
+   45 |   _ = int_str[n]
+      |               ^

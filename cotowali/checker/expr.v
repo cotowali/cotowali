@@ -162,9 +162,30 @@ fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 	}
 
 	c.expr(expr.left)
-	left_ts := expr.left.type_symbol()
 
-	want_typ := if _ := left_ts.array_info() {
+	left_ts := expr.left.type_symbol()
+	left_ts_resolved := left_ts.resolved()
+	index_pos := expr.index.pos()
+
+	if tuple_info := left_ts_resolved.tuple_info() {
+		i, is_literal := match expr.index {
+			ast.IntLiteral { expr.index.int(), true }
+			ast.PrefixExpr { expr.index.int(), expr.index.is_literal() }
+			else { int(0), false }
+		}
+		if is_literal {
+			n := tuple_info.elements.len
+			if !(0 <= i && i < n) {
+				c.error('index $i out of bounds for `$left_ts.name` ($n elements tuple)',
+					index_pos)
+			}
+		} else {
+			c.error('index of tuple must be int literal.', index_pos)
+		}
+		return
+	}
+
+	want_typ := if left_ts_resolved.kind() in [.array, .tuple] {
 		builtin_type(.int)
 	} else if info := left_ts.map_info() {
 		info.key
