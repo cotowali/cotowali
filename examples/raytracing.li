@@ -318,6 +318,9 @@ fn sphere_intersect(sphere: Sphere, ray: Ray) RayHit {
 
   var b = vec3_dot(center_o, dir)
   var d4 = b * b - vec3_dot(center_o, center_o) + radius * radius
+  if (d4 < 0) {
+    return ray_hit_null()
+  }
   var sqrt_d4 = sqrt(d4)
 
   var (t1, t2) = (b - sqrt_d4, b + sqrt_d4)
