@@ -370,6 +370,39 @@ test_sphere()
 
 // --------------------
 
+type Object = (...Sphere, ...Material)
+
+fn object(sp: Sphere, mat: Material) Object {
+  return (...sp, ...mat)
+}
+
+fn object_sphere(obj: Object) Sphere {
+  return sphere(vec3(obj[0], obj[1], obj[2]), obj[3])
+}
+
+fn object_material(obj: Object) Material {
+  return material(color(obj[4], obj[5], obj[6]), color(obj[7], obj[8], obj[9]))
+}
+
+fn object_intersect(obj: Object, ray: Ray) RayHit {
+  return sphere_intersect(object_sphere(obj), ray)
+}
+
+fn test_object() {
+  var sp = sphere(vec3(0, -1, 1), 2)
+  var mat = material(color(0, 0.5, 1), color(0.1, 0.2, 0.3))
+  var obj = object(sp, mat)
+  assert(object_sphere(obj) == sp)
+  assert(object_material(obj) == mat)
+
+  var hit = object_intersect(obj, ray(vec3(-10, -1, 1), vec3(1, 0, 0)))
+  assert(hit == ray_hit(vec3(-2.0, -1.0, 1.0), vec3(-1.0, 0.0, 0.0), 8.0))
+  assert(ray_hit_is_null(object_intersect(obj, ray(vec3(-10, 0, 0), vec3(0, 1, 0)))))
+}
+test_object()
+
+// --------------------
+
 // pos, dir, up, screen_dist, screen_width screen_height
 type Camera = (...Vec3, ...Vec3, ...Vec3, float, float, float)
 
