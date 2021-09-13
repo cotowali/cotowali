@@ -16,8 +16,16 @@ pub struct PrimitiveTypeInfo {}
 
 pub struct PlaceholderTypeInfo {}
 
-pub type TypeInfo = AliasTypeInfo | ArrayTypeInfo | FunctionTypeInfo | MapTypeInfo | PlaceholderTypeInfo |
-	PrimitiveTypeInfo | ReferenceTypeInfo | StructTypeInfo | TupleTypeInfo | UnknownTypeInfo
+pub type TypeInfo = AliasTypeInfo
+	| ArrayTypeInfo
+	| FunctionTypeInfo
+	| MapTypeInfo
+	| PlaceholderTypeInfo
+	| PrimitiveTypeInfo
+	| ReferenceTypeInfo
+	| StructTypeInfo
+	| TupleTypeInfo
+	| UnknownTypeInfo
 
 pub struct TypeSymbol {
 mut:
@@ -32,6 +40,10 @@ pub:
 
 pub fn (v TypeSymbol) scope() ?&Scope {
 	return Symbol(v).scope()
+}
+
+fn (v TypeSymbol) must_scope() &Scope {
+	return v.scope() or { panic(unreachable('socpe not set')) }
 }
 
 fn (v TypeSymbol) scope_str() string {

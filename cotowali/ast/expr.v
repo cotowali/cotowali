@@ -8,8 +8,6 @@ module ast
 import cotowali.source { Pos }
 import cotowali.token { Token }
 import cotowali.symbols {
-	ArrayTypeInfo,
-	MapTypeInfo,
 	Scope,
 	TupleElement,
 	Type,
@@ -17,10 +15,27 @@ import cotowali.symbols {
 	builtin_type,
 }
 import cotowali.errors { unreachable }
+import cotowali.util { nil_to_none }
 
-pub type Expr = ArrayLiteral | AsExpr | BoolLiteral | CallCommandExpr | CallExpr | DecomposeExpr |
-	DefaultValue | FloatLiteral | IndexExpr | InfixExpr | IntLiteral | MapLiteral | NamespaceItem |
-	ParenExpr | Pipeline | PrefixExpr | StringLiteral | Var
+pub type Expr = ArrayLiteral
+	| AsExpr
+	| BoolLiteral
+	| CallCommandExpr
+	| CallExpr
+	| DecomposeExpr
+	| DefaultValue
+	| FloatLiteral
+	| IndexExpr
+	| InfixExpr
+	| IntLiteral
+	| MapLiteral
+	| NamespaceItem
+	| ParenExpr
+	| Pipeline
+	| PrefixExpr
+	| SelectorExpr
+	| StringLiteral
+	| Var
 
 pub fn (expr Expr) children() []Node {
 	return match expr {
@@ -28,7 +43,7 @@ pub fn (expr Expr) children() []Node {
 			[]Node{}
 		}
 		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DecomposeExpr, IndexExpr, InfixExpr,
-		MapLiteral, NamespaceItem, ParenExpr, Pipeline, PrefixExpr {
+		MapLiteral, NamespaceItem, ParenExpr, Pipeline, PrefixExpr, SelectorExpr {
 			expr.children()
 		}
 		StringLiteral {
@@ -66,6 +81,7 @@ fn (mut r Resolver) expr(expr Expr, opt ResolveExprOpt) {
 		ParenExpr { r.paren_expr(expr, opt) }
 		Pipeline { r.pipeline(expr, opt) }
 		PrefixExpr { r.prefix_expr(mut expr, opt) }
+		SelectorExpr { r.selector_expr(expr, opt) }
 		StringLiteral { r.string_literal(expr, opt) }
 		Var { r.var_(mut expr, opt) }
 	}
@@ -87,7 +103,7 @@ pub fn (expr Expr) pos() Pos {
 		Var {
 			expr.pos()
 		}
-		NamespaceItem {
+		NamespaceItem, SelectorExpr {
 			expr.pos()
 		}
 		Pipeline {
@@ -112,28 +128,37 @@ pub fn (mut e InfixExpr) typ() Type {
 		return builtin_type(.float)
 	}
 
-	left_ts := e.left.type_symbol().resolved()
-	right_ts := e.right.type_symbol().resolved()
+	left_ts_resolved := e.left.type_symbol().resolved()
+	right_ts_resolved := e.right.type_symbol().resolved()
 
-	if left_ts.kind() == .tuple && right_ts.kind() == .tuple && e.op.kind == .plus {
-		left_elements := (left_ts.tuple_info() or { panic(unreachable('')) }).elements
-		right_elements := (right_ts.tuple_info() or { panic(unreachable('')) }).elements
+	if left_ts_resolved.kind() == .tuple && right_ts_resolved.kind() == .tuple && e.op.kind == .plus {
+		left_elements := (left_ts_resolved.tuple_info() or { panic(unreachable('')) }).elements
+		right_elements := (right_ts_resolved.tuple_info() or { panic(unreachable('')) }).elements
 		mut elements := []TupleElement{cap: left_elements.len + right_elements.len}
 		elements << left_elements
 		elements << right_elements
 		return e.scope.lookup_or_register_tuple_type(elements: elements).typ
 	}
 
-	return right_ts.typ
+	return e.right.typ()
 }
 
 pub fn (e IndexExpr) typ() Type {
-	left_info := e.left.type_symbol().resolved().info
-	return match left_info {
-		ArrayTypeInfo { left_info.elem }
-		MapTypeInfo { left_info.value }
-		else { builtin_type(.unknown) }
+	left_ts := e.left.type_symbol().resolved()
+
+	if array_info := left_ts.array_info() {
+		return array_info.elem
+	} else if map_info := left_ts.map_info() {
+		return map_info.value
+	} else if tuple_info := left_ts.tuple_info() {
+		if e.index is IntLiteral {
+			i := e.index.int()
+			if 0 <= i && i < tuple_info.elements.len {
+				return tuple_info.elements[i].typ
+			}
+		}
 	}
+	return builtin_type(.unknown)
 }
 
 pub fn (mut e ParenExpr) typ() Type {
@@ -193,6 +218,7 @@ pub fn (e Expr) typ() Type {
 		ParenExpr { e.typ() }
 		Pipeline { e.exprs.last().typ() }
 		PrefixExpr { e.typ() }
+		SelectorExpr { e.typ() }
 		InfixExpr { e.typ() }
 		IndexExpr { e.typ() }
 		MapLiteral { e.scope.lookup_or_register_map_type(key: e.key_typ, value: e.value_typ).typ }
@@ -220,6 +246,9 @@ pub fn (e Expr) scope() &Scope {
 			e.scope()
 		}
 		NamespaceItem {
+			e.scope()
+		}
+		SelectorExpr {
 			e.scope()
 		}
 		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, FloatLiteral,
@@ -460,6 +489,23 @@ pub fn (expr &PrefixExpr) children() []Node {
 	return [Node(expr.expr)]
 }
 
+pub fn (expr &PrefixExpr) is_literal() bool {
+	return match expr.expr {
+		PrefixExpr { expr.expr.is_literal() }
+		IntLiteral, FloatLiteral { true }
+		else { false }
+	}
+}
+
+pub fn (expr &PrefixExpr) int() int {
+	n := match expr.expr {
+		PrefixExpr { expr.expr.int() }
+		IntLiteral { expr.expr.int() }
+		else { 0 }
+	}
+	return if expr.op.kind == .minus { -n } else { n }
+}
+
 fn (mut r Resolver) prefix_expr(mut expr PrefixExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
@@ -474,12 +520,46 @@ fn (mut r Resolver) prefix_expr(mut expr PrefixExpr, opt ResolveExprOpt) {
 	}
 }
 
+// TODO: merge Var to Ident
 pub struct Ident {
 pub mut:
 	scope &Scope
 pub:
 	pos  Pos
 	text string
+}
+
+pub struct SelectorExpr {
+pub mut:
+	left  Expr
+	ident Var
+}
+
+pub fn (expr &SelectorExpr) typ() Type {
+	return expr.ident.typ()
+}
+
+pub fn (expr &SelectorExpr) scope() &Scope {
+	return expr.ident.scope()
+}
+
+pub fn (expr &SelectorExpr) pos() Pos {
+	return expr.left.pos().merge(expr.ident.pos())
+}
+
+pub fn (expr &SelectorExpr) children() []Node {
+	return [Node(expr.left), Node(Expr(expr.ident))]
+}
+
+fn (mut r Resolver) selector_expr(expr SelectorExpr, opt ResolveExprOpt) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+
+	r.expr(expr.left)
 }
 
 pub struct Var {
@@ -502,7 +582,7 @@ pub fn (v Var) typ() Type {
 }
 
 pub fn (v Var) sym() ?&symbols.Var {
-	return if isnil(v.sym) { none } else { v.sym }
+	return nil_to_none(v.sym)
 }
 
 pub fn (v Var) name() string {

@@ -35,9 +35,21 @@ pub fn (attr Attr) kind() AttrKind {
 	return ast.attr_name_kind_table[attr.name] or { AttrKind.unknown }
 }
 
-pub type Stmt = AssertStmt | AssignStmt | Block | DocComment | EmptyStmt | Expr | FnDecl |
-	ForInStmt | IfStmt | InlineShell | NamespaceDecl | RequireStmt | ReturnStmt | WhileStmt |
-	YieldStmt
+pub type Stmt = AssertStmt
+	| AssignStmt
+	| Block
+	| DocComment
+	| EmptyStmt
+	| Expr
+	| FnDecl
+	| ForInStmt
+	| IfStmt
+	| InlineShell
+	| NamespaceDecl
+	| RequireStmt
+	| ReturnStmt
+	| WhileStmt
+	| YieldStmt
 
 pub fn (stmt Stmt) children() []Node {
 	return match stmt {
@@ -136,9 +148,18 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 				} else {
 					[]Type{}
 				}
+				if stmt.left.exprs.len != expr_types.len {
+					r.error('expected $expr_types.len variables, but found $stmt.left.exprs.len variables',
+						Expr(stmt.left).pos())
+				}
 				for i, left in stmt.left.exprs {
 					if mut left is Var {
-						name, pos, typ := left.ident.text, left.ident.pos, expr_types[i]
+						name, pos := left.ident.text, left.ident.pos
+						typ := if i < expr_types.len {
+							expr_types[i]
+						} else {
+							builtin_type(.placeholder)
+						}
 						if name == '_' {
 							left.sym = &symbols.Var{
 								name: '_'

@@ -51,6 +51,9 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 				ast.NamespaceItem {
 					e.ident_for(v.item)
 				}
+				ast.SelectorExpr {
+					e.ident_for(v.ident)
+				}
 				else {
 					panic_and_value(unreachable('cannot take ident'), '')
 				}

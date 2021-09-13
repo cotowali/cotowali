@@ -14,6 +14,7 @@ pub:
 	parent_scope &Scope
 	sym          &symbols.Var
 	has_body     bool
+	is_method    bool
 pub mut:
 	attrs  []Attr
 	params []Var
@@ -147,6 +148,17 @@ pub mut:
 	args    []Expr
 }
 
+pub fn (e CallExpr) is_method() bool {
+	return if _ := e.receiver() { true } else { false }
+}
+
+pub fn (e CallExpr) receiver() ?Expr {
+	if e.func is SelectorExpr {
+		return e.func.left
+	}
+	return none
+}
+
 pub fn (e CallExpr) is_varargs() bool {
 	syms := e.function_info().params.map(e.scope.must_lookup_type(it))
 	if syms.len > 0 {
@@ -190,17 +202,31 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr, mut func Expr) {
 			r.namespace_item(mut func)
 			r.call_expr_func(mut e, mut &func.item)
 		}
+		SelectorExpr {
+			r.selector_expr(func)
+			r.call_expr_func_var(mut e, mut &func.ident)
+		}
 		else {
 			r.error('cannot call `$e.func.type_symbol().name`', e.pos)
 		}
 	}
 }
 
+fn (e CallExpr) lookup_sym(name string, scope &Scope) ?&symbols.Var {
+	if receiver := e.receiver() {
+		return scope.lookup_method(receiver.typ(), name) or {
+			return error('function `${receiver.type_symbol().name}.$name` is not defined')
+		}
+	} else {
+		return scope.lookup_var(name) or { return error('function `$name` is not defined') }
+	}
+}
+
 // TODO: Refactor
 fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 	name := func.name()
-	sym := func.scope().lookup_var(name) or {
-		r.error('function `$name` is not defined', e.pos)
+	sym := e.lookup_sym(name, func.scope()) or {
+		r.error(err.msg, e.pos)
 		return
 	}
 
@@ -212,7 +238,7 @@ fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 		return
 	}
 
-	function_info := e.function_info()
+	function_info := ts.function_info() or { panic(unreachable(err)) }
 	e.typ = function_info.ret
 	e.func_id = sym.id
 	if owner := e.scope.owner() {

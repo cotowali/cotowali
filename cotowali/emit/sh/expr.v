@@ -71,6 +71,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.MapLiteral { e.map_literal(expr, opt) }
 		ast.NamespaceItem { e.namespace_item(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
+		ast.SelectorExpr { e.selector_expr(expr, opt) }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
 		ast.StringLiteral { e.string_literal(expr, opt) }
 		ast.Var { e.var_(expr, opt) }
@@ -170,7 +171,21 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	e.sh_command_substitution(fn (mut e Emitter, v ExprWithOpt<ast.IndexExpr>) {
-		e.write(match v.expr.left.type_symbol().resolved().kind() {
+		left_ts := v.expr.left.type_symbol().resolved()
+
+		if tuple_info := left_ts.tuple_info() {
+			tmp := e.new_tmp_ident()
+			mut tmps := []string{cap: tuple_info.elements.len}
+			for i in 0 .. tuple_info.elements.len {
+				tmps << '${tmp}__$i'
+			}
+			e.destructuring_assign(tmps, v.expr.left)
+			e.write('echo \$${tmp}__')
+			e.expr(v.expr.index, writeln: true)
+			return
+		}
+
+		e.write(match left_ts.kind() {
 			.array { 'array_get ' }
 			.map { 'map_get ' }
 			else { panic_and_value(unreachable('invalid index left'), '') }
@@ -239,11 +254,11 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) infix_expr_for_number(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.typ() !in [builtin_type(.int), builtin_type(.float)] {
+	if expr.left.resolved_typ() !in [builtin_type(.int), builtin_type(.float)] {
 		panic(unreachable('invalid operand'))
 	}
 
-	if expr.left.typ() == builtin_type(.float) || expr.right.typ() == builtin_type(.float) {
+	if builtin_type(.float) in [expr.left.resolved_typ(), expr.right.resolved_typ()] {
 		e.infix_expr_for_float(expr, opt)
 	} else {
 		e.infix_expr_for_int(expr, opt)
@@ -251,7 +266,7 @@ fn (mut e Emitter) infix_expr_for_number(expr ast.InfixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.typ() !in [builtin_type(.float), builtin_type(.int)] {
+	if expr.left.resolved_typ() !in [builtin_type(.float), builtin_type(.int)] {
 		panic(unreachable('invalid operand'))
 	}
 	e.write_echo_if_command(opt)
@@ -458,4 +473,9 @@ fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
 	} else {
 		e.sh_command_substitution(f, expr)
 	}
+}
+
+fn (mut e Emitter) selector_expr(expr ast.SelectorExpr, opt ExprOpt) {
+	// selector expr is used for only method call now.
+	// method call is handled by call_expr. Nothing to do
 }

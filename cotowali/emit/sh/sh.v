@@ -55,6 +55,14 @@ fn (mut e Emitter) sh_command_substitution<T>(f fn (mut Emitter, T), v T) {
 	e.write(' )')
 }
 
+fn (mut e Emitter) sh_define_function<T>(name string, f fn (mut Emitter, T), v T) {
+	e.writeln('${name}() {')
+	e.indent()
+	f(mut e, v)
+	e.unindent()
+	e.writeln('}')
+}
+
 fn (mut e Emitter) sh_awk_quote_line() {
 	e.write(' | awk \'{printf "\'\\\'\'%s\'\\\'\'", \$0}\'')
 }

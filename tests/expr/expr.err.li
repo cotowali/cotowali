@@ -18,6 +18,7 @@ var arr = [0]
 arr['10']
 arr[0][0]
 x[0]
+foo[0]
 
 fn int |> g() {
   read(&n)

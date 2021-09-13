@@ -98,3 +98,39 @@ fn test_lookup_or_register_var() ? {
 	assert registered.id == found.id
 	assert s.vars.keys().len == v_n + 1
 }
+
+fn test_method() ? {
+	mut s := new_global_scope()
+	int_ := builtin_type(.int)
+
+	t1 := (s.register_type(name: 'Type1') ?).typ
+	t2 := (s.register_type(name: 'Type2') ?).typ
+
+	if _ := s.lookup_method(t1, 'f') {
+		assert false
+	}
+
+	method1 := s.register_method(name: 'f', receiver: t1, params: [int_], ret: int_) ?
+	if _ := s.register_method(name: method1.name, receiver: t1, params: [int_], ret: int_) {
+		assert false
+	}
+	assert method1.id != 0
+	if found := s.lookup_method(t1, method1.name) {
+		assert found.id == method1.id
+	} else {
+		assert false
+	}
+
+	// same name, different receiver
+	method2 := s.register_method(name: 'f', receiver: t2, pipe_in: int_, params: [int_]) ?
+	assert method1.name == method2.name
+	assert method2.id != 0
+	assert method1.id != method2.id
+	if found := s.lookup_method(t2, method2.name) {
+		assert found.id == method2.id
+	} else {
+		assert false
+	}
+
+	assert (method2.type_symbol().fn_signature() ?) == 'fn (Type2) int | (int) void'
+}

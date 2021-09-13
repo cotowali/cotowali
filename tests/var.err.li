@@ -13,3 +13,7 @@ fn f() {
   n = '10'
   (i, n) = ('a', 'b')
 }
+
+fn mismatched_variables_count() {
+  var (a, b, c): (int, int)
+}

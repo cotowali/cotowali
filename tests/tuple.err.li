@@ -29,3 +29,19 @@ fn non_tuple_decompose() {
   v = (...n, ...n)
   v = (...0, ...0)
 }
+
+fn tuple_index() {
+  var n = 10
+
+  _ = (0, "10")[-1]
+  _ = (0, "10")[2]
+  _ = (0, "10")[n]
+  var _: int = (0, "10")[1]
+
+  type IntStr = (int, string)
+  var int_str: IntStr = (0, "10")
+  _ = int_str[-1]
+  _ = int_str[2]
+  _ = int_str[n]
+  var _: int = int_str[1]
+}

@@ -8,7 +8,7 @@ module parser
 import cotowali.ast
 import cotowali.source { Pos }
 import cotowali.token { Token }
-import cotowali.symbols { Type, builtin_type }
+import cotowali.symbols { Scope, Type, Var, builtin_type }
 import cotowali.errors { unreachable }
 import cotowali.util { struct_name }
 
@@ -21,10 +21,33 @@ mut:
 
 struct FnSignatureParsingInfo {
 mut:
-	name    Token
-	pipe_in Type = builtin_type(.void)
-	params  []FnParamParsingInfo
-	ret_typ Type = builtin_type(.void)
+	is_method bool
+	name      Token
+	pipe_in   Type = builtin_type(.void)
+	params    []FnParamParsingInfo
+	ret_typ   Type = builtin_type(.void)
+}
+
+fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
+	if info.is_method {
+		// dummy comment. Workaround of breaking code by v fmt
+		return scope.register_method(
+			name: info.name.text
+			pos: info.name.pos
+			receiver: info.params[0].typ
+			params: info.params[1..].map(it.typ)
+			pipe_in: info.pipe_in
+			ret: info.ret_typ
+		)
+	} else {
+		return scope.register_fn(
+			name: info.name.text
+			pos: info.name.pos
+			params: info.params.map(it.typ)
+			pipe_in: info.pipe_in
+			ret: info.ret_typ
+		)
+	}
 }
 
 fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
@@ -62,6 +85,24 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	p.consume_with_assert(.key_fn)
 	mut info := FnSignatureParsingInfo{}
+
+	if p.kind(0) == .l_paren && p.kind(1) == .ident && p.kind(2) == .colon {
+		// fn ( x : Type ) (int, int) |> f()
+		//    | | ^kind(2) == colon
+		//    | ^ kind(1) == .ident
+		//    ^ kind(0) == .l_paren
+		info.is_method = true
+		p.consume_with_assert(.l_paren)
+		rec_name_tok := p.consume_with_assert(.ident)
+		p.consume_with_assert(.colon)
+		rec_typ := (p.parse_type() ?).typ
+		info.params << FnParamParsingInfo{
+			name: rec_name_tok.text
+			pos: rec_name_tok.pos
+			typ: rec_typ
+		}
+		p.consume_with_check(.r_paren) ?
+	}
 
 	if !(p.kind(0) == .ident && p.kind(1) == .l_paren) {
 		//    v kind(0) == .ident
@@ -114,13 +155,9 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	info := p.parse_fn_signature_info() ?
 	mut outer_scope := p.scope
 
-	sym := outer_scope.register_fn(
-		name: info.name.text
-		pos: info.name.pos
-		params: info.params.map(it.typ)
-		pipe_in: info.pipe_in
-		ret: info.ret_typ
-	) or { return p.duplicated_error(info.name.text, info.name.pos) }
+	sym := info.register_sym(mut outer_scope) or {
+		return p.duplicated_error(info.name.text, info.name.pos)
+	}
 
 	p.open_scope(info.name.text)
 	defer {
@@ -148,6 +185,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		sym: sym
 		params: params
 		has_body: has_body
+		is_method: info.is_method
 	}
 	if has_body {
 		node.body = p.parse_block_without_new_scope() ?

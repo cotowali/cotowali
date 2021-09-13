@@ -111,3 +111,13 @@ fn test_decompose() {
   assert((...tup, ...tup) == (1, 2, 1, 2))
 }
 test_decompose()
+
+fn test_tuple_index() {
+  assert((0, 1)[0] == 0)
+  assert((0, "10")[1] == "10")
+
+  type IntStr = (int, string)
+  var int_str: IntStr = (1, "s")
+  assert(int_str[0] == 1 && int_str[1] == "s")
+}
+test_tuple_index()

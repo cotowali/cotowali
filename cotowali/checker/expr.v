@@ -40,6 +40,7 @@ fn (mut c Checker) expr(expr Expr) {
 		ast.ParenExpr { c.paren_expr(expr) }
 		ast.Pipeline { c.pipeline(expr) }
 		ast.PrefixExpr { c.prefix_expr(expr) }
+		ast.SelectorExpr { c.selector_expr(expr) }
 		ast.StringLiteral { c.string_literal(expr) }
 		ast.Var { c.var_(expr) }
 	}
@@ -155,10 +156,36 @@ fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 		}
 	}
 
-	c.expr(expr.left)
-	left_ts := expr.left.type_symbol()
+	if builtin_type(.placeholder) in [expr.left.typ(), expr.index.typ()] {
+		// skip check if unresolved. error is repoted another place
+		return
+	}
 
-	want_typ := if _ := left_ts.array_info() {
+	c.expr(expr.left)
+
+	left_ts := expr.left.type_symbol()
+	left_ts_resolved := left_ts.resolved()
+	index_pos := expr.index.pos()
+
+	if tuple_info := left_ts_resolved.tuple_info() {
+		i, is_literal := match expr.index {
+			ast.IntLiteral { expr.index.int(), true }
+			ast.PrefixExpr { expr.index.int(), expr.index.is_literal() }
+			else { int(0), false }
+		}
+		if is_literal {
+			n := tuple_info.elements.len
+			if !(0 <= i && i < n) {
+				c.error('index $i out of bounds for `$left_ts.name` ($n elements tuple)',
+					index_pos)
+			}
+		} else {
+			c.error('index of tuple must be int literal.', index_pos)
+		}
+		return
+	}
+
+	want_typ := if left_ts_resolved.kind() in [.array, .tuple] {
 		builtin_type(.int)
 	} else if info := left_ts.map_info() {
 		info.key
@@ -331,6 +358,18 @@ fn (mut c Checker) prefix_expr(expr ast.PrefixExpr) {
 	}
 
 	c.expr(expr.expr)
+}
+
+fn (mut c Checker) selector_expr(expr ast.SelectorExpr) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
+	c.expr(expr.left)
+	c.expr(expr.ident)
 }
 
 fn (mut c Checker) string_literal(s ast.StringLiteral) {

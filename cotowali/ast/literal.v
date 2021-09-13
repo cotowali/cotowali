@@ -99,6 +99,10 @@ pub fn (e BoolLiteral) bool() bool {
 	return e.token.text != 'false'
 }
 
+pub fn (e IntLiteral) int() int {
+	return e.token.text.int()
+}
+
 fn (mut r Resolver) bool_literal(expr BoolLiteral, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)

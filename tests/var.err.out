@@ -22,3 +22,6 @@ error: var.err.li 13,3: cannot assign to variables outside of current function
 error: var.err.li 14,3: cannot assign to variables outside of current function
    14 |   (i, n) = ('a', 'b')
       |   ^^^^^^^^^^^^^^^^^^^
+error: var.err.li 18,7: expected 2 variables, but found 3 variables
+   18 |   var (a, b, c): (int, int)
+      |       ^^^^^^^^^

@@ -14,9 +14,10 @@ pub struct RegisterFnArgs {
 
 pub struct FunctionTypeInfo {
 pub:
-	pipe_in Type = builtin_type(.void)
-	params  []Type
-	ret     Type = builtin_type(.void)
+	receiver Type = builtin_type(.placeholder)
+	pipe_in  Type = builtin_type(.void)
+	params   []Type
+	ret      Type = builtin_type(.void)
 }
 
 pub fn (ts TypeSymbol) function_info() ?FunctionTypeInfo {
@@ -24,11 +25,20 @@ pub fn (ts TypeSymbol) function_info() ?FunctionTypeInfo {
 	return if resolved.info is FunctionTypeInfo { resolved.info } else { none }
 }
 
-fn (f FunctionTypeInfo) signature(s &Scope) string {
+pub fn (f &FunctionTypeInfo) is_method() bool {
+	return f.receiver != builtin_type(.placeholder)
+}
+
+fn (f &FunctionTypeInfo) signature(s &Scope) string {
 	params_str := f.params.map(s.must_lookup_type(it).name).join(', ')
 	in_str := s.must_lookup_type(f.pipe_in).name
 	ret_str := s.must_lookup_type(f.ret).name
-	return 'fn $in_str | ($params_str) $ret_str'
+
+	return (if f.is_method() {
+		'fn (${s.must_lookup_type(f.receiver).name})'
+	} else {
+		'fn'
+	}) + ' $in_str | ($params_str) $ret_str'
 }
 
 pub fn (t TypeSymbol) fn_signature() ?string {
@@ -56,4 +66,34 @@ pub fn (mut s Scope) register_fn(f RegisterFnArgs) ?&Var {
 
 fn (mut s Scope) must_register_fn(f RegisterFnArgs) &Var {
 	return s.register_fn(f) or { panic(unreachable(err)) }
+}
+
+// -- methods --
+
+pub fn (mut s Scope) register_method(f RegisterFnArgs) ?&Var {
+	if !f.is_method() {
+		panic(unreachable('not a method'))
+	}
+	typ := s.lookup_or_register_fn_type(f.FunctionTypeInfo).typ
+	v := &Var{
+		...f.Var
+		id: if f.Var.id == 0 { auto_id() } else { f.Var.id }
+		typ: typ
+		receiver_typ: f.FunctionTypeInfo.receiver
+		scope: s
+	}
+	if v.name in s.methods[v.receiver_typ] {
+		return error('duplicated method $v.name')
+	}
+	s.methods[v.receiver_typ][v.name] = v
+	return v
+}
+
+pub fn (s &Scope) lookup_method(typ Type, name string) ?&Var {
+	return (s.methods[typ] or { return none })[name] or {
+		if p := s.parent() {
+			return p.lookup_method(typ, name)
+		}
+		return none
+	}
 }

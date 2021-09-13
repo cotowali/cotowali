@@ -395,6 +395,26 @@ fn (mut p Parser) parse_index_expr_with_left(left ast.Expr) ?ast.Expr {
 	}
 }
 
+fn (mut p Parser) parse_selector_expr_with_left(left ast.Expr) ?ast.Expr {
+	$if trace_parser ? {
+		p.trace_begin(@FN, '${struct_name(left)}{...}')
+		defer {
+			p.trace_end()
+		}
+	}
+
+	p.consume_with_assert(.dot)
+	ident := p.parse_ident() ?
+	if ident is ast.Var {
+		return ast.SelectorExpr{
+			left: left
+			ident: ident
+		}
+	} else {
+		return p.syntax_error('invalid selector', ident.pos())
+	}
+}
+
 fn (mut p Parser) parse_value_left() ?ast.Expr {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
@@ -476,6 +496,7 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 		match p.kind(0) {
 			.l_paren { expr = p.parse_call_expr_with_left(expr) ? }
 			.l_bracket { expr = p.parse_index_expr_with_left(expr) ? }
+			.dot { expr = p.parse_selector_expr_with_left(expr) ? }
 			else { break }
 		}
 	}
