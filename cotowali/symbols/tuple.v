@@ -9,7 +9,8 @@ import cotowali.errors { unreachable }
 
 pub struct TupleElement {
 pub:
-	typ Type [required]
+	typ  Type   [required]
+	name string
 }
 
 pub struct TupleTypeInfo {
@@ -23,7 +24,11 @@ pub fn (ts TypeSymbol) tuple_info() ?TupleTypeInfo {
 }
 
 fn (info TupleTypeInfo) typename(s &Scope) string {
-	return '(${info.elements.map(s.must_lookup_type(it.typ).name).join(', ')})'
+	elem_to_str := fn (e TupleElement, s &Scope) string {
+		typename := s.must_lookup_type(e.typ).name
+		return if e.name.len == 0 { typename } else { '$e.name: $typename' }
+	}
+	return '(${info.elements.map(elem_to_str(it, s)).join(', ')})'
 }
 
 pub fn (mut s Scope) lookup_or_register_tuple_type(info TupleTypeInfo) &TypeSymbol {
