@@ -171,7 +171,21 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	e.sh_command_substitution(fn (mut e Emitter, v ExprWithOpt<ast.IndexExpr>) {
-		e.write(match v.expr.left.type_symbol().resolved().kind() {
+		left_ts := v.expr.left.type_symbol().resolved()
+
+		if tuple_info := left_ts.tuple_info() {
+			tmp := e.new_tmp_ident()
+			mut tmps := []string{cap: tuple_info.elements.len}
+			for i in 0 .. tuple_info.elements.len {
+				tmps << '${tmp}__$i'
+			}
+			e.destructuring_assign(tmps, v.expr.left)
+			e.write('echo \$tmp__')
+			e.expr(v.expr.index, writeln: true)
+			return
+		}
+
+		e.write(match left_ts.kind() {
 			.array { 'array_get ' }
 			.map { 'map_get ' }
 			else { panic_and_value(unreachable('invalid index left'), '') }

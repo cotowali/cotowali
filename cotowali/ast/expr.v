@@ -8,8 +8,6 @@ module ast
 import cotowali.source { Pos }
 import cotowali.token { Token }
 import cotowali.symbols {
-	ArrayTypeInfo,
-	MapTypeInfo,
 	Scope,
 	TupleElement,
 	Type,
@@ -146,12 +144,21 @@ pub fn (mut e InfixExpr) typ() Type {
 }
 
 pub fn (e IndexExpr) typ() Type {
-	left_info := e.left.type_symbol().resolved().info
-	return match left_info {
-		ArrayTypeInfo { left_info.elem }
-		MapTypeInfo { left_info.value }
-		else { builtin_type(.unknown) }
+	left_ts := e.left.type_symbol().resolved()
+
+	if array_info := left_ts.array_info() {
+		return array_info.elem
+	} else if map_info := left_ts.map_info() {
+		return map_info.value
+	} else if tuple_info := left_ts.tuple_info() {
+		if e.index is IntLiteral {
+			i := e.index.int()
+			if 0 <= i && i < tuple_info.elements.len {
+				return tuple_info.elements[i].typ
+			}
+		}
 	}
+	return builtin_type(.unknown)
 }
 
 pub fn (mut e ParenExpr) typ() Type {
