@@ -482,6 +482,14 @@ pub fn (expr &PrefixExpr) children() []Node {
 	return [Node(expr.expr)]
 }
 
+pub fn (expr &PrefixExpr) is_literal() bool {
+	return match expr.expr {
+		PrefixExpr { expr.expr.is_literal() }
+		IntLiteral, FloatLiteral { true }
+		else { false }
+	}
+}
+
 fn (mut r Resolver) prefix_expr(mut expr PrefixExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
