@@ -242,6 +242,55 @@ fn test_ray_hit() {
 
 // --------------------
 
+type Color = Vec3
+
+fn color(r: float, g: float, b: float) Color {
+  return vec3(r, g, b)
+}
+
+fn color_r(color: Color) float {
+  return vec3_x(color)
+}
+
+fn color_g(color: Color) float {
+  return vec3_y(color)
+}
+
+fn color_b(color: Color) float {
+  return vec3_y(color)
+}
+
+fn test_color() {
+  var c = color(1.0, 0.5, 0)
+  assert(color_r(c) == 1.0 && color_g(c) == 0.5 && color_b(c) == 0)
+}
+
+// --------------------
+
+type Material = (...Color, ...Color) // color, emission
+
+fn material(color: Color, emission: Color) Material {
+  return (...color, ...emission)
+}
+
+fn material_color(mat: Material) Color {
+  var (color_r, color_g, color_b, emission_r, emission_g, emission_b) = mat
+  return color(color_r, color_b, color_g)
+}
+
+fn material_emission(mat: Material) Color {
+  var (color_r, color_g, color_b, emission_r, emission_g, emission_b) = mat
+  return color(emission_r, emission_g, emission_b)
+}
+
+fn test_material() {
+  var mat = material(color(1.0, 0.5, 0), color(1, 1, 1))
+  assert(material_color(mat) == color(1.0, 0.5, 0))
+  assert(material_emission(mat) == color(1, 1, 1))
+}
+
+// --------------------
+
 type Sphere = (...Vec3, float)
 
 fn sphere(center: Vec3, radius: float) Sphere {
@@ -315,55 +364,6 @@ fn test_sphere() {
   assert(sphere_radius(sp) == 3)
 }
 test_sphere()
-
-// --------------------
-
-type Color = Vec3
-
-fn color(r: float, g: float, b: float) Color {
-  return vec3(r, g, b)
-}
-
-fn color_r(color: Color) float {
-  return vec3_x(color)
-}
-
-fn color_g(color: Color) float {
-  return vec3_y(color)
-}
-
-fn color_b(color: Color) float {
-  return vec3_y(color)
-}
-
-fn test_color() {
-  var c = color(1.0, 0.5, 0)
-  assert(color_r(c) == 1.0 && color_g(c) == 0.5 && color_b(c) == 0)
-}
-
-// --------------------
-
-type Material = (...Color, ...Color) // color, emission
-
-fn material(color: Color, emission: Color) Material {
-  return (...color, ...emission)
-}
-
-fn material_color(mat: Material) Color {
-  var (color_r, color_g, color_b, emission_r, emission_g, emission_b) = mat
-  return color(color_r, color_b, color_g)
-}
-
-fn material_emission(mat: Material) Color {
-  var (color_r, color_g, color_b, emission_r, emission_g, emission_b) = mat
-  return color(emission_r, emission_g, emission_b)
-}
-
-fn test_material() {
-  var mat = material(color(1.0, 0.5, 0), color(1, 1, 1))
-  assert(material_color(mat) == color(1.0, 0.5, 0))
-  assert(material_emission(mat) == color(1, 1, 1))
-}
 
 // --------------------
 
