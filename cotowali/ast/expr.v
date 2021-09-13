@@ -490,6 +490,15 @@ pub fn (expr &PrefixExpr) is_literal() bool {
 	}
 }
 
+pub fn (expr &PrefixExpr) int() int {
+	n := match expr.expr {
+		PrefixExpr { expr.expr.int() }
+		IntLiteral { expr.expr.int() }
+		else { 0 }
+	}
+	return if expr.op.kind == .minus { -n } else { n }
+}
+
 fn (mut r Resolver) prefix_expr(mut expr PrefixExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
