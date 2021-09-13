@@ -156,6 +156,11 @@ fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 		}
 	}
 
+	if builtin_type(.placeholder) in [expr.left.typ(), expr.index.typ()] {
+		// skip check if unresolved. error is repoted another place
+		return
+	}
+
 	c.expr(expr.left)
 	left_ts := expr.left.type_symbol()
 
