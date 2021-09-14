@@ -49,4 +49,15 @@ array_assign() {
   done
 }
 
+array_copy() {
+  dest_name="$1"
+  src_name="$2"
+  len="$(eval "echo \$${src_name}_len" )"
+  eval "${dest_name}_len=$len"
+  for i in $(seq 0 $(( len - 1 )) )
+  do
+    array_set "$dest_name" $i "$(array_get "$src_name" $i)"
+  done
+}
+
 # end: builtin/array.sh
