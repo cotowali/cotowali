@@ -6,7 +6,7 @@
 module sh
 
 import cotowali.ast { Stmt }
-import cotowali.symbols { builtin_type }
+import cotowali.symbols { TypeSymbol, builtin_type }
 
 fn (mut e Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {
@@ -78,6 +78,7 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 	e.writeln('fi')
 }
 
+[params]
 struct BlockOpt {
 	allow_blank bool
 }
@@ -128,7 +129,7 @@ fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
 	e.writeln('do')
 	e.indent()
 	{
-		e.assign(e.ident_for(stmt.var_), '\$(eval echo \$$tmp)')
+		e.assign(e.ident_for(stmt.var_), '\$(eval echo \$$tmp)', TypeSymbol{})
 		e.block(stmt.body)
 	}
 	e.unindent()

@@ -59,6 +59,7 @@ fn (mut r Resolver) exprs(exprs []Expr, opt ResolveExprOpt) {
 	}
 }
 
+[params]
 struct ResolveExprOpt {
 	is_left_of_assignment bool
 }
@@ -164,7 +165,7 @@ pub fn (e IndexExpr) typ() Type {
 pub fn (mut e ParenExpr) typ() Type {
 	match e.exprs.len {
 		0 {
-			return e.scope.lookup_or_register_tuple_type().typ
+			return e.scope.lookup_or_register_tuple_type(elements: []).typ
 		}
 		1 {
 			return e.exprs[0].typ()

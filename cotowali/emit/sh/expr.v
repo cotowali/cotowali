@@ -20,6 +20,7 @@ enum ExprEmitMode {
 	inside_arithmetic
 }
 
+[params]
 struct ExprOpt {
 mut:
 	mode           ExprEmitMode = .normal
