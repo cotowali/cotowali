@@ -13,7 +13,7 @@ import cotowali.util { panic_and_value }
 fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 	// v bug: `match value` occurs c error at `e.ident_for`
 	if value is string {
-		e.writeln('array_assign "$name" \$(eval echo \$(array_elements "$value") )')
+		e.writeln('array_copy "$name" "$value"')
 	} else {
 		expr := value as ast.Expr
 		ident := e.ident_for(expr)

@@ -98,7 +98,9 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 				'\$1'
 			}
 			e.assign(e.ident_for(param), value, ast.Expr(param).type_symbol())
-			e.writeln('shift')
+			if i < node.params.len - 1 {
+				e.writeln('shift')
+			}
 		}
 		e.block(node.body)
 	}, node)
