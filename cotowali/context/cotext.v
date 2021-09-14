@@ -29,7 +29,7 @@ pub fn new_context(config Config) &Context {
 }
 
 pub fn new_default_context() &Context {
-	return new_context()
+	return new_context(Config{})
 }
 
 [inline]
