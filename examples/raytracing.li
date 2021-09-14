@@ -191,6 +191,9 @@ type RayHit = (...Vec3, ...Vec3, float) // (point, normal, distance); if not hit
 
 fn ray_hit(point: Vec3, normal: Vec3, distance: float) RayHit {
   var (p_x, p_y, p_z) = point
+  if eps_eq(vec3_length_squared(normal), 0) || eps_eq(distance, 0) {
+    return ray_hit_null()
+  }
   var (n_x, n_y, n_z) = vec3_normalize(normal)
   return (
     p_x, p_y, p_z,
