@@ -39,7 +39,13 @@ fn (mut e Emitter) double_quote_string_literal_value(expr StringLiteral) {
 	{
 		for v in expr.contents {
 			if v is Token {
-				e.write(v.text)
+				if v.kind == .string_literal_content_escaped_newline {
+					e.write('"')
+					e.write("'\n'")
+					e.write('"')
+				} else {
+					e.write(v.text)
+				}
 			} else if v is Expr {
 				e.expr(v, quote: false)
 			}

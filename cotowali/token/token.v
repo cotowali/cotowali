@@ -49,6 +49,7 @@ pub enum TokenKind {
 	string_literal_content_expr_open
 	string_literal_content_expr_close
 	string_literal_content_escaped_back_slash
+	string_literal_content_escaped_newline
 	string_literal_content_escaped_single_quote
 	string_literal_content_escaped_double_quote
 	string_literal_content_escaped_dollar
