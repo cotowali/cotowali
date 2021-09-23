@@ -110,8 +110,7 @@ fn test_lexer() {
 	ktest(@FN, @LINE, 'var i = 0', [.key_var, .ident, .assign, .int_literal, .eof])
 	ktest(@FN, @LINE, '&a.b |> c', [.amp, .ident, .dot, .ident, .pipe, .ident, .eof])
 	ktest(@FN, @LINE, 'a && b || c &', [.ident, .logical_and, .ident, .logical_or, .ident, .amp,
-		.eof,
-	])
+		.eof])
 	ktest(@FN, @LINE, 'return 0', [.key_return, .int_literal])
 	ktest(@FN, @LINE, 'assert a == b', [.key_assert, .ident, .eq, .ident])
 	ktest(@FN, @LINE, 'a < b || c > d', [.ident, .lt, .ident, .logical_or, .ident, .gt, .ident])
@@ -130,8 +129,7 @@ fn test_lexer() {
 	ktest(@FN, @LINE, '.....', [.dotdotdot, .dot, .dot])
 	ktest(@FN, @LINE, ':::::', [.coloncolon, .coloncolon, .colon])
 	ktest(@FN, @LINE, 'require "file.li"', [.key_require, .double_quote, .string_literal_content_text,
-		.double_quote,
-	])
+		.double_quote])
 	ktest(@FN, @LINE, 'yield 0', [.key_yield, .int_literal])
 	ktest(@FN, @LINE, 'while true { }', [.key_while, .bool_literal, .l_brace, .r_brace])
 	ktest(@FN, @LINE, 'use PATH', [.key_use, .ident])
