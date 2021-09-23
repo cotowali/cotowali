@@ -20,6 +20,7 @@ pub fn (mut flags BuilderFlags) reset() {
 	flags = BuilderFlags(0)
 }
 
+[params]
 pub struct LanguageConfig {
 	comment_start string = '#'
 }
