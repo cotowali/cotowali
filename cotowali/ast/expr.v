@@ -447,7 +447,8 @@ fn (mut r Resolver) paren_expr(expr ParenExpr, opt ResolveExprOpt) {
 // expr |> expr |> expr
 pub struct Pipeline {
 pub:
-	scope &Scope
+	scope     &Scope
+	is_append bool // expr |>> "file"
 pub mut:
 	exprs []Expr
 }

@@ -458,7 +458,7 @@ fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
 	f := fn (mut e Emitter, pipeline ast.Pipeline) {
 		for i, expr in pipeline.exprs {
 			if i > 0 && i == pipeline.exprs.len - 1 && pipeline.has_redirect() {
-				e.write(' > ')
+				e.write(if pipeline.is_append { ' >> ' } else { ' > ' })
 				e.expr(expr)
 				return
 			}
