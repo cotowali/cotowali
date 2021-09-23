@@ -443,6 +443,7 @@ fn (mut r Resolver) paren_expr(expr ParenExpr, opt ResolveExprOpt) {
 	r.exprs(expr.exprs, opt)
 }
 
+// TODO: merge into InfixExpr
 // expr |> expr |> expr
 pub struct Pipeline {
 pub:
