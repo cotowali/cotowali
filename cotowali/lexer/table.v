@@ -53,6 +53,7 @@ const (
 	table_for_three_chars_symbols = {
 		'...': tk(.dotdotdot)
 		'**=': tk(.pow_assign)
+		'|>>': tk(.pipe_append)
 	}
 
 	table_for_keywords = {
