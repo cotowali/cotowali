@@ -235,12 +235,42 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 		// []Type{}
 		elem_ts := p.parse_type() ?
 		p.consume_with_check(.l_brace) ?
+
+		mut len := ast.Expr(ast.DefaultValue{
+			scope: p.scope
+			typ: builtin_type(.int)
+		})
+		mut init := ast.Expr(ast.DefaultValue{
+			scope: p.scope
+			typ: elem_ts.typ
+		})
+		for p.kind(0) == .ident {
+			field := p.consume_with_assert(.ident)
+			p.consume_with_check(.colon) ?
+			field_expr := p.parse_expr(.toplevel) ?
+			match field.text {
+				'len' {
+					len = field_expr
+				}
+				'init' {
+					init = field_expr
+				}
+				else {}
+			}
+			if _ := p.consume_if_kind_eq(.comma) {
+			} else {
+				break
+			}
+		}
+
 		last_tok = p.consume_with_check(.r_brace) ?
 		return ast.ArrayLiteral{
 			scope: p.scope
 			pos: first_tok.pos.merge(last_tok.pos)
 			elem_typ: elem_ts.typ
-			elements: []
+			init: init
+			len: len
+			is_init_syntax: true
 		}
 	}
 	mut elements := []ast.Expr{}

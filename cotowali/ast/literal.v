@@ -11,7 +11,10 @@ import cotowali.symbols { Scope, Type, builtin_type }
 
 pub struct ArrayLiteral {
 pub:
-	pos Pos
+	pos            Pos
+	is_init_syntax bool // is `[]Type{init: v, len: n}` syntax
+	len            Expr
+	init           Expr
 pub mut:
 	elem_typ Type
 	scope    &Scope
@@ -31,7 +34,12 @@ fn (mut r Resolver) array_literal(mut expr ArrayLiteral, opt ResolveExprOpt) {
 		}
 	}
 
-	r.exprs(expr.elements, opt)
+	if expr.is_init_syntax {
+		r.expr(expr.init, opt)
+		r.expr(expr.len, opt)
+	} else {
+		r.exprs(expr.elements, opt)
+	}
 	if expr.elements.len > 0 && expr.elem_typ == builtin_type(.placeholder) {
 		expr.elem_typ = expr.elements[0].typ()
 	}

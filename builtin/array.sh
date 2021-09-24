@@ -49,6 +49,16 @@ array_assign() {
   done
 }
 
+array_init() {
+  name=$1
+  len=$2
+  value=$3
+  for i in $(seq 0 $(( len - 1 )) )
+  do
+    array_set "$name" "$i" "$value"
+  done
+}
+
 array_copy() {
   dest_name="$1"
   src_name="$2"
