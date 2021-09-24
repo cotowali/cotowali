@@ -158,6 +158,8 @@ pub fn (e IndexExpr) typ() Type {
 				return tuple_info.elements[i].typ
 			}
 		}
+	} else if left_ts.typ == builtin_type(.string) {
+		return builtin_type(.string)
 	}
 	return builtin_type(.unknown)
 }

@@ -28,3 +28,26 @@ a
 b
 '
 )
+
+fn test_string_index() {
+  fn twice(n: int) int {
+    return n * 2
+  }
+  fn int |> twice_input() |> int {
+    var n: int
+    read(&n)
+    return n * 2
+  }
+  var i = 0
+  assert('123'[0] == '1')
+  assert('123'[1] == '2')
+  assert("1\n2"[2] == '2')
+
+  var s = "12345678"
+  assert(s[0] == '1')
+  assert(s[4] == '5')
+  assert(s[twice(3)] == '7')
+  assert(s[twice(3) - 1] == '6')
+  assert(s[3 |> twice_input()] == '7')
+}
+test_string_index()

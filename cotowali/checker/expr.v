@@ -185,7 +185,8 @@ fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 		return
 	}
 
-	want_typ := if left_ts_resolved.kind() in [.array, .tuple] {
+	want_typ := if left_ts_resolved.kind() in [.array, .tuple]
+		|| left_ts_resolved.typ == builtin_type(.string) {
 		builtin_type(.int)
 	} else if info := left_ts.map_info() {
 		info.key

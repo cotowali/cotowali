@@ -169,6 +169,11 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 }
 
 fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
+	if expr.left.resolved_typ() == builtin_type(.string) {
+		e.index_expr_for_string(expr, opt)
+		return
+	}
+
 	e.write_echo_if_command(opt)
 
 	e.sh_command_substitution(fn (mut e Emitter, v ExprWithOpt<ast.IndexExpr>) {
@@ -196,6 +201,20 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 		e.write(' ')
 		e.expr(v.expr.index, v.opt)
 	}, expr_with_opt(expr, opt), opt)
+}
+
+fn (mut e Emitter) index_expr_for_string(expr ast.IndexExpr, opt ExprOpt) {
+	if opt.mode != .command {
+		e.sh_command_substitution_open(opt)
+		defer {
+			e.sh_command_substitution_close(opt)
+		}
+	}
+	e.expr(expr.left, mode: .command)
+	e.write(" | awk -v RS='' -v i=")
+	e.expr(expr.index)
+	e.write(' ')
+	e.write('\'{printf "%s", substr(\$0, i + 1, 1) }\'')
 }
 
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
