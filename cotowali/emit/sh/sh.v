@@ -49,8 +49,14 @@ fn (mut e Emitter) sh_test_command_for_expr<T>(f fn (mut Emitter, T), v T, opt E
 	}
 }
 
-fn (mut e Emitter) sh_command_substitution<T>(f fn (mut Emitter, T), v T) {
-	e.write('\$( ')
+fn (mut e Emitter) sh_command_substitution<T>(f fn (mut Emitter, T), v T, opt ExprOpt) {
+	if opt.quote && opt.mode != .inside_arithmetic {
+		e.write('"')
+		defer {
+			e.write('"')
+		}
+	}
+	e.write(r'$( ')
 	f(mut e, v)
 	e.write(' )')
 }

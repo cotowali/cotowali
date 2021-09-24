@@ -195,7 +195,7 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 		e.expr(v.expr.left)
 		e.write(' ')
 		e.expr(v.expr.index, v.opt)
-	}, expr_with_opt(expr, opt))
+	}, expr_with_opt(expr, opt), opt)
 }
 
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
@@ -472,7 +472,7 @@ fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
 	if opt.mode == .command {
 		f(mut e, expr)
 	} else {
-		e.sh_command_substitution(f, expr)
+		e.sh_command_substitution(f, expr, opt)
 	}
 }
 
