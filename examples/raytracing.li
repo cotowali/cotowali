@@ -35,6 +35,16 @@ fn clamp(v: float, min: float, max: float) float {
   }
 }
 
+fn fmax(values: ...float) float {
+  var res = values[0]
+  for v in values {
+    if v > res {
+      res = v
+    }
+  }
+  return res
+}
+
 fn rand() float {
   // NOTE: /dev/urandom exists in most environments. but it is not POSIX compliant.
   return (@od('-vAn', '-N4', '-tu4', '/dev/urandom') |> @awk('{printf "%lf", $1 / 4294967295}')) as float
@@ -54,6 +64,9 @@ fn test_math() {
     assert(0 <= rand() && rand() < 1)
     assert(rand() != rand())
   }
+
+  assert(fmax(-1.0, 1.0, 0) == 1.0)
+  assert(fmax(-2.0, -1.0, 0.0) == 0.0)
 }
 test_math()
 
