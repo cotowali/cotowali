@@ -308,10 +308,12 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 	p.consume_with_assert(.key_if)
 
 	cond := p.parse_expr(.toplevel) ?
-	mut branches := [ast.IfBranch{
-		cond: cond
-		body: p.parse_block('if_$p.count', []) ?
-	}]
+	mut branches := [
+		ast.IfBranch{
+			cond: cond
+			body: p.parse_block('if_$p.count', []) ?
+		},
+	]
 	mut has_else := false
 	mut elif_count := 0
 	for {

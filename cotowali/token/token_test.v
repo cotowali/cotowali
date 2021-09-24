@@ -16,10 +16,6 @@ fn test_eq() {
 	}
 	assert t != Token{
 		...t
-		pos: pos()
-	}
-	assert t != Token{
-		...t
 		kind: .eof
 	}
 	assert t != Token{

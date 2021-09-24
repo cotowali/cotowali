@@ -49,6 +49,7 @@ pub enum TokenKind {
 	string_literal_content_expr_open
 	string_literal_content_expr_close
 	string_literal_content_escaped_back_slash
+	string_literal_content_escaped_newline
 	string_literal_content_escaped_single_quote
 	string_literal_content_escaped_double_quote
 	string_literal_content_escaped_dollar
@@ -60,6 +61,7 @@ pub enum TokenKind {
 	l_bracket
 	r_bracket
 	pipe
+	pipe_append
 	plus
 	minus
 	div
@@ -151,7 +153,7 @@ fn (k TokenKind) is_postfix_op() bool {
 [inline]
 fn (k TokenKind) is_infix_op() bool {
 	return k.is_comparsion_op() || k.is_logical_infix_op()
-		|| k in [.pipe, .plus, .minus, .mul, .div, .mod, .pow]
+		|| k in [.pipe_append, .pipe, .plus, .minus, .mul, .div, .mod, .pow]
 }
 
 [inline]

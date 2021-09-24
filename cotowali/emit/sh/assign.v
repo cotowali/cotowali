@@ -19,10 +19,17 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 		ident := e.ident_for(expr)
 		match expr {
 			ast.ArrayLiteral {
-				e.write('array_assign "$name"')
-				for elem in expr.elements {
+				if expr.is_init_syntax {
+					e.write('array_init "$name" ')
+					e.expr(expr.len)
 					e.write(' ')
-					e.expr(elem)
+					e.expr(expr.init)
+				} else {
+					e.write('array_assign "$name"')
+					for elem in expr.elements {
+						e.write(' ')
+						e.expr(elem)
+					}
 				}
 				e.writeln('')
 			}

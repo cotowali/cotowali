@@ -93,3 +93,11 @@ fn array_of_tuple_test() {
   assert(n == 6)
 }
 array_of_tuple_test()
+
+fn test_array_init() {
+  assert([]int{len: 0} == []int{})
+  assert([]int{len: 2} == [0, 0])
+  assert([]int{len: 2, init: -1} == [-1, -1])
+  var (len, init) = (3, -2)
+  assert([]int{len: len, init: init} == [-2, -2, -2])
+}

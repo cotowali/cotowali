@@ -47,7 +47,22 @@ fn (mut c Checker) expr(expr Expr) {
 }
 
 fn (mut c Checker) array_literal(expr ast.ArrayLiteral) {
-	c.exprs(expr.elements)
+	if expr.is_init_syntax {
+		c.expr(expr.len)
+		c.check_types(
+			want: expr.scope.must_lookup_type(builtin_type(.int))
+			got: expr.len.type_symbol()
+			pos: expr.len.pos()
+		) or {}
+		c.expr(expr.init)
+		c.check_types(
+			want: expr.scope.must_lookup_type(expr.elem_typ)
+			got: expr.init.type_symbol()
+			pos: expr.init.pos()
+		) or {}
+	} else {
+		c.exprs(expr.elements)
+	}
 }
 
 fn (mut c Checker) as_expr(expr ast.AsExpr) {
@@ -185,7 +200,8 @@ fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 		return
 	}
 
-	want_typ := if left_ts_resolved.kind() in [.array, .tuple] {
+	want_typ := if left_ts_resolved.kind() in [.array, .tuple]
+		|| left_ts_resolved.typ == builtin_type(.string) {
 		builtin_type(.int)
 	} else if info := left_ts.map_info() {
 		info.key

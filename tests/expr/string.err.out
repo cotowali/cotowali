@@ -28,3 +28,9 @@ error: string.err.li 6,26: undefined variable `x`
 error: string.err.li 6,31: undefined variable `x`
     6 | echo("${ 1 + "${ a + 1 } $x"} $x")
       |                               ^^
+error: string.err.li 9,3: `string` does not support index assignment
+    9 |   "a"[0] = "a"
+      |   ^^^^^^
+error: string.err.li 11,3: `string` does not support index assignment
+   11 |   s[1] = "a"
+      |   ^^^^

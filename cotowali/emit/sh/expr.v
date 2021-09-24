@@ -169,6 +169,11 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 }
 
 fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
+	if expr.left.resolved_typ() == builtin_type(.string) {
+		e.index_expr_for_string(expr, opt)
+		return
+	}
+
 	e.write_echo_if_command(opt)
 
 	e.sh_command_substitution(fn (mut e Emitter, v ExprWithOpt<ast.IndexExpr>) {
@@ -195,7 +200,21 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 		e.expr(v.expr.left)
 		e.write(' ')
 		e.expr(v.expr.index, v.opt)
-	}, expr_with_opt(expr, opt))
+	}, expr_with_opt(expr, opt), opt)
+}
+
+fn (mut e Emitter) index_expr_for_string(expr ast.IndexExpr, opt ExprOpt) {
+	if opt.mode != .command {
+		e.sh_command_substitution_open(opt)
+		defer {
+			e.sh_command_substitution_close(opt)
+		}
+	}
+	e.expr(expr.left, mode: .command)
+	e.write(" | awk -v RS='' -v i=")
+	e.expr(expr.index)
+	e.write(' ')
+	e.write('\'{printf "%s", substr(\$0, i + 1, 1) }\'')
 }
 
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
@@ -458,7 +477,7 @@ fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
 	f := fn (mut e Emitter, pipeline ast.Pipeline) {
 		for i, expr in pipeline.exprs {
 			if i > 0 && i == pipeline.exprs.len - 1 && pipeline.has_redirect() {
-				e.write(' > ')
+				e.write(if pipeline.is_append { ' >> ' } else { ' > ' })
 				e.expr(expr)
 				return
 			}
@@ -472,7 +491,7 @@ fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
 	if opt.mode == .command {
 		f(mut e, expr)
 	} else {
-		e.sh_command_substitution(f, expr)
+		e.sh_command_substitution(f, expr, opt)
 	}
 }
 

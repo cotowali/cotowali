@@ -158,6 +158,8 @@ pub fn (e IndexExpr) typ() Type {
 				return tuple_info.elements[i].typ
 			}
 		}
+	} else if left_ts.typ == builtin_type(.string) {
+		return builtin_type(.string)
 	}
 	return builtin_type(.unknown)
 }
@@ -443,10 +445,12 @@ fn (mut r Resolver) paren_expr(expr ParenExpr, opt ResolveExprOpt) {
 	r.exprs(expr.exprs, opt)
 }
 
+// TODO: merge into InfixExpr
 // expr |> expr |> expr
 pub struct Pipeline {
 pub:
-	scope &Scope
+	scope     &Scope
+	is_append bool // expr |>> "file"
 pub mut:
 	exprs []Expr
 }

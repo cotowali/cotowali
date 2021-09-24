@@ -104,6 +104,15 @@ fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 					) or {}
 				}
 			}
+			ast.IndexExpr {
+				index_expr := stmt.left as ast.IndexExpr
+				index_left_ts := index_expr.left.type_symbol()
+
+				if index_left_ts.resolved().kind() !in [.map, .array] {
+					c.error('`$index_left_ts.name` does not support index assignment',
+						index_expr.pos)
+				}
+			}
 			else {
 				// Handled by resolver. Nothing to do
 			}

@@ -49,7 +49,7 @@ const expr_kind_to_op_table = (fn () map[ExprKind][]TokenKind {
 		return ops
 	}
 	return {
-		k(.pipeline):    v(.pipe)
+		k(.pipeline):    v(.pipe, .pipe_append)
 		k(.logical_or):  v(.logical_or)
 		k(.logical_and): v(.logical_and)
 		k(.comparsion):  v(.eq, .ne, .gt, .ge, .lt, .le)
@@ -174,7 +174,7 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 
 	inner := ExprKind.pipeline.inner()
 	expr := p.parse_expr(inner) ?
-	if p.kind(0) != .pipe {
+	if p.kind(0) !in [.pipe, .pipe_append] {
 		return expr
 	}
 	mut exprs := [expr]
@@ -182,9 +182,16 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 		p.consume_with_assert(.pipe)
 		exprs << p.parse_expr(inner) ?
 	}
+	is_append := if _ := p.consume_if_kind_eq(.pipe_append) {
+		exprs << p.parse_expr(inner) ?
+		true
+	} else {
+		false
+	}
 	return ast.Pipeline{
 		scope: p.scope
 		exprs: exprs
+		is_append: is_append
 	}
 }
 
@@ -228,12 +235,44 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 		// []Type{}
 		elem_ts := p.parse_type() ?
 		p.consume_with_check(.l_brace) ?
+
+		mut len := ast.Expr(ast.DefaultValue{
+			scope: p.scope
+			typ: builtin_type(.int)
+		})
+		mut init := ast.Expr(ast.DefaultValue{
+			scope: p.scope
+			typ: elem_ts.typ
+		})
+		for p.kind(0) == .ident {
+			field := p.consume_with_assert(.ident)
+			p.consume_with_check(.colon) ?
+			field_expr := p.parse_expr(.toplevel) ?
+			match field.text {
+				'len' {
+					len = field_expr
+				}
+				'init' {
+					init = field_expr
+				}
+				else {
+					p.error('wrond field `$field.text`, expecting `len` or `init`', field.pos.merge(field_expr.pos()))
+				}
+			}
+			if _ := p.consume_if_kind_eq(.comma) {
+			} else {
+				break
+			}
+		}
+
 		last_tok = p.consume_with_check(.r_brace) ?
 		return ast.ArrayLiteral{
 			scope: p.scope
 			pos: first_tok.pos.merge(last_tok.pos)
 			elem_typ: elem_ts.typ
-			elements: []
+			init: init
+			len: len
+			is_init_syntax: true
 		}
 	}
 	mut elements := []ast.Expr{}

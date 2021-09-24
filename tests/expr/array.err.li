@@ -1,0 +1,3 @@
+fn invalid_array_init() {
+  _ = []string{x: 0, y: '', init: 0, len: ''}
+}

@@ -1,0 +1,12 @@
+error: array.err.li 2,16: wrond field `x`, expecting `len` or `init`
+    2 |   _ = []string{x: 0, y: '', init: 0, len: ''}
+      |                ^^^^
+error: array.err.li 2,22: wrond field `y`, expecting `len` or `init`
+    2 |   _ = []string{x: 0, y: '', init: 0, len: ''}
+      |                      ^^^^^
+error: array.err.li 2,35: mismatched types: `string` (expected) and `int` (found)
+    2 |   _ = []string{x: 0, y: '', init: 0, len: ''}
+      |                                   ^
+error: array.err.li 2,43: mismatched types: `int` (expected) and `string` (found)
+    2 |   _ = []string{x: 0, y: '', init: 0, len: ''}
+      |                                           ^^

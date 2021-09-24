@@ -122,7 +122,14 @@ fn test_method() ? {
 	}
 
 	// same name, different receiver
-	method2 := s.register_method(name: 'f', receiver: t2, pipe_in: int_, params: [int_]) ?
+	method2 := s.register_method(
+		name: 'f'
+		receiver: t2
+		pipe_in: int_
+		params: [
+			int_,
+		]
+	) ?
 	assert method1.name == method2.name
 	assert method2.id != 0
 	assert method1.id != method2.id

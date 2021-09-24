@@ -1,6 +1,8 @@
 fn test_redirect_with_literal() {
   "hello" |> "tmp.txt"
   assert(cat("tmp.txt") == "hello")
+  "world" |>> "tmp.txt"
+  assert(cat("tmp.txt") == "hello\nworld")
   @rm("tmp.txt")
 }
 test_redirect_with_literal()
