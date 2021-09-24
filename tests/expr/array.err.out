@@ -1,0 +1,3 @@
+error: array.err.li 2,13: wrond field `x`, expecting `len` or `init`
+    2 |   _ = []int{x: 0}
+      |             ^^^^

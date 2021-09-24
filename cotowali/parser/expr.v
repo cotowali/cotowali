@@ -255,7 +255,9 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 				'init' {
 					init = field_expr
 				}
-				else {}
+				else {
+					p.error('wrond field `$field.text`, expecting `len` or `init`', field.pos.merge(field_expr.pos()))
+				}
 			}
 			if _ := p.consume_if_kind_eq(.comma) {
 			} else {

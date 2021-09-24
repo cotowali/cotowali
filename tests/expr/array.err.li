@@ -1,0 +1,3 @@
+fn invalid_array_init() {
+  _ = []int{x: 0}
+}
