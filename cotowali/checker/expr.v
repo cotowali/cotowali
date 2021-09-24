@@ -47,7 +47,22 @@ fn (mut c Checker) expr(expr Expr) {
 }
 
 fn (mut c Checker) array_literal(expr ast.ArrayLiteral) {
-	c.exprs(expr.elements)
+	if expr.is_init_syntax {
+		c.expr(expr.len)
+		c.check_types(
+			want: expr.scope.must_lookup_type(builtin_type(.int))
+			got: expr.len.type_symbol()
+			pos: expr.len.pos()
+		) or {}
+		c.expr(expr.init)
+		c.check_types(
+			want: expr.scope.must_lookup_type(expr.elem_typ)
+			got: expr.init.type_symbol()
+			pos: expr.init.pos()
+		) or {}
+	} else {
+		c.exprs(expr.elements)
+	}
 }
 
 fn (mut c Checker) as_expr(expr ast.AsExpr) {

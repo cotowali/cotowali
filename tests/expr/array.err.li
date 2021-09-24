@@ -1,3 +1,3 @@
 fn invalid_array_init() {
-  _ = []int{x: 0}
+  _ = []string{x: 0, y: '', init: 0, len: ''}
 }
