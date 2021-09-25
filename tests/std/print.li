@@ -1,0 +1,5 @@
+print('print()')
+println('println()')
+
+eprint('eprint()')
+eprintln('eprintln()')

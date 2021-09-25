@@ -4,6 +4,27 @@
 /// License, v. 2.0. If a copy of the MPL was not distributed with this
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+fn print(s: string) {
+  // eprint_s is output name of local variable, s
+  // TODO: integrated inline shell script
+  ${printf '%s' $print_s}
+}
+
+fn println(s: string) {
+  // see comment of print()
+  ${printf '%s\n' $println_s}
+}
+
+fn eprint(s: string) {
+  // see comment of print()
+  ${printf '%s' $eprint_s >&2}
+}
+
+fn eprintln(s: string) {
+  // see comment of print()
+  ${printf '%s\n' $eprintln_s >&2}
+}
+
 fn string |> cat(files: ...string) string
 
 fn seq(n: int) ...int
