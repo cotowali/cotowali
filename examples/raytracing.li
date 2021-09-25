@@ -8,6 +8,7 @@
 // --------------------
 
 var eps = 1e-4
+var pi = 3.1415926535
 
 fn eps_eq(a: float, b: float) bool {
   return abs(a - b) < eps
@@ -25,6 +26,14 @@ fn sqrt(v: float) float {
   return (v |> @awk('{printf "%lf", sqrt($1)}')) as float
 }
 
+fn sin(v: float) float {
+  return (v |> @awk('{printf "%lf", sin($1)}')) as float
+}
+
+fn cos(v: float) float {
+  return (v |> @awk('{printf "%lf", cos($1)}')) as float
+}
+
 fn clamp(v: float, min: float, max: float) float {
   if v < min {
     return min
@@ -33,6 +42,10 @@ fn clamp(v: float, min: float, max: float) float {
   } else {
     return v
   }
+}
+
+fn floor(v: float) int {
+  return (v |> @awk('{printf "%d", $1}')) as int
 }
 
 fn fmax(values: ...float) float {
@@ -104,7 +117,8 @@ fn vec3_length(v: Vec3) float {
 }
 
 fn vec3_normalize(v: Vec3) Vec3 {
-  return vec3_divide(v, vec3_length(v))
+  var vv = vec3_multiply(v, 1000)
+  return vec3_divide(vv, vec3_length(vv))
 }
 
 fn vec3_add(v1: Vec3, v2: Vec3) Vec3 {
@@ -550,20 +564,147 @@ fn test_objects_intersection() {
 test_objects_intersection()
 
 // --------------------
+var cornell_box_scene = [
+  // walls
+  object(sphere(vec3( 1e+5 + 1  , 40.8 , 81.6), 1e+5), material(color(0.75, 0.25, 0.25), color(0, 0, 0))),
+  object(sphere(vec3(-1e+5 + 99 , 40.8 , 81.6), 1e+5), material(color(0.25, 0.25, 0.75), color(0, 0, 0))),
+  object(sphere(vec3(50.0, 40.8 ,  1e+5      ), 1e+5), material(color(0.75, 0.75, 0.75), color(0, 0, 0))),
+  object(sphere(vec3(50.0, 40.8 , -1e+5 + 250), 1e+5), material(color(0.00, 0.00, 0.00), color(0, 0, 0))),
+  object(sphere(vec3(50.0,  1e+5,        81.6), 1e+5), material(color(0.75, 0.25, 0.75), color(0, 0, 0))),
+  object(sphere(vec3(50.0, -1e+5 + 81.6, 81.6), 1e+5), material(color(0.75, 0.75, 0.75), color(0, 0, 0))),
+
+  // obj
+  object(sphere(vec3(65.0, 20.0, 20.0), 20), material(color(0.25, 0.75, 0.25), color(36, 36, 36))),
+
+  // light
+  object(sphere(vec3(50.0, 90.0, 81.6), 15), material(color(1, 1, 1), color(36, 36, 36))),
+]
+// --------------------
+
+var DEPTH_LIMIT = 10
+var MIN_DEPTH = 2
 
 // TODO: escpape sequence
 var ln = "
 "
 
-fn render(width: int, height: int) string {
+fn calc_radiance(objects: []Object, input_ray: Ray, depth: int) Color {
+  var intersection = objects_intersect(objects, input_ray)
+  var hit = intersection_hit(intersection)
+  if ray_hit_is_null(hit) {
+    return color(0.0, 0.0, 0.0)
+  }
+  var obj = objects[intersection_object_index(intersection)]
+  var mat = object_material(obj)
+  var mat_color = material_color(mat)
+  var mat_emission = material_emission(mat)
+
+  var orienting_normal = ray_hit_normal(hit)
+  if vec3_dot(orienting_normal, ray_dir(input_ray)) > 0.0 {
+    orienting_normal = vec3_multiply(orienting_normal, -1.0)
+  }
+
+  var probability = fmax(color_r(mat_color), color_g(mat_color), color_b(mat_color))
+  if depth > DEPTH_LIMIT {
+    probability *= 0.5 ** (depth - DEPTH_LIMIT)
+  }
+  if depth <= MIN_DEPTH {
+    probability = 1.0
+  }
+
+  if rand() > probability {
+    return mat_emission
+  }
+
+  var incoming_radiance: Color
+  var weight = color(1.0, 1.0, 1.0)
+  var w = orienting_normal
+  var u: Vec3
+  if vec3_x(w) > eps {
+    u = vec3_normalize(vec3_cross(vec3(0.0, 1.0, 0.0), w))
+    /*
+    if vec3_length(vec3_cross(vec3(0.0, 1.0, 0.0), w)) < eps {
+      assert (false, "w:$w, cross: ${vec3_length(vec3_multiply(vec3_cross(vec3(0.0, 1.0, 0.0), w), 100))}")
+    }
+    */
+  } else {
+    u = vec3_normalize(vec3_cross(vec3(1.0, 0.0, 0.0), w))
+    /*
+    if vec3_length(vec3_cross(vec3(1.0, 0.0, 0.0), w)) < eps {
+      assert (false, "w:$w, cross: ${vec3_length(vec3_multiply(vec3_cross(vec3(1.0, 0.0, 0.0), w), 100))}")
+    }
+    */
+  }
+  var v = vec3_cross(w, u)
+
+  var r1 = 2 * pi * rand()
+  var r2 = rand()
+  var r2s = sqrt(r2)
+  var dir = vec3_normalize(
+    vec3_add(
+      vec3_add(
+        vec3_multiply(u, cos(r1) * r2s),
+        vec3_multiply(v, sin(r1) * r2s),
+      ),
+      vec3_multiply(w, sqrt(1.0 - r2)),
+    ),
+  )
+  incoming_radiance = calc_radiance(objects, ray(ray_hit_point(hit), dir), depth + 1)
+  weight = vec3_divide(mat_color, probability)
+  return vec3_add(
+    mat_emission,
+    color(
+      vec3_x(incoming_radiance) * vec3_x(weight),
+      vec3_y(incoming_radiance) * vec3_y(weight),
+      vec3_z(incoming_radiance) * vec3_z(weight),
+    ),
+  )
+}
+
+fn render(camera: Camera, objects: []Object, width: int, height: int, samples: int, supersamples: int) string {
+  var screen_width = camera_screen_width(camera)
+  var screen_height = camera_screen_height(camera)
+  var cam_dir = camera_dir(camera)
+  var screen_x = vec3_multiply(vec3_normalize(vec3_cross(cam_dir, camera_up(camera))), screen_width)
+  var screen_y = vec3_multiply(vec3_normalize(vec3_cross(screen_x, cam_dir)), screen_height)
+  var camera_p = camera_pos(camera)
+  var screen_center = vec3_add(camera_p, vec3_multiply(cam_dir, camera_screen_dist(camera)))
   var out =
     "P3$ln" +
     "$width $height$ln" +
     "255$ln"
-  for y in seq(height) {
-    for x in seq(width) {
-      out="${out}${x * 255 / width} ${y * 255 / height} 0 "
+  for y in range(0, height) {
+    for x in range(0, width) {
+      var pix_color: Color
+      for sy in range(0, supersamples) {
+        for sx in range(0, supersamples) {
+          var accumulated_radiance: Color
+          for s in range(0, samples) {
+            var rate = 1.0 / supersamples
+            var r1 = sx * rate + rate / 2.0
+            var r2 = sy * rate + rate / 2.0
+            var screen_position = vec3_add(
+              screen_center,
+              vec3_add(
+                vec3_multiply(screen_x, (r1 + x) / width - 0.5),
+                vec3_multiply(screen_y, (r2 + y) / height - 0.5),
+              ),
+            )
+            var dir = vec3_normalize(vec3_subtract(screen_position, camera_p))
+            var rad: Color
+            rad = calc_radiance(objects, ray(camera_p, dir), 0)
+            accumulated_radiance = vec3_add(accumulated_radiance, vec3_divide(rad, samples * supersamples * supersamples))
+          }
+          pix_color = vec3_add(pix_color, accumulated_radiance)
+        }
+      }
+      var out_r = (clamp(color_r(pix_color), 0.0, 1.0) * 255)
+      var out_g = (clamp(color_g(pix_color), 0.0, 1.0) * 255)
+      var out_b = (clamp(color_b(pix_color), 0.0, 1.0) * 255)
+      ${printf "." >&2}
+      out="${out}$out_r $out_g $out_b "
     }
+    ${echo "" >&2}
     out="$out$ln"
   }
   return out
@@ -572,7 +713,14 @@ fn render(width: int, height: int) string {
 fn main() {
   echo('Ray tracing example')
 
-  var (width, height) = (120, 90)
-  render(width, height) |> 'image.ppm'
+  var (width, height) = (20, 15)
+  var cam = camera(
+    vec3(50.0, 52.0, 220.0),
+    vec3(0.0, -0.04, -1.0),
+    vec3(0.0, 1.0, 0.0),
+    40, 40, 30
+  )
+
+  echo(render(cam, cornell_box_scene, width, height, 8, 1))// |> 'image.ppm'
 }
 main()
