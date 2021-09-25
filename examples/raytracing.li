@@ -574,15 +574,15 @@ var cornell_box_scene = [
   object(sphere(vec3(50.0, -1e+5 + 81.6, 81.6), 1e+5), material(color(0.75, 0.75, 0.75), color(0, 0, 0))),
 
   // obj
-  object(sphere(vec3(65.0, 20.0, 20.0), 20), material(color(0.25, 0.75, 0.25), color(36, 36, 36))),
+  object(sphere(vec3(65.0, 20.0, 20.0), 20), material(color(0.25, 0.75, 0.25), color(0, 0, 0))),
 
   // light
-  object(sphere(vec3(50.0, 90.0, 81.6), 15), material(color(1, 1, 1), color(36, 36, 36))),
+  object(sphere(vec3(50.0, 90.0, 81.6), 15), material(color(0, 0, 0), color(24, 24, 24))),
 ]
 // --------------------
 
-var DEPTH_LIMIT = 10
-var MIN_DEPTH = 2
+var DEPTH_LIMIT = 36
+var MIN_DEPTH = 6
 
 // TODO: escpape sequence
 var ln = "
@@ -698,13 +698,13 @@ fn render(camera: Camera, objects: []Object, width: int, height: int, samples: i
           pix_color = vec3_add(pix_color, accumulated_radiance)
         }
       }
-      var out_r = (clamp(color_r(pix_color), 0.0, 1.0) * 255)
-      var out_g = (clamp(color_g(pix_color), 0.0, 1.0) * 255)
-      var out_b = (clamp(color_b(pix_color), 0.0, 1.0) * 255)
-      ${printf "." >&2}
+      var out_r = floor(clamp(color_r(pix_color), 0.0, 1.0) * 255)
+      var out_g = floor(clamp(color_g(pix_color), 0.0, 1.0) * 255)
+      var out_b = floor(clamp(color_b(pix_color), 0.0, 1.0) * 255)
+      eprint(".")
       out="${out}$out_r $out_g $out_b "
     }
-    ${echo "" >&2}
+    eprintln('')
     out="$out$ln"
   }
   return out
@@ -721,6 +721,6 @@ fn main() {
     40, 40, 30
   )
 
-  echo(render(cam, cornell_box_scene, width, height, 8, 1))// |> 'image.ppm'
+  echo(render(cam, cornell_box_scene, width, height, 16, 1)) |> 'image.ppm'
 }
 main()
