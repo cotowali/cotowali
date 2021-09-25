@@ -5,5 +5,13 @@
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 fn string |> cat(files: ...string) string
+
 fn seq(n: int) ...int
+
+fn range(begin: int, end: int) ...int {
+  for i in @seq(begin, end - 1) as ...int {
+    yield i as int
+  }
+}
+
 fn rm(paths: ...string) void

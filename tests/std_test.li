@@ -1,0 +1,20 @@
+fn test_range() {
+  var n: int
+  for i in range(0, 3) {
+    n += i
+  }
+  assert(n == 0 + 1 + 2)
+
+  n = 0
+  for i in range(2, 5) {
+    n += i
+  }
+  assert(n == 2 + 3 + 4)
+
+  n = 0
+  for i in range(-2, 3) {
+    n += i
+  }
+  assert(n == -2 + -1 + 0 + 1 + 2)
+}
+test_range()
