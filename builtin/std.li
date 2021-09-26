@@ -37,6 +37,14 @@ fn range(begin: int, end: int) ...int {
 
 fn rm(paths: ...string) void
 
+// --- string methods ---
+
 fn (s: string) replace(a: string, b: string) string {
   return s |> @sed("s/$a/$b/g")
 }
+
+fn (s: string) index(t: string) int {
+  return (s|> @awk('-v', "t=$t", '{print index($1, t) - 1}')) as int
+}
+
+// ---
