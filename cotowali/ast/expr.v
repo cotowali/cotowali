@@ -622,6 +622,8 @@ fn (mut r Resolver) var_(mut v Var, opt ResolveExprOpt) {
 			}
 		} else if sym := v.scope().lookup_var_with_pos(name, v.pos()) {
 			v.sym = sym
+		} else if sym := v.scope().lookup_fn(name) {
+			v.sym = sym
 		} else {
 			r.error('undefined variable `$name`', v.pos())
 		}
