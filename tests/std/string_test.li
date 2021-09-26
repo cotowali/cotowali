@@ -1,0 +1,2 @@
+assert('ababc'.replace('ab', 'x') == 'xxc')
+assert('ababc'.replace('ab', 'x').replace('xx', 'y') == 'yc')

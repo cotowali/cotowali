@@ -36,3 +36,7 @@ fn range(begin: int, end: int) ...int {
 }
 
 fn rm(paths: ...string) void
+
+fn (s: string) replace(a: string, b: string) string {
+  return s |> @sed("s/$a/$b/g")
+}
