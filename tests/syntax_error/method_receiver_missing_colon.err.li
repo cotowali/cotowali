@@ -1,0 +1,2 @@
+type Num = int
+fn (n Num) f() {}

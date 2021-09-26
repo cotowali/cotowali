@@ -86,15 +86,17 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	p.consume_with_assert(.key_fn)
 	mut info := FnSignatureParsingInfo{}
 
-	if p.kind(0) == .l_paren && p.kind(1) == .ident && p.kind(2) == .colon {
+	if p.kind(0) == .l_paren && p.kind(1) == .ident && p.kind(2) in [.colon, .ident] {
 		// fn ( x : Type ) (int, int) |> f()
-		//    | | ^kind(2) == colon
-		//    | ^ kind(1) == .ident
-		//    ^ kind(0) == .l_paren
+		//    | | +- kind(2) == .colon
+		//    | +--- kind(1) == .ident
+		//    +-|--- kind(0) == .l_paren
+		//    | | +  kind(2) == .ident
+		// fn ( x Type ) f() // frequently encountered invalid syntax.
 		info.is_method = true
 		p.consume_with_assert(.l_paren)
 		rec_name_tok := p.consume_with_assert(.ident)
-		p.consume_with_assert(.colon)
+		p.consume_with_check(.colon) ?
 		rec_typ := (p.parse_type() ?).typ
 		info.params << FnParamParsingInfo{
 			name: rec_name_tok.text
