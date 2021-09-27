@@ -45,11 +45,11 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 
 fn execute(cmd Command) ? {
 	sh := cmd.flags.get_string(sh_flag.name) or { panic(unreachable('')) }
-	mut lish := new_shell(sh, new_ctx_from_cmd(cmd))
-	lish.run() or {
+	mut lish := new_shell(sh, new_ctx_from_cmd(cmd)) or {
 		eprintln(err.msg)
 		exit(1)
 	}
+	lish.run()
 }
 
 fn main() {

@@ -8,37 +8,29 @@ module shell
 import os
 
 fn (shell &Shell) welcome() {
-	println('Welcome to shell (Cotowali interactive shell)')
+	println('Welcome to lish (Cotowali interactive shell)')
 }
 
-pub fn (mut shell Shell) run() ? {
+pub fn (mut shell Shell) run() {
 	shell.welcome()
 
-	mut sh := shell.new_sh_process() ?
-	sh.run()
+	shell.start()
 	defer {
-		sh.close()
+		shell.close()
 	}
 
-	for sh.is_alive() {
+	for shell.is_alive() {
 		if s := os.input_opt('> ') {
-			sh.stdin_write(s + '\n')
+			shell.stdin_write(s + '\n')
 
-			// stdou_read() blocks until found 1 or more output.
-			// To avoid this problem, print extra character, then trim it.
-			sh.stdin_write('printf ":"\n')
-			mut stdout := sh.stdout_read()
-			stdout = stdout[..stdout.len - 1]
+			mut stdout := shell.stdout_read()
 			if stdout.len > 0 {
 				println(stdout)
 			}
 
-			// same as stdout
-			sh.stdin_write('printf ":" >&2 \n')
-			mut stderr := sh.stderr_read()
-			stderr = stderr[..stderr.len - 1]
+			mut stderr := shell.stderr_read()
 			if stderr.len > 0 {
-				println(stderr)
+				eprintln(stderr)
 			}
 		} else {
 			println('')
