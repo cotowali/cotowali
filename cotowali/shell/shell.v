@@ -3,40 +3,40 @@
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
-module main
+module shell
 
 import os
 import cotowali.context { Context }
 
-struct Lish {
+pub struct Shell {
 	ctx &Context
 	sh  string
 }
 
-fn new_lish(sh string, ctx &Context) Lish {
-	return Lish{
+pub fn new_shell(sh string, ctx &Context) Shell {
+	return Shell{
 		ctx: ctx
 		sh: sh
 	}
 }
 
-fn (lish &Lish) welcome() {
-	println('Welcome to lish (Cotowali interactive shell)')
+fn (shell &Shell) welcome() {
+	println('Welcome to shell (Cotowali interactive shell)')
 }
 
-fn (lish &Lish) new_sh_process() ?&os.Process {
-	mut sh := os.new_process(os.find_abs_path_of_executable(lish.sh) or {
-		return error('command not found: $lish.sh')
+fn (shell &Shell) new_sh_process() ?&os.Process {
+	mut sh := os.new_process(os.find_abs_path_of_executable(shell.sh) or {
+		return error('command not found: $shell.sh')
 	})
 
 	sh.set_redirect_stdio()
 	return sh
 }
 
-fn (mut lish Lish) run() ? {
-	lish.welcome()
+pub fn (mut shell Shell) run() ? {
+	shell.welcome()
 
-	mut sh := lish.new_sh_process() ?
+	mut sh := shell.new_sh_process() ?
 	sh.run()
 	defer {
 		sh.close()

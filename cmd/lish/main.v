@@ -12,6 +12,7 @@ import cotowali
 import cotowali.config { backend_from_str, default_feature }
 import cotowali.context { Context, new_context }
 import cotowali.errors { unreachable }
+import cotowali.shell { new_shell }
 
 const (
 	backend_flag = Flag{
@@ -44,7 +45,7 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 
 fn execute(cmd Command) ? {
 	sh := cmd.flags.get_string(sh_flag.name) or { panic(unreachable('')) }
-	mut lish := new_lish(sh, new_ctx_from_cmd(cmd))
+	mut lish := new_shell(sh, new_ctx_from_cmd(cmd))
 	lish.run() or {
 		eprintln(err.msg)
 		exit(1)
