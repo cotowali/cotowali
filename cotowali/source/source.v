@@ -13,6 +13,7 @@ pub const std = new_source('std.ri', std_file.to_string())
 
 [heap]
 pub struct Source {
+mut:
 	lines []string
 pub:
 	path string
@@ -23,7 +24,6 @@ pub fn new_source(path string, code string) &Source {
 	return &Source{
 		path: path
 		code: code
-		lines: code.split_into_lines()
 	}
 }
 
@@ -37,7 +37,16 @@ pub fn (s &Source) slice(begin int, end int) string {
 	return s.code.substr(begin, end)
 }
 
+fn (mut s Source) set_lines() {
+	s.lines = s.code.split_into_lines()
+}
+
 pub fn (s &Source) line(i int) string {
+	if s.lines.len == 0 {
+		unsafe {
+			s.set_lines()
+		}
+	}
 	return if i <= s.lines.len { s.lines[i - 1] } else { '' }
 }
 

@@ -13,7 +13,7 @@ fn test_read_file() {
 	expected := Source{
 		path: @FILE
 		code: code
-		lines: code.split_into_lines()
+		lines: got.lines
 	}
 
 	assert got == expected
