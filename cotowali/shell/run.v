@@ -5,8 +5,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module shell
 
-import os
-
 fn (shell &Shell) welcome() {
 	println('Welcome to lish (Cotowali interactive shell)')
 }
@@ -20,7 +18,7 @@ pub fn (mut shell Shell) run() {
 	}
 
 	for shell.is_alive() {
-		if s := os.input_opt('> ') {
+		if s := shell.input('> ') {
 			shell.stdin_write(s + '\n')
 			mut stdout := shell.stdout_read()
 			if stdout.len > 0 {

@@ -6,6 +6,7 @@
 module shell
 
 import os
+import readline { Readline }
 import cotowali.context { Context }
 import cotowali.util { nil_to_none }
 
@@ -13,6 +14,7 @@ pub struct Shell {
 	ctx &Context
 mut:
 	backend_process &os.Process = 0
+	readline        Readline
 }
 
 fn new_sh_process(command string) ?&os.Process {
@@ -83,4 +85,8 @@ pub fn (mut shell Shell) stderr_read() string {
 		out += p.stderr_read()
 	}
 	return out.trim_right(done_marker)
+}
+
+fn (mut shell Shell) input(prompt string) ?string {
+	return shell.readline.read_line(prompt)
 }
