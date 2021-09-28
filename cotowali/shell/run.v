@@ -22,15 +22,13 @@ pub fn (mut shell Shell) run() {
 	for shell.is_alive() {
 		if s := os.input_opt('> ') {
 			shell.stdin_write(s + '\n')
-
 			mut stdout := shell.stdout_read()
 			if stdout.len > 0 {
-				println(stdout)
+				print(stdout)
 			}
-
 			mut stderr := shell.stderr_read()
 			if stderr.len > 0 {
-				eprintln(stderr)
+				eprint(stderr)
 			}
 		} else {
 			println('')
