@@ -9,6 +9,18 @@ fn (shell &Shell) welcome() {
 	println('Welcome to lish (Cotowali interactive shell)')
 }
 
+fn (mut shell Shell) execute_compiled_code(code string) {
+	shell.stdin_write(code)
+	mut stdout := shell.stdout_read()
+	if stdout.len > 0 {
+		print(stdout)
+	}
+	mut stderr := shell.stderr_read()
+	if stderr.len > 0 {
+		eprint(stderr)
+	}
+}
+
 pub fn (mut shell Shell) run() {
 	shell.welcome()
 
@@ -19,15 +31,7 @@ pub fn (mut shell Shell) run() {
 
 	for shell.is_alive() {
 		if s := shell.input('> ') {
-			shell.stdin_write(s + '\n')
-			mut stdout := shell.stdout_read()
-			if stdout.len > 0 {
-				print(stdout)
-			}
-			mut stderr := shell.stderr_read()
-			if stderr.len > 0 {
-				eprint(stderr)
-			}
+			shell.execute_compiled_code(s)
 		} else {
 			println('')
 			break
