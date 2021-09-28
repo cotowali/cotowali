@@ -55,19 +55,32 @@ pub fn (mut shell Shell) stdin_write(s string) {
 	p.stdin_write(s)
 }
 
+fn get_marker() string {
+	return '__lish__command__${util.rand<u64>()}__done__'
+}
+
 pub fn (mut shell Shell) stdout_read() string {
 	mut p := shell.backend_process() or { return '' }
-	// p.stdout_read() blocks until found 1 or more output.
-	// To avoid this problem, print extra character, then trim it.
-	p.stdin_write('printf ":"\n')
-	mut stdout := p.stdout_read()
-	return stdout[..stdout.len - 1]
+
+	// by printing marker, wait to complete command
+	done_marker := get_marker()
+	p.stdin_write('printf "$done_marker"\n')
+	mut out := ''
+	for !out.ends_with(done_marker) {
+		out += p.stdout_read()
+	}
+	return out.trim_suffix(done_marker)
 }
 
 pub fn (mut shell Shell) stderr_read() string {
 	mut p := shell.backend_process() or { return '' }
-	// same as stdout_rerad
-	p.stdin_write('printf ":" >&2 \n')
-	mut stderr := p.stderr_read()
-	return stderr[..stderr.len - 1]
+
+	// same as stdout_read
+	done_marker := get_marker()
+	p.stdin_write('printf "$done_marker" >&2 \n')
+	mut out := ''
+	for !out.ends_with(done_marker) {
+		out += p.stderr_read()
+	}
+	return out.trim_right(done_marker)
 }
