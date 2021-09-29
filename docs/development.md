@@ -17,6 +17,21 @@
 - Of course it's better to be fast. But it is not important.
 - This doesn't mean the code has to be super slow.
 
+## Task Runner
+
+Cotowali uses [zakuro9715/z](https://github.com/zakuro9715/z) for development.
+
+Many tasks defined in `z.yaml`. Here are some frequently used tasks
+
+- `z`: build `lic`, `lish` and `kuqi`
+- `z file.li`: compile `.li` file
+- `z run file.li`: compile and execute `.li` file
+- `z debug file.li`: compile and execute `.li` file with debug mode and libSegFault
+- `z test [file_test.li|tests_dir]`: execute tests
+- `z lish`: run lish
+- `z kuqi`: build kuqi
+- `z symlink`: create symlinks
+
 ## Testing
 
 ### Run
