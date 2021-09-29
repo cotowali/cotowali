@@ -11,8 +11,8 @@ import cotowali.context { Context }
 import cotowali.util { nil_to_none }
 
 pub struct Shell {
-	ctx &Context
 mut:
+	ctx             &Context
 	backend_process &os.Process = 0
 	readline        Readline
 }

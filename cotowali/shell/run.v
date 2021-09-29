@@ -6,6 +6,10 @@
 module shell
 
 import strings
+import os
+import cotowali { compile }
+import cotowali.source { Source }
+import cotowali.errors { PrettyFormatter }
 
 fn (shell &Shell) welcome() {
 	println('Welcome to lish (Cotowali interactive shell)')
@@ -32,13 +36,23 @@ pub fn (mut shell Shell) run() {
 	}
 
 	mut sb := strings.new_builder(20)
+	source_path := os.join_path(os.getwd(), 'lish')
 	for shell.is_alive() {
 		prompt := if sb.len == 0 { '>' } else { '...' }
 		if input := shell.input('$prompt ') {
 			s := input.trim_space()
 			sb.writeln(s)
 			if !s.ends_with(r'\') {
-				shell.execute_compiled_code(sb.str())
+				source := &Source{
+					path: source_path
+					code: sb.str()
+				}
+				compiled_code := compile(source, shell.ctx) or {
+					eprint(shell.ctx.errors.format(PrettyFormatter{}))
+					shell.ctx.errors.clear()
+					continue
+				}
+				shell.execute_compiled_code(compiled_code)
 			}
 		} else {
 			println('')
