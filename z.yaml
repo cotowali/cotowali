@@ -22,7 +22,11 @@ tasks:
   run: v run {{lic_path}} ${@:- {{hello_world}} }
   run.stdin: v run {{lic_path}}
   no-emit: v run {{lic_path}} -no-emit $@
-  debug: v -cg -g run {{lic_path}} $@
+  debug:
+    env:
+      - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
+      - SEGFAULT_SIGNALS=all
+    run: v -cg -g run {{lic_path}} $@
   lish: v run {{lish_path}} $@
   watch: v watch --add $@ run {{lic_path}} $@
   profile: v -profile profile.txt run {{lic_path}} $@
