@@ -12,6 +12,11 @@ mut:
 	has_syntax_error bool
 }
 
+pub fn (mut e ErrorManager) clear() {
+	e.list = {}
+	e.has_syntax_error = false
+}
+
 pub fn (mut e ErrorManager) push(err ErrOrWarn) ErrOrWarn {
 	return match err {
 		Err { e.push_err(err) }
