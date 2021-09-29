@@ -8,6 +8,7 @@ module shell
 import strings
 import os
 import cotowali { compile }
+import cotowali.lexer { new_lexer }
 import cotowali.source { Source }
 import cotowali.errors { PrettyFormatter }
 
@@ -37,23 +38,55 @@ pub fn (mut shell Shell) run() {
 
 	mut sb := strings.new_builder(20)
 	source_path := os.join_path(os.getwd(), 'lish')
+
+	mut brace_depth := 0
+	mut paren_depth := 0
+	mut bracket_depth := 0
+
 	for shell.is_alive() {
 		prompt := if sb.len == 0 { '>' } else { '...' }
 		if input := shell.input('$prompt ') {
-			s := input.trim_space()
-			sb.writeln(s)
-			if !s.ends_with(r'\') {
-				source := &Source{
-					path: source_path
-					code: sb.str()
-				}
-				compiled_code := compile(source, shell.ctx) or {
-					eprint(shell.ctx.errors.format(PrettyFormatter{}))
-					shell.ctx.errors.clear()
-					continue
-				}
-				shell.execute_compiled_code(compiled_code)
+			mut s := input.trim_space()
+			mut is_continue := false
+			if s.ends_with(r'\') {
+				is_continue = true
+				s = s[..s.len - 1]
 			}
+
+			lexer := new_lexer(&Source{
+				path: source_path
+				code: s
+			}, shell.ctx)
+			for tok in lexer {
+				match tok.kind {
+					.l_brace { brace_depth += 1 }
+					.r_brace { brace_depth -= 1 }
+					.l_paren { paren_depth += 1 }
+					.r_paren { paren_depth -= 1 }
+					.l_bracket { bracket_depth += 1 }
+					.r_bracket { bracket_depth -= 1 }
+					else {}
+				}
+			}
+			if brace_depth > 0 || paren_depth > 0 || bracket_depth > 0 {
+				is_continue = true
+			}
+
+			sb.writeln(s)
+			if is_continue {
+				continue
+			}
+
+			source := &Source{
+				path: source_path
+				code: sb.str()
+			}
+			compiled_code := compile(source, shell.ctx) or {
+				eprint(shell.ctx.errors.format(PrettyFormatter{}))
+				shell.ctx.errors.clear()
+				continue
+			}
+			shell.execute_compiled_code(compiled_code)
 		} else {
 			println('')
 			break
