@@ -3,3 +3,7 @@ assert(1.41 <= sqrt2 && sqrt2 <= 1.42)
 assert(2.0 == math::sqrt(4))
 
 assert(3.14 < math::pi() && math::pi() < 3.142)
+
+assert(math::sin(0) == 0)
+assert(0.99 < math::sin(math::pi() / 2.0) && math::sin(math::pi() / 2.0) < 1.01)
+assert(0.49 < math::sin(math::pi() / 6.0) && math::sin(math::pi() / 6.0) < 0.51)

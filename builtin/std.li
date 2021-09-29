@@ -54,6 +54,10 @@ namespace math {
     return @awk('BEGIN{ printf "%lf", atan2(0, -0) }') as float
   }
 
+  fn sin(v: float) float {
+    return (v |> @awk('{printf "%lf", sin($1)}')) as float
+  }
+
   fn sqrt(v: float) float {
     return (v |> @awk('{printf "%lf", sqrt($1)}')) as float
   }
