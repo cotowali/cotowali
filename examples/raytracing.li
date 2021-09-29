@@ -581,7 +581,7 @@ var cornell_box_scene = [
 ]
 // --------------------
 
-var DEPTH_LIMIT = 36
+var DEPTH_LIMIT = 48
 var MIN_DEPTH = 6
 
 // TODO: escpape sequence
@@ -721,6 +721,6 @@ fn main() {
     40, 40, 30
   )
 
-  echo(render(cam, cornell_box_scene, width, height, 16, 1)) |> 'image.ppm'
+  echo(render(cam, cornell_box_scene, width, height, 16, 4)) |> 'image.ppm'
 }
 main()
