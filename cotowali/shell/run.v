@@ -5,6 +5,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module shell
 
+import strings
+
 fn (shell &Shell) welcome() {
 	println('Welcome to lish (Cotowali interactive shell)')
 }
@@ -29,9 +31,15 @@ pub fn (mut shell Shell) run() {
 		shell.close()
 	}
 
+	mut sb := strings.new_builder(20)
 	for shell.is_alive() {
-		if s := shell.input('> ') {
-			shell.execute_compiled_code(s)
+		prompt := if sb.len == 0 { '>' } else { '...' }
+		if input := shell.input('$prompt ') {
+			s := input.trim_space()
+			sb.writeln(s)
+			if !s.ends_with(r'\') {
+				shell.execute_compiled_code(sb.str())
+			}
 		} else {
 			println('')
 			break
