@@ -39,7 +39,7 @@ tasks:
 
   build: mkdir -p {{bin}} && v {{lic_path}} -o {{bin}}/lic && v {{lish_path}} -o {{bin}}/lish
   build.win: mkdir -p {{bin}} && v {{lic_path}} -o {{bin}}/lic.exe -os windows
-  symlink: ln -fs {{bin}}/lic {{install_dir}}/lic
+  symlink: ln -fs {{bin}}/lic {{install_dir}}/lic && ln -fs {{bin}}/lish {{install_dir}}/lish
   install: z build && cp {{bin}}/lic {{install_dir}}/lic
 
   kuqi:
