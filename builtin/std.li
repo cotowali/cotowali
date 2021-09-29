@@ -50,6 +50,10 @@ fn (s: string) index(t: string) int {
 // ---
 
 namespace math {
+  fn pi() float {
+    return @awk('BEGIN{ printf "%lf", atan2(0, -0) }') as float
+  }
+
   fn sqrt(v: float) float {
     return (v |> @awk('{printf "%lf", sqrt($1)}')) as float
   }
