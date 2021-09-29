@@ -44,7 +44,7 @@ pub fn (mut shell Shell) run() {
 	mut bracket_depth := 0
 
 	for shell.is_alive() {
-		prompt := if sb.len == 0 { '>' } else { '...' }
+		prompt := if sb.len == 0 { '>>>' } else { '...' }
 		if input := shell.input('$prompt ') {
 			mut s := input.trim_space()
 			mut is_continue := false
