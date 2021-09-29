@@ -339,7 +339,7 @@ fn (t TestSuite) run() bool {
 
 fn main() {
 	if ['--help', '-h', 'help'].any(it in os.args) {
-		println('Usage: v run tests/run.v [test.li|tests]...')
+		println('Usage: v run tests/tester.v [test.li|tests]...')
 		return
 	}
 
