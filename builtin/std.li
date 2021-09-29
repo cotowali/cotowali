@@ -58,6 +58,10 @@ namespace math {
     return (v |> @awk('{printf "%lf", sin($1)}')) as float
   }
 
+  fn cos(v: float) float {
+    return (v |> @awk('{printf "%lf", cos($1)}')) as float
+  }
+
   fn sqrt(v: float) float {
     return (v |> @awk('{printf "%lf", sqrt($1)}')) as float
   }
