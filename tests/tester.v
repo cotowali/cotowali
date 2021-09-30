@@ -19,6 +19,7 @@ fn indent_each_lines(n int, s string) string {
 
 enum FileSuffix {
 	li
+	sh
 	err
 	todo
 	out
@@ -28,6 +29,7 @@ enum FileSuffix {
 fn suffix(s FileSuffix) string {
 	return match s {
 		.li { '.li' }
+		.sh { '.sh' }
 		.err { '.err' }
 		.todo { '.todo' }
 		.out { '.out' }
@@ -84,6 +86,7 @@ struct Lic {
 enum LicCommand {
 	shellcheck
 	compile
+	compile_to_file
 	noemit
 	run
 }
@@ -100,6 +103,7 @@ fn (lic Lic) execute(c LicCommand, file string) os.Result {
 	return match c {
 		.shellcheck { os.execute('$lic.bin $file | shellcheck -') }
 		.compile { os.execute('$lic.bin $file') }
+		.compile_to_file { os.execute('$lic.bin $file > ${file.trim_suffix(suffix(.li))}${suffix(.sh)}') }
 		.noemit { os.execute('$lic.bin -no-emit $file') }
 		.run { os.execute('$lic.bin run $file') }
 	}
@@ -120,12 +124,14 @@ fn (lic Lic) new_test_case(path string, opt TestOption) TestCase {
 }
 
 struct TestOption {
-	shellcheck bool
-	fix_mode   bool
+	shellcheck   bool
+	fix_mode     bool
+	compile_only bool
 }
 
 enum TestResultStatus {
 	ok
+	compiled
 	failed
 	fixed
 	todo
@@ -170,6 +176,8 @@ fn (t &TestCase) run() TestResult {
 		t.lic.execute(.shellcheck, t.path)
 	} else if t.is_err_test {
 		t.lic.execute(.compile, t.path)
+	} else if t.opt.compile_only {
+		t.lic.execute(.compile_to_file, t.path)
 	} else if t.is_noemit_test {
 		t.lic.execute(.noemit, t.path)
 	} else {
@@ -185,14 +193,15 @@ fn (t &TestCase) run() TestResult {
 	}
 
 	correct_exit_code := if t.is_err_test { result.exit_code != 0 } else { result.exit_code == 0 }
-	if t.is_todo_test {
-		result.status = .todo
+	result.status = if t.is_todo_test {
+		TestResultStatus.todo
+		// result.status = .todo
+	} else if t.opt.compile_only {
+		if correct_exit_code { TestResultStatus.compiled } else { TestResultStatus.failed }
+	} else if (result.output == result.expected || t.opt.compile_only) && correct_exit_code {
+		TestResultStatus.ok
 	} else {
-		result.status = if result.output == result.expected && correct_exit_code {
-			TestResultStatus.ok
-		} else {
-			TestResultStatus.failed
-		}
+		TestResultStatus.failed
 	}
 
 	if t.opt.fix_mode && !t.is_shellcheck_test {
@@ -216,6 +225,7 @@ fn (t &TestCase) run() TestResult {
 fn (result TestResult) summary_message(file string) string {
 	status := match result.status {
 		.ok, .fixed { term.ok_message('[ OK ]') }
+		.compiled { term.ok_message('[COMPILED]') }
 		.todo { term.warn_message('[TODO]') }
 		.failed { term.fail_message('[FAIL]') }
 	}
@@ -258,6 +268,7 @@ fn (r TestResult) message() string {
 }
 
 struct TestSuite {
+	opt TestOption
 mut:
 	cases []TestCase
 }
@@ -294,6 +305,7 @@ fn new_test_suite(paths []string, opt TestOption) TestSuite {
 		}
 	}
 	return TestSuite{
+		opt: opt
 		cases: cases
 	}
 }
@@ -312,10 +324,11 @@ fn (t TestSuite) run() bool {
 	status_list := threads.wait()
 	sw.stop()
 
-	mut ok_n, mut fixed_n, mut todo_n, mut failed_n := 0, 0, 0, 0
+	mut ok_n, mut compiled_n, mut fixed_n, mut todo_n, mut failed_n := 0, 0, 0, 0, 0
 	for s in status_list {
 		match s {
 			.ok { ok_n++ }
+			.compiled { compiled_n++ }
 			.fixed { fixed_n++ }
 			.todo { todo_n++ }
 			.failed { failed_n++ }
@@ -323,7 +336,11 @@ fn (t TestSuite) run() bool {
 	}
 
 	println('Total: $t.cases.len, Runtime: ${sw.elapsed().milliseconds()}ms')
-	println(term.ok_message('$ok_n Passed'))
+	println(if t.opt.compile_only {
+		term.ok_message('$compiled_n Compiled')
+	} else {
+		term.ok_message('$ok_n Passed')
+	})
 	if fixed_n > 0 {
 		println(term.ok_message('$fixed_n Fixed'))
 	}
@@ -339,19 +356,35 @@ fn (t TestSuite) run() bool {
 
 fn main() {
 	if ['--help', '-h', 'help'].any(it in os.args) {
-		println('Usage: v run tests/tester.v [test.li|tests]...')
+		println('Usage: v run tests/tester.v flags... [test.li|tests]...')
+		println('Flags:')
+		println('  --shellcheck use shellcheck')
+		println('  --fix-mode   auto fix failed tests')
+		println('  --compile    compile tests instead of run tests')
 		return
 	}
 
 	shellcheck := '--shellcheck' in os.args
 	fix_mode := '--fix' in os.args
+	compile_only := '--compile' in os.args
+	if compile_only && (fix_mode || shellcheck) {
+		eprintln('cannot use --compile with another flags')
+		exit(1)
+	}
+
 	args := os.args.filter(!it.starts_with('-'))
 	paths := if args.len > 1 {
 		os.args[1..]
+	} else if compile_only {
+		['tests'].map(os.join_path(@VMODROOT, it))
 	} else {
 		['examples', 'tests'].map(os.join_path(@VMODROOT, it))
 	}
 
-	t := new_test_suite(paths, shellcheck: shellcheck, fix_mode: fix_mode)
+	t := new_test_suite(paths,
+		shellcheck: shellcheck
+		fix_mode: fix_mode
+		compile_only: compile_only
+	)
 	exit(if t.run() { 0 } else { 1 })
 }

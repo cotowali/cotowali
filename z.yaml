@@ -82,6 +82,7 @@ tasks:
     tasks:
       unit: v test ${@:-./cotowali}
       integration: v run tests/tester.v $@
+      compile: v run tests/tester.v --compile $@
       fix: z test integration --fix $@
       hello: z run examples/hello.li
       watch: |
