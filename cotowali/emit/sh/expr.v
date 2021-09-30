@@ -409,7 +409,10 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 			e.write('"')
 		}
 	}
+
+	mut subexpr_mode := ExprEmitMode.normal
 	if opt.mode == .inside_arithmetic {
+		subexpr_mode = opt.mode
 		e.write(' (')
 		defer {
 			e.write(' )')
@@ -420,7 +423,7 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 		if i > 0 {
 			e.write(' ')
 		}
-		e.expr(subexpr)
+		e.expr(subexpr, mode: subexpr_mode)
 	}
 }
 
