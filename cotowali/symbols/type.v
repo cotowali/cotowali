@@ -126,6 +126,7 @@ fn (mut s Scope) must_register_builtin_type(ts TypeSymbol) &TypeSymbol {
 	s.check_before_register_type(ts) or { panic(err.msg) }
 	new_ts := &TypeSymbol{
 		...ts
+		scope: s
 	}
 	s.type_symbols[ts.typ] = new_ts
 	if ts.name.len > 0 && ts.kind() != .placeholder {
