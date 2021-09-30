@@ -86,7 +86,7 @@ fn op_to_awk_op(op Token) string {
 	return if op.kind == .pow { '^' } else { op.text }
 }
 
-const printf_format_float = '%lf'
+const printf_format_float = '%g'
 
 fn (mut e Emitter) sh_awk_infix_expr(expr ast.InfixExpr) {
 	mut awk_expr := '\$1 ${op_to_awk_op(expr.op)} \$2'
