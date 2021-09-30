@@ -214,8 +214,9 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr, mut func Expr) {
 
 fn (e CallExpr) lookup_sym(name string, scope &Scope) ?&symbols.Var {
 	if receiver := e.receiver() {
-		return scope.lookup_method(receiver.typ(), name) or {
-			return error('function `${receiver.type_symbol().name}.$name` is not defined')
+		receiver_ts := receiver.type_symbol()
+		return receiver_ts.lookup_method(name) or {
+			return error('function `${receiver_ts.name}.$name` is not defined')
 		}
 	} else {
 		return scope.lookup_var(name) or { return error('function `$name` is not defined') }

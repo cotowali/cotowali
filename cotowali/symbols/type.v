@@ -29,7 +29,8 @@ pub type TypeInfo = AliasTypeInfo
 
 pub struct TypeSymbol {
 mut:
-	scope &Scope = 0
+	scope   &Scope = 0
+	methods map[string]&Var
 pub mut:
 	pos Pos
 pub:
@@ -174,4 +175,33 @@ pub fn (mut s Scope) lookup_or_register_type(ts TypeSymbol) &TypeSymbol {
 		return s.lookup_type(ts.name) or { s.must_register_type(ts) }
 	}
 	return s.lookup_type(ts.typ) or { s.must_register_type(ts) }
+}
+
+// -- methods --
+
+pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) ?&Var {
+	fn_typ := ts.scope.lookup_or_register_fn_type(FunctionTypeInfo{
+		...f.FunctionTypeInfo
+		receiver: ts.typ
+	}).typ
+
+	v := &Var{
+		...f.Var
+		id: if f.Var.id == 0 { auto_id() } else { f.Var.id }
+		typ: fn_typ
+		receiver_typ: ts.typ
+		scope: ts.must_scope()
+	}
+	if v.name == '' {
+		panic(unreachable('method name is empty'))
+	}
+	if v.name in ts.methods {
+		return error('duplicated method $v.name')
+	}
+	ts.methods[v.name] = v
+	return v
+}
+
+pub fn (ts &TypeSymbol) lookup_method(name string) ?&Var {
+	return ts.methods[name] or { return none }
 }
