@@ -153,7 +153,7 @@ fn (k TokenKind) is_postfix_op() bool {
 [inline]
 fn (k TokenKind) is_infix_op() bool {
 	return k.is_comparsion_op() || k.is_logical_infix_op()
-		|| k in [.pipe_append, .pipe, .plus, .minus, .mul, .div, .mod, .pow]
+		|| k in [.key_as, .pipe_append, .pipe, .plus, .minus, .mul, .div, .mod, .pow]
 }
 
 [inline]
