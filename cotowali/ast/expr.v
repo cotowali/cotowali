@@ -104,7 +104,10 @@ pub fn (expr Expr) pos() Pos {
 		Var {
 			expr.pos()
 		}
-		NamespaceItem, SelectorExpr {
+		NamespaceItem {
+			expr.pos()
+		}
+		SelectorExpr {
 			expr.pos()
 		}
 		Pipeline {
