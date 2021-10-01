@@ -9,7 +9,7 @@ import cotowali.ast
 import cotowali.source { Pos }
 import cotowali.token { Token }
 import cotowali.symbols { Scope, Type, TypeSymbol, Var, builtin_type }
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 import cotowali.util { struct_name }
 
 struct FnParamParsingInfo {

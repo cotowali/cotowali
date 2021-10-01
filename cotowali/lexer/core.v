@@ -9,7 +9,8 @@ import cotowali.source { Char, CharClass, CharCond, Pos, Source, pos }
 import cotowali.token { Token, TokenKind }
 import cotowali.context { Context }
 import cotowali.util { Unit, min }
-import cotowali.errors { LexerErr, LexerWarn, unreachable }
+import cotowali.errors { LexerErr, LexerWarn }
+import cotowali.messages { unreachable }
 import cotowali.debug { Tracer }
 
 enum LexicalContextKind {

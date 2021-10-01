@@ -10,7 +10,7 @@ import cli { Command, Flag }
 import v.vmod
 import cotowali.config { backend_from_str, default_feature }
 import cotowali.context { Context, new_context }
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 import cotowali.shell { new_shell }
 
 const (

@@ -22,6 +22,11 @@ pub fn (k SymbolKind) str() string {
 }
 
 [inline]
+pub fn unreachable<T>(err T) string {
+	return 'unreachable - This is a compiler bug (err: $err).'
+}
+
+[inline]
 pub fn duplicated(name string) string {
 	return '`$name` is already defined'
 }

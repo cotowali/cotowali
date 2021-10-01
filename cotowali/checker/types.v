@@ -8,7 +8,7 @@ module checker
 import cotowali.ast { Expr }
 import cotowali.symbols { Type, TypeSymbol, builtin_type }
 import cotowali.source { Pos }
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 
 struct TypeCheckingConfig {
 	want       TypeSymbol [required]

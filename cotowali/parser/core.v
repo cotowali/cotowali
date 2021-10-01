@@ -10,7 +10,8 @@ import cotowali.token { Token, TokenCond, TokenKind, TokenKindClass }
 import cotowali.context { Context }
 import cotowali.symbols { Scope }
 import cotowali.debug { Tracer }
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
+import cotowali.errors { LexerErr, LexerWarn }
 import cotowali.source { Pos, Source }
 
 pub struct Parser {
@@ -84,11 +85,11 @@ pub fn (p &Parser) pos(i int) Pos {
 fn (mut p Parser) read_token() Token {
 	tok := p.lexer.read() or {
 		match err {
-			errors.LexerErr {
+			LexerErr {
 				p.syntax_error(err.msg, err.token.pos)
 				return err.token
 			}
-			errors.LexerWarn {
+			LexerWarn {
 				p.warn(err.msg, err.token.pos)
 				return err.token
 			}

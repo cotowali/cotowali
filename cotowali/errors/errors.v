@@ -8,11 +8,6 @@ module errors
 import cotowali.source { Pos, Source }
 import cotowali.token { Token }
 
-[inline]
-pub fn unreachable<T>(err T) string {
-	return 'unreachable - This is a compiler bug (err: $err).'
-}
-
 pub type ErrOrWarn = Err | Warn
 
 pub fn (e ErrOrWarn) label() string {

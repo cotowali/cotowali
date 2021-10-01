@@ -6,7 +6,7 @@
 module sh
 
 import cotowali.ast
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 
 fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 	ident := e.ident_for(expr)

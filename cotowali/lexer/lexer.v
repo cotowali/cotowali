@@ -7,7 +7,8 @@ module lexer
 
 import cotowali.token { Token }
 import cotowali.source { Char }
-import cotowali.errors { LexerErr, unreachable }
+import cotowali.errors { LexerErr }
+import cotowali.messages { unreachable }
 
 pub fn (mut lex Lexer) next() ?Token {
 	if lex.closed {

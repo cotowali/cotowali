@@ -6,8 +6,7 @@
 module symbols
 
 import cotowali.source { Pos, none_pos }
-import cotowali.messages { duplicated }
-import cotowali.errors { unreachable }
+import cotowali.messages { duplicated, unreachable }
 
 pub struct Var {
 mut:

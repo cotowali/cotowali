@@ -7,7 +7,7 @@ module parser
 
 import cotowali.ast
 import cotowali.token { TokenKind }
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 
 fn (mut p Parser) parse_string_literal() ?ast.StringLiteral {
 	tok := p.check(.single_quote, .double_quote, .single_quote_with_r_prefix, .double_quote_with_r_prefix) ?

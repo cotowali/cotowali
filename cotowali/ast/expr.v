@@ -14,8 +14,7 @@ import cotowali.symbols {
 	TypeSymbol,
 	builtin_type,
 }
-import cotowali.messages { undefined }
-import cotowali.errors { unreachable }
+import cotowali.messages { undefined, unreachable }
 import cotowali.util { nil_to_none }
 
 pub type Expr = ArrayLiteral

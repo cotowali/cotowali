@@ -7,7 +7,7 @@ module checker
 
 import cotowali.ast
 import cotowali.symbols { builtin_type }
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 
 fn (mut c Checker) attrs(attrs []ast.Attr) {
 	for attr in attrs {

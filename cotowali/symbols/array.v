@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 
 pub struct ArrayTypeInfo {
 pub:

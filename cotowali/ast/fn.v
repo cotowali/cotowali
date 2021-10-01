@@ -7,8 +7,7 @@ module ast
 
 import cotowali.source { Pos }
 import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id }
-import cotowali.messages { undefined }
-import cotowali.errors { unreachable }
+import cotowali.messages { undefined, unreachable }
 
 pub struct FnDecl {
 pub:

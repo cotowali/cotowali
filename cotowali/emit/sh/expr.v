@@ -9,7 +9,7 @@ import cotowali.ast
 import cotowali.token { Token }
 import cotowali.symbols { builtin_type }
 import cotowali.util { Tuple2, panic_and_value, tuple2 }
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 
 type ExprOrString = ast.Expr | string
 

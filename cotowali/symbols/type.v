@@ -6,8 +6,7 @@
 module symbols
 
 import cotowali.source { Pos }
-import cotowali.errors { unreachable }
-import cotowali.messages { duplicated }
+import cotowali.messages { duplicated, unreachable }
 
 pub type Type = u64
 

@@ -7,7 +7,7 @@ module sh
 
 import cotowali.ast
 import cotowali.symbols { TypeSymbol }
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 import cotowali.util { panic_and_value }
 
 fn (mut e Emitter) array_assign(name string, value ExprOrString) {

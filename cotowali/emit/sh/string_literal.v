@@ -7,7 +7,7 @@ module sh
 
 import cotowali.ast { Expr, StringLiteral }
 import cotowali.token { Token }
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 
 const invalid_string_literal = unreachable('invalid string literal')
 
