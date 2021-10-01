@@ -3,5 +3,6 @@
 /cmd/lic/lic
 /lic
 /vim-lsp.log
+/tmp
 
 profile.txt
