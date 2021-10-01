@@ -2,6 +2,7 @@ default: default
 disable_help: true
 var:
   bin: $(pwd)/.bin
+  tmp: $(pwd)/tmp
   install_dir: /usr/local/bin
   lic_path: cmd/lic
   lish_path: cmd/lish
@@ -14,54 +15,67 @@ tasks:
     if [ "$#" -eq 0 ]
     then
       z build
-      z kuqi build
     else
       z run $@
     fi
 
-  run: v run {{lic_path}} ${@:- {{hello_world}} }
-  run.stdin: v run {{lic_path}}
-  no-emit: v run {{lic_path}} -no-emit $@
-  debug:
-    env:
-      - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
-      - SEGFAULT_SIGNALS=all
-    run: v -cg -g run {{lic_path}} $@
-  lish: v run {{lish_path}} $@
-  watch: v watch --add $@ run {{lic_path}} $@
-  profile: v -profile profile.txt run {{lic_path}} $@
-  trace:
+  run: z lic run $@
+  debug: z lic debug $@
+  no-emit: z lic no-emit $@
+
+  build: z lic build && z lish build && z kuqi build
+  build.win: z lic build.win && z lish build.win && z kuqi build.win
+  symlink: z lic symlink && z lish symlink && z kuqi symlink
+  install: z lic install && z lish install && z kuqi install
+
+  lic:
+    run: z lic build
     tasks:
-      lexer: v -cg -d trace_lexer run {{lic_path}} -no-emit $@
-      parser: v -cg -d trace_parser run {{lic_path}} -no-emit $@
-      resolver: v -cg -d trace_resolver run {{lic_path}} -no-emit $@
-      checker: v -cg -d trace_checker run {{lic_path}} -no-emit $@
-  time: |
-    /usr/bin/time -f 'Time: %es, Memory: %M: KB ' v run {{lic_path}}
-
-  raytracing: |
-    z examples/raytracing.li | sh
-    convert image.ppm image.png
-
-  build.c: v {{lic_path}} -o main.c
-
-  build: mkdir -p {{bin}} && v {{lic_path}} -o {{bin}}/lic && v {{lish_path}} -o {{bin}}/lish
-  build.win: mkdir -p {{bin}} && v {{lic_path}} -o {{bin}}/lic.exe -os windows
-  symlink: ln -fs {{bin}}/lic {{install_dir}}/lic && ln -fs {{bin}}/lish {{install_dir}}/lish
-  install: z build && cp {{bin}}/lic {{install_dir}}/lic
-
+      build: mkdir -p {{bin}} && v {{lic_path}} -o {{bin}}/lic
+      build.win: mkdir -p {{bin}} && v {{lic_path}} -o {{bin}}/lic.exe -os windows
+      build.c: v {{lic_path}} -o main.c
+      debug: z lic run debug $@
+      no-emit: z lic run no-emit $@
+      run:
+        run: v run {{lic_path}} "$@"
+        tasks:
+          stdin: v run {{lic_path}}
+          no-emit: v run {{lic_path}} -no-emit $@
+          debug:
+            env:
+              - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
+              - SEGFAULT_SIGNALS=all
+            run: v -cg -g run {{lic_path}} $@
+          trace.lexer: v -cg -d trace_lexer run {{lic_path}} -no-emit $@
+          trace.parser: v -cg -d trace_parser run {{lic_path}} -no-emit $@
+          trace.resolver: v -cg -d trace_resolver run {{lic_path}} -no-emit $@
+          trace.checker: v -cg -d trace_checker run {{lic_path}} -no-emit $@
+      install: sudo cp {{bin}}/lic {{install_dir}}/lic
+      symlink: sudo ln -fs {{bin}}/lic {{install_dir}}/lic
+  lish:
+    run: z lish run
+    tasks:
+      run: v run {{lish_path}} $@
+      build: mkdir -p {{bin}} && v {{lish_path}} -o {{bin}}/lish
+      build.win: mkdir -p {{bin}} && v {{lish_path}} -o {{bin}}/lish.exe -os windows
+      install: sudo cp {{bin}}/lish {{install_dir}}/lish
+      symlink: sudo ln -fs {{bin}}/lish {{install_dir}}/lish
   kuqi:
-    run: z kuqi build
     tasks:
       run: v run {{kuqi_path}} $@
       build: v {{kuqi_path}} -o {{bin}}/kuqi $@
       build.gc: v {{kuqi_path}} -o {{bin}}/kuqi -gc boehm $@
       build.win: v {{kuqi_path}} -o {{bin}}/kuqi.exe -os windows $@
+      install: sudo cp {{bin}}/lic {{install_dir}}/lic
       symlink: sudo ln -fs {{bin}}/kuqi {{install_dir}}/kuqi
 
   ast: z run tools ast $@
   tokens: z run tools tokens $@
   scope: z run tools scope $@
+
+  raytracing: |
+    z examples/raytracing.li | sh
+    convert image.ppm image.png
 
   fix:
     - z fmt

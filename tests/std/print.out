@@ -1,2 +1,2 @@
-print()println()
-eprint()eprintln()
+print: a b c;println: a b c;
+eprint: a b c;eprintln: a b c;

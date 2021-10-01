@@ -1,5 +1,5 @@
-print('print()')
-println('println()')
+print('print: a b c;')
+println('println: a b c;')
 
-eprint('eprint()')
-eprintln('eprintln()')
+eprint('eprint: a b c;')
+eprintln('eprintln: a b c;')
