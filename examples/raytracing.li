@@ -661,7 +661,7 @@ fn calc_radiance(objects: []Object, input_ray: Ray, depth: int) Color {
   )
 }
 
-fn render(camera: Camera, objects: []Object, width: int, height: int, samples: int, supersamples: int) string {
+fn render(out_path: string, camera: Camera, objects: []Object, width: int, height: int, samples: int, supersamples: int) {
   var screen_width = camera_screen_width(camera)
   var screen_height = camera_screen_height(camera)
   var cam_dir = camera_dir(camera)
@@ -669,11 +669,13 @@ fn render(camera: Camera, objects: []Object, width: int, height: int, samples: i
   var screen_y = vec3_multiply(vec3_normalize(vec3_cross(screen_x, cam_dir)), screen_height)
   var camera_p = camera_pos(camera)
   var screen_center = vec3_add(camera_p, vec3_multiply(cam_dir, camera_screen_dist(camera)))
-  var out =
-    "P3$ln" +
-    "$width $height$ln" +
-    "255$ln"
+
+  println("P3") |> out_path
+  println("$width $height") |>> out_path
+  println("255") |>> out_path
+
   for y in range(0, height) {
+    var line: string
     for x in range(0, width) {
       var pix_color: Color
       for sy in range(0, supersamples) {
@@ -701,13 +703,12 @@ fn render(camera: Camera, objects: []Object, width: int, height: int, samples: i
       var out_r = floor(clamp(color_r(pix_color), 0.0, 1.0) * 255)
       var out_g = floor(clamp(color_g(pix_color), 0.0, 1.0) * 255)
       var out_b = floor(clamp(color_b(pix_color), 0.0, 1.0) * 255)
+      line="$line$out_r $out_g $out_b "
       eprint(".")
-      out="${out}$out_r $out_g $out_b "
     }
     eprintln('')
-    out="$out$ln"
+    println(line) |>> out_path
   }
-  return out
 }
 
 fn main() {
@@ -721,6 +722,6 @@ fn main() {
     40, 40, 30
   )
 
-  echo(render(cam, cornell_box_scene, width, height, 16, 4)) |> 'image.ppm'
+  render('image.ppm', cam, cornell_box_scene, width, height, 2, 8)
 }
 main()
