@@ -14,24 +14,6 @@ pub fn (t Tuple2<T, U>) str() string {
 	return '($t.v1.str(), $t.v2.str())'
 }
 
-pub struct Pair<T, U> {
-pub mut:
-	v1 T
-	v2 U
-}
-
-pub fn pair<T, U>(v1 T, v2 U) Pair<T, U> {
-	return Pair<T, U>{v1, v2}
-}
-
-pub fn (p Pair<T, U>) tuple() Tuple2<T, U> {
-	return tuple2(p.v1, p.v2)
-}
-
-pub fn (p Pair<T, U>) str() string {
-	return p.tuple().str()
-}
-
 /*
 TODO: wait to fix v bug
 
