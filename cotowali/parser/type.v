@@ -178,7 +178,7 @@ fn (mut p Parser) parse_type_decl() ?ast.Stmt {
 	pos = pos.merge(p.pos(-1))
 
 	p.scope.register_alias_type(name: ident.text, target: target) or {
-		return p.duplicated_error(ident.text, pos)
+		return p.error(err.msg, pos)
 	}
 
 	return ast.EmptyStmt{}

@@ -99,7 +99,7 @@ fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
 		panic(unreachable('$ts.typ is exists'))
 	}
 	if ts.name.len > 0 && ts.name in s.name_to_type {
-		return error('$ts.name is exists')
+		return error('`$ts.name` is already defined')
 	}
 }
 

@@ -156,9 +156,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	info := p.parse_fn_signature_info() ?
 	mut outer_scope := p.scope
 
-	sym := info.register_sym(mut outer_scope) or {
-		return p.duplicated_error(info.name.text, info.name.pos)
-	}
+	sym := info.register_sym(mut outer_scope) or { return p.error(err.msg, info.name.pos) }
 
 	p.open_scope(info.name.text)
 	defer {
@@ -175,7 +173,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 				text: param.name
 			}
 			sym: p.scope.register_var(name: param.name, pos: param.pos, typ: param.ts.typ) or {
-				return p.duplicated_error(param.name, param.pos)
+				return p.error(err.msg, param.pos)
 			}
 		}
 	}

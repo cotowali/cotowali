@@ -79,7 +79,3 @@ fn (mut p Parser) unexpected_token_error(found Token, expects ...TokenKind) IErr
 	}
 	return p.syntax_error(msg, found.pos)
 }
-
-fn (mut p Parser) duplicated_error(name string, pos Pos) IError {
-	return p.error('`$name` is already defined', pos)
-}

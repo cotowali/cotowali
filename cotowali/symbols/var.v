@@ -64,7 +64,7 @@ pub fn (v Var) receiver_type_symbol() &TypeSymbol {
 fn (mut s Scope) check_before_register_var(v Var) ? {
 	key := v.name
 	if key in s.vars {
-		return error('$key is exists')
+		return error('`$key` is already defined')
 	}
 }
 
