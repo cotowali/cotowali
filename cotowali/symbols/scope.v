@@ -6,7 +6,7 @@
 module symbols
 
 import cotowali.util { nil_to_none }
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 
 pub type ID = u64
 

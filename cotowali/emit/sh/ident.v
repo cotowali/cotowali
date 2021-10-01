@@ -7,7 +7,7 @@ module sh
 
 import cotowali.ast { ArrayLiteral, Expr, FnDecl, MapLiteral }
 import cotowali.symbols
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 import cotowali.util { panic_and_value }
 
 type IdentForValue = ArrayLiteral | Expr | FnDecl | MapLiteral | ast.Var | symbols.Var

@@ -73,6 +73,8 @@ fn (mut lex Lexer) read_double_quote_string_literal_content() ?Token {
 			return lex.new_token_with_consume_n(2, .string_literal_content_escaped_back_slash)
 		} else if next == `$` {
 			return lex.new_token_with_consume_n(2, .string_literal_content_escaped_dollar)
+		} else if next == lexer.dq {
+			return lex.new_token_with_consume_n(2, .string_literal_content_escaped_double_quote)
 		} else if next == `n` {
 			return lex.new_token_with_consume_n(2, .string_literal_content_escaped_newline)
 		}

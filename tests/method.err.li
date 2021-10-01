@@ -1,0 +1,7 @@
+type Num = int
+
+fn (n: Num) f() {}
+fn (n: Num) f() {}
+
+var n: Num
+n.undefined()

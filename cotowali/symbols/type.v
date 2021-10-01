@@ -6,7 +6,7 @@
 module symbols
 
 import cotowali.source { Pos }
-import cotowali.errors { unreachable }
+import cotowali.messages { duplicated, unreachable }
 
 pub type Type = u64
 
@@ -29,7 +29,8 @@ pub type TypeInfo = AliasTypeInfo
 
 pub struct TypeSymbol {
 mut:
-	scope &Scope = 0
+	scope   &Scope = 0
+	methods map[string]&Var
 pub mut:
 	pos Pos
 pub:
@@ -95,10 +96,10 @@ pub fn (v TypeSymbol) str() string {
 
 fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
 	if ts.typ != 0 && ts.typ in s.type_symbols {
-		return error('$ts.typ is exists')
+		panic(unreachable('$ts.typ is exists'))
 	}
 	if ts.name.len > 0 && ts.name in s.name_to_type {
-		return error('$ts.name is exists')
+		return error(duplicated(ts.name))
 	}
 }
 
@@ -126,6 +127,7 @@ fn (mut s Scope) must_register_builtin_type(ts TypeSymbol) &TypeSymbol {
 	s.check_before_register_type(ts) or { panic(err.msg) }
 	new_ts := &TypeSymbol{
 		...ts
+		scope: s
 	}
 	s.type_symbols[ts.typ] = new_ts
 	if ts.name.len > 0 && ts.kind() != .placeholder {
@@ -173,4 +175,33 @@ pub fn (mut s Scope) lookup_or_register_type(ts TypeSymbol) &TypeSymbol {
 		return s.lookup_type(ts.name) or { s.must_register_type(ts) }
 	}
 	return s.lookup_type(ts.typ) or { s.must_register_type(ts) }
+}
+
+// -- methods --
+
+pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) ?&Var {
+	fn_typ := ts.scope.lookup_or_register_fn_type(FunctionTypeInfo{
+		...f.FunctionTypeInfo
+		receiver: ts.typ
+	}).typ
+
+	v := &Var{
+		...f.Var
+		id: if f.Var.id == 0 { auto_id() } else { f.Var.id }
+		typ: fn_typ
+		receiver_typ: ts.typ
+		scope: ts.must_scope()
+	}
+	if v.name == '' {
+		panic(unreachable('method name is empty'))
+	}
+	if v.name in ts.methods {
+		return error(duplicated('${ts.name}.$v.name'))
+	}
+	ts.methods[v.name] = v
+	return v
+}
+
+pub fn (ts &TypeSymbol) lookup_method(name string) ?&Var {
+	return ts.methods[name] or { return none }
 }

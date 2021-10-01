@@ -8,8 +8,8 @@ module sh
 import cotowali.ast
 import cotowali.token { Token }
 import cotowali.symbols { builtin_type }
-import cotowali.util { Pair, pair, panic_and_value }
-import cotowali.errors { unreachable }
+import cotowali.util { Tuple2, panic_and_value, tuple2 }
+import cotowali.messages { unreachable }
 
 type ExprOrString = ast.Expr | string
 
@@ -103,7 +103,7 @@ fn (mut e Emitter) float_literal(expr ast.FloatLiteral, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	tmp_var := e.new_tmp_ident()
-	e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, v Pair<string, string>) {
+	e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, v Tuple2<string, string>) {
 		tmp_var, text := v.v1, v.v2
 		e.write('$tmp_var="\$(')
 		{
@@ -111,7 +111,7 @@ fn (mut e Emitter) float_literal(expr ast.FloatLiteral, opt ExprOpt) {
 			e.write("echo $text | awk '$awk_code'")
 		}
 		e.writeln(')"')
-	}, pair(tmp_var, expr.token.text))
+	}, tuple2(tmp_var, expr.token.text))
 	e.write('\$$tmp_var')
 }
 
@@ -409,7 +409,10 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 			e.write('"')
 		}
 	}
+
+	mut subexpr_mode := ExprEmitMode.normal
 	if opt.mode == .inside_arithmetic {
+		subexpr_mode = opt.mode
 		e.write(' (')
 		defer {
 			e.write(' )')
@@ -420,7 +423,7 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 		if i > 0 {
 			e.write(' ')
 		}
-		e.expr(subexpr)
+		e.expr(subexpr, mode: subexpr_mode)
 	}
 }
 

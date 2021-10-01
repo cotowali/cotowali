@@ -14,7 +14,7 @@ import cotowali.symbols {
 	TypeSymbol,
 	builtin_type,
 }
-import cotowali.errors { unreachable }
+import cotowali.messages { undefined, unreachable }
 import cotowali.util { nil_to_none }
 
 pub type Expr = ArrayLiteral
@@ -104,7 +104,10 @@ pub fn (expr Expr) pos() Pos {
 		Var {
 			expr.pos()
 		}
-		NamespaceItem, SelectorExpr {
+		NamespaceItem {
+			expr.pos()
+		}
+		SelectorExpr {
 			expr.pos()
 		}
 		Pipeline {
@@ -417,7 +420,7 @@ fn (mut r Resolver) namespace_item(mut expr NamespaceItem, opt ResolveExprOpt) {
 		expr.is_resolved = true
 		r.expr(expr.item, opt)
 	} else {
-		r.error('undefined namespace `$expr.namespace.text`', expr.namespace.pos)
+		r.error(undefined(.namespace, expr.namespace.text), expr.namespace.pos)
 	}
 }
 
@@ -622,8 +625,10 @@ fn (mut r Resolver) var_(mut v Var, opt ResolveExprOpt) {
 			}
 		} else if sym := v.scope().lookup_var_with_pos(name, v.pos()) {
 			v.sym = sym
+		} else if sym := v.scope().lookup_fn(name) {
+			v.sym = sym
 		} else {
-			r.error('undefined variable `$name`', v.pos())
+			r.error(undefined(.variable, name), v.pos())
 		}
 	}
 }

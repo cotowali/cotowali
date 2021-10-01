@@ -6,7 +6,7 @@
 module parser
 
 import cotowali.ast
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 import cotowali.token { Token, TokenKind }
 import cotowali.util { panic_and_value }
 import cotowali.symbols { builtin_type }

@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 
 pub struct RegisterFnArgs {
 	Var
@@ -59,6 +59,11 @@ pub fn (s Scope) lookup_fn_type(info FunctionTypeInfo) ?&TypeSymbol {
 	return s.lookup_type(typename)
 }
 
+pub fn (s &Scope) lookup_fn(name string) ?&Var {
+	v := s.lookup_var(name) ?
+	return if v.is_function() { v } else { none }
+}
+
 pub fn (mut s Scope) register_fn(f RegisterFnArgs) ?&Var {
 	typ := s.lookup_or_register_fn_type(f.FunctionTypeInfo).typ
 	return s.register_var(Var{ ...f.Var, typ: typ })
@@ -66,34 +71,4 @@ pub fn (mut s Scope) register_fn(f RegisterFnArgs) ?&Var {
 
 fn (mut s Scope) must_register_fn(f RegisterFnArgs) &Var {
 	return s.register_fn(f) or { panic(unreachable(err)) }
-}
-
-// -- methods --
-
-pub fn (mut s Scope) register_method(f RegisterFnArgs) ?&Var {
-	if !f.is_method() {
-		panic(unreachable('not a method'))
-	}
-	typ := s.lookup_or_register_fn_type(f.FunctionTypeInfo).typ
-	v := &Var{
-		...f.Var
-		id: if f.Var.id == 0 { auto_id() } else { f.Var.id }
-		typ: typ
-		receiver_typ: f.FunctionTypeInfo.receiver
-		scope: s
-	}
-	if v.name in s.methods[v.receiver_typ] {
-		return error('duplicated method $v.name')
-	}
-	s.methods[v.receiver_typ][v.name] = v
-	return v
-}
-
-pub fn (s &Scope) lookup_method(typ Type, name string) ?&Var {
-	return (s.methods[typ] or { return none })[name] or {
-		if p := s.parent() {
-			return p.lookup_method(typ, name)
-		}
-		return none
-	}
 }

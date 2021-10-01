@@ -61,7 +61,3 @@ fn (mut r Resolver) error(msg string, pos Pos) IError {
 		pos: pos
 	)
 }
-
-fn (mut r Resolver) duplicated_error(name string, pos Pos) IError {
-	return r.error('`$name` is duplicated', pos)
-}

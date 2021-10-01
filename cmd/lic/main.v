@@ -12,7 +12,8 @@ import cotowali { compile }
 import cotowali.config { backend_from_str, default_feature }
 import cotowali.context { Context, new_context }
 import cotowali.source { Source }
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
+import cotowali.errors { PrettyFormatter }
 import cmd.tools
 
 const (
@@ -91,7 +92,7 @@ fn execute_run(cmd Command) ? {
 		exit(1)
 	}
 	cotowali.run(s, ctx) or {
-		eprint(ctx.errors.format(errors.PrettyFormatter{}))
+		eprint(ctx.errors.format(PrettyFormatter{}))
 		exit(1)
 	}
 }
@@ -103,7 +104,7 @@ fn execute_compile(cmd Command) ? {
 		exit(1)
 	}
 	out := compile(s, ctx) or {
-		eprint(ctx.errors.format(errors.PrettyFormatter{}))
+		eprint(ctx.errors.format(PrettyFormatter{}))
 		exit(1)
 	}
 	print(out)

@@ -7,7 +7,7 @@ module ast
 
 import cotowali.source { Pos }
 import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id }
-import cotowali.errors { unreachable }
+import cotowali.messages { undefined, unreachable }
 
 pub struct FnDecl {
 pub:
@@ -200,7 +200,9 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr, mut func Expr) {
 		}
 		NamespaceItem {
 			r.namespace_item(mut func)
-			r.call_expr_func(mut e, mut &func.item)
+			if func.is_resolved {
+				r.call_expr_func(mut e, mut &func.item)
+			}
 		}
 		SelectorExpr {
 			r.selector_expr(func)
@@ -214,11 +216,12 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr, mut func Expr) {
 
 fn (e CallExpr) lookup_sym(name string, scope &Scope) ?&symbols.Var {
 	if receiver := e.receiver() {
-		return scope.lookup_method(receiver.typ(), name) or {
-			return error('function `${receiver.type_symbol().name}.$name` is not defined')
+		receiver_ts := receiver.type_symbol()
+		return receiver_ts.lookup_method(name) or {
+			return error(undefined(.function, '${receiver_ts.name}.$name'))
 		}
 	} else {
-		return scope.lookup_var(name) or { return error('function `$name` is not defined') }
+		return scope.lookup_var(name) or { return error(undefined(.function, name)) }
 	}
 }
 

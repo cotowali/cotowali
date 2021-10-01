@@ -32,3 +32,6 @@ fn ...int |> twice_each() |> ...int {
 
 assert((seq(3) |> sum()) == 6)
 assert((seq(3) |> twice_each() |> sum()) == 12)
+
+// Call command by `@command` syntax with pipeline operator
+assert(((1, 2) |> @awk('{print $1 + $2}')) == '3')

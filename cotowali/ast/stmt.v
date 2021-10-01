@@ -132,11 +132,11 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 						name: '_'
 						typ: builtin_type(.any)
 					}
-				} else if registered := stmt.scope.register_var(name: name, pos: pos, typ: typ) {
-					stmt.left.sym = registered
 				} else {
-					stmt.left.sym = stmt.scope.must_lookup_var(name)
-					r.duplicated_error(name, pos)
+					stmt.left.sym = stmt.scope.register_var(name: name, pos: pos, typ: typ) or {
+						r.error(err.msg, pos)
+						stmt.scope.must_lookup_var(name)
+					}
 				}
 			}
 		}
@@ -165,16 +165,15 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 								name: '_'
 								typ: builtin_type(.any)
 							}
-						} else if registered := stmt.scope.register_var(
-							name: name
-							pos: pos
-							typ: typ
-						)
-						{
-							left.sym = registered
 						} else {
-							left.sym = stmt.scope.must_lookup_var(name)
-							r.duplicated_error(name, pos)
+							left.sym = stmt.scope.register_var(
+								name: name
+								pos: pos
+								typ: typ
+							) or {
+								r.error(err.msg, pos)
+								stmt.scope.must_lookup_var(name)
+							}
 						}
 					}
 				}

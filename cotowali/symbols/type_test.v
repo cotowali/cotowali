@@ -58,9 +58,6 @@ fn test_lookup_type_and_register_type() ? {
 	if _ := child.lookup_type(Type(99999)) {
 		assert false
 	}
-	if _ := child.register_type(typ: child_t.typ) {
-		assert false
-	}
 	if _ := child.register_type(name: child_t.name) {
 		assert false
 	}
@@ -124,4 +121,46 @@ fn test_resolved() ? {
 	assert int2_ts.resolved().typ == int_
 	assert int3_ts.resolved().typ == int_
 	assert s.must_lookup_type(int_).resolved().typ == int_
+}
+
+fn test_method() ? {
+	mut s := new_global_scope()
+	int_ := builtin_type(.int)
+
+	mut t1 := (s.register_type(name: 'Type1') ?)
+	mut t2 := (s.register_type(name: 'Type2') ?)
+
+	if _ := t1.lookup_method('f') {
+		assert false
+	}
+
+	method1 := t1.register_method(name: 'f', params: [int_], ret: int_) ?
+	if _ := t1.register_method(name: method1.name, params: [int_], ret: int_) {
+		assert false
+	}
+	assert method1.id != 0
+	if found := t1.lookup_method(method1.name) {
+		assert found.id == method1.id
+	} else {
+		assert false
+	}
+
+	// same name, different receiver
+	method2 := t2.register_method(
+		name: 'f'
+		pipe_in: int_
+		params: [
+			int_,
+		]
+	) ?
+	assert method1.name == method2.name
+	assert method2.id != 0
+	assert method1.id != method2.id
+	if found := t2.lookup_method(method2.name) {
+		assert found.id == method2.id
+	} else {
+		assert false
+	}
+
+	assert (method2.type_symbol().fn_signature() ?) == 'fn (Type2) int | (int) void'
 }

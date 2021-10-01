@@ -8,14 +8,14 @@ module parser
 import cotowali.ast
 import cotowali.source { Pos }
 import cotowali.token { Token }
-import cotowali.symbols { Scope, Type, Var, builtin_type }
-import cotowali.errors { unreachable }
+import cotowali.symbols { Scope, Type, TypeSymbol, Var, builtin_type }
+import cotowali.messages { unreachable }
 import cotowali.util { struct_name }
 
 struct FnParamParsingInfo {
 mut:
 	name string
-	typ  Type
+	ts   &TypeSymbol
 	pos  Pos
 }
 
@@ -30,12 +30,11 @@ mut:
 
 fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 	if info.is_method {
-		// dummy comment. Workaround of breaking code by v fmt
-		return scope.register_method(
+		mut receiver := info.params[0].ts
+		return receiver.register_method(
 			name: info.name.text
 			pos: info.name.pos
-			receiver: info.params[0].typ
-			params: info.params[1..].map(it.typ)
+			params: info.params[1..].map(it.ts.typ)
 			pipe_in: info.pipe_in
 			ret: info.ret_typ
 		)
@@ -43,7 +42,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 		return scope.register_fn(
 			name: info.name.text
 			pos: info.name.pos
-			params: info.params.map(it.typ)
+			params: info.params.map(it.ts.typ)
 			pipe_in: info.pipe_in
 			ret: info.ret_typ
 		)
@@ -64,7 +63,7 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 		info.params << FnParamParsingInfo{
 			name: name_tok.text
 			pos: name_tok.pos
-			typ: ts.typ
+			ts: ts
 		}
 
 		if array_info := ts.array_info() {
@@ -86,20 +85,22 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	p.consume_with_assert(.key_fn)
 	mut info := FnSignatureParsingInfo{}
 
-	if p.kind(0) == .l_paren && p.kind(1) == .ident && p.kind(2) == .colon {
+	if p.kind(0) == .l_paren && p.kind(1) == .ident && p.kind(2) in [.colon, .ident] {
 		// fn ( x : Type ) (int, int) |> f()
-		//    | | ^kind(2) == colon
-		//    | ^ kind(1) == .ident
-		//    ^ kind(0) == .l_paren
+		//    | | +- kind(2) == .colon
+		//    | +--- kind(1) == .ident
+		//    +-|--- kind(0) == .l_paren
+		//    | | +  kind(2) == .ident
+		// fn ( x Type ) f() // frequently encountered invalid syntax.
 		info.is_method = true
 		p.consume_with_assert(.l_paren)
 		rec_name_tok := p.consume_with_assert(.ident)
-		p.consume_with_assert(.colon)
-		rec_typ := (p.parse_type() ?).typ
+		p.consume_with_check(.colon) ?
+		rec_ts := (p.parse_type() ?)
 		info.params << FnParamParsingInfo{
 			name: rec_name_tok.text
 			pos: rec_name_tok.pos
-			typ: rec_typ
+			ts: rec_ts
 		}
 		p.consume_with_check(.r_paren) ?
 	}
@@ -155,9 +156,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	info := p.parse_fn_signature_info() ?
 	mut outer_scope := p.scope
 
-	sym := info.register_sym(mut outer_scope) or {
-		return p.duplicated_error(info.name.text, info.name.pos)
-	}
+	sym := info.register_sym(mut outer_scope) or { return p.error(err.msg, info.name.pos) }
 
 	p.open_scope(info.name.text)
 	defer {
@@ -173,8 +172,8 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 				pos: param.pos
 				text: param.name
 			}
-			sym: p.scope.register_var(name: param.name, pos: param.pos, typ: param.typ) or {
-				return p.duplicated_error(param.name, param.pos)
+			sym: p.scope.register_var(name: param.name, pos: param.pos, typ: param.ts.typ) or {
+				return p.error(err.msg, param.pos)
 			}
 		}
 	}

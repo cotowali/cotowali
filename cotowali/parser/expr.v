@@ -8,7 +8,7 @@ module parser
 import cotowali.token { TokenKind }
 import cotowali.ast
 import cotowali.symbols { builtin_type }
-import cotowali.errors { unreachable }
+import cotowali.messages { unreachable }
 import cotowali.util { struct_name }
 
 fn (mut p Parser) parse_expr_stmt(expr ast.Expr) ?ast.Stmt {

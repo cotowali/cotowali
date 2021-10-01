@@ -26,6 +26,7 @@ pub fn (b Backend) shebang() string {
 [flag]
 pub enum Feature {
 	warn_all
+	interactive
 	shebang
 }
 

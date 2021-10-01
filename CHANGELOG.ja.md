@@ -1,6 +1,7 @@
 HEAD
 =================
 
+- lish (Cotowali interactive shell)
 - ドキュメントコメント
 - べき乗演算子 `**`
 - 文字列のインデックスアクセス

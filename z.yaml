@@ -4,6 +4,7 @@ var:
   bin: $(pwd)/.bin
   install_dir: /usr/local/bin
   lic_path: cmd/lic
+  lish_path: cmd/lish
   kuqi_path: cmd/kuqi
   hello_world: examples/hello_world.li
   err_source: tests/expr_err.li
@@ -21,7 +22,12 @@ tasks:
   run: v run {{lic_path}} ${@:- {{hello_world}} }
   run.stdin: v run {{lic_path}}
   no-emit: v run {{lic_path}} -no-emit $@
-  debug: v -cg -g run {{lic_path}} $@
+  debug:
+    env:
+      - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
+      - SEGFAULT_SIGNALS=all
+    run: v -cg -g run {{lic_path}} $@
+  lish: v run {{lish_path}} $@
   watch: v watch --add $@ run {{lic_path}} $@
   profile: v -profile profile.txt run {{lic_path}} $@
   trace:
@@ -39,9 +45,9 @@ tasks:
 
   build.c: v {{lic_path}} -o main.c
 
-  build: mkdir -p {{bin}} && v {{lic_path}} -o {{bin}}/lic
+  build: mkdir -p {{bin}} && v {{lic_path}} -o {{bin}}/lic && v {{lish_path}} -o {{bin}}/lish
   build.win: mkdir -p {{bin}} && v {{lic_path}} -o {{bin}}/lic.exe -os windows
-  symlink: ln -fs {{bin}}/lic {{install_dir}}/lic
+  symlink: ln -fs {{bin}}/lic {{install_dir}}/lic && ln -fs {{bin}}/lish {{install_dir}}/lish
   install: z build && cp {{bin}}/lic {{install_dir}}/lic
 
   kuqi:
@@ -79,7 +85,8 @@ tasks:
       fi
     tasks:
       unit: v test ${@:-./cotowali}
-      integration: v run tests/run.v $@
+      integration: v run tests/tester.v $@
+      compile: v run tests/tester.v --compile $@
       fix: z test integration --fix $@
       hello: z run examples/hello.li
       watch: |
