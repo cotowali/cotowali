@@ -14,6 +14,7 @@ import cotowali.symbols {
 	TypeSymbol,
 	builtin_type,
 }
+import cotowali.messages { undefined }
 import cotowali.errors { unreachable }
 import cotowali.util { nil_to_none }
 
@@ -420,7 +421,7 @@ fn (mut r Resolver) namespace_item(mut expr NamespaceItem, opt ResolveExprOpt) {
 		expr.is_resolved = true
 		r.expr(expr.item, opt)
 	} else {
-		r.error('namespace `$expr.namespace.text` is not defined', expr.namespace.pos)
+		r.error(undefined(.namespace, expr.namespace.text), expr.namespace.pos)
 	}
 }
 
@@ -628,7 +629,7 @@ fn (mut r Resolver) var_(mut v Var, opt ResolveExprOpt) {
 		} else if sym := v.scope().lookup_fn(name) {
 			v.sym = sym
 		} else {
-			r.error('variable `$name` is not defined', v.pos())
+			r.error(undefined(.variable, name), v.pos())
 		}
 	}
 }

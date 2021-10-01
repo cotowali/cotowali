@@ -7,6 +7,7 @@ module symbols
 
 import cotowali.source { Pos }
 import cotowali.errors { unreachable }
+import cotowali.messages { duplicated }
 
 pub type Type = u64
 
@@ -99,7 +100,7 @@ fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
 		panic(unreachable('$ts.typ is exists'))
 	}
 	if ts.name.len > 0 && ts.name in s.name_to_type {
-		return error('`$ts.name` is already defined')
+		return error(duplicated(ts.name))
 	}
 }
 
@@ -196,7 +197,7 @@ pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) ?&Var {
 		panic(unreachable('method name is empty'))
 	}
 	if v.name in ts.methods {
-		return error('`${ts.name}.$v.name` is already defined')
+		return error(duplicated('${ts.name}.$v.name'))
 	}
 	ts.methods[v.name] = v
 	return v

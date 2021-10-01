@@ -7,6 +7,7 @@ module ast
 
 import cotowali.source { Pos }
 import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id }
+import cotowali.messages { undefined }
 import cotowali.errors { unreachable }
 
 pub struct FnDecl {
@@ -218,10 +219,10 @@ fn (e CallExpr) lookup_sym(name string, scope &Scope) ?&symbols.Var {
 	if receiver := e.receiver() {
 		receiver_ts := receiver.type_symbol()
 		return receiver_ts.lookup_method(name) or {
-			return error('function `${receiver_ts.name}.$name` is not defined')
+			return error(undefined(.function, '${receiver_ts.name}.$name'))
 		}
 	} else {
-		return scope.lookup_var(name) or { return error('function `$name` is not defined') }
+		return scope.lookup_var(name) or { return error(undefined(.function, name)) }
 	}
 }
 
