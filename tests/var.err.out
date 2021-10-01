@@ -13,7 +13,7 @@ error: var.err.li 6,5: mismatched types: `(int, int)` (expected) and `(string, s
 error: var.err.li 7,1: mismatched types: `(int, int)` (expected) and `(string, string)` (found)
     7 | (i, n) = ('a', 'b')
       | ^^^^^^^^^^^^^^^^^^^
-error: var.err.li 10,6: undefined variable `_`
+error: var.err.li 10,6: variable `_` is not defined
    10 | echo(_)
       |      ^
 error: var.err.li 13,3: cannot assign to variables outside of current function

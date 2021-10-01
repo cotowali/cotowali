@@ -1,10 +1,10 @@
-error: string.err.li 2,10: undefined variable `undefined_variable`
+error: string.err.li 2,10: variable `undefined_variable` is not defined
     2 | echo("-- $undefined_variable --")
       |          ^^^^^^^^^^^^^^^^^^^
-error: string.err.li 3,19: undefined variable `b`
+error: string.err.li 3,19: variable `b` is not defined
     3 | echo("a = $a; b = $b; c = $c;")
       |                   ^^
-error: string.err.li 3,27: undefined variable `c`
+error: string.err.li 3,27: variable `c` is not defined
     3 | echo("a = $a; b = $b; c = $c;")
       |                           ^^
 error: string.err.li 5,10: mismatched types: `string` (left) and `int` (right)
@@ -13,7 +13,7 @@ error: string.err.li 5,10: mismatched types: `string` (left) and `int` (right)
 error: string.err.li 5,21: mismatched types: `unresolved` (left) and `int` (right)
     5 | echo("${ a + 1 } ${ x + 1 }")
       |                     ^^^^^
-error: string.err.li 5,21: undefined variable `x`
+error: string.err.li 5,21: variable `x` is not defined
     5 | echo("${ a + 1 } ${ x + 1 }")
       |                     ^
 error: string.err.li 6,10: mismatched types: `int` (left) and `string` (right)
@@ -22,10 +22,10 @@ error: string.err.li 6,10: mismatched types: `int` (left) and `string` (right)
 error: string.err.li 6,18: mismatched types: `string` (left) and `int` (right)
     6 | echo("${ 1 + "${ a + 1 } $x"} $x")
       |                  ^^^^^
-error: string.err.li 6,26: undefined variable `x`
+error: string.err.li 6,26: variable `x` is not defined
     6 | echo("${ 1 + "${ a + 1 } $x"} $x")
       |                          ^^
-error: string.err.li 6,31: undefined variable `x`
+error: string.err.li 6,31: variable `x` is not defined
     6 | echo("${ 1 + "${ a + 1 } $x"} $x")
       |                               ^^
 error: string.err.li 9,3: `string` does not support index assignment
