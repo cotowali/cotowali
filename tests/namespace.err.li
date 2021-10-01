@@ -5,3 +5,5 @@ namespace ns {
 
 echo(n)
 f()
+undefined_ns::f()
+echo(undefined_ns::n)

@@ -200,7 +200,9 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr, mut func Expr) {
 		}
 		NamespaceItem {
 			r.namespace_item(mut func)
-			r.call_expr_func(mut e, mut &func.item)
+			if func.is_resolved {
+				r.call_expr_func(mut e, mut &func.item)
+			}
 		}
 		SelectorExpr {
 			r.selector_expr(func)

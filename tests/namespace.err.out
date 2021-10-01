@@ -4,3 +4,9 @@ error: namespace.err.li 6,6: undefined variable `n`
 error: namespace.err.li 7,1: function `f` is not defined
     7 | f()
       | ^^^
+error: namespace.err.li 8,1: undefined namespace `undefined_ns`
+    8 | undefined_ns::f()
+      | ^^^^^^^^^^^^
+error: namespace.err.li 9,6: undefined namespace `undefined_ns`
+    9 | echo(undefined_ns::n)
+      |      ^^^^^^^^^^^^
