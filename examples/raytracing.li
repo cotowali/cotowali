@@ -722,6 +722,6 @@ fn main() {
     40, 40, 30
   )
 
-  render('image.ppm', cam, cornell_box_scene, width, height, 2, 8)
+  render('./tmp/image.ppm', cam, cornell_box_scene, width, height, 2, 8)
 }
 main()

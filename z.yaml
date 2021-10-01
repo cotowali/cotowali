@@ -74,8 +74,9 @@ tasks:
   scope: z run tools scope $@
 
   raytracing: |
+    mkdir -p {{tmp}}
     z examples/raytracing.li | sh
-    convert image.ppm image.png
+    convert {{tmp}}/image.ppm {{tmp}}/image.png
 
   fix:
     - z fmt
