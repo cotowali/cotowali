@@ -196,7 +196,7 @@ pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) ?&Var {
 		panic(unreachable('method name is empty'))
 	}
 	if v.name in ts.methods {
-		return error('duplicated method $v.name')
+		return error('`${ts.name}.$v.name` is already defined')
 	}
 	ts.methods[v.name] = v
 	return v
