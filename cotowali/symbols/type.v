@@ -96,7 +96,7 @@ pub fn (v TypeSymbol) str() string {
 
 fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
 	if ts.typ != 0 && ts.typ in s.type_symbols {
-		return error('$ts.typ is exists')
+		panic(unreachable('$ts.typ is exists'))
 	}
 	if ts.name.len > 0 && ts.name in s.name_to_type {
 		return error('$ts.name is exists')

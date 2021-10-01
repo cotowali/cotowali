@@ -58,9 +58,6 @@ fn test_lookup_type_and_register_type() ? {
 	if _ := child.lookup_type(Type(99999)) {
 		assert false
 	}
-	if _ := child.register_type(typ: child_t.typ) {
-		assert false
-	}
 	if _ := child.register_type(name: child_t.name) {
 		assert false
 	}
