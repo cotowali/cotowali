@@ -119,7 +119,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 		//      ^ kind(1) != .l_paren
 		//
 		//    vvv kind(0) != .ident
-		// fn ... int _> f()
+		// fn ... int |> f()
 		//        ^^^ kind(1) != .l_paren
 		//
 		//    vvv kind(0) != .ident
@@ -132,15 +132,17 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	info.name = p.consume_with_check(.ident) ?
 
 	p.parse_fn_params(mut info) ?
-	if p.kind(0) != .l_brace {
-		// consume output pipe symbol (optional)
-		//        vv
-		// fn f() |> int
-		//        ^^
-		p.consume_if_kind_eq(.pipe) or {}
-
-		info.ret_typ = (p.parse_type() ?).typ
+	if p.kind(0) in [.l_brace, .eol] {
+		// implicit void
+		return info
 	}
+
+	//        vv
+	// fn f() |> int
+	// fn f(): int
+	//       ^
+	p.consume_with_check(.colon, .pipe) ?
+	info.ret_typ = (p.parse_type() ?).typ
 
 	return info
 }

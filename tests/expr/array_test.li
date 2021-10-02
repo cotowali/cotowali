@@ -1,8 +1,8 @@
-fn raw_arr(arr: []int) []int {
+fn raw_arr(arr: []int): []int {
   return arr
 }
 
-fn arr_0_1_2() []int {
+fn arr_0_1_2(): []int {
   return [0, 1, 2]
 }
 

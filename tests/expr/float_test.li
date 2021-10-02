@@ -13,7 +13,7 @@ assert(-+v == +-v)
 assert(- -v == + +v)
 assert(- - -v == -v)
 
-fn negative(v: float) float {
+fn negative(v: float): float {
   return -v
 }
 assert(negative(1.0) == -1)

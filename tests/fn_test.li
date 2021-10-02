@@ -1,13 +1,13 @@
-fn git(command: string) string
-fn add(a: int, b: int) int {
+fn git(command: string): string
+fn add(a: int, b: int): int {
   return a + b
 }
 
-fn div(a: float, b: float) float {
+fn div(a: float, b: float): float {
   return a / b
 }
 
-fn sum(vals: ...int) int {
+fn sum(vals: ...int): int {
   var res = 0
   for v in vals {
     res = res + v
@@ -30,13 +30,13 @@ assert(add(
 assert(@expr('1', '+', '1') == '2')
 assert(((1.1 |> @awk('{print $1 * 2}')) as float) == 2.2)
 
-fn f() int{
+fn f(): int {
   return 0
 }
 
 fn test_nested_func() {
-  fn f(x: string) string {
-    fn f(v: int) int {
+  fn f(x: string): string {
+    fn f(v: int): int {
       return 1 + v
     }
     var v = f(10)

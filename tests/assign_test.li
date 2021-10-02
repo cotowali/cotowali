@@ -1,4 +1,4 @@
-fn add(a: int, b: int) int {
+fn add(a: int, b: int): int {
   return a + b
 }
 
@@ -81,7 +81,7 @@ fn test_discard_value() {
 
   var tmp = '/tmp/cotowali_discrad_value_tmp.txt'
   var msg = 'hello'
-  fn mktemp() string {
+  fn mktemp(): string {
     msg |> tmp
     return tmp
   }
@@ -93,7 +93,7 @@ fn test_discard_value() {
 test_discard_value()
 
 fn test_assign_fn() {
-  fn f() int {
+  fn f(): int {
     return 42
   }
   var aliased_f = f

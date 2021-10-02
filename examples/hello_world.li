@@ -1,4 +1,4 @@
-fn helloworld() string {
+fn helloworld(): string {
   return "Hello World"
 }
 

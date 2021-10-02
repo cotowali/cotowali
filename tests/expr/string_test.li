@@ -31,7 +31,7 @@ b
 )
 
 fn test_string_index() {
-  fn twice(n: int) int {
+  fn twice(n: int): int {
     return n * 2
   }
   fn int |> twice_input() |> int {

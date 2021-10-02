@@ -1,6 +1,6 @@
 var global = 0
 var n = 0
-fn f() int {
+fn f(): int {
   return 0
 }
 
@@ -35,7 +35,7 @@ namespace ns2 {
   var n = 1
   assert(n == 1)
 
-  fn f() string {
+  fn f(): string {
     return '10'
   }
   assert(f() == '10')
@@ -45,7 +45,7 @@ namespace ns2 {
   assert(global == 1)
 
   namespace ns2_1 {
-    fn f() string {
+    fn f(): string {
       return 'ns2_1'
     }
     assert(f() == 'ns2_1')

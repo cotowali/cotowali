@@ -1,8 +1,8 @@
-fn add(a: int, b: int) int {
+fn add(a: int, b: int): int {
   return a + b
 }
 
-fn int |> twice() int {
+fn int |> twice(): int {
   var n: int
   read(&n)
   return n * 2
