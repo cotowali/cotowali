@@ -4,3 +4,6 @@ assert('ababc'.replace('ab', 'x').replace('xx', 'y') == 'yc')
 assert('00112'.index('01') == 1)
 assert('00112'.index('x') == -1)
 assert('ab"cd"ef'.index('"') == 2)
+
+assert(''.len() == 0)
+assert('abc'.len() == 3)

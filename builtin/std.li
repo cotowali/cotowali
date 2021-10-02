@@ -48,6 +48,12 @@ fn (s: string) index(t: string): int {
   return (s|> @awk('-v', "t=$t", '{print index($1, t) - 1}')) as int
 }
 
+fn (s: string) len(): int {
+  var n: int
+  ${ len_n=${#len_s} }
+  return n
+}
+
 // ---
 
 namespace math {
