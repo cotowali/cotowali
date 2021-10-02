@@ -127,20 +127,30 @@ fn test_method() ? {
 	mut s := new_global_scope()
 	int_ := builtin_type(.int)
 
-	mut t1 := (s.register_type(name: 'Type1') ?)
+	mut base := (s.register_type(name: 'Base') ?)
+	mut t1 := (s.register_type(name: 'Type1', base: base) ?)
 	mut t2 := (s.register_type(name: 'Type2') ?)
 
 	if _ := t1.lookup_method('f') {
 		assert false
 	}
 
-	method1 := t1.register_method(name: 'f', params: [int_], ret: int_) ?
+	base_method1 := base.register_method(name: 'f', params: [], ret: int_) ?
+	assert base_method1.id != 0
+	if found := t1.lookup_method(base_method1.name) {
+		assert found.id == base_method1.id
+	} else {
+		assert false
+	}
+
+	method1 := t1.register_method(name: base_method1.name, params: [int_], ret: int_) ?
 	if _ := t1.register_method(name: method1.name, params: [int_], ret: int_) {
 		assert false
 	}
 	assert method1.id != 0
-	if found := t1.lookup_method(method1.name) {
+	if found := t1.lookup_method(base_method1.name) {
 		assert found.id == method1.id
+		assert found.id != base_method1.id
 	} else {
 		assert false
 	}

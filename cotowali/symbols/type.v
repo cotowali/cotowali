@@ -7,6 +7,7 @@ module symbols
 
 import cotowali.source { Pos }
 import cotowali.messages { duplicated, unreachable }
+import cotowali.util { nil_to_none }
 
 pub type Type = u64
 
@@ -34,6 +35,7 @@ mut:
 pub mut:
 	pos Pos
 pub:
+	base &TypeSymbol = 0
 	typ  Type
 	name string
 	info TypeInfo = TypeInfo(PlaceholderTypeInfo{})
@@ -53,6 +55,10 @@ fn (v TypeSymbol) scope_str() string {
 
 pub fn (v TypeSymbol) full_name() string {
 	return Symbol(v).full_name()
+}
+
+pub fn (ts &TypeSymbol) base() ?&TypeSymbol {
+	return nil_to_none(ts.base)
 }
 
 pub enum TypeKind {
@@ -203,5 +209,5 @@ pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) ?&Var {
 }
 
 pub fn (ts &TypeSymbol) lookup_method(name string) ?&Var {
-	return ts.methods[name] or { return none }
+	return ts.methods[name] or { (ts.base() or { return none }).lookup_method(name) ? }
 }
