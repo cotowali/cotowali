@@ -24,9 +24,14 @@ array_set() {
   eval "${name}_$i='$val'"
 }
 
+array_len() {
+  name="$1"
+  eval "echo \$${name}_len"
+}
+
 array_elements() {
   name=$1
-  len="$(eval "echo \$${name}_len" )"
+  len="$(array_len $name)"
   for i in $(seq 0 $(( len - 1 )) )
   do
     elem="${name}_$i"
@@ -62,7 +67,7 @@ array_init() {
 array_copy() {
   dest_name="$1"
   src_name="$2"
-  len="$(eval "echo \$${src_name}_len" )"
+  len="$(array_len $src_name)"
   eval "${dest_name}_len=$len"
   for i in $(seq 0 $(( len - 1 )) )
   do
