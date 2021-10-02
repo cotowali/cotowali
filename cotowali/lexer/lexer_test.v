@@ -331,6 +331,7 @@ fn test_string_expr_substitution() {
 
 fn test_inline_shell() {
 	test(@FN, @LINE, r'${echo 1}', [t(.inline_shell, 'echo 1')])
+	test(@FN, @LINE, r'${echo ${n}}', [t(.inline_shell, r'echo ${n}')])
 }
 
 fn test_number() {
