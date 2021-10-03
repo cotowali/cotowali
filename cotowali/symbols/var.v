@@ -40,9 +40,9 @@ fn (v Var) scope_str() string {
 	return Symbol(v).scope_str()
 }
 
-pub fn (v Var) full_name() string {
-	name := Symbol(v).full_name()
-	return if v.is_member() { v.receiver_type_symbol().full_name() + '__$name' } else { name }
+pub fn (v Var) name_for_ident() string {
+	name := Symbol(v).name_for_ident()
+	return if v.is_member() { v.receiver_type_symbol().name_for_ident() + '__$name' } else { name }
 }
 
 pub fn (v Var) type_symbol() &TypeSymbol {

@@ -18,7 +18,7 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 			if v.name == '_' {
 				e.ident_to_discard
 			} else {
-				v.full_name()
+				v.name_for_ident()
 			}
 		}
 		FnDecl {

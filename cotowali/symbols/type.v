@@ -53,8 +53,8 @@ fn (v TypeSymbol) scope_str() string {
 	return Symbol(v).scope_str()
 }
 
-pub fn (v TypeSymbol) full_name() string {
-	return Symbol(v).full_name()
+pub fn (v TypeSymbol) name_for_ident() string {
+	return Symbol(v).name_for_ident()
 }
 
 pub fn (ts &TypeSymbol) base() ?&TypeSymbol {

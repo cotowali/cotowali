@@ -23,7 +23,7 @@ pub fn (v Symbol) scope() ?&Scope {
 	return nil_to_none(v.scope)
 }
 
-pub fn (v Symbol) full_name() string {
+pub fn (v Symbol) name_for_ident() string {
 	id := match v {
 		Var { v.id }
 		TypeSymbol { u64(v.typ) }
