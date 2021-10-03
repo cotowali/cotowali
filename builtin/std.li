@@ -54,6 +54,15 @@ fn (s: string) len(): int {
   return n
 }
 
+// --- array methods ---
+// All array inherits []any
+
+fn (arr: []any) len(): int {
+  var v: int
+  ${ len_n=$(array_len len_arr) }
+  return n
+}
+
 // ---
 
 namespace math {
