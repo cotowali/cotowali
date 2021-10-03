@@ -1,0 +1,4 @@
+require 'ns.mod.li'
+
+assert(ns::hello() == 'hello ns')
+assert(ns2::hello() == 'hello ns2')
