@@ -67,7 +67,7 @@ fn (arr: []any) len(): int {
 
 namespace math {
   fn pi(): float {
-    return @awk('BEGIN{ printf "%g", atan2(0, -0) }') as float
+    return @awk('BEGIN{ printf "%g", 4 * atan2(1, 1) }') as float
   }
 
   fn sin(v: float): float {
