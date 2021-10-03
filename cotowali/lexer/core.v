@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module lexer
 
-import cotowali.source { Char, CharClass, CharCond, Pos, Source, pos }
+import cotowali.source { Char, CharClass, CharCond, Pos, Source }
 import cotowali.token { Token, TokenKind }
 import cotowali.context { Context }
 import cotowali.util { Unit, min }
@@ -89,7 +89,7 @@ pub fn (lex &Lexer) is_eof() bool {
 }
 
 fn (mut lex Lexer) start_pos() {
-	lex.pos = pos(
+	lex.pos = lex.source.new_pos(
 		i: lex.idx()
 		col: lex.pos.last_col
 		line: lex.pos.last_line
@@ -119,7 +119,6 @@ fn (mut lex Lexer) error(token Token, msg string) IError {
 		}
 	}
 	return &LexerErr{
-		source: lex.source
 		token: token
 		msg: msg
 	}
@@ -133,7 +132,6 @@ fn (mut lex Lexer) warn(token Token, msg string) IError {
 		}
 	}
 	return &LexerWarn{
-		source: lex.source
 		token: token
 		msg: msg
 	}

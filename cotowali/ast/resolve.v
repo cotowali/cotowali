@@ -5,14 +5,14 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module ast
 
-import cotowali.source { Pos, Source }
+import cotowali.source { Pos }
 import cotowali.context { Context }
 import cotowali.debug { Tracer }
 
 pub struct Resolver {
 mut:
-	ctx    &Context
-	source &Source = 0
+	ctx  &Context
+	file &File = 0
 
 	tracer Tracer [if trace_resolver ?]
 }
@@ -56,7 +56,6 @@ fn (mut r Resolver) error(msg string, pos Pos) IError {
 	}
 
 	return r.ctx.errors.push_err(
-		source: r.source
 		msg: msg
 		pos: pos
 	)

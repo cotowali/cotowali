@@ -15,7 +15,7 @@ pub interface Formatter {
 pub struct SimpleFormatter {}
 
 pub fn (p SimpleFormatter) format(e ErrOrWarn) string {
-	s := e.source
+	s := e.source()
 	pos := e.pos
 	return '$e.label(): $s.file_name() $pos.line,$pos.col: $e.msg\n'
 }
@@ -23,7 +23,7 @@ pub fn (p SimpleFormatter) format(e ErrOrWarn) string {
 pub struct PrettyFormatter {}
 
 pub fn (p PrettyFormatter) format(e ErrOrWarn) string {
-	s := e.source
+	s := e.source()
 	pos := e.pos
 
 	format_line := fn (s &Source, line int) string {

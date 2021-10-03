@@ -28,13 +28,13 @@ pub fn (mut e ErrorManager) push_err(err Err) Err {
 	if err.is_syntax_error {
 		e.has_syntax_error = true
 	}
-	e.list[err.source.path] << err
+	e.list[err.source().path] << err
 	return err
 }
 
 [inline]
 pub fn (mut e ErrorManager) push_warn(warn Warn) Warn {
-	e.list[warn.source.path] << warn
+	e.list[warn.source().path] << warn
 	return warn
 }
 

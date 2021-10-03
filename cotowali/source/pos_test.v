@@ -24,6 +24,13 @@ fn test_pos() {
 
 	// if multiline, don,t owerride last_col
 	assert pos(i: 0, len: 3, line: 1, last_line: 2, col: 1, last_col: 1).last_col == 1
+
+	s := new_source('path', 'code')
+	p2 := Pos{
+		...p
+		source: s
+	}
+	assert s.new_pos(p) == p2
 }
 
 fn test_pos_extend() {

@@ -5,9 +5,10 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module source
 
-import cotowali.util { max }
+import cotowali.util { max, nil_to_none }
 
 pub struct Pos {
+	source &Source = 0
 pub:
 	i    int
 	line int = 1
@@ -16,6 +17,14 @@ pub mut:
 	len       int = 1
 	last_line int = 1
 	last_col  int = 1
+}
+
+pub fn (pos &Pos) source() ?&Source {
+	return nil_to_none(pos.source)
+}
+
+pub fn (s &Source) new_pos(p Pos) Pos {
+	return pos(Pos{ ...p, source: s })
 }
 
 [inline]
@@ -31,7 +40,9 @@ pub fn pos(pos Pos) Pos {
 
 [inline]
 pub fn none_pos() Pos {
-	return Pos{-1, -1, -1, -1, -1, -1}
+	return Pos{
+		i: -1
+	}
 }
 
 [inline]

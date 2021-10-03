@@ -7,6 +7,7 @@ module errors
 
 import cotowali.source { Pos, Source }
 import cotowali.token { Token }
+import cotowali.messages { unreachable }
 
 pub type ErrOrWarn = Err | Warn
 
@@ -17,10 +18,13 @@ pub fn (e ErrOrWarn) label() string {
 	}
 }
 
+pub fn (e ErrOrWarn) source() &Source {
+	return e.pos.source() or { panic(unreachable('source is nil')) }
+}
+
 // Err represents cotowali compile error
 pub struct Err {
 pub:
-	source          &Source
 	pos             Pos
 	is_syntax_error bool
 	// Implements IError
@@ -28,30 +32,36 @@ pub:
 	code int
 }
 
+pub fn (e &Err) source() &Source {
+	return ErrOrWarn(e).source()
+}
+
 pub fn (lhs Err) < (rhs Err) bool {
-	lhs_path, rhs_path := lhs.source.path, rhs.source.path
+	lhs_path, rhs_path := lhs.source().path, rhs.source().path
 	return lhs_path < rhs_path || (lhs_path == rhs_path && lhs.pos.i < rhs.pos.i)
 }
 
 // Warn represents cotowali compile warning
 pub struct Warn {
 pub:
-	source &Source
-	pos    Pos
+	pos Pos
 	// Implements IError
 	msg  string
 	code int
 }
 
+pub fn (e &Warn) source() &Source {
+	return ErrOrWarn(e).source()
+}
+
 pub fn (lhs Warn) < (rhs Warn) bool {
-	lhs_path, rhs_path := lhs.source.path, rhs.source.path
+	lhs_path, rhs_path := lhs.source().path, rhs.source().path
 	return lhs_path < rhs_path || (lhs_path == rhs_path && lhs.pos.i < rhs.pos.i)
 }
 
 pub struct LexerErr {
 pub:
-	source &Source
-	token  Token
+	token Token
 	// Implements IError
 	msg  string
 	code int
@@ -59,8 +69,7 @@ pub:
 
 pub struct LexerWarn {
 pub:
-	source &Source
-	token  Token
+	token Token
 	// Implements IError
 	msg  string
 	code int
@@ -68,7 +77,6 @@ pub:
 
 pub fn (err LexerErr) to_err() Err {
 	return Err{
-		source: err.source
 		pos: err.token.pos
 		msg: err.msg
 		code: err.code

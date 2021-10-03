@@ -7,13 +7,12 @@ module kuqi
 
 import lsp
 import jsonrpc
-import cotowali.source
 import cotowali.errors { Warn }
 
 [manualfree]
 fn (mut q Kuqi) show_diagnostics(uri lsp.DocumentUri) {
 	path := uri.path()
-	errors := q.ctx.errors.all().filter(it.source.path == path)
+	errors := q.ctx.errors.all().filter(it.source().path == path)
 
 	mut diagnostics := []lsp.Diagnostic{cap: errors.len}
 
