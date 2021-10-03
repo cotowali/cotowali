@@ -32,7 +32,9 @@ array_len() {
 array_elements() {
   name=$1
   len="$(array_len $name)"
-  for i in $(seq 0 $(( len - 1 )) )
+
+  i=0
+  while [ "$i" -lt "$len" ]
   do
     elem="${name}_$i"
     printf '"$%s"' "$elem"
@@ -40,6 +42,7 @@ array_elements() {
     then
       printf ' '
     fi
+    i=$((i + 1))
   done
 }
 
@@ -48,9 +51,12 @@ array_assign() {
   shift
   len="$#"
   eval "${name}_len=$len"
-  for i in $(seq 0 $(( len - 1 )) )
+
+  i=0
+  while [ "$i" -lt "$len" ]
   do
     array_set "$name" "$i" "$(eval echo "\$$(( i + 1 ))")"
+    i=$((i + 1))
   done
 }
 
@@ -58,10 +64,13 @@ array_init() {
   name=$1
   len=$2
   value=$3
+
   eval "${name}_len=$len"
-  for i in $(seq 0 $(( len - 1 )) )
+  i=0
+  while [ "$i" -lt "$len" ]
   do
     array_set "$name" "$i" "$value"
+    i=$((i + 1))
   done
 }
 
@@ -70,9 +79,12 @@ array_copy() {
   src_name="$2"
   len="$(array_len $src_name)"
   eval "${dest_name}_len=$len"
-  for i in $(seq 0 $(( len - 1 )) )
+
+  i=0
+  while [ "$i" -lt "$len" ]
   do
-    array_set "$dest_name" $i "$(array_get "$src_name" $i)"
+    array_set "$dest_name" "$i" "$(array_get "$src_name" $i)"
+    i=$((i + 1))
   done
 }
 
