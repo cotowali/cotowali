@@ -39,6 +39,15 @@ jobs:
       - run: z ci setup-v
       - run: z test compile
       - run: docker run -v $(pwd)/tests:/app/tests -w /app alpine ./tests/run.sh
+  test-macos:
+    runs-on: macos-latest
+    env:
+      VFLAGS: "-cc clang"
+    steps:
+      - uses: zakuro9715/setup-z@main
+      - uses: actions/checkout@v2
+      - run: z ci setup-v
+      - run: z ci test
   shellcheck:
     runs-on: ubuntu-latest
     strategy:
