@@ -34,6 +34,7 @@ pub fn (v Symbol) name_for_ident() string {
 			name = v.receiver_type_symbol().name_for_ident() + '__$name'
 		}
 	}
+	name = name.replace('[]', '__array__')
 	if s := v.scope() {
 		if s.is_global() {
 			return name
