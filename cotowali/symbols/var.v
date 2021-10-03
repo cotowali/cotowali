@@ -41,8 +41,7 @@ fn (v Var) scope_str() string {
 }
 
 pub fn (v Var) name_for_ident() string {
-	name := Symbol(v).name_for_ident()
-	return if v.is_member() { v.receiver_type_symbol().name_for_ident() + '__$name' } else { name }
+	return Symbol(v).name_for_ident()
 }
 
 pub fn (v Var) type_symbol() &TypeSymbol {
