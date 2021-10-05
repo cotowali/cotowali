@@ -14,6 +14,9 @@ fn test_pos() {
 		col: 2
 		last_col: 3
 	}
+	assert p.begin() == 5
+	assert p.end() == 7
+
 	assert pos(p) == p
 
 	// auto set last_line and last_col

@@ -23,6 +23,16 @@ pub fn (pos &Pos) source() ?&Source {
 	return nil_to_none(pos.source)
 }
 
+[inline]
+pub fn (pos &Pos) begin() int {
+	return pos.i
+}
+
+[inline]
+pub fn (pos &Pos) end() int {
+	return pos.i + pos.len
+}
+
 pub fn (s &Source) new_pos(p Pos) Pos {
 	return pos(Pos{ ...p, source: s })
 }
