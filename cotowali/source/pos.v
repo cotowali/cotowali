@@ -72,6 +72,19 @@ pub fn (p1 Pos) merge(p2 Pos) Pos {
 	}
 }
 
+pub fn (p Pos) includes(p2 Pos) bool {
+	source_eq := if isnil(p.source) || isnil(p2.source) {
+		isnil(p.source) && isnil(p2.source)
+	} else {
+		p.source == p2.source
+	}
+	idx_ok := p.begin() <= p2.begin() && p.end() >= p2.end()
+	first_line_ok := p.line < p2.line || (p.line == p2.line && p.col <= p2.col)
+	last_line_ok := p.last_line > p2.last_line
+		|| (p.last_line == p2.last_line && p.last_col >= p2.last_col)
+	return source_eq && (idx_ok || (first_line_ok && last_line_ok))
+}
+
 pub fn (p Pos) str() string {
 	if p.is_none() {
 		return 'none'

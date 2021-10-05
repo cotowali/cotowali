@@ -44,6 +44,32 @@ fn test_pos_extend() {
 	assert p2.merge(p1) == result
 }
 
+fn test_include() {
+	p := Pos{
+		i: 1
+		len: 8
+		line: 1
+		last_line: 3
+		col: 2
+		last_col: 3
+	}
+	assert p.includes(pos(i: 2, len: 1))
+	assert p.includes(pos(line: 1, last_line: 2, col: 3))
+	assert p.includes(pos(line: 2, last_line: 2, col: 5))
+	assert p.includes(pos(line: 1, last_line: 1, col: 2))
+	assert p.includes(pos(line: 3, last_line: 3, col: 3, last_col: 3))
+	assert p.includes(pos(line: 1, last_line: 3, col: 2, last_col: 3))
+	assert !p.includes(pos(i: 2, len: 10))
+	assert !p.includes(pos(line: 1, col: 1))
+	assert !p.includes(pos(line: 0))
+	assert !p.includes(pos(line: 4))
+	assert !p.includes(pos(line: 1, col: 1))
+	assert !p.includes(pos(line: 2, last_line: 4))
+	assert !p.includes(pos(line: 1, col: 1))
+	assert !p.includes(pos(line: 2, last_line: 3, col: 1, last_col: 4))
+	assert !p.includes(pos(line: 2, last_line: 3, col: 3, last_col: 4))
+}
+
 fn test_pos_none() {
 	assert !(pos(i: 0).is_none())
 	assert none_pos().is_none()
