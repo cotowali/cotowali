@@ -7,6 +7,7 @@ module symbols
 
 import cotowali.util { nil_to_none }
 import cotowali.messages { unreachable }
+import cotowali.source { Pos }
 
 pub type ID = u64
 
@@ -17,6 +18,7 @@ pub:
 	name string
 pub mut:
 	owner &Var = 0
+	pos   Pos
 mut:
 	parent           &Scope = 0
 	children         map[u64]&Scope // map[ID]&Scope
