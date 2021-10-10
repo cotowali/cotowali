@@ -5,5 +5,7 @@ namespace ns {
   fn hello(): string {
     return 'hello ns'
   }
+
+  var one = 1
 }
 

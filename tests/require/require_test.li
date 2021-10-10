@@ -1,4 +1,5 @@
 require 'ns.mod.li'
 
+assert(ns::one == 1)
 assert(ns::hello() == 'hello ns')
 assert(ns2::hello() == 'hello ns2')
