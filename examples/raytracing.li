@@ -622,18 +622,8 @@ fn calc_radiance(objects: []Object, input_ray: Ray, depth: int) Color {
   var u: Vec3
   if vec3_x(w) > eps {
     u = vec3_normalize(vec3_cross(vec3(0.0, 1.0, 0.0), w))
-    /*
-    if vec3_length(vec3_cross(vec3(0.0, 1.0, 0.0), w)) < eps {
-      assert (false, "w:$w, cross: ${vec3_length(vec3_multiply(vec3_cross(vec3(0.0, 1.0, 0.0), w), 100))}")
-    }
-    */
   } else {
     u = vec3_normalize(vec3_cross(vec3(1.0, 0.0, 0.0), w))
-    /*
-    if vec3_length(vec3_cross(vec3(1.0, 0.0, 0.0), w)) < eps {
-      assert (false, "w:$w, cross: ${vec3_length(vec3_multiply(vec3_cross(vec3(1.0, 0.0, 0.0), w), 100))}")
-    }
-    */
   }
   var v = vec3_cross(w, u)
 
