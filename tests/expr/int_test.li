@@ -24,7 +24,7 @@ assert(1 > 0)
 assert(1 >= 0)
 assert(0 >= 0)
 
-fn zero() int {
+fn zero(): int {
   var v = 0
 
   // evaluated but not used. this is valid but no output
@@ -35,11 +35,11 @@ fn zero() int {
   return v
 }
 
-fn add(a: int, b: int) int {
+fn add(a: int, b: int): int {
   return a + b
 }
 
-fn as_int(v: any) int {
+fn as_int(v: any): int {
   return v as int
 }
 

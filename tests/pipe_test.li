@@ -1,10 +1,10 @@
-fn int |> inc() int {
+fn int |> inc() |> int {
   var n = 0
   read(&n)
   return n + 1
 }
 
-fn ...int |> sum() int {
+fn ...int |> sum() |> int {
   var n: int
   var v: int
   while read(&v) {

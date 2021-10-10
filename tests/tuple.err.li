@@ -1,11 +1,11 @@
-fn ...(int, int) |> f() ...(int, int) {
+fn ...(int, int) |> f() |> ...(int, int) {
   return 0
   return ('x', 'y')
 }
 
 0 |> f()
 
-fn () |> zero() int {
+fn () |> zero() |> int {
   var v: int
   read(&v)
   return 0

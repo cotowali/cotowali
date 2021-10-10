@@ -23,12 +23,18 @@ pub fn (v Symbol) scope() ?&Scope {
 	return nil_to_none(v.scope)
 }
 
-pub fn (v Symbol) full_name() string {
+pub fn (v Symbol) name_for_ident() string {
 	id := match v {
 		Var { v.id }
 		TypeSymbol { u64(v.typ) }
 	}
-	name := if v.name.len > 0 { v.name } else { 'sym$id' }
+	mut name := if v.name.len > 0 { v.name } else { 'sym$id' }
+	if v is Var {
+		if v.is_member() {
+			name = v.receiver_type_symbol().name_for_ident() + '__$name'
+		}
+	}
+	name = name.replace('[]', '__array__')
 	if s := v.scope() {
 		if s.is_global() {
 			return name

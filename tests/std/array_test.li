@@ -1,0 +1,8 @@
+fn test_len() {
+  var nums = [1, 2, 3]
+  assert(nums.len() == 3)
+  var strs = ['a', 'b']
+  assert(strs.len() == 2)
+  assert([true, false, true, false].len() == 4)
+}
+test_len()

@@ -4,7 +4,7 @@ assert(name == 'bob')
 assert((name as string) == 'bob')
 assert(name == ('bob' as name_t))
 
-fn i_am(name: name_t) string {
+fn i_am(name: name_t): string {
   return "I am $name"
 }
 
@@ -31,17 +31,17 @@ test_infix_for_alias_type()
 type vec2 = (int, int)
 type vec = vec2
 
-fn vec2(x: int, y: int) vec2 {
+fn vec2(x: int, y: int): vec2 {
   return (x, y)
 }
 
-fn vec2_add(v1: vec2, v2: vec2) vec2 {
+fn vec2_add(v1: vec2, v2: vec2): vec2 {
   var (x1, y1) = v1
   var (x2, y2) = v2
   return (x1 + x2, y1 + y2)
 }
 
-fn vec_add(v1: vec, v2: vec) vec {
+fn vec_add(v1: vec, v2: vec): vec {
   return vec2_add(v1, v2)
 }
 

@@ -45,7 +45,6 @@ fn (mut c Checker) error(msg string, pos Pos) IError {
 	}
 
 	return c.ctx.errors.push_err(
-		source: c.source
 		msg: msg
 		pos: pos
 	)
@@ -60,7 +59,6 @@ fn (mut c Checker) warn(msg string, pos Pos) IError {
 	}
 
 	return c.ctx.errors.push_warn(
-		source: c.source
 		msg: msg
 		pos: pos
 	)

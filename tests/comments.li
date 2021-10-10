@@ -38,7 +38,7 @@ assert(1 /* comment */ /* /* comment */ */ == 1)
 /// doc comment
 
 /// add two integers
-fn add(a: int, b: int) int {
+fn add(a: int, b: int): int {
   /// doc comment in function
   return a + b
 }

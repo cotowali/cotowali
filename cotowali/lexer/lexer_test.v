@@ -7,14 +7,18 @@ module lexer
 
 import cotowali.context { new_default_context }
 import cotowali.token { Token, TokenKind }
-import cotowali.source { Pos, new_source, none_pos }
+import cotowali.source { Pos, Source, new_source, none_pos }
 import cotowali.errors
 
-fn test(fn_name string, line string, code string, tokens []Token) {
+fn code(code string) &Source {
+	return new_source('', code)
+}
+
+fn test(fn_name string, line string, source &Source, tokens []Token) {
 	println('@FN: $fn_name, LINE: $line')
 
 	ctx := new_default_context()
-	lexer := new_lexer(new_source('', code), ctx)
+	lexer := new_lexer(source, ctx)
 	mut i := 0
 	for t1 in lexer {
 		if !(i < tokens.len) {
@@ -96,13 +100,14 @@ fn t(kind TokenKind, text string) Token {
 }
 
 fn test_lexer() {
-	test(@FN, @LINE, ' "🐈__" a ', [
+	s1 := code(' "🐈__" a ')
+	test(@FN, @LINE, s1, [
 		// Pos{i, line, col, len, last_line, last_col}
-		Token{.double_quote, '"', Pos{1, 1, 2, 1, 1, 2}},
-		Token{.string_literal_content_text, '🐈__', Pos{2, 1, 3, 6, 1, 6}},
-		Token{.double_quote, '"', Pos{8, 1, 7, 1, 1, 7}},
-		Token{.ident, 'a', Pos{10, 1, 9, 1, 1, 9}},
-		Token{.eof, '', Pos{12, 1, 11, 1, 1, 11}},
+		Token{.double_quote, '"', Pos{s1, 1, 1, 2, 1, 1, 2}},
+		Token{.string_literal_content_text, '🐈__', Pos{s1, 2, 1, 3, 6, 1, 6}},
+		Token{.double_quote, '"', Pos{s1, 8, 1, 7, 1, 1, 7}},
+		Token{.ident, 'a', Pos{s1, 10, 1, 9, 1, 1, 9}},
+		Token{.eof, '', Pos{s1, 12, 1, 11, 1, 1, 11}},
 	])
 	ktest(@FN, @LINE, 'namespace x::y', [.key_namespace, .ident, .coloncolon, .ident])
 	ktest(@FN, @LINE, 'fn f(a, b){}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren,
@@ -142,7 +147,7 @@ fn test_lexer() {
 	ktest(@FN, @LINE, 'n %= 2', [.ident, .mod_assign, .int_literal])
 	ktest(@FN, @LINE, 'n **= 2', [.ident, .pow_assign, .int_literal])
 
-	test(@FN, @LINE, 'if i == 0 { } else if i != 1 {} else {}', [
+	test(@FN, @LINE, code('if i == 0 { } else if i != 1 {} else {}'), [
 		t(.key_if, 'if'),
 		t(.ident, 'i'),
 		t(.eq, '=='),
@@ -162,7 +167,7 @@ fn test_lexer() {
 		t(.eof, ''),
 	])
 
-	test(@FN, @LINE, '\n\r\n\r', [
+	test(@FN, @LINE, code('\n\r\n\r'), [
 		t(.eol, '\n'),
 		t(.eol, '\r\n'),
 		t(.eol, '\r'),
@@ -170,7 +175,7 @@ fn test_lexer() {
 		t(.eof, ''),
 	])
 
-	test(@FN, @LINE, '{(true + false - 2 * 3 / x) == 0}', [
+	test(@FN, @LINE, code('{(true + false - 2 * 3 / x) == 0}'), [
 		t(.l_brace, '{'),
 		t(.l_paren, '('),
 		t(.bool_literal, 'true'),
@@ -194,7 +199,8 @@ fn test_comment() {
 	cr, lf := '\r', '\n'
 	crlf := cr + lf
 
-	test(@FN, @LINE, 'a//abc' + cr + 'b//xxx' + lf + 'c//cr' + crlf + 'd//eee', [
+	test(@FN, @LINE, code('a//abc' + cr + 'b//xxx' + lf + 'c//cr' + crlf + 'd//eee'),
+		[
 		t(.ident, 'a'),
 		t(.eol, cr),
 		t(.ident, 'b'),
@@ -203,12 +209,12 @@ fn test_comment() {
 		t(.eol, crlf),
 		t(.ident, 'd'),
 	])
-	test(@FN, @LINE, 'a/* /* xx */ */b', [
+	test(@FN, @LINE, code('a/* /* xx */ */b'), [
 		t(.ident, 'a'),
 		t(.ident, 'b'),
 	])
 
-	test(@FN, @LINE, 'a/// comment // comment' + lf + 'b', [
+	test(@FN, @LINE, code('a/// comment // comment' + lf + 'b'), [
 		t(.ident, 'a'),
 		t(.doc_comment, ' comment // comment'),
 		t(.eol, lf),
@@ -219,31 +225,31 @@ fn test_comment() {
 fn test_at_ident() {
 	texts := ['@a.a', '@./a.a', '@/usr/local/bin/', '@~/.bin/cmd.py']
 	for text in texts {
-		test(@FN, @LINE, text, [t(.ident, text)])
+		test(@FN, @LINE, code(text), [t(.ident, text)])
 	}
 
 	ktest(@FN, @LINE, '@expr()', [.ident, .l_paren, .r_paren])
 }
 
 fn test_string() {
-	test(@FN, @LINE, "$dq'a\nb\nc'$dq", [
+	test(@FN, @LINE, code("$dq'a\nb\nc'$dq"), [
 		t(.double_quote, '"'),
 		t(.string_literal_content_text, "'a\nb\nc'"),
 		t(.double_quote, '"'),
 	])
-	test(@FN, @LINE, '$sq"a\nb\nc"$sq', [
+	test(@FN, @LINE, code('$sq"a\nb\nc"$sq'), [
 		t(.single_quote, "'"),
 		t(.string_literal_content_text, '"a\nb\nc"'),
 		t(.single_quote, "'"),
 	])
 
-	test(@FN, @LINE, r'"  x  "', [
+	test(@FN, @LINE, code(r'"  x  "'), [
 		t(.double_quote, '"'),
 		t(.string_literal_content_text, '  x  '),
 		t(.double_quote, '"'),
 	])
 
-	test(@FN, @LINE, "'" + r"a\\\n\'" + r'\"' + "'", [
+	test(@FN, @LINE, code("'" + r"a\\\n\'" + r'\"' + "'"), [
 		t(.single_quote, "'"),
 		t(.string_literal_content_text, 'a'),
 		t(.string_literal_content_escaped_back_slash, r'\\'),
@@ -269,13 +275,13 @@ fn test_string() {
 	ktest(@FN, @LINE, '"a', [.double_quote, .string_literal_content_text])
 	ktest(@FN, @LINE, "'a", [.single_quote, .string_literal_content_text, .eof])
 
-	test(@FN, @LINE, r"r'\\\n\''", [
+	test(@FN, @LINE, code(r"r'\\\n\''"), [
 		t(.single_quote_with_r_prefix, "r'"),
 		t(.string_literal_content_text, '$bs$bs${bs}n$bs'),
 		t(.single_quote, "'"),
 		t(.single_quote, "'"),
 	])
-	test(@FN, @LINE, r'r"\\\n\""', [
+	test(@FN, @LINE, code(r'r"\\\n\""'), [
 		t(.double_quote_with_r_prefix, 'r"'),
 		t(.string_literal_content_text, '$bs$bs${bs}n$bs'),
 		t(.double_quote, '"'),
@@ -285,7 +291,7 @@ fn test_string() {
 
 fn test_string_expr_substitution() {
 	ktest(@FN, @LINE, r"'${x}'", [.single_quote, .string_literal_content_text, .single_quote])
-	test(@FN, @LINE, r'"${x}"', [
+	test(@FN, @LINE, code(r'"${x}"'), [
 		t(.double_quote, '"'),
 		t(.string_literal_content_expr_open, r'${'),
 		t(.ident, 'x'),
@@ -293,7 +299,7 @@ fn test_string_expr_substitution() {
 		t(.double_quote, '"'),
 	])
 
-	test(@FN, @LINE, r'"${ "a" {} " b ${ {} "${ "x" }"} $v" "${ ([ }" }}"', [
+	test(@FN, @LINE, code(r'"${ "a" {} " b ${ {} "${ "x" }"} $v" "${ ([ }" }}"'), [
 		t(.double_quote, '"'),
 		t(.string_literal_content_expr_open, r'${'),
 		t(.double_quote, '"'),
@@ -330,11 +336,12 @@ fn test_string_expr_substitution() {
 }
 
 fn test_inline_shell() {
-	test(@FN, @LINE, r'${echo 1}', [t(.inline_shell, 'echo 1')])
+	test(@FN, @LINE, code(r'${echo 1}'), [t(.inline_shell, 'echo 1')])
+	test(@FN, @LINE, code(r'${echo ${n}}'), [t(.inline_shell, r'echo ${n}')])
 }
 
 fn test_number() {
-	test(@FN, @LINE, '1 1.1 1E+9 1e-9', [
+	test(@FN, @LINE, code('1 1.1 1E+9 1e-9'), [
 		t(.int_literal, '1'),
 		t(.float_literal, '1.1'),
 		t(.float_literal, '1E+9'),
@@ -351,17 +358,17 @@ fn test_multiline() {
 		'',
 		' s5 ',
 	]
-	code := lines.join('\n')
-	test(@FN, @LINE, code, [
-		// Pos{i, line, col, len, last_line, last_col}
-		Token{.ident, 's1', Pos{0, 1, 1, 2, 1, 2}},
-		Token{.ident, 's2', Pos{3, 1, 4, 2, 1, 5}},
-		Token{.eol, '\n', Pos{5, 1, lines[0].len + 1, 1, 1, lines[0].len + 1}},
-		Token{.ident, 's3', Pos{6, 2, 1, 2, 2, 2}},
-		Token{.ident, 's4', Pos{10, 2, 5, 2, 2, 6}},
-		Token{.eol, '\n', Pos{13, 2, lines[1].len + 1, 1, 2, lines[1].len + 1}},
-		Token{.eol, '\n', Pos{14, 3, lines[2].len + 1, 1, 3, lines[2].len + 1}},
-		Token{.ident, 's5', Pos{16, 4, 2, 2, 4, 3}},
-		Token{.eof, '', Pos{code.len, 4, lines[3].len + 1, 1, 4, lines[3].len + 1}},
+	s := new_source('', lines.join('\n'))
+	test(@FN, @LINE, s, [
+		// Pos{source, i, line, col, len, last_line, last_col}
+		Token{.ident, 's1', Pos{s, 0, 1, 1, 2, 1, 2}},
+		Token{.ident, 's2', Pos{s, 3, 1, 4, 2, 1, 5}},
+		Token{.eol, '\n', Pos{s, 5, 1, lines[0].len + 1, 1, 1, lines[0].len + 1}},
+		Token{.ident, 's3', Pos{s, 6, 2, 1, 2, 2, 2}},
+		Token{.ident, 's4', Pos{s, 10, 2, 5, 2, 2, 6}},
+		Token{.eol, '\n', Pos{s, 13, 2, lines[1].len + 1, 1, 2, lines[1].len + 1}},
+		Token{.eol, '\n', Pos{s, 14, 3, lines[2].len + 1, 1, 3, lines[2].len + 1}},
+		Token{.ident, 's5', Pos{s, 16, 4, 2, 2, 4, 3}},
+		Token{.eof, '', Pos{s, s.code.len, 4, lines[3].len + 1, 1, 4, lines[3].len + 1}},
 	])
 }

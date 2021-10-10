@@ -253,9 +253,18 @@ fn (mut lex Lexer) read_dollar_directive() Token {
 	})
 	if lex.byte() == `{` {
 		lex.skip()
-		for lex.byte() != `}` {
+		mut depth := 1
+		for {
 			if lex.is_eof() {
 				panic('unterminated inline shell')
+			}
+			match lex.byte() {
+				`{` { depth++ }
+				`}` { depth-- }
+				else {}
+			}
+			if depth == 0 {
+				break
 			}
 			lex.consume()
 		}

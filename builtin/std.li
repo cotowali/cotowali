@@ -25,45 +25,60 @@ fn eprintln(s: string) {
   ${printf '%s\n' "$eprintln_s" >&2}
 }
 
-fn string |> cat(files: ...string) string
+fn string |> cat(files: ...string) |> string
 
-fn seq(n: int) ...int
+fn seq(n: int) |> ...int
 
-fn range(begin: int, end: int) ...int {
+fn range(begin: int, end: int) |> ...int {
   // cannot use negative number on busybox
   for i in @seq(0, end - begin - 1) as ...int {
     yield (i as int) + begin
   }
 }
 
-fn rm(paths: ...string) void
+fn rm(paths: ...string)
 
 // --- string methods ---
 
-fn (s: string) replace(a: string, b: string) string {
+fn (s: string) replace(a: string, b: string): string {
   return s |> @sed("s/$a/$b/g")
 }
 
-fn (s: string) index(t: string) int {
+fn (s: string) index(t: string): int {
   return (s|> @awk('-v', "t=$t", '{print index($1, t) - 1}')) as int
+}
+
+fn (s: string) len(): int {
+  var n: int
+  ${ len_n=${#len_s} }
+  return n
+}
+
+// --- array methods ---
+// All array inherits []any
+
+fn (arr: []any) len(): int {
+  var v: int
+  ${ len_n=$(array_len len_arr) }
+  return n
 }
 
 // ---
 
 namespace math {
-  fn pi() float {
-    return @awk('BEGIN{ printf "%g", atan2(0, -0) }') as float
+  fn pi(): float {
+    return @awk('BEGIN{ printf "%g", 4 * atan2(1, 1) }') as float
   }
 
-  fn sin(v: float) float {
+  fn sin(v: float): float {
     return (v |> @awk('{printf "%g", sin($1)}')) as float
   }
 
-  fn cos(v: float) float {
+  fn cos(v: float): float {
     return (v |> @awk('{printf "%g", cos($1)}')) as float
   }
 
-  fn sqrt(v: float) float {
+  fn sqrt(v: float): float {
     return (v |> @awk('{printf "%g", sqrt($1)}')) as float
   }
 }

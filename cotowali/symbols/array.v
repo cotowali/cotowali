@@ -25,7 +25,13 @@ pub fn (ts &TypeSymbol) array_info() ?ArrayTypeInfo {
 }
 
 pub fn (mut s Scope) lookup_or_register_array_type(info ArrayTypeInfo) &TypeSymbol {
-	return s.lookup_or_register_type(name: info.typename(s), info: info)
+	return if info.elem == builtin_type(.any) {
+		s.lookup_or_register_type(name: info.typename(s), info: info)
+	} else {
+		// array type inherits []any
+		base := s.must_lookup_array_type(elem: builtin_type(.any))
+		s.lookup_or_register_type(name: info.typename(s), info: info, base: base)
+	}
 }
 
 pub fn (s Scope) lookup_array_type(info ArrayTypeInfo) ?&TypeSymbol {

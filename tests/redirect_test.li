@@ -8,11 +8,11 @@ fn test_redirect_with_literal() {
 test_redirect_with_literal()
 
 fn test_redirect_with_var_and_func() {
-  fn hello(msg: string) string {
+  fn hello(msg: string): string {
     return "hello $msg"
   }
 
-  fn tmp_file() string {
+  fn tmp_file(): string {
     return "/tmp/cotowali_redirect_tmp.txt"
   }
 

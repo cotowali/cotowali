@@ -198,10 +198,12 @@ pub fn new_parser(source &Source, ctx &Context) Parser {
 
 fn (mut p Parser) open_scope(name string) &Scope {
 	p.scope = p.scope.get_or_create_child(name)
+	p.scope.pos = p.pos(0)
 	return p.scope
 }
 
 fn (mut p Parser) close_scope() &Scope {
+	p.scope.pos = p.scope.pos.merge(p.pos(0))
 	p.scope = p.scope.parent() or { panic(err) }
 	return p.scope
 }
