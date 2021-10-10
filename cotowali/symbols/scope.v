@@ -113,6 +113,13 @@ pub fn (s &Scope) children() []&Scope {
 	return ids.map(s.children[it])
 }
 
+pub fn (s &Scope) is_ancestor_of(target &Scope) bool {
+	if s2 := target.parent() {
+		return if s.id == s2.id { true } else { s.is_ancestor_of(s2) }
+	}
+	return false
+}
+
 type NameOrID = ID | string
 
 pub fn (mut s Scope) get_child(key NameOrID) ?&Scope {
