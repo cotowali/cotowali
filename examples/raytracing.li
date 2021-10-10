@@ -10,11 +10,11 @@
 var eps = 1e-4
 var pi = 3.1415926535
 
-fn eps_eq(a: float, b: float) bool {
+fn eps_eq(a: float, b: float): bool {
   return abs(a - b) < eps
 }
 
-fn abs(v: float) float {
+fn abs(v: float): float {
   if v < 0 {
     return -v
   } else {
@@ -22,19 +22,19 @@ fn abs(v: float) float {
   }
 }
 
-fn sqrt(v: float) float {
+fn sqrt(v: float): float {
   return (v |> @awk('{printf "%lf", sqrt($1)}')) as float
 }
 
-fn sin(v: float) float {
+fn sin(v: float): float {
   return (v |> @awk('{printf "%lf", sin($1)}')) as float
 }
 
-fn cos(v: float) float {
+fn cos(v: float): float {
   return (v |> @awk('{printf "%lf", cos($1)}')) as float
 }
 
-fn clamp(v: float, min: float, max: float) float {
+fn clamp(v: float, min: float, max: float): float {
   if v < min {
     return min
   } else if v > max {
@@ -44,11 +44,11 @@ fn clamp(v: float, min: float, max: float) float {
   }
 }
 
-fn floor(v: float) int {
+fn floor(v: float): int {
   return (v |> @awk('{printf "%d", $1}')) as int
 }
 
-fn fmax(values: ...float) float {
+fn fmax(values: ...float): float {
   var res = values[0]
   for v in values {
     if v > res {
@@ -58,7 +58,7 @@ fn fmax(values: ...float) float {
   return res
 }
 
-fn rand() float {
+fn rand(): float {
   // NOTE: /dev/urandom exists in most environments. but it is not POSIX compliant.
   return (@od('-vAn', '-N4', '-tu4', '/dev/urandom') |> @awk('{printf "%lf", $1 / 4294967295}')) as float
 }
@@ -88,40 +88,40 @@ test_math()
 
 type Vec3 = (float, float, float)
 
-fn vec3(x: float, y: float, z: float) Vec3 {
+fn vec3(x: float, y: float, z: float): Vec3 {
   return (x, y, z)
 }
 
-fn vec3_x(v: Vec3) float {
+fn vec3_x(v: Vec3): float {
   var (x, y, z) = v
   return x
 }
 
-fn vec3_y(v: Vec3) float {
+fn vec3_y(v: Vec3): float {
   var (x, y, z) = v
   return y
 }
 
-fn vec3_z(v: Vec3) float {
+fn vec3_z(v: Vec3): float {
   var (x, y, z) = v
   return z
 }
 
-fn vec3_length_squared(v: Vec3) float {
+fn vec3_length_squared(v: Vec3): float {
   var (x, y, z) = v
   return x * x + y * y + z * z
 }
 
-fn vec3_length(v: Vec3) float {
+fn vec3_length(v: Vec3): float {
   return sqrt(vec3_length_squared(v))
 }
 
-fn vec3_normalize(v: Vec3) Vec3 {
+fn vec3_normalize(v: Vec3): Vec3 {
   var vv = vec3_multiply(v, 1000)
   return vec3_divide(vv, vec3_length(vv))
 }
 
-fn vec3_add(v1: Vec3, v2: Vec3) Vec3 {
+fn vec3_add(v1: Vec3, v2: Vec3): Vec3 {
   return vec3(
     vec3_x(v1) + vec3_x(v2),
     vec3_y(v1) + vec3_y(v2),
@@ -129,7 +129,7 @@ fn vec3_add(v1: Vec3, v2: Vec3) Vec3 {
   )
 }
 
-fn vec3_subtract(v1: Vec3, v2: Vec3) Vec3 {
+fn vec3_subtract(v1: Vec3, v2: Vec3): Vec3 {
   return vec3(
     vec3_x(v1) - vec3_x(v2),
     vec3_y(v1) - vec3_y(v2),
@@ -137,15 +137,15 @@ fn vec3_subtract(v1: Vec3, v2: Vec3) Vec3 {
   )
 }
 
-fn vec3_multiply(v: Vec3, n: float) Vec3 {
+fn vec3_multiply(v: Vec3, n: float): Vec3 {
   return vec3(vec3_x(v) * n, vec3_y(v) * n, vec3_z(v) * n)
 }
 
-fn vec3_divide(v: Vec3, n: float) Vec3 {
+fn vec3_divide(v: Vec3, n: float): Vec3 {
   return vec3(vec3_x(v) / n, vec3_y(v) / n, vec3_z(v) / n)
 }
 
-fn vec3_cross(v1: Vec3, v2: Vec3) Vec3 {
+fn vec3_cross(v1: Vec3, v2: Vec3): Vec3 {
   return vec3(
     vec3_y(v1) * vec3_z(v2) - vec3_z(v1) * vec3_y(v2),
     vec3_z(v1) * vec3_x(v2) - vec3_x(v1) * vec3_z(v2),
@@ -153,7 +153,7 @@ fn vec3_cross(v1: Vec3, v2: Vec3) Vec3 {
   )
 }
 
-fn vec3_dot(v1: Vec3, v2: Vec3) float {
+fn vec3_dot(v1: Vec3, v2: Vec3): float {
   return vec3_x(v1) * vec3_x(v2) + vec3_y(v1) * vec3_y(v2) + vec3_z(v1) * vec3_z(v2)
 }
 
@@ -185,16 +185,16 @@ test_vec3()
 
 type Ray = (...Vec3, ...Vec3)
 
-fn ray(origin: Vec3, dir: Vec3) Ray {
+fn ray(origin: Vec3, dir: Vec3): Ray {
   return origin + vec3_normalize(dir)
 }
 
-fn ray_origin(ray: Ray) Vec3 {
+fn ray_origin(ray: Ray): Vec3 {
   var (origin_x, origin_y, origin_z, dir_x, dir_y, dir_z) = ray
   return vec3(origin_x, origin_y, origin_z)
 }
 
-fn ray_dir(ray: Ray) Vec3 {
+fn ray_dir(ray: Ray): Vec3 {
   var (origin_x, origin_y, origin_z, dir_x, dir_y, dir_z) = ray
   return vec3(dir_x, dir_y, dir_z)
 }
@@ -216,7 +216,7 @@ test_ray()
 
 type RayHit = (...Vec3, ...Vec3, float) // (point, normal, distance); if not hit, distance == 0
 
-fn ray_hit(point: Vec3, normal: Vec3, distance: float) RayHit {
+fn ray_hit(point: Vec3, normal: Vec3, distance: float): RayHit {
   var (p_x, p_y, p_z) = point
   if eps_eq(vec3_length_squared(normal), 0) || eps_eq(distance, 0) {
     return ray_hit_null()
@@ -229,26 +229,26 @@ fn ray_hit(point: Vec3, normal: Vec3, distance: float) RayHit {
   )
 }
 
-fn ray_hit_null() RayHit {
+fn ray_hit_null(): RayHit {
   return (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 }
 
-fn ray_hit_point(hit: RayHit) Vec3 {
+fn ray_hit_point(hit: RayHit): Vec3 {
   var (p_x, p_y, p_z, n_x, n_y, n_z, distance) = hit
   return vec3(p_x, p_y, p_z)
 }
 
-fn ray_hit_normal(hit: RayHit) Vec3 {
+fn ray_hit_normal(hit: RayHit): Vec3 {
   var (p_x, p_y, p_z, n_x, n_y, n_z, distance) = hit
   return vec3(n_x, n_y, n_z)
 }
 
-fn ray_hit_distance(hit: RayHit) float {
+fn ray_hit_distance(hit: RayHit): float {
   var (p_x, p_y, p_z, n_x, n_y, n_z, distance) = hit
   return distance
 }
 
-fn ray_hit_is_null(hit: RayHit) bool {
+fn ray_hit_is_null(hit: RayHit): bool {
   return eps_eq(ray_hit_distance(hit), 0)
 }
 
@@ -274,19 +274,19 @@ fn test_ray_hit() {
 
 type Color = Vec3
 
-fn color(r: float, g: float, b: float) Color {
+fn color(r: float, g: float, b: float): Color {
   return vec3(r, g, b)
 }
 
-fn color_r(color: Color) float {
+fn color_r(color: Color): float {
   return vec3_x(color)
 }
 
-fn color_g(color: Color) float {
+fn color_g(color: Color): float {
   return vec3_y(color)
 }
 
-fn color_b(color: Color) float {
+fn color_b(color: Color): float {
   return vec3_y(color)
 }
 
@@ -299,16 +299,16 @@ fn test_color() {
 
 type Material = (...Color, ...Color) // color, emission
 
-fn material(color: Color, emission: Color) Material {
+fn material(color: Color, emission: Color): Material {
   return (...color, ...emission)
 }
 
-fn material_color(mat: Material) Color {
+fn material_color(mat: Material): Color {
   var (color_r, color_g, color_b, emission_r, emission_g, emission_b) = mat
   return color(color_r, color_b, color_g)
 }
 
-fn material_emission(mat: Material) Color {
+fn material_emission(mat: Material): Color {
   var (color_r, color_g, color_b, emission_r, emission_g, emission_b) = mat
   return color(emission_r, emission_g, emission_b)
 }
@@ -323,22 +323,22 @@ fn test_material() {
 
 type Sphere = (...Vec3, float)
 
-fn sphere(center: Vec3, radius: float) Sphere {
+fn sphere(center: Vec3, radius: float): Sphere {
   var (x, y, z) = center
   return (x, y, z, radius)
 }
 
-fn sphere_center(sphere: Sphere) Vec3 {
+fn sphere_center(sphere: Sphere): Vec3 {
   var (x, y, z, radius) = sphere
   return vec3(x, y, z)
 }
 
-fn sphere_radius(sphere: Sphere) float {
+fn sphere_radius(sphere: Sphere): float {
   var (x, y, z, radius) = sphere
   return radius
 }
 
-fn sphere_intersect(sphere: Sphere, ray: Ray) RayHit {
+fn sphere_intersect(sphere: Sphere, ray: Ray): RayHit {
   var center = sphere_center(sphere)
   var radius = sphere_radius(sphere)
   var origin = ray_origin(ray)
@@ -402,19 +402,19 @@ test_sphere()
 
 type Object = (...Sphere, ...Material)
 
-fn object(sp: Sphere, mat: Material) Object {
+fn object(sp: Sphere, mat: Material): Object {
   return (...sp, ...mat)
 }
 
-fn object_sphere(obj: Object) Sphere {
+fn object_sphere(obj: Object): Sphere {
   return sphere(vec3(obj[0], obj[1], obj[2]), obj[3])
 }
 
-fn object_material(obj: Object) Material {
+fn object_material(obj: Object): Material {
   return material(color(obj[4], obj[5], obj[6]), color(obj[7], obj[8], obj[9]))
 }
 
-fn object_intersect(obj: Object, ray: Ray) RayHit {
+fn object_intersect(obj: Object, ray: Ray): RayHit {
   return sphere_intersect(object_sphere(obj), ray)
 }
 
@@ -436,11 +436,11 @@ test_object()
 // pos, dir, up, screen_dist, screen_width screen_height
 type Camera = (...Vec3, ...Vec3, ...Vec3, float, float, float)
 
-fn camera(pos: Vec3, dir: Vec3, up: Vec3, dist: float, width: float, height: float) Camera {
+fn camera(pos: Vec3, dir: Vec3, up: Vec3, dist: float, width: float, height: float): Camera {
   return (...pos, ...vec3_normalize(dir), ...vec3_normalize(up), dist, width, height)
 }
 
-fn camera_pos(camera: Camera) Vec3 {
+fn camera_pos(camera: Camera): Vec3 {
   var (
     pos_x, pos_y, pos_z,
     dir_x, dir_y, dir_z,
@@ -450,7 +450,7 @@ fn camera_pos(camera: Camera) Vec3 {
   return vec3(pos_x, pos_y, pos_z)
 }
 
-fn camera_dir(camera: Camera) Vec3 {
+fn camera_dir(camera: Camera): Vec3 {
   var (
     pos_x, pos_y, pos_z,
     dir_x, dir_y, dir_z,
@@ -460,7 +460,7 @@ fn camera_dir(camera: Camera) Vec3 {
   return vec3(dir_x, dir_y, dir_z)
 }
 
-fn camera_up(camera: Camera) Vec3 {
+fn camera_up(camera: Camera): Vec3 {
   var (
     pos_x, pos_y, pos_z,
     dir_x, dir_y, dir_z,
@@ -470,7 +470,7 @@ fn camera_up(camera: Camera) Vec3 {
   return vec3(up_x, up_y, up_z)
 }
 
-fn camera_screen_dist(camera: Camera) float {
+fn camera_screen_dist(camera: Camera): float {
   var (
     pos_x, pos_y, pos_z,
     dir_x, dir_y, dir_z,
@@ -480,7 +480,7 @@ fn camera_screen_dist(camera: Camera) float {
   return dist
 }
 
-fn camera_screen_width(camera: Camera) float {
+fn camera_screen_width(camera: Camera): float {
   var (
     pos_x, pos_y, pos_z,
     dir_x, dir_y, dir_z,
@@ -490,7 +490,7 @@ fn camera_screen_width(camera: Camera) float {
   return width
 }
 
-fn camera_screen_height(camera: Camera) float {
+fn camera_screen_height(camera: Camera): float {
   var (
     pos_x, pos_y, pos_z,
     dir_x, dir_y, dir_z,
@@ -524,15 +524,15 @@ type ObjectIndex = int
 
 type Intersection = (ObjectIndex, ...RayHit)
 
-fn intersection_hit(v: Intersection) RayHit {
+fn intersection_hit(v: Intersection): RayHit {
   return ray_hit(vec3(v[1], v[2], v[3]), vec3(v[4], v[5], v[6]), v[7])
 }
 
-fn intersection_object_index(v: Intersection) ObjectIndex {
+fn intersection_object_index(v: Intersection): ObjectIndex {
   return v[0]
 }
 
-fn objects_intersect(objects: []Object, ray: Ray) Intersection {
+fn objects_intersect(objects: []Object, ray: Ray): Intersection {
   var out_hit = ray_hit_null()
   var out_index = -1
 
@@ -588,7 +588,7 @@ var MIN_DEPTH = 6
 var ln = "
 "
 
-fn calc_radiance(objects: []Object, input_ray: Ray, depth: int) Color {
+fn calc_radiance(objects: []Object, input_ray: Ray, depth: int): Color {
   var intersection = objects_intersect(objects, input_ray)
   var hit = intersection_hit(intersection)
   if ray_hit_is_null(hit) {
