@@ -581,8 +581,8 @@ var cornell_box_scene = [
 ]
 // --------------------
 
-var DEPTH_LIMIT = 48
-var MIN_DEPTH = 6
+var DEPTH_LIMIT = 24
+var MIN_DEPTH = 2
 
 // TODO: escpape sequence
 var ln = "
@@ -704,7 +704,7 @@ fn render(out_path: string, camera: Camera, objects: []Object, width: int, heigh
 fn main() {
   echo('Ray tracing example')
 
-  var (width, height) = (20, 15)
+  var (width, height) = (400, 300)
   var cam = camera(
     vec3(50.0, 52.0, 220.0),
     vec3(0.0, -0.04, -1.0),
@@ -712,6 +712,6 @@ fn main() {
     40, 40, 30
   )
 
-  render('./tmp/image.ppm', cam, cornell_box_scene, width, height, 2, 8)
+  render('./tmp/image.ppm', cam, cornell_box_scene, width, height, 2, 1)
 }
 main()
