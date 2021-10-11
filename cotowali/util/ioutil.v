@@ -9,13 +9,13 @@ import io
 
 type WritableData = []byte | string
 
-pub fn write(w io.Writer, data WritableData) ?int {
+pub fn write(mut w io.Writer, data WritableData) ?int {
 	return w.write(match data {
 		string { data.bytes() }
 		[]byte { data }
 	})
 }
 
-pub fn must_write(w io.Writer, data WritableData) int {
-	return write(w, data) or { panic(err) }
+pub fn must_write(mut w io.Writer, data WritableData) int {
+	return write(mut w, data) or { panic(err) }
 }

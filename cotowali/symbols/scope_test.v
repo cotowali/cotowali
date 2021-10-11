@@ -43,4 +43,17 @@ fn test_scope() ? {
 	assert s.children().len == 1
 	assert s.get_or_create_child('new').name == 'new'
 	assert s.children().len == 2
+
+	mut child2 := s.must_create_child('child2')
+	child_child := child.must_create_child('child')
+	child2_child := child2.must_create_child('child2')
+	assert s.is_ancestor_of(child)
+	assert s.is_ancestor_of(child2)
+	assert s.is_ancestor_of(child_child)
+	assert s.is_ancestor_of(child2_child)
+	assert child.is_ancestor_of(child_child)
+	assert child2.is_ancestor_of(child2_child)
+	assert !child.is_ancestor_of(child2_child)
+	assert !child2.is_ancestor_of(child_child)
+	assert !s.is_ancestor_of(s)
 }
