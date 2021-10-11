@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-import cotowali.source { Pos, none_pos }
+import cotowali.source { Pos, new_source, none_pos }
 import cotowali.messages { duplicated, unreachable }
 
 pub struct Var {
@@ -110,7 +110,9 @@ pub fn (s &Scope) must_lookup_var(name string) &Var {
 pub fn (s &Scope) lookup_var_with_pos(name string, pos Pos) ?&Var {
 	if name in s.vars {
 		v := s.vars[name]
-		if v.pos.i <= pos.i || v.pos.is_none() || pos.is_none() {
+		s1 := v.pos.source() or { new_source('', '') }
+		s2 := pos.source() or { new_source('', '') }
+		if v.pos.i <= pos.i || s1 != s2 || v.pos.is_none() || pos.is_none() {
 			return v
 		}
 	}
