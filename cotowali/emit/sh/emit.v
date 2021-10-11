@@ -10,13 +10,13 @@ import cotowali.util { must_write }
 
 pub fn (mut e Emitter) emit(f &ast.File) {
 	if e.ctx.config.feature.has(.shebang) {
-		must_write(e.out, e.ctx.config.backend.shebang() + '\n\n')
+		must_write(mut &e.out, e.ctx.config.backend.shebang() + '\n\n')
 	}
 
 	e.builtin()
 	e.file(f)
 	for k in ordered_code_kinds {
-		must_write(e.out, e.codes[k].bytes())
+		must_write(mut &e.out, e.codes[k].bytes())
 	}
 }
 
