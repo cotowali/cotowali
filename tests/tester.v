@@ -21,6 +21,7 @@ enum FileSuffix {
 	li
 	sh
 	err
+	mod
 	todo
 	out
 	noemit
@@ -31,6 +32,7 @@ fn suffix(s FileSuffix) string {
 		.li { '.li' }
 		.sh { '.sh' }
 		.err { '.err' }
+		.mod { '.mod' }
 		.todo { '.todo' }
 		.out { '.out' }
 		.noemit { '.noemit' }
@@ -50,6 +52,10 @@ fn is_noemit_test_file(f string) bool {
 	return f.trim_suffix(suffix(.li)).trim_suffix(suffix(.todo)).ends_with(suffix(.noemit))
 }
 
+fn is_mod_file(f string) bool {
+	return f.trim_suffix(suffix(.li)).ends_with(suffix(.mod))
+}
+
 fn out_path(f string) string {
 	return f.trim_suffix(suffix(.li)) + suffix(.out)
 }
@@ -62,7 +68,7 @@ fn is_target_file(s string) bool {
 			return false
 		}
 	}
-	return s.ends_with(suffix(.li))
+	return s.ends_with(suffix(.li)) && !is_mod_file(s)
 }
 
 fn get_sources(paths []string) []string {

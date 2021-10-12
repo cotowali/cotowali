@@ -1,0 +1,11 @@
+require 'ns2.mod.li'
+assert(ns2::hello() == 'hello ns2')
+
+namespace ns {
+  fn hello(): string {
+    return 'hello ns'
+  }
+
+  var one = 1
+}
+
