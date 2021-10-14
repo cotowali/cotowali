@@ -50,24 +50,24 @@ tasks:
           trace.parser: v -cg -d trace_parser run {{lic_path}} -no-emit $@
           trace.resolver: v -cg -d trace_resolver run {{lic_path}} -no-emit $@
           trace.checker: v -cg -d trace_checker run {{lic_path}} -no-emit $@
-      install: sudo cp {{bin}}/lic {{install_dir}}/lic
-      symlink: sudo ln -fs {{bin}}/lic {{install_dir}}/lic
+      install: cp {{bin}}/lic {{install_dir}}/lic
+      symlink: ln -fs {{bin}}/lic {{install_dir}}/lic
   lish:
     run: z lish run
     tasks:
       run: v run {{lish_path}} $@
       build: mkdir -p {{bin}} && v {{lish_path}} -o {{bin}}/lish
       build.win: mkdir -p {{bin}} && v {{lish_path}} -o {{bin}}/lish.exe -os windows
-      install: sudo cp {{bin}}/lish {{install_dir}}/lish
-      symlink: sudo ln -fs {{bin}}/lish {{install_dir}}/lish
+      install: cp {{bin}}/lish {{install_dir}}/lish
+      symlink: ln -fs {{bin}}/lish {{install_dir}}/lish
   kuqi:
     tasks:
       run: v run {{kuqi_path}} $@
       build: v {{kuqi_path}} -o {{bin}}/kuqi $@
       build.gc: v {{kuqi_path}} -o {{bin}}/kuqi -gc boehm $@
       build.win: v {{kuqi_path}} -o {{bin}}/kuqi.exe -os windows $@
-      install: sudo cp {{bin}}/lic {{install_dir}}/lic
-      symlink: sudo ln -fs {{bin}}/kuqi {{install_dir}}/kuqi
+      install: cp {{bin}}/lic {{install_dir}}/lic
+      symlink: ln -fs {{bin}}/kuqi {{install_dir}}/kuqi
 
   ast: z run tools ast $@
   tokens: z run tools tokens $@
