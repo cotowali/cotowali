@@ -38,5 +38,8 @@ pub fn parse(s &Source, ctx &Context) &ast.File {
 }
 
 pub fn parse_file(path string, ctx &Context) ?&ast.File {
+	if path in ctx.sources {
+		return none
+	}
 	return parse(source.read_file(path) ?, ctx)
 }

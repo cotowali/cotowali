@@ -392,11 +392,9 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 	pos := key_tok.pos.merge(path_pos)
 	path := os.real_path(os.join_path(os.dir(p.source().path), path_node.contents.map((it as Token).text).join('')))
 
-	if path in p.ctx.sources {
-		return none
+	f := parse_file(path, p.ctx) or {
+		return if err is none { none } else { p.error(err.msg, pos) }
 	}
-
-	f := parse_file(path, p.ctx) or { return p.error(err.msg, pos) }
 	return ast.RequireStmt{
 		file: f
 	}
