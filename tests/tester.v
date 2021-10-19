@@ -136,6 +136,7 @@ struct TestOption {
 	fix_mode     bool
 	compile_only bool
 	prod         bool
+	parallel     bool = true
 }
 
 enum TestResultStatus {
@@ -322,19 +323,29 @@ fn new_test_suite(paths []string, opt TestOption) TestSuite {
 
 fn (t TestSuite) run() bool {
 	mut sw := time.new_stopwatch()
+	mut ok_n, mut compiled_n, mut fixed_n, mut todo_n, mut failed_n := 0, 0, 0, 0, 0
 	sw.start()
+
 	mut threads := []thread TestResultStatus{}
-	for tt in t.cases {
-		threads << go fn (t TestCase) TestResultStatus {
-			res := t.run()
+	mut status_list := []TestResultStatus{}
+	if t.opt.parallel {
+		for tt in t.cases {
+			threads << go fn (t TestCase) TestResultStatus {
+				res := t.run()
+				println(res.message())
+				return res.status
+			}(tt)
+		}
+		status_list = threads.wait()
+	} else {
+		for tt in t.cases {
+			res := tt.run()
 			println(res.message())
-			return res.status
-		}(tt)
+			status_list << res.status
+		}
 	}
-	status_list := threads.wait()
 	sw.stop()
 
-	mut ok_n, mut compiled_n, mut fixed_n, mut todo_n, mut failed_n := 0, 0, 0, 0, 0
 	for s in status_list {
 		match s {
 			.ok { ok_n++ }
@@ -368,10 +379,11 @@ fn main() {
 	if ['--help', '-h', 'help'].any(it in os.args) {
 		println('Usage: v run tests/tester.v flags... [test.li|tests]...')
 		println('Flags:')
-		println('  --shellcheck use shellcheck')
-		println('  --fix-mode   auto fix failed tests')
-		println('  --compile    compile tests instead of run tests')
-		println("  --prod       enable V's -prod")
+		println('  --shellcheck   use shellcheck')
+		println('  --fix-mode     auto fix failed tests')
+		println('  --compile      compile tests instead of run tests')
+		println("  --prod         enable V's -prod")
+		println('  --no-parallel  disable parallel test')
 		return
 	}
 
@@ -379,6 +391,7 @@ fn main() {
 	fix_mode := '--fix' in os.args
 	compile_only := '--compile' in os.args
 	prod := '--prod' in os.args
+	parallel := '--no-parallel' !in os.args
 	if compile_only && (fix_mode || shellcheck) {
 		eprintln('cannot use --compile with another flags')
 		exit(1)
@@ -398,6 +411,7 @@ fn main() {
 		fix_mode: fix_mode
 		compile_only: compile_only
 		prod: prod
+		parallel: parallel
 	)
 	exit(if t.run() { 0 } else { 1 })
 }
