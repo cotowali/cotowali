@@ -10,7 +10,6 @@ import cotowali.messages { unreachable }
 import cotowali.token { Token, TokenKind }
 import cotowali.util { panic_and_value }
 import cotowali.symbols { builtin_type }
-import os
 import net.urllib
 
 fn (mut p Parser) parse_attr() ?ast.Attr {
@@ -399,24 +398,13 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 		return ast.RequireStmt{
 			file: f
 		}
-	} else if source_url := p.source().url() {
-		url := source_url.resolve_reference(&urllib.URL{ user: 0, path: path }) or {
-			panic(unreachable('faild to resolve url'))
-		}
-		f := parse_remote_file(url, p.ctx) or {
-			return if err is none { none } else { p.error(err.msg, pos) }
-		}
-		return ast.RequireStmt{
-			file: f
-		}
-	} else {
-		resolved_path := os.real_path(os.join_path(os.dir(p.source().path), path))
-		f := parse_file(resolved_path, p.ctx) or {
-			return if err is none { none } else { p.error(err.msg, pos) }
-		}
-		return ast.RequireStmt{
-			file: f
-		}
+	}
+
+	f := parse_file_relative(p.source(), path, p.ctx) or {
+		return if err is none { none } else { p.error(err.msg, pos) }
+	}
+	return ast.RequireStmt{
+		file: f
 	}
 }
 

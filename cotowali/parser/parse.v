@@ -9,8 +9,10 @@ import cotowali.context { Context }
 import cotowali.source { Source, source_scheme_from_str }
 import cotowali.symbols { Scope }
 import cotowali.ast
+import cotowali.messages { unreachable }
 import net.urllib { URL }
 import net.http
+import os
 
 pub fn (mut p Parser) parse(scope &Scope) &ast.File {
 	p.scope = scope
@@ -44,6 +46,18 @@ pub fn parse_file(path string, ctx &Context) ?&ast.File {
 		return none
 	}
 	return parse(source.read_file(path) ?, ctx)
+}
+
+pub fn parse_file_relative(base_source &Source, path string, ctx &Context) ?&ast.File {
+	if source_url := base_source.url() {
+		url := source_url.resolve_reference(&URL{ user: 0, path: path }) or {
+			panic(unreachable('faild to resolve url'))
+		}
+		return parse_remote_file(url, ctx)
+	}
+
+	resolved_path := os.real_path(os.join_path(os.dir(base_source.path), path))
+	return parse_file(resolved_path, ctx)
 }
 
 pub fn parse_remote_file(url &URL, ctx &Context) ?&ast.File {
