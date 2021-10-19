@@ -1,5 +1,11 @@
 # Docs for developpers
 
+## Requirements
+
+### Ubuntu
+
+- libssl-dev
+
 ## Development Philosophy
 
 ### Be readable code

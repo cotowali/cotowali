@@ -6,24 +6,41 @@
 module source
 
 import os
+import net.urllib
+import cotowali.messages { unreachable }
 
 const std_file = $embed_file('../../builtin/std.li')
 
 pub const std = new_source('std.ri', std_file.to_string())
+
+pub enum SourceScheme {
+	local
+	http
+	https
+}
 
 [heap]
 pub struct Source {
 mut:
 	lines []string
 pub:
-	path string
-	code string
+	scheme SourceScheme = .local
+	path   string
+	code   string
 }
 
 pub fn new_source(path string, code string) &Source {
 	return &Source{
 		path: path
 		code: code
+	}
+}
+
+pub fn (s &Source) url() ?urllib.URL {
+	match s.scheme {
+		.http { return urllib.parse('http://$s.path') or { panic(unreachable(err.msg)) } }
+		.https { return urllib.parse('https://$s.path') or { panic(unreachable(err.msg)) } }
+		.local { return none }
 	}
 }
 

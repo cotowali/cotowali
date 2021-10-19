@@ -47,6 +47,10 @@ jobs:
     steps:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
+      # https://github.com/vlang/v/blob/a84a6d1fb1b2b4025db88a883a4682c978212562/.github/workflows/ci.yml#L272-L273
+      - run: |
+          brew install openssl
+          export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/opt/openssl/lib/"
       - run: z ci setup-v
       - run: z ci test
       - run: z ci test prod
