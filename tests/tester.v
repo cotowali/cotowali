@@ -8,6 +8,7 @@ import rand
 import term
 import v.util { color_compare_strings, find_working_diff_command }
 import time
+import runtime
 
 fn indent(n int) string {
 	return '  '.repeat(n)
@@ -326,17 +327,21 @@ fn (t TestSuite) run() bool {
 	mut ok_n, mut compiled_n, mut fixed_n, mut todo_n, mut failed_n := 0, 0, 0, 0, 0
 	sw.start()
 
-	mut threads := []thread TestResultStatus{}
 	mut status_list := []TestResultStatus{}
 	if t.opt.parallel {
+		mut threads := []thread TestResultStatus{}
 		for tt in t.cases {
 			threads << go fn (t TestCase) TestResultStatus {
 				res := t.run()
 				println(res.message())
 				return res.status
 			}(tt)
+			if threads.len >= runtime.nr_jobs() - 1 {
+				status_list << threads.wait()
+				threads.clear()
+			}
 		}
-		status_list = threads.wait()
+		status_list << threads.wait()
 	} else {
 		for tt in t.cases {
 			res := tt.run()
