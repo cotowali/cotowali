@@ -64,7 +64,7 @@ pub fn parse_remote_file(url &URL, ctx &Context) ?&ast.File {
 
 	res := http.get(url_str) or { return error('failed to get $url_str') }
 	if res.status() != .ok {
-		return error('faild to get $url_str ($res.status_code $res.status_msg)')
+		return error('faild to get $url_str ($res.status_code $res.status())')
 	}
 	source_code := res.text
 

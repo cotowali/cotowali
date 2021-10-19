@@ -1,0 +1,90 @@
+error: require_http_status.err.li 1,1: faild to get http://httpstat.us/201 (201 Created)
+    1 | require 'http://httpstat.us/201'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 2,1: faild to get https://httpstat.us/201 (201 Created)
+    2 | require 'https://httpstat.us/201'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 3,1: faild to get http://httpstat.us/202 (202 Accepted)
+    3 | require 'http://httpstat.us/202'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 4,1: faild to get https://httpstat.us/202 (202 Accepted)
+    4 | require 'https://httpstat.us/202'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 5,1: faild to get http://httpstat.us/204 (204 No Content)
+    5 | require 'http://httpstat.us/204'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 6,1: faild to get https://httpstat.us/204 (204 No Content)
+    6 | require 'https://httpstat.us/204'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 7,1: faild to get http://httpstat.us/400 (400 Bad Request)
+    7 | require 'http://httpstat.us/400'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 8,1: faild to get https://httpstat.us/400 (400 Bad Request)
+    8 | require 'https://httpstat.us/400'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 9,1: faild to get http://httpstat.us/401 (401 Unauthorized)
+    9 | require 'http://httpstat.us/401'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 10,1: faild to get https://httpstat.us/401 (401 Unauthorized)
+   10 | require 'https://httpstat.us/401'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 11,1: faild to get http://httpstat.us/402 (402 Payment Required)
+   11 | require 'http://httpstat.us/402'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 12,1: faild to get https://httpstat.us/402 (402 Payment Required)
+   12 | require 'https://httpstat.us/402'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 13,1: faild to get http://httpstat.us/403 (403 Forbidden)
+   13 | require 'http://httpstat.us/403'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 14,1: faild to get https://httpstat.us/403 (403 Forbidden)
+   14 | require 'https://httpstat.us/403'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 15,1: faild to get http://httpstat.us/404 (404 Not Found)
+   15 | require 'http://httpstat.us/404'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 16,1: faild to get https://httpstat.us/404 (404 Not Found)
+   16 | require 'https://httpstat.us/404'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 17,1: faild to get http://httpstat.us/405 (405 Method Not Allowed)
+   17 | require 'http://httpstat.us/405'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 18,1: faild to get https://httpstat.us/405 (405 Method Not Allowed)
+   18 | require 'https://httpstat.us/405'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 19,1: faild to get http://httpstat.us/406 (406 Not Acceptable)
+   19 | require 'http://httpstat.us/406'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 20,1: faild to get https://httpstat.us/406 (406 Not Acceptable)
+   20 | require 'https://httpstat.us/406'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 21,1: faild to get http://httpstat.us/500 (500 Internal Server Error)
+   21 | require 'http://httpstat.us/500'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 22,1: faild to get https://httpstat.us/500 (500 Internal Server Error)
+   22 | require 'https://httpstat.us/500'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 23,1: faild to get http://httpstat.us/501 (501 Not Implemented)
+   23 | require 'http://httpstat.us/501'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 24,1: faild to get https://httpstat.us/501 (501 Not Implemented)
+   24 | require 'https://httpstat.us/501'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 25,1: faild to get http://httpstat.us/502 (502 Bad Gateway)
+   25 | require 'http://httpstat.us/502'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 26,1: faild to get https://httpstat.us/502 (502 Bad Gateway)
+   26 | require 'https://httpstat.us/502'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 27,1: faild to get http://httpstat.us/503 (503 Service Unavailable)
+   27 | require 'http://httpstat.us/503'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 28,1: faild to get https://httpstat.us/503 (503 Service Unavailable)
+   28 | require 'https://httpstat.us/503'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 31,1: faild to get http://httpstat.us/522 (522 Unassigned)
+   31 | require 'http://httpstat.us/522'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 32,1: faild to get https://httpstat.us/522 (522 Unassigned)
+   32 | require 'https://httpstat.us/522'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
