@@ -6,7 +6,7 @@
 module parser
 
 import cotowali.context { Context }
-import cotowali.source { Source }
+import cotowali.source { Source, SourceScheme }
 import cotowali.symbols { Scope }
 import cotowali.ast
 import net.urllib { URL }
@@ -48,6 +48,15 @@ pub fn parse_file(path string, ctx &Context) ?&ast.File {
 
 pub fn parse_remote_file(url &URL, ctx &Context) ?&ast.File {
 	url_str := url.str()
+
+	mut scheme := SourceScheme.local // placeholder
+	// return stmt in match expr will be compile error. so we use match stmt
+	match url.scheme {
+		'http' { scheme = SourceScheme.http }
+		'https' { scheme = SourceScheme.https }
+		else { return error('invalid scheme: $url.scheme') }
+	}
+
 	path := url_str.trim_prefix('$url.scheme:').trim_prefix('//')
 	if path in ctx.sources {
 		return none
@@ -60,6 +69,7 @@ pub fn parse_remote_file(url &URL, ctx &Context) ?&ast.File {
 	source_code := res.text
 
 	return parse(&Source{
+		scheme: scheme
 		path: path
 		code: source_code
 	}, ctx)
