@@ -87,6 +87,7 @@ fn get_sources(paths []string) []string {
 struct Lic {
 	source string [required]
 	bin    string [required]
+	prod   bool
 }
 
 enum LicCommand {
@@ -98,7 +99,8 @@ enum LicCommand {
 }
 
 fn (lic Lic) compile() ? {
-	res := os.execute('v -g $lic.source -o $lic.bin')
+	flags := if lic.prod { '-prod' } else { '-g' }
+	res := os.execute('v $flags $lic.source -o $lic.bin')
 	if res.exit_code != 0 {
 		return error_with_code(res.output, res.exit_code)
 	}
@@ -133,6 +135,7 @@ struct TestOption {
 	shellcheck   bool
 	fix_mode     bool
 	compile_only bool
+	prod         bool
 }
 
 enum TestResultStatus {
@@ -285,6 +288,7 @@ fn new_test_suite(paths []string, opt TestOption) TestSuite {
 	sources := get_sources(paths)
 
 	lic := Lic{
+		prod: opt.prod
 		source: lic_dir
 		bin: os.join_path(lic_dir, 'lic')
 	}
@@ -367,12 +371,14 @@ fn main() {
 		println('  --shellcheck use shellcheck')
 		println('  --fix-mode   auto fix failed tests')
 		println('  --compile    compile tests instead of run tests')
+		println("  --prod       enable V's -prod")
 		return
 	}
 
 	shellcheck := '--shellcheck' in os.args
 	fix_mode := '--fix' in os.args
 	compile_only := '--compile' in os.args
+	prod := '--prod' in os.args
 	if compile_only && (fix_mode || shellcheck) {
 		eprintln('cannot use --compile with another flags')
 		exit(1)
@@ -391,6 +397,7 @@ fn main() {
 		shellcheck: shellcheck
 		fix_mode: fix_mode
 		compile_only: compile_only
+		prod: prod
 	)
 	exit(if t.run() { 0 } else { 1 })
 }
