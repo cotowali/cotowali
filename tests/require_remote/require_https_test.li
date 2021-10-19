@@ -1,0 +1,6 @@
+//require 'https://raw.githubusercontent.com/cotowali/cotowali/main/tests/require_remote/hello.mod.li'
+require './hello_world.mod.li'
+
+assert(hello::text == 'hello')
+assert(world::text == 'world')
+assert(hello_world == 'hello world')
