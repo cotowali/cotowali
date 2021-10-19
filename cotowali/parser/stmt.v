@@ -11,6 +11,7 @@ import cotowali.token { Token, TokenKind }
 import cotowali.util { panic_and_value }
 import cotowali.symbols { builtin_type }
 import os
+import net.urllib
 
 fn (mut p Parser) parse_attr() ?ast.Attr {
 	$if trace_parser ? {
@@ -390,13 +391,32 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 		return p.error('cannot require non-constant path', path_pos)
 	}
 	pos := key_tok.pos.merge(path_pos)
-	path := os.real_path(os.join_path(os.dir(p.source().path), path_node.contents.map((it as Token).text).join('')))
-
-	f := parse_file(path, p.ctx) or {
-		return if err is none { none } else { p.error(err.msg, pos) }
-	}
-	return ast.RequireStmt{
-		file: f
+	path := path_node.contents.map((it as Token).text).join('')
+	if url := urllib.parse(path) {
+		f := parse_remote_file(url, p.ctx) or {
+			return if err is none { none } else { p.error(err.msg, pos) }
+		}
+		return ast.RequireStmt{
+			file: f
+		}
+	} else if source_url := p.source().url() {
+		url := source_url.resolve_reference(&urllib.URL{ user: 0, path: path }) or {
+			panic(unreachable('faild to resolve url'))
+		}
+		f := parse_remote_file(url, p.ctx) or {
+			return if err is none { none } else { p.error(err.msg, pos) }
+		}
+		return ast.RequireStmt{
+			file: f
+		}
+	} else {
+		resolved_path := os.real_path(os.join_path(os.dir(p.source().path), path))
+		f := parse_file(resolved_path, p.ctx) or {
+			return if err is none { none } else { p.error(err.msg, pos) }
+		}
+		return ast.RequireStmt{
+			file: f
+		}
 	}
 }
 
