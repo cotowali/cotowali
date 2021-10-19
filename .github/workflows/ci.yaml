@@ -84,7 +84,7 @@ jobs:
       - run: z ci run-on-all-conditions
   slack-notify:
     if: failure()
-    needs: [format, test, test-alpine, sanitize, run-on-all-conditions]
+    needs: [format, test, test-alpine, run-on-all-conditions]
     runs-on: ubuntu-latest
     steps:
       - uses: Gamesight/slack-workflow-status@master
