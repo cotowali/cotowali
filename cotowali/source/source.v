@@ -6,7 +6,7 @@
 module source
 
 import os
-import net.urllib
+import net.urllib { URL }
 import cotowali.messages { unreachable }
 
 const std_file = $embed_file('../../builtin/std.li')
@@ -17,6 +17,7 @@ pub enum SourceScheme {
 	local
 	http
 	https
+	github
 }
 
 pub fn source_scheme_from_str(s string) ?SourceScheme {
@@ -24,6 +25,7 @@ pub fn source_scheme_from_str(s string) ?SourceScheme {
 		'local' { return .local }
 		'http' { return .http }
 		'https' { return .https }
+		'github' { return .github }
 		else { return none }
 	}
 }
@@ -45,12 +47,47 @@ pub fn new_source(path string, code string) &Source {
 	}
 }
 
-pub fn (s &Source) url() ?urllib.URL {
+pub fn (s &Source) url() ?URL {
 	match s.scheme {
-		.http { return urllib.parse('http://$s.path') or { panic(unreachable(err.msg)) } }
-		.https { return urllib.parse('https://$s.path') or { panic(unreachable(err.msg)) } }
-		.local { return none }
+		.http {
+			return urllib.parse('http://$s.path') or { panic(unreachable(err.msg)) }
+		}
+		.https {
+			return urllib.parse('https://$s.path') or { panic(unreachable(err.msg)) }
+		}
+		.github {
+			return URL{
+				scheme: 'github'
+				path: s.path
+				user: 0
+			}
+		}
+		.local {
+			return none
+		}
 	}
+}
+
+pub fn convert_to_http_url(scheme SourceScheme, url URL) URL {
+	if scheme in [.http, .https] {
+		return url
+	}
+
+	mut http_url := URL{
+		...url
+	}
+
+	http_url.scheme = 'https'
+	http_url.host = 'raw.githubusercontent.com'
+	if url.opaque != '' {
+		http_url.opaque = ''
+		http_url.path = url.opaque
+		if url.path != '' {
+			http_url.path += '/$url.path'
+		}
+	}
+	http_url.path = http_url.path.replace_once('@', '/')
+	return http_url
 }
 
 // at returns one Char at code[i]
