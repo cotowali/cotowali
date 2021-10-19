@@ -19,6 +19,15 @@ pub enum SourceScheme {
 	https
 }
 
+pub fn source_scheme_from_str(s string) ?SourceScheme {
+	match s {
+		'local' { return .local }
+		'http' { return .http }
+		'https' { return .https }
+		else { return none }
+	}
+}
+
 [heap]
 pub struct Source {
 mut:
