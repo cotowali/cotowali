@@ -1,0 +1,3 @@
+error: require_github.err.li 1,1: faild to get https://raw.githubusercontent.com/cotowali/cotowali/main/tests/__missing__ (404 Not Found)
+    1 | require 'github:cotowali/cotowali/main/tests/__missing__'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

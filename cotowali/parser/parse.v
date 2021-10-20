@@ -6,7 +6,7 @@
 module parser
 
 import cotowali.context { Context }
-import cotowali.source { Source, source_scheme_from_str }
+import cotowali.source { Source, SourceScheme, source_scheme_from_str }
 import cotowali.symbols { Scope }
 import cotowali.ast
 import cotowali.messages { unreachable }
@@ -60,21 +60,27 @@ pub fn parse_file_relative(base_source &Source, path string, ctx &Context) ?&ast
 	return parse_file(resolved_path, ctx)
 }
 
-pub fn parse_remote_file(url &URL, ctx &Context) ?&ast.File {
-	url_str := url.str()
-
+pub fn parse_remote_file(url URL, ctx &Context) ?&ast.File {
 	mut scheme := source_scheme_from_str(url.scheme) or {
 		return error('invalid scheme: $url.scheme')
 	}
 
-	path := url_str.trim_prefix('$url.scheme:').trim_prefix('//')
+	mut http_url := convert_to_http_url(scheme, url)
+
+	http_url_str := http_url.str()
+	path := if scheme in [.http, .https] {
+		http_url_str.trim_prefix('$url.scheme:').trim_prefix('//')
+	} else {
+		http_url.path
+	}
+
 	if path in ctx.sources {
 		return none
 	}
 
-	res := http.get(url_str) or { return error('failed to get $url_str ($err.msg)') }
+	res := http.get(http_url_str) or { return error('failed to get $http_url_str ($err.msg)') }
 	if res.status() != .ok {
-		return error('faild to get $url_str ($res.status_code $res.status())')
+		return error('faild to get $http_url_str ($res.status_code $res.status())')
 	}
 	source_code := res.text
 
@@ -83,4 +89,39 @@ pub fn parse_remote_file(url &URL, ctx &Context) ?&ast.File {
 		path: path
 		code: source_code
 	}, ctx)
+}
+
+pub fn normalize_url(scheme SourceScheme, url URL) URL {
+	if scheme in [SourceScheme.http, .https] {
+		return url
+	}
+
+	mut new_url := URL{
+		...url
+	}
+
+	// opaque is 'cotowali/cotowali' for 'github:cotowali/cotowali'
+	if url.opaque != '' {
+		new_url.opaque = ''
+		new_url.path = url.opaque
+		if url.path != '' {
+			new_url.path += '/$url.path'
+		}
+	}
+	return new_url
+}
+
+pub fn convert_to_http_url(scheme SourceScheme, url URL) URL {
+	if scheme in [.http, .https] {
+		return url
+	}
+
+	mut http_url := normalize_url(scheme, url)
+
+	http_url.scheme = 'https'
+	if scheme == .github {
+		http_url.host = 'raw.githubusercontent.com'
+		http_url.path = http_url.path.replace_once('@', '/')
+	}
+	return http_url
 }
