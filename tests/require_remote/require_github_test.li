@@ -1,4 +1,4 @@
-require 'github:cotowali/cotowali/main/tests/require_remote/hello_world.mod.li'
+require 'github:cotowali/cotowali@main/tests/require_remote/hello_world.mod.li'
 
 assert(hello::text == 'hello')
 assert(world::text == 'world')
