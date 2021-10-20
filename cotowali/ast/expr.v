@@ -120,7 +120,7 @@ pub fn (expr Expr) pos() Pos {
 			expr.token.pos
 		}
 		StringLiteral {
-			expr.open.pos.merge(expr.close.pos)
+			expr.pos()
 		}
 	}
 }

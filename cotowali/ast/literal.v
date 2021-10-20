@@ -152,6 +152,10 @@ pub:
 	close    Token
 }
 
+pub fn (s &StringLiteral) pos() Pos {
+	return s.open.pos.merge(s.close.pos)
+}
+
 pub fn (s &StringLiteral) is_const() bool {
 	return s.contents.all(it.is_const())
 }
