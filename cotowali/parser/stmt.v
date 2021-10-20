@@ -386,11 +386,11 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 	key_tok := p.consume_with_assert(.key_require)
 	path_node := p.parse_string_literal() ?
 	path_pos := path_node.pos()
-	if !path_node.is_const() {
+	path := path_node.const_text() or {
 		return p.error('cannot require non-constant path', path_pos)
 	}
-	pos := key_tok.pos.merge(path_pos)
-	path := path_node.contents.map((it as Token).text).join('')
+	mut pos := key_tok.pos.merge(path_pos)
+
 	if url := urllib.parse(path) {
 		f := parse_remote_file(url, p.ctx) or {
 			return if err is none { none } else { p.error(err.msg, pos) }
