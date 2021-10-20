@@ -6,7 +6,7 @@
 module parser
 
 import cotowali.context { Context }
-import cotowali.source { Source, convert_to_http_url, source_scheme_from_str }
+import cotowali.source { Source, SourceScheme, source_scheme_from_str }
 import cotowali.symbols { Scope }
 import cotowali.ast
 import cotowali.messages { unreachable }
@@ -89,4 +89,39 @@ pub fn parse_remote_file(url URL, ctx &Context) ?&ast.File {
 		path: path
 		code: source_code
 	}, ctx)
+}
+
+pub fn normalize_url(scheme SourceScheme, url URL) URL {
+	if scheme in [SourceScheme.http, .https] {
+		return url
+	}
+
+	mut new_url := URL{
+		...url
+	}
+
+	// opaque is 'cotowali/cotowali' for 'github:cotowali/cotowali'
+	if url.opaque != '' {
+		new_url.opaque = ''
+		new_url.path = url.opaque
+		if url.path != '' {
+			new_url.path += '/$url.path'
+		}
+	}
+	return new_url
+}
+
+pub fn convert_to_http_url(scheme SourceScheme, url URL) URL {
+	if scheme in [.http, .https] {
+		return url
+	}
+
+	mut http_url := normalize_url(scheme, url)
+
+	http_url.scheme = 'https'
+	if scheme == .github {
+		http_url.host = 'raw.githubusercontent.com'
+		http_url.path = http_url.path.replace_once('@', '/')
+	}
+	return http_url
 }

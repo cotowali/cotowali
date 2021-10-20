@@ -68,28 +68,6 @@ pub fn (s &Source) url() ?URL {
 	}
 }
 
-pub fn convert_to_http_url(scheme SourceScheme, url URL) URL {
-	if scheme in [.http, .https] {
-		return url
-	}
-
-	mut http_url := URL{
-		...url
-	}
-
-	http_url.scheme = 'https'
-	http_url.host = 'raw.githubusercontent.com'
-	if url.opaque != '' {
-		http_url.opaque = ''
-		http_url.path = url.opaque
-		if url.path != '' {
-			http_url.path += '/$url.path'
-		}
-	}
-	http_url.path = http_url.path.replace_once('@', '/')
-	return http_url
-}
-
 // at returns one Char at code[i]
 pub fn (s &Source) at(i int) Char {
 	end := i + utf8_char_len(s.code[i])
