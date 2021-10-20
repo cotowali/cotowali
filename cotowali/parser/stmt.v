@@ -385,7 +385,7 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 	key_tok := p.consume_with_assert(.key_require)
 	path_node := p.parse_string_literal() ?
-	path_pos := ast.Expr(path_node).pos()
+	path_pos := path_node.pos()
 	if !path_node.is_const() {
 		return p.error('cannot require non-constant path', path_pos)
 	}
