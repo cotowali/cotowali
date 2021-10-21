@@ -57,12 +57,10 @@ const (
 	}
 
 	table_for_keywords = {
-		'true':      tk(.bool_literal)
-		'false':     tk(.bool_literal)
 		'as':        tk(.key_as)
 		'assert':    tk(.key_assert)
-		'export':    tk(.key_export)
 		'else':      tk(.key_else)
+		'export':    tk(.key_export)
 		'fn':        tk(.key_fn)
 		'for':       tk(.key_for)
 		'if':        tk(.key_if)
@@ -77,5 +75,7 @@ const (
 		'var':       tk(.key_var)
 		'while':     tk(.key_while)
 		'yield':     tk(.key_yield)
+		'true':      tk(.bool_literal)
+		'false':     tk(.bool_literal)
 	}
 )
