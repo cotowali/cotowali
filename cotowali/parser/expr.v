@@ -8,7 +8,7 @@ module parser
 import cotowali.token { TokenKind }
 import cotowali.ast
 import cotowali.symbols { builtin_type }
-import cotowali.messages { unreachable }
+import cotowali.messages { invalid_key, unreachable }
 import cotowali.util { struct_name }
 
 fn (mut p Parser) parse_expr_stmt(expr ast.Expr) ?ast.Stmt {
@@ -256,7 +256,7 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 					init = value
 				}
 				else {
-					p.error('invalid key `$key.text`, expecting `len` or `init`', key.pos)
+					p.error(invalid_key(key.text, expects: ['len', 'init']), key.pos)
 				}
 			}
 			if _ := p.consume_if_kind_eq(.comma) {

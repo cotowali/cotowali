@@ -37,3 +37,26 @@ pub fn already_defined(kind SymbolKind, name string) string {
 pub fn undefined(kind SymbolKind, name string) string {
 	return '$kind `$name` is not defined'
 }
+
+[params]
+pub struct ParamsForInvalid {
+	expects []string
+}
+
+pub fn invalid_key(key string, v ParamsForInvalid) string {
+	return 'invalid key `$key`' + (match v.expects.len {
+		0 {
+			''
+		}
+		1 {
+			', expecting `$v.expects.first()`'
+		}
+		2 {
+			', expecting `$v.expects.first()` or `$v.expects.last()`'
+		}
+		else {
+			quoted_strs := v.expects.map('`$it`')
+			', expecting ${quoted_strs[..quoted_strs.len - 1].join(', ')}, or $quoted_strs.last()'
+		}
+	})
+}
