@@ -340,11 +340,6 @@ fn test_string_expr_substitution() {
 	])
 }
 
-fn test_inline_shell() {
-	test(@FN, @LINE, code(r'${echo 1}'), [t(.inline_shell, 'echo 1')])
-	test(@FN, @LINE, code(r'${echo ${n}}'), [t(.inline_shell, r'echo ${n}')])
-}
-
 fn test_number() {
 	test(@FN, @LINE, code('1 1.1 1E+9 1e-9'), [
 		t(.int_literal, '1'),

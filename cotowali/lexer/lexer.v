@@ -128,7 +128,6 @@ pub fn (mut lex Lexer) do_read() ?Token {
 
 		return match c.byte() {
 			`@` { lex.read_at_ident() }
-			`\$` { lex.read_dollar_directive() }
 			else { lex.read_unknown() }
 		}
 	}
@@ -256,40 +255,4 @@ fn (mut lex Lexer) read_at_ident() Token {
 	return lex.new_token_with_consume_not_for(fn (c Char) bool {
 		return is_whitespace(c) || c[0] in [`(`, `)`]
 	}, .ident)
-}
-
-fn (mut lex Lexer) read_dollar_directive() Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
-	lex.skip_with_assert(fn (c Char) bool {
-		return c.byte() == `$`
-	})
-	if lex.byte() == `{` {
-		lex.skip()
-		mut depth := 1
-		for {
-			if lex.is_eof() {
-				panic('unterminated inline shell')
-			}
-			match lex.byte() {
-				`{` { depth++ }
-				`}` { depth-- }
-				else {}
-			}
-			if depth == 0 {
-				break
-			}
-			lex.consume()
-		}
-		tok := lex.new_token(.inline_shell)
-		lex.skip()
-		return tok
-	} else {
-		panic('invalid dollar directive')
-	}
 }

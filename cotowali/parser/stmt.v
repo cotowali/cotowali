@@ -125,13 +125,6 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 				token: p.consume()
 			}
 		}
-		.inline_shell {
-			tok := p.consume()
-			return ast.InlineShell{
-				pos: tok.pos
-				text: tok.text
-			}
-		}
 		.key_yield {
 			return ast.Stmt(p.parse_yield_stmt() ?)
 		}
