@@ -8,7 +8,7 @@ module parser
 import cotowali.token { TokenKind }
 import cotowali.ast
 import cotowali.symbols { builtin_type }
-import cotowali.messages { invalid_key, unreachable }
+import cotowali.messages { duplicated_key, invalid_key, unreachable }
 import cotowali.util { struct_name }
 
 fn (mut p Parser) parse_expr_stmt(expr ast.Expr) ?ast.Stmt {
@@ -250,10 +250,18 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 			value := p.parse_expr(.toplevel) ?
 			match key.text {
 				'len' {
-					len = value
+					if len is ast.DefaultValue {
+						len = value
+					} else {
+						p.error(duplicated_key(key.text), key.pos)
+					}
 				}
 				'init' {
-					init = value
+					if init is ast.DefaultValue {
+						init = value
+					} else {
+						p.error(duplicated_key(key.text), key.pos)
+					}
 				}
 				else {
 					p.error(invalid_key(key.text, expects: ['len', 'init']), key.pos)
@@ -275,6 +283,7 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 			is_init_syntax: true
 		}
 	}
+
 	mut elements := []ast.Expr{}
 	for {
 		p.skip_eol()

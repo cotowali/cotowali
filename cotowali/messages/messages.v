@@ -60,3 +60,8 @@ pub fn invalid_key(key string, v ParamsForInvalid) string {
 		}
 	})
 }
+
+[inline]
+pub fn duplicated_key(key string) string {
+	return 'duplicated key `$key`'
+}
