@@ -1,3 +1,8 @@
 fn invalid_array_init() {
   _ = []string{x: 0, y: '', init: 0, len: ''}
 }
+
+fn duplicated_key() {
+  _ = []string{init: 0, init: 1}
+  _ = []string{len: 0, len: 0, len: 0}
+}

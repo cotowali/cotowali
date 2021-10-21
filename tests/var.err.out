@@ -1,4 +1,4 @@
-error: var.err.li 2,5: `i` is already defined
+error: var.err.li 2,5: variable `i` is already defined
     2 | var i = 0
       |     ^
 error: var.err.li 3,5: mismatched types: `int` (expected) and `string` (found)

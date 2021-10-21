@@ -8,7 +8,7 @@ module parser
 import cotowali.token { TokenKind }
 import cotowali.ast
 import cotowali.symbols { builtin_type }
-import cotowali.messages { unreachable }
+import cotowali.messages { duplicated_key, invalid_key, unreachable }
 import cotowali.util { struct_name }
 
 fn (mut p Parser) parse_expr_stmt(expr ast.Expr) ?ast.Stmt {
@@ -245,18 +245,26 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 			typ: elem_ts.typ
 		})
 		for p.kind(0) == .ident {
-			field := p.consume_with_assert(.ident)
+			key := p.consume_with_assert(.ident)
 			p.consume_with_check(.colon) ?
-			field_expr := p.parse_expr(.toplevel) ?
-			match field.text {
+			value := p.parse_expr(.toplevel) ?
+			match key.text {
 				'len' {
-					len = field_expr
+					if len is ast.DefaultValue {
+						len = value
+					} else {
+						p.error(duplicated_key(key.text), key.pos)
+					}
 				}
 				'init' {
-					init = field_expr
+					if init is ast.DefaultValue {
+						init = value
+					} else {
+						p.error(duplicated_key(key.text), key.pos)
+					}
 				}
 				else {
-					p.error('wrond field `$field.text`, expecting `len` or `init`', field.pos.merge(field_expr.pos()))
+					p.error(invalid_key(key.text, expects: ['len', 'init']), key.pos)
 				}
 			}
 			if _ := p.consume_if_kind_eq(.comma) {
@@ -275,6 +283,7 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 			is_init_syntax: true
 		}
 	}
+
 	mut elements := []ast.Expr{}
 	for {
 		p.skip_eol()

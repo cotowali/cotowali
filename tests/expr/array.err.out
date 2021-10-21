@@ -1,12 +1,24 @@
-error: array.err.li 2,16: wrond field `x`, expecting `len` or `init`
+error: array.err.li 2,16: invalid key `x`, expecting `len` or `init`
     2 |   _ = []string{x: 0, y: '', init: 0, len: ''}
-      |                ^^^^
-error: array.err.li 2,22: wrond field `y`, expecting `len` or `init`
+      |                ^
+error: array.err.li 2,22: invalid key `y`, expecting `len` or `init`
     2 |   _ = []string{x: 0, y: '', init: 0, len: ''}
-      |                      ^^^^^
+      |                      ^
 error: array.err.li 2,35: mismatched types: `string` (expected) and `int` (found)
     2 |   _ = []string{x: 0, y: '', init: 0, len: ''}
       |                                   ^
 error: array.err.li 2,43: mismatched types: `int` (expected) and `string` (found)
     2 |   _ = []string{x: 0, y: '', init: 0, len: ''}
       |                                           ^^
+error: array.err.li 6,22: mismatched types: `string` (expected) and `int` (found)
+    6 |   _ = []string{init: 0, init: 1}
+      |                      ^
+error: array.err.li 6,25: duplicated key `init`
+    6 |   _ = []string{init: 0, init: 1}
+      |                         ^^^^
+error: array.err.li 7,24: duplicated key `len`
+    7 |   _ = []string{len: 0, len: 0, len: 0}
+      |                        ^^^
+error: array.err.li 7,32: duplicated key `len`
+    7 |   _ = []string{len: 0, len: 0, len: 0}
+      |                                ^^^
