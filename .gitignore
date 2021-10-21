@@ -2,6 +2,7 @@
 /*.sh
 /cmd/lic/lic
 /lic
+/tests/tester
 /vim-lsp.log
 /tmp
 
