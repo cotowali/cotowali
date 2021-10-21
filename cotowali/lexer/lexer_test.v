@@ -340,6 +340,10 @@ fn test_string_expr_substitution() {
 	])
 }
 
+fn test_inline_shell() {
+	ktest(@FN, @LINE, 'sh {}', [.key_sh, .l_brace, .r_brace])
+}
+
 fn test_number() {
 	test(@FN, @LINE, code('1 1.1 1E+9 1e-9'), [
 		t(.int_literal, '1'),

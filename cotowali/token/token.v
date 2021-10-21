@@ -22,6 +22,7 @@ pub enum TokenKind {
 	key_namespace
 	key_require
 	key_return
+	key_sh
 	key_struct
 	key_type
 	key_use
