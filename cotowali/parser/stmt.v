@@ -384,79 +384,16 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 }
 
 fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
-	require_tok := p.consume_with_assert(.key_require)
-	mut pos := require_tok.pos
+	key_tok := p.consume_with_assert(.key_require)
+	mut pos := key_tok.pos
+
 	path_node := p.parse_string_literal() ?
 	path_pos := path_node.pos()
 	path := path_node.const_text() or {
 		return p.error('cannot require non-constant path', path_pos)
 	}
 
-	mut props_map := {
-		'md5':    ''
-		'sha1':   ''
-		'sha256': ''
-	}
-	mut props_pos_map := {
-		'md5':    none_pos()
-		'sha1':   none_pos()
-		'sha256': none_pos()
-	}
-	if l_brace := p.consume_if_kind_eq(.l_brace) {
-		p.skip_eol()
-		pos = pos.merge(l_brace.pos)
-		for {
-			p.skip_eol()
-			if r_brace := p.consume_if_kind_eq(.r_brace) {
-				pos = pos.merge(r_brace.pos)
-				break
-			}
-
-			key_tok := p.consume_with_check(.ident) ?
-			key := key_tok.text
-
-			p.skip_eol()
-			p.consume_with_check(.colon) ?
-
-			if key in props_map {
-				p.skip_eol()
-
-				value_node := p.parse_string_literal() ?
-				value_pos := value_node.pos()
-				if !value_node.is_const() {
-					p.error('cannot use non-constant value here', value_pos)
-				}
-				value := value_node.contents.map((it as Token).text).join('')
-				if props_map[key] != '' {
-					p.error(duplicated_key(key), key_tok.pos)
-				}
-				props_map[key] = value
-				props_pos_map[key] = key_tok.pos.merge(value_pos)
-			} else {
-				p.error(invalid_key(key, expects: props_map.keys()), key_tok.pos)
-				p.consume_for(fn (t Token) bool {
-					return t.kind !in [.comma, .r_brace, .eol]
-				})
-			}
-
-			p.skip_eol()
-			if r_brace := p.consume_if_kind_eq(.r_brace) {
-				pos = pos.merge(r_brace.pos)
-				break
-			}
-
-			p.skip_eol()
-			p.consume_with_check(.comma) ?
-		}
-	}
-	props := ast.RequireStmtProps{
-		md5: props_map['md5']
-		sha1: props_map['sha1']
-		sha256: props_map['sha256']
-		md5_pos: props_pos_map['md5']
-		sha1_pos: props_pos_map['sha1']
-		sha256_pos: props_pos_map['sha256']
-	}
+	props := p.parse_require_stmt_props() ?
 
 	pos = pos.merge(p.pos(-1))
 
@@ -480,6 +417,89 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 
 	p.require_stmt_verify_checksum(stmt) ?
 	return stmt
+}
+
+fn (mut p Parser) parse_require_stmt_props() ?ast.RequireStmtProps {
+	mut props_map := {
+		'md5':    ''
+		'sha1':   ''
+		'sha256': ''
+	}
+	mut props_pos_map := {
+		'md5':    none_pos()
+		'sha1':   none_pos()
+		'sha256': none_pos()
+	}
+
+	if p.kind(0) != .l_brace {
+		// stmt don't have `{}` props
+		return ast.RequireStmtProps{}
+	}
+
+	p.consume_with_assert(.l_brace)
+	p.skip_eol()
+
+	if p.kind(0) == .r_brace {
+		// stmt have `{}` but it is empty
+		return ast.RequireStmtProps{}
+	}
+
+	for {
+		p.skip_eol()
+
+		key_tok := p.consume_with_check(.ident) ?
+		key := key_tok.text
+
+		p.skip_eol()
+		p.consume_with_check(.colon) ?
+
+		if key in props_map {
+			p.skip_eol()
+
+			value_node := p.parse_string_literal() ?
+			value_pos := value_node.pos()
+			value := value_node.const_text() or {
+				// report error then continue to parse
+				p.error('cannot use non-constant value here', value_pos)
+				''
+			}
+
+			if props_map[key] != '' {
+				p.error(duplicated_key(key), key_tok.pos)
+			}
+			props_map[key] = value
+			props_pos_map[key] = key_tok.pos.merge(value_pos)
+		} else {
+			// report error then continue to parse
+			p.error(invalid_key(key, expects: props_map.keys()), key_tok.pos)
+			p.consume_for(fn (t Token) bool {
+				// skip until end of value
+				return t.kind !in [.comma, .r_brace, .eol]
+			})
+		}
+
+		p.skip_eol()
+		if _ := p.consume_if_kind_eq(.r_brace) {
+			break
+		}
+
+		p.skip_eol()
+		p.consume_with_check(.comma) ?
+
+		p.skip_eol()
+		if _ := p.consume_if_kind_eq(.r_brace) {
+			break
+		}
+	}
+
+	return ast.RequireStmtProps{
+		md5: props_map['md5']
+		sha1: props_map['sha1']
+		sha256: props_map['sha256']
+		md5_pos: props_pos_map['md5']
+		sha1_pos: props_pos_map['sha1']
+		sha256_pos: props_pos_map['sha256']
+	}
 }
 
 fn (mut p Parser) require_stmt_verify_checksum(stmt ast.RequireStmt) ? {
