@@ -245,18 +245,18 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 			typ: elem_ts.typ
 		})
 		for p.kind(0) == .ident {
-			field := p.consume_with_assert(.ident)
+			key := p.consume_with_assert(.ident)
 			p.consume_with_check(.colon) ?
-			field_expr := p.parse_expr(.toplevel) ?
-			match field.text {
+			value := p.parse_expr(.toplevel) ?
+			match key.text {
 				'len' {
-					len = field_expr
+					len = value
 				}
 				'init' {
-					init = field_expr
+					init = value
 				}
 				else {
-					p.error('wrond field `$field.text`, expecting `len` or `init`', field.pos.merge(field_expr.pos()))
+					p.error('invalid key `$key.text`, expecting `len` or `init`', key.pos)
 				}
 			}
 			if _ := p.consume_if_kind_eq(.comma) {
