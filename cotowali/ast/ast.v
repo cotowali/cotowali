@@ -6,6 +6,7 @@
 module ast
 
 import cotowali.source { Source }
+import cotowali.util.checksum
 
 pub type Node = Expr | File | Ident | Stmt
 
@@ -15,6 +16,10 @@ pub:
 	source &Source
 pub mut:
 	stmts []Stmt
+}
+
+pub fn (f &File) checksum(algo checksum.Algorithm) string {
+	return f.source.checksum(algo)
 }
 
 fn (mut r Resolver) file(f &File) {

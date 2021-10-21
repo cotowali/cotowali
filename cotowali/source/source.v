@@ -8,6 +8,7 @@ module source
 import os
 import net.urllib { URL }
 import cotowali.messages { unreachable }
+import cotowali.util.checksum
 
 const std_file = $embed_file('../../builtin/std.li')
 
@@ -45,6 +46,10 @@ pub fn new_source(path string, code string) &Source {
 		path: path
 		code: code
 	}
+}
+
+pub fn (s &Source) checksum(algo checksum.Algorithm) string {
+	return checksum.hexhash(algo, s.code)
 }
 
 pub fn (s &Source) url() ?URL {
