@@ -160,6 +160,13 @@ pub fn (s &StringLiteral) is_const() bool {
 	return s.contents.all(it.is_const())
 }
 
+pub fn (s &StringLiteral) const_text() ?string {
+	if !s.is_const() {
+		return error('string literal is not a const')
+	}
+	return s.contents.map((it as Token).text).join('')
+}
+
 pub fn (s &StringLiteral) is_raw() bool {
 	return s.open.kind in [.single_quote_with_r_prefix, .double_quote_with_r_prefix]
 }

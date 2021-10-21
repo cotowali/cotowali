@@ -24,7 +24,9 @@ pub fn (mut p Parser) parse(scope &Scope) &ast.File {
 	if !ctx.std_loaded() {
 		ctx.std_source = source.std
 		mut std_parser := new_parser(ctx.std_source, ctx)
-		file.stmts << ast.RequireStmt{std_parser.parse(ctx.global_scope)}
+		file.stmts << ast.RequireStmt{
+			file: std_parser.parse(ctx.global_scope)
+		}
 	}
 
 	p.ctx.sources[p.source().path] = file.source

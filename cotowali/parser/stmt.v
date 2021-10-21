@@ -6,10 +6,11 @@
 module parser
 
 import cotowali.ast
-import cotowali.messages { unreachable }
+import cotowali.messages { checksum_mismatch, duplicated_key, invalid_key, unreachable }
 import cotowali.token { Token, TokenKind }
-import cotowali.util { panic_and_value }
+import cotowali.source { none_pos }
 import cotowali.symbols { builtin_type }
+import cotowali.util { panic_and_value }
 import net.urllib
 
 fn (mut p Parser) parse_attr() ?ast.Attr {
@@ -384,27 +385,148 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 
 fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 	key_tok := p.consume_with_assert(.key_require)
+	mut pos := key_tok.pos
+
 	path_node := p.parse_string_literal() ?
 	path_pos := path_node.pos()
-	if !path_node.is_const() {
+	path := path_node.const_text() or {
 		return p.error('cannot require non-constant path', path_pos)
 	}
-	pos := key_tok.pos.merge(path_pos)
-	path := path_node.contents.map((it as Token).text).join('')
-	if url := urllib.parse(path) {
+
+	props := p.parse_require_stmt_props() ?
+
+	pos = pos.merge(p.pos(-1))
+
+	stmt := if url := urllib.parse(path) {
 		f := parse_remote_file(url, p.ctx) or {
 			return if err is none { none } else { p.error(err.msg, pos) }
 		}
-		return ast.RequireStmt{
+		ast.RequireStmt{
+			props: props
+			file: f
+		}
+	} else {
+		f := parse_file_relative(p.source(), path, p.ctx) or {
+			return if err is none { none } else { p.error(err.msg, pos) }
+		}
+		ast.RequireStmt{
+			props: props
 			file: f
 		}
 	}
 
-	f := parse_file_relative(p.source(), path, p.ctx) or {
-		return if err is none { none } else { p.error(err.msg, pos) }
+	p.require_stmt_verify_checksum(stmt) ?
+	return stmt
+}
+
+fn (mut p Parser) parse_require_stmt_props() ?ast.RequireStmtProps {
+	mut props_map := {
+		'md5':    ''
+		'sha1':   ''
+		'sha256': ''
 	}
-	return ast.RequireStmt{
-		file: f
+	mut props_pos_map := {
+		'md5':    none_pos()
+		'sha1':   none_pos()
+		'sha256': none_pos()
+	}
+
+	if p.kind(0) != .l_brace {
+		// stmt don't have `{}` props
+		return ast.RequireStmtProps{}
+	}
+
+	p.consume_with_assert(.l_brace)
+	p.skip_eol()
+
+	if p.kind(0) == .r_brace {
+		// stmt have `{}` but it is empty
+		return ast.RequireStmtProps{}
+	}
+
+	for {
+		p.skip_eol()
+
+		key_tok := p.consume_with_check(.ident) ?
+		key := key_tok.text
+
+		p.skip_eol()
+		p.consume_with_check(.colon) ?
+
+		if key in props_map {
+			p.skip_eol()
+
+			value_node := p.parse_string_literal() ?
+			value_pos := value_node.pos()
+			value := value_node.const_text() or {
+				// report error then continue to parse
+				p.error('cannot use non-constant value here', value_pos)
+				''
+			}
+
+			if props_map[key] != '' {
+				p.error(duplicated_key(key), key_tok.pos)
+			}
+			props_map[key] = value
+			props_pos_map[key] = key_tok.pos.merge(value_pos)
+		} else {
+			// report error then continue to parse
+			p.error(invalid_key(key, expects: props_map.keys()), key_tok.pos)
+			p.consume_for(fn (t Token) bool {
+				// skip until end of value
+				return t.kind !in [.comma, .r_brace, .eol]
+			})
+		}
+
+		p.skip_eol()
+		if _ := p.consume_if_kind_eq(.r_brace) {
+			break
+		}
+
+		p.skip_eol()
+		p.consume_with_check(.comma) ?
+
+		p.skip_eol()
+		if _ := p.consume_if_kind_eq(.r_brace) {
+			break
+		}
+	}
+
+	return ast.RequireStmtProps{
+		md5: props_map['md5']
+		sha1: props_map['sha1']
+		sha256: props_map['sha256']
+		md5_pos: props_pos_map['md5']
+		sha1_pos: props_pos_map['sha1']
+		sha256_pos: props_pos_map['sha256']
+	}
+}
+
+fn (mut p Parser) require_stmt_verify_checksum(stmt ast.RequireStmt) ? {
+	mut ok := true
+	if stmt.has_checksum(.md5) {
+		expected, actual := stmt.checksum(.md5), stmt.file.checksum(.md5)
+		if expected != actual {
+			p.error(checksum_mismatch(.md5, expected: expected, actual: actual), stmt.checksum_pos(.md5))
+			ok = false
+		}
+	}
+	if stmt.has_checksum(.sha1) {
+		expected, actual := stmt.checksum(.sha1), stmt.file.checksum(.sha1)
+		if expected != actual {
+			p.error(checksum_mismatch(.sha1, expected: expected, actual: actual), stmt.checksum_pos(.sha1))
+			ok = false
+		}
+	}
+	if stmt.has_checksum(.sha256) {
+		expected, actual := stmt.checksum(.sha256), stmt.file.checksum(.sha256)
+		if expected != actual {
+			p.error(checksum_mismatch(.sha256, expected: expected, actual: actual), stmt.checksum_pos(.sha256))
+			ok = false
+		}
+	}
+	if !ok {
+		return error('checksum mismatch')
 	}
 }
 
