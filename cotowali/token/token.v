@@ -29,6 +29,7 @@ pub enum TokenKind {
 	key_while
 	key_yield
 	inline_shell
+	compiler_directive
 	colon
 	coloncolon
 	comma
