@@ -8,6 +8,7 @@ module ast
 import cotowali.token { Token }
 import cotowali.source { Pos }
 import cotowali.symbols { Scope, Type, builtin_type }
+import cotowali.util.checksum
 
 pub struct Attr {
 pub:
@@ -367,9 +368,45 @@ fn (mut r Resolver) namespace_decl(ns NamespaceDecl) {
 	r.block(ns.block)
 }
 
+pub struct RequireStmtProps {
+pub:
+	md5        string
+	md5_pos    Pos
+	sha1       string
+	sha1_pos   Pos
+	sha256     string
+	sha256_pos Pos
+}
+
 pub struct RequireStmt {
+pub:
+	props RequireStmtProps
 pub mut:
 	file File
+}
+
+pub fn (s &RequireStmt) has_checksum(algo checksum.Algorithm) bool {
+	return match algo {
+		.md5 { s.props.md5 != '' }
+		.sha1 { s.props.sha1 != '' }
+		.sha256 { s.props.sha256 != '' }
+	}
+}
+
+pub fn (s &RequireStmt) checksum(algo checksum.Algorithm) string {
+	return match algo {
+		.md5 { s.props.md5 }
+		.sha1 { s.props.sha1 }
+		.sha256 { s.props.sha256 }
+	}
+}
+
+pub fn (s &RequireStmt) checksum_pos(algo checksum.Algorithm) Pos {
+	return match algo {
+		.md5 { s.props.md5_pos }
+		.sha1 { s.props.sha1_pos }
+		.sha256 { s.props.sha256_pos }
+	}
 }
 
 [inline]
