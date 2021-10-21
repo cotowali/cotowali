@@ -1,0 +1,9 @@
+error: require_with_checksum.err.li 2,3: md5 checksum mismatch: 111122223333444455550998ecf8427e (expected) != d41d8cd98f00b204e9800998ecf8427e (actual)
+    2 |   md5   : '111122223333444455550998ecf8427e',
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_with_checksum.err.li 3,3: sha1 checksum mismatch: 11112222333344445555bfef95601890afd80709 (expected) != da39a3ee5e6b4b0d3255bfef95601890afd80709 (actual)
+    3 |   sha1  : '11112222333344445555bfef95601890afd80709',
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_with_checksum.err.li 4,3: sha256 checksum mismatch: 11112222333344445555f4c8996fb92427ae41e4649b934ca495991b7852b855 (expected) != e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 (actual)
+    4 |   sha256: '11112222333344445555f4c8996fb92427ae41e4649b934ca495991b7852b855',
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -5,6 +5,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module messages
 
+import cotowali.util.checksum
+
 pub enum SymbolKind {
 	typ
 	variable
@@ -64,4 +66,15 @@ pub fn invalid_key(key string, v ParamsForInvalid) string {
 [inline]
 pub fn duplicated_key(key string) string {
 	return 'duplicated key `$key`'
+}
+
+[params]
+pub struct ParamsForMismatch {
+	expected string [required]
+	actual   string [required]
+}
+
+[inline]
+pub fn checksum_mismatch(algo checksum.Algorithm, v ParamsForMismatch) string {
+	return '$algo checksum mismatch: $v.expected (expected) != $v.actual (actual)'
 }

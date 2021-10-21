@@ -6,7 +6,7 @@
 module parser
 
 import cotowali.ast
-import cotowali.messages { duplicated_key, invalid_key, unreachable }
+import cotowali.messages { checksum_mismatch, duplicated_key, invalid_key, unreachable }
 import cotowali.token { Token, TokenKind }
 import cotowali.source { none_pos }
 import cotowali.symbols { builtin_type }
@@ -476,6 +476,32 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 			props: props
 			file: f
 		}
+	}
+
+	mut checksum_ok := true
+	if stmt.has_checksum(.md5) {
+		expected, actual := stmt.checksum(.md5), stmt.file.checksum(.md5)
+		if expected != actual {
+			p.error(checksum_mismatch(.md5, expected: expected, actual: actual), stmt.checksum_pos(.md5))
+			checksum_ok = false
+		}
+	}
+	if stmt.has_checksum(.sha1) {
+		expected, actual := stmt.checksum(.sha1), stmt.file.checksum(.sha1)
+		if expected != actual {
+			p.error(checksum_mismatch(.sha1, expected: expected, actual: actual), stmt.checksum_pos(.sha1))
+			checksum_ok = false
+		}
+	}
+	if stmt.has_checksum(.sha256) {
+		expected, actual := stmt.checksum(.sha256), stmt.file.checksum(.sha256)
+		if expected != actual {
+			p.error(checksum_mismatch(.sha256, expected: expected, actual: actual), stmt.checksum_pos(.sha256))
+			checksum_ok = false
+		}
+	}
+	if !checksum_ok {
+		return none
 	}
 
 	return stmt
