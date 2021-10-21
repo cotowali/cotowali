@@ -383,13 +383,33 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 }
 
 fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
-	key_tok := p.consume_with_assert(.key_require)
+	require_tok := p.consume_with_assert(.key_require)
 	path_node := p.parse_string_literal() ?
 	path_pos := path_node.pos()
 	path := path_node.const_text() or {
 		return p.error('cannot require non-constant path', path_pos)
 	}
-	mut pos := key_tok.pos.merge(path_pos)
+	mut pos := require_tok.pos.merge(path_pos)
+
+	if l_brace := p.consume_if_kind_eq(.l_brace) {
+		pos = pos.merge(l_brace.pos)
+		for {
+			if r_brace := p.consume_if_kind_eq(.r_brace) {
+				pos = pos.merge(r_brace.pos)
+				break
+			}
+
+			key_tok := p.consume_with_check(.ident) ?
+			key := key_tok.text
+			p.consume_with_check(.colon) ?
+
+			if r_brace := p.consume_if_kind_eq(.r_brace) {
+				pos = pos.merge(r_brace.pos)
+				break
+			}
+			p.consume_with_check(.comma) ?
+		}
+	}
 
 	if url := urllib.parse(path) {
 		f := parse_remote_file(url, p.ctx) or {

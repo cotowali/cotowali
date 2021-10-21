@@ -1,0 +1,3 @@
+error: require.err.li 1,23: invalid key `invalid_key`, expecting ``
+    1 | require 'ns.mod.li' { invalid_key: '' }
+      |                       ^^^^^^^^^^^
