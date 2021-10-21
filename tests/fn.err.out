@@ -1,4 +1,4 @@
-error: fn.err.li 1,15: `i` is already defined
+error: fn.err.li 1,15: variable `i` is already defined
     1 | fn f1(i: int, i: int) {}
       |               ^
 error: fn.err.li 2,10: unknown type `foo`
@@ -10,7 +10,7 @@ error: fn.err.li 5,3: cannot use yield in function that return non-sequence type
 error: fn.err.li 6,10: mismatched types: `string` (expected) and `int` (found)
     6 |   return i
       |          ^
-error: fn.err.li 8,4: `g` is already defined
+error: fn.err.li 8,4: function `g` is already defined
     8 | fn g(i: int) {}
       |    ^
 error: fn.err.li 12,11: mismatched types: `string` (expected) and `int` (found)

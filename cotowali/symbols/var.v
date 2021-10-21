@@ -6,7 +6,7 @@
 module symbols
 
 import cotowali.source { Pos, new_source, none_pos }
-import cotowali.messages { duplicated, unreachable }
+import cotowali.messages { already_defined, unreachable }
 
 pub struct Var {
 mut:
@@ -62,9 +62,14 @@ pub fn (v Var) receiver_type_symbol() &TypeSymbol {
 
 fn (mut s Scope) check_before_register_var(v Var) ? {
 	key := v.name
-	if key in s.vars {
-		return error(duplicated(key))
+	found_v := s.vars[key] or { return }
+
+	msg := if found_v.is_function() {
+		already_defined(.function, key)
+	} else {
+		already_defined(.variable, key)
 	}
+	return error(msg)
 }
 
 pub fn (mut s Scope) register_var(v Var) ?&Var {

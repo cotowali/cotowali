@@ -9,6 +9,7 @@ pub enum SymbolKind {
 	typ
 	variable
 	function
+	method
 	namespace
 }
 
@@ -17,6 +18,7 @@ pub fn (k SymbolKind) str() string {
 		.typ { 'type' }
 		.variable { 'variable' }
 		.function { 'function' }
+		.method { 'method' }
 		.namespace { 'namespace' }
 	}
 }
@@ -27,8 +29,8 @@ pub fn unreachable<T>(err T) string {
 }
 
 [inline]
-pub fn duplicated(name string) string {
-	return '`$name` is already defined'
+pub fn already_defined(kind SymbolKind, name string) string {
+	return '$kind `$name` is already defined'
 }
 
 [inline]
