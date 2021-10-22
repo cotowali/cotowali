@@ -41,7 +41,7 @@ fn suffix(s FileSuffix) string {
 }
 
 fn is_err_test_file(f string) bool {
-	name := f.trim_suffix(suffix(.li)).trim_suffix(suffix(.todo))
+	name := os.base(f.trim_suffix(suffix(.li)).trim_suffix(suffix(.todo)))
 	return name.ends_with(suffix(.err)) || name == 'error'
 }
 
