@@ -1,0 +1,15 @@
+fn unknown() {
+  # unknown unknwown directive
+  var n = 10
+  # endunknwon
+}
+
+fn error_and_warn() {
+  # error This is error
+  # error +++++ error +++++
+  #error  without space after #
+
+  # warning This is warning
+  # warning +++++ warn +++++
+  #warning  without space after #
+}

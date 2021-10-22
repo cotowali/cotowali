@@ -59,6 +59,8 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 		}
 	}
 
+	p.process_compiler_directives()
+
 	attrs := p.parse_attrs()
 	mut stmt := p.try_parse_stmt() or {
 		p.skip_until_eol()
@@ -73,6 +75,8 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 			p.error('cannot use attributes here', attrs.last().pos)
 		}
 	}
+
+	p.process_compiler_directives()
 
 	return stmt
 }
@@ -162,10 +166,12 @@ fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
 fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 	p.consume_with_check(.l_brace) ?
 	p.skip_eol() // ignore eol after brace.
+
 	mut node := ast.Block{
 		scope: p.scope
 	}
 	for {
+		p.process_compiler_directives()
 		if _ := p.consume_if_kind_eq(.r_brace) {
 			return node
 		}

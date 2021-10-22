@@ -1,0 +1,24 @@
+error: error.li 2,3: unknown compiler directive `#unknown`
+    2 |   # unknown unknwown directive
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: error.li 4,3: unknown compiler directive `#endunknwon`
+    4 |   # endunknwon
+      |   ^^^^^^^^^^^^
+error: error.li 8,3: This is error
+    8 |   # error This is error
+      |   ^^^^^^^^^^^^^^^^^^^^^
+error: error.li 9,3: +++++ error +++++
+    9 |   # error +++++ error +++++
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^
+error: error.li 10,3: without space after #
+   10 |   #error  without space after #
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+warning: error.li 12,3: This is warning
+   12 |   # warning This is warning
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^
+warning: error.li 13,3: +++++ warn +++++
+   13 |   # warning +++++ warn +++++
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+warning: error.li 14,3: without space after #
+   14 |   #warning  without space after #
+      |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
