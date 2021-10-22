@@ -144,18 +144,14 @@ fn (mut p Parser) parse_type() ?&TypeSymbol {
 
 	start_pos := p.pos(0)
 
-	// workaround for V's bug of match expr
-	f := fn (mut p Parser) ?&TypeSymbol {
-		match p.kind(0) {
-			.l_bracket { return p.parse_array_type() }
-			.key_map { return p.parse_map_type() }
-			.amp { return p.parse_reference_type() }
-			.dotdotdot { return p.parse_variadic_type() }
-			.l_paren { return p.parse_tuple_type() }
-			else { return p.parse_ident_type() }
-		}
+	mut ts := match p.kind(0) {
+		.l_bracket { p.parse_array_type() ? }
+		.key_map { p.parse_map_type() ? }
+		.amp { p.parse_reference_type() ? }
+		.dotdotdot { p.parse_variadic_type() ? }
+		.l_paren { p.parse_tuple_type() ? }
+		else { p.parse_ident_type() ? }
 	}
-	mut ts := f(mut p) ?
 	ts.pos = start_pos.merge(p.pos(-1))
 	return ts
 }
