@@ -46,11 +46,11 @@ pub fn (mut lex Lexer) read() ?Token {
 			return Token{.eof, '', lex.pos}
 		}
 
-		if tok := lex.read_for_string_literal() {
+		if tok := lex.try_read_for_string_literal() {
 			return tok
 		}
 
-		if tok := lex.read_doc_comment() {
+		if tok := lex.try_read_doc_comment() {
 			return tok
 		}
 

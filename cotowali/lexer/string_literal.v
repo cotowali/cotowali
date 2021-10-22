@@ -103,7 +103,7 @@ fn (mut lex Lexer) read_raw_string_literal_content(quote byte) Token {
 	return lex.new_token(.string_literal_content_text)
 }
 
-pub fn (mut lex Lexer) read_for_string_literal() ?Token {
+pub fn (mut lex Lexer) try_read_for_string_literal() ?Token {
 	match lex.lex_ctx.current.kind {
 		.inside_single_quoted_string_literal {
 			if lex.byte() == lexer.sq {

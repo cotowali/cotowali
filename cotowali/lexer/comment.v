@@ -25,7 +25,7 @@ fn (mut lex Lexer) try_skip_comment() ?Unit {
 	return Unit{}
 }
 
-fn (mut lex Lexer) read_doc_comment() ?Token {
+fn (mut lex Lexer) try_read_doc_comment() ?Token {
 	ccc := '${lex.char(0)}${lex.char(1)}${lex.char(2)}'
 	if ccc == '///' {
 		lex.skip_n(3)
