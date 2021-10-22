@@ -113,10 +113,10 @@ pub fn (mut lex Lexer) read() ?Token {
 			return lex.read_eol()
 		}
 
-		match c.byte() {
-			`@` { return lex.read_at_ident() }
-			`\$` { return lex.read_dollar_directive() }
-			else { return lex.read_unknown() }
+		return match c.byte() {
+			`@` { lex.read_at_ident() }
+			`\$` { lex.read_dollar_directive() }
+			else { lex.read_unknown() }
 		}
 	}
 	panic(unreachable(''))
