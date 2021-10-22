@@ -154,9 +154,6 @@ fn (mut p Parser) skip_until_eol() {
 	p.consume_for(fn (t Token) bool {
 		return t.kind !in [.eol, .eof]
 	})
-	if p.kind(0) == .eol {
-		p.consume_with_assert(.eol)
-	}
 }
 
 fn (mut p Parser) skip_eol() {

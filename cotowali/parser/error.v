@@ -52,7 +52,10 @@ fn (mut p Parser) syntax_error(msg string, pos Pos) IError {
 fn (mut p Parser) restore_from_syntax_error() {
 	match p.restore_strategy {
 		.@none {}
-		.eol { p.skip_until_eol() }
+		.eol {
+			p.skip_until_eol()
+			p.skip_eol()
+		}
 	}
 }
 
