@@ -14,7 +14,7 @@ const (
 	bs = `\\`
 )
 
-fn (mut lex Lexer) read_single_quote_string_literal_content() ?Token {
+fn (mut lex Lexer) read_single_quote_string_literal_content() Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
 		defer {
@@ -47,7 +47,7 @@ fn (mut lex Lexer) read_single_quote_string_literal_content() ?Token {
 	return tok
 }
 
-fn (mut lex Lexer) read_double_quote_string_literal_content() ?Token {
+fn (mut lex Lexer) read_double_quote_string_literal_content() Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
 		defer {
@@ -88,7 +88,7 @@ fn (mut lex Lexer) read_double_quote_string_literal_content() ?Token {
 	return tok
 }
 
-fn (mut lex Lexer) read_raw_string_literal_content(quote byte) ?Token {
+fn (mut lex Lexer) read_raw_string_literal_content(quote byte) Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
 		defer {
