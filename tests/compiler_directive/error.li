@@ -1,0 +1,5 @@
+fn unknown() {
+  # unknown unknwown directive
+  var n = 10
+  # endunknwon
+}
