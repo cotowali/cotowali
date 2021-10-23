@@ -191,6 +191,11 @@ fn (mut lex Lexer) skip_whitespaces() {
 	lex.consume_for(is_whitespace)
 }
 
+fn (mut lex Lexer) consume_for_ident() {
+	lex.consume_for(is_ident_char)
+	lex.consume_for(is_ident_first_char)
+}
+
 fn (mut lex Lexer) read_ident_or_keyword() Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
@@ -199,7 +204,7 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 		}
 	}
 
-	lex.consume_for(is_ident_char)
+	lex.consume_for_ident()
 	text := lex.text()
 	pos := lex.pos_for_new_token()
 	kind := table_for_keywords[text] or { tk(.ident) }
