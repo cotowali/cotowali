@@ -10,8 +10,13 @@ import cotowali.token { Token, TokenKind }
 import cotowali.source { Pos, Source, new_source, none_pos }
 import cotowali.errors
 
-fn code(code string) &Source {
-	return new_source('', code)
+type StrOrStrArray = []string | string
+
+fn code(code StrOrStrArray) &Source {
+	return new_source('', match code {
+		string { code }
+		[]string { code.map(it + '\n').join('') }
+	})
 }
 
 fn test(fn_name string, line string, source &Source, tokens []Token) {
@@ -358,7 +363,7 @@ fn test_multiline() {
 		'',
 		' s5 ',
 	]
-	s := new_source('', lines.join('\n'))
+	s := code(lines)
 	test(@FN, @LINE, s, [
 		// Pos{source, i, line, col, len, last_line, last_col}
 		Token{.ident, 's1', Pos{s, 0, 1, 1, 2, 1, 2}},
@@ -369,6 +374,7 @@ fn test_multiline() {
 		Token{.eol, '\n', Pos{s, 13, 2, lines[1].len + 1, 1, 2, lines[1].len + 1}},
 		Token{.eol, '\n', Pos{s, 14, 3, lines[2].len + 1, 1, 3, lines[2].len + 1}},
 		Token{.ident, 's5', Pos{s, 16, 4, 2, 2, 4, 3}},
-		Token{.eof, '', Pos{s, s.code.len, 4, lines[3].len + 1, 1, 4, lines[3].len + 1}},
+		Token{.eol, '\n', Pos{s, 19, 4, lines[3].len + 1, 1, 4, lines[3].len + 1}},
+		Token{.eof, '', Pos{s, s.code.len, 5, 1, 1, 5, 1}},
 	])
 }
