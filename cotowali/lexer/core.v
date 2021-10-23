@@ -52,6 +52,7 @@ pub:
 	ctx    &Context
 mut:
 	prev_char         Char
+	prev_tok          Token
 	pos               Pos
 	closed            bool // for iter
 	in_string_literal bool

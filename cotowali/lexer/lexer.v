@@ -7,7 +7,7 @@ module lexer
 
 import cotowali.token { Token }
 import cotowali.source { Char }
-import cotowali.errors { LexerErr }
+import cotowali.errors { LexerErr, LexerWarn }
 import cotowali.messages { unreachable }
 
 pub fn (mut lex Lexer) next() ?Token {
@@ -32,6 +32,19 @@ fn (mut lex Lexer) prepare_to_read() {
 }
 
 pub fn (mut lex Lexer) read() ?Token {
+	tok := lex.do_read() or {
+		match err {
+			LexerErr { lex.prev_tok = err.token }
+			LexerWarn { lex.prev_tok = err.token }
+			else {}
+		}
+		return err
+	}
+	lex.prev_tok = tok
+	return tok
+}
+
+pub fn (mut lex Lexer) do_read() ?Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
 		defer {
