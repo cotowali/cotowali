@@ -390,6 +390,16 @@ fn test_inline_shell() {
 		t(.r_brace, '}'),
 		t(.eol, '\n'),
 	])
+
+	// escaped %
+	test(@FN, @LINE, code(r"sh { printf '%%s' $%str }"), [
+		t(.key_sh, 'sh'),
+		t(.l_brace, '{'),
+		t(.inline_shell_content_text, r" printf '%s' $"),
+		t(.inline_shell_content_var, '%str'),
+		t(.inline_shell_content_text, ' '),
+		t(.r_brace, '}'),
+	])
 }
 
 fn test_number() {

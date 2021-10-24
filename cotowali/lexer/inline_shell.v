@@ -29,9 +29,21 @@ fn (mut lex Lexer) read_inline_shell_content() ?Token {
 			return lex.error(lex.new_token(.inline_shell_content_text), 'unterminated inline shell')
 		}
 		match lex.byte() {
-			`{` { lex.lex_ctx.current.inline_shell_brace_depth++ }
-			`}` { lex.lex_ctx.current.inline_shell_brace_depth-- }
-			`%` { break } // terminate .inline_shell_content_text
+			`{` {
+				lex.lex_ctx.current.inline_shell_brace_depth++
+			}
+			`}` {
+				lex.lex_ctx.current.inline_shell_brace_depth--
+			}
+			`%` {
+				if lex.char(1).byte() == `%` {
+					// escaped %
+					// consume first %. next % will be consumed like all other chars
+					lex.consume()
+				} else {
+					break // terminate .inline_shell_content_text
+				}
+			}
 			else {}
 		}
 		if lex.lex_ctx.current.inline_shell_brace_depth == 0 {
@@ -40,6 +52,9 @@ fn (mut lex Lexer) read_inline_shell_content() ?Token {
 		}
 		lex.consume()
 	}
-	tok := lex.new_token(.inline_shell_content_text)
-	return tok
+	return Token{
+		kind: .inline_shell_content_text
+		pos: lex.pos_for_new_token()
+		text: lex.text().replace('%%', '%') // replace escaped %. And text will be raw shell code
+	}
 }
