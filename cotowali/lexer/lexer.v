@@ -23,8 +23,15 @@ pub fn (mut lex Lexer) next() ?Token {
 }
 
 fn (mut lex Lexer) prepare_to_read() {
-	// " $v " should be ['"', ' ' '$v', ' ', '"']. So don't skip whitespace inside double quote literal
-	if lex.lex_ctx.current.kind in [.normal, .inside_string_literal_expr_substitution] {
+	// don't skip white space in string literal and inline shell
+	// e.g
+	//   " $v "      should be ['"', ' ' '$v', ' ', '"'].
+	//   "sh { %a }" should be ['sh', '{', ' ', %a', ' ', '}']
+	if lex.lex_ctx.current.kind in [
+		.normal,
+		.inside_string_literal_expr_substitution,
+		.inside_inline_shell_expr_substitution,
+	] {
 		lex.skip_whitespaces()
 	}
 
@@ -113,10 +120,23 @@ pub fn (mut lex Lexer) do_read() ?Token {
 				}
 			}
 			if kind == .r_brace {
-				if lex.lex_ctx.current.kind == .inside_string_literal_expr_substitution
-					&& lex.lex_ctx.current.brace_depth == 0 {
-					lex.lex_ctx.pop()
-					return lex.new_token_with_consume(.string_literal_content_expr_close)
+				if lex.lex_ctx.current.brace_depth == 0 {
+					if lex.prev_tok.kind in [.inline_shell_content_text, .inline_shell_content_var] {
+						// end of inline shell
+						return lex.new_token_with_consume(.r_brace)
+					}
+
+					match lex.lex_ctx.current.kind {
+						.inside_string_literal_expr_substitution {
+							lex.lex_ctx.pop()
+							return lex.new_token_with_consume(.string_literal_content_expr_close)
+						}
+						.inside_inline_shell_expr_substitution {
+							lex.lex_ctx.pop()
+							return lex.new_token_with_consume(.inline_shell_content_expr_substitution_close)
+						}
+						else {}
+					}
 				}
 
 				lex.lex_ctx.current.brace_depth -= 1

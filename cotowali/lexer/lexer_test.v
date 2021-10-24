@@ -402,6 +402,49 @@ fn test_inline_shell() {
 	])
 }
 
+fn test_mix_inline_shell_and_string() {
+	//             0                                                 0
+	//             +-------------------------------------------------+
+	//             |       1                                    1    |
+	//             |       +------------------------------------+    |
+	//             |       |      2                          2  |    |
+	//             |       |      +--------------------------+  |    |
+	//             |       |      |      3                 3 |  |    |
+	//             |       |      |      +-----------------+ |  |    |
+	//             |       |      |      |       4       4 | |  |    |
+	//             |       |      |      |       +-------+ | |  |    |
+	//             v       v      v      v       v       v v v  v    v
+	s := code(r'sh { echo %{ "$a ${ b sh { echo %{ r"$a" } } }" } %n }')
+	test(@FN, @LINE, s, [
+		t(.key_sh, 'sh'),
+		t(.l_brace, '{'), // ------------------------------------------------------+ 0
+		t(.inline_shell_content_text, r' echo '), //                               |
+		t(.inline_shell_content_expr_substitution_open, r'%{'), //-------------+ 1 |
+		t(.double_quote, '"'), //                                              |   |
+		t(.string_literal_content_var, r'$a'), //                              |   |
+		t(.string_literal_content_text, r' '), //                              |   |
+		t(.string_literal_content_expr_open, r'${'), //--------------------+ 2 |   |
+		t(.ident, 'b'), //                                                 |   |   |
+		t(.key_sh, 'sh'), //                                               |   |   |
+		t(.l_brace, '{'), // ------------------------------------------+ 3 |   |   |
+		t(.inline_shell_content_text, r' echo '), //                   |   |   |   |
+		t(.inline_shell_content_expr_substitution_open, r'%{'), //-+ 4 |   |   |   |
+		t(.double_quote_with_r_prefix, 'r"'), //                   |   |   |   |   |
+		t(.string_literal_content_text, r'$a'), //                 |   |   |   |   |
+		t(.double_quote, '"'), //                                  |   |   |   |   |
+		t(.inline_shell_content_expr_substitution_close, r'}'), //-+ 4 |   |   |   |
+		t(.inline_shell_content_text, ' '), //                         |   |   |   |
+		t(.r_brace, '}'), // ------------------------------------------+ 3 |   |   |
+		t(.string_literal_content_expr_close, '}'), //---------------------+ 2 |   |
+		t(.double_quote, '"'), // ---------------------------------------------|   |
+		t(.inline_shell_content_expr_substitution_close, r'}'), //-------------+ 1 |
+		t(.inline_shell_content_text, ' '), //                                     |
+		t(.inline_shell_content_var, '%n'), //                                     |
+		t(.inline_shell_content_text, ' '), //                                     |
+		t(.r_brace, '}'), // ------------------------------------------------------+ 0
+	])
+}
+
 fn test_number() {
 	test(@FN, @LINE, code('1 1.1 1E+9 1e-9'), [
 		t(.int_literal, '1'),

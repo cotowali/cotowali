@@ -20,6 +20,10 @@ fn (mut lex Lexer) read_inline_shell_content() ?Token {
 
 	if lex.byte() == `%` {
 		lex.consume()
+		if lex.byte() == `{` {
+			lex.lex_ctx.push(kind: .inside_inline_shell_expr_substitution)
+			return lex.new_token_with_consume(.inline_shell_content_expr_substitution_open)
+		}
 		lex.consume_for_ident()
 		return lex.new_token(.inline_shell_content_var)
 	}

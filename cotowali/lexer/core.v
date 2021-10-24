@@ -21,6 +21,7 @@ enum LexicalContextKind {
 	inside_raw_double_quoted_string_literal
 	inside_string_literal_expr_substitution
 	inside_inline_shell
+	inside_inline_shell_expr_substitution
 }
 
 struct LexicalContext {

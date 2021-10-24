@@ -133,7 +133,7 @@ pub fn (mut lex Lexer) try_read_for_string_literal() ?Token {
 			}
 			return lex.read_raw_string_literal_content(lexer.dq)
 		}
-		.inside_string_literal_expr_substitution, .normal {
+		.inside_string_literal_expr_substitution, .inside_inline_shell_expr_substitution, .normal {
 			b := lex.byte()
 			if b == lexer.sq {
 				lex.lex_ctx.push(kind: .inside_single_quoted_string_literal)
