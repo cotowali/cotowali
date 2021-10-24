@@ -7,6 +7,8 @@ module sh
 
 import cotowali.ast { Stmt }
 import cotowali.symbols { TypeSymbol, builtin_type }
+import cotowali.token { Token }
+import cotowali.messages { unreachable }
 
 fn (mut e Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {
@@ -30,7 +32,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 		ast.EmptyStmt { e.writeln('') }
 		ast.ForInStmt { e.for_in_stmt(stmt) }
 		ast.IfStmt { e.if_stmt(stmt) }
-		ast.InlineShell { e.writeln(stmt.text) }
+		ast.InlineShell { e.inline_shell(stmt) }
 		ast.NamespaceDecl { e.namespace_decl(stmt) }
 		ast.ReturnStmt { e.return_stmt(stmt) }
 		ast.RequireStmt { e.require_stmt(stmt) }
@@ -134,6 +136,24 @@ fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
 	}
 	e.unindent()
 	e.writeln('done')
+}
+
+fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
+	for part in stmt.parts {
+		match part {
+			Token {
+				if part.kind != .inline_shell_content_text {
+					panic(unreachable('want inline_shell_content_text. got $part.kind'))
+				}
+				e.write(part.text)
+			}
+			ast.Var {
+				// TODO: explicit `as` cast is workaround for avoid V's bug
+				e.write(e.ident_for(part as ast.Var))
+			}
+		}
+	}
+	e.writeln('')
 }
 
 fn (mut e Emitter) namespace_decl(ns ast.NamespaceDecl) {

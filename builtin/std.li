@@ -5,24 +5,19 @@
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 fn print(s: string) {
-  // eprint_s is output name of local variable, s
-  // TODO: integrated inline shell script
-  ${printf '%s' "$print_s"}
+  sh { printf '%%s' "$%s" }
 }
 
 fn println(s: string) {
-  // see comment of print()
-  ${printf '%s\n' "$println_s"}
+  sh { printf '%%s\n' "$%s" }
 }
 
 fn eprint(s: string) {
-  // see comment of print()
-  ${printf '%s' "$eprint_s" >&2}
+  sh { printf '%%s' "$%s" >&2 }
 }
 
 fn eprintln(s: string) {
-  // see comment of print()
-  ${printf '%s\n' "$eprintln_s" >&2}
+  sh { printf '%%s\n' "$%s" >&2 }
 }
 
 fn string |> cat(files: ...string) |> string
@@ -50,7 +45,7 @@ fn (s: string) index(t: string): int {
 
 fn (s: string) len(): int {
   var n: int
-  ${ len_n=${#len_s} }
+  sh { %n=${#%s} }
   return n
 }
 
@@ -59,7 +54,7 @@ fn (s: string) len(): int {
 
 fn (arr: []any) len(): int {
   var v: int
-  ${ len_n=$(array_len len_arr) }
+  sh { %n=$(array_len %arr) }
   return n
 }
 

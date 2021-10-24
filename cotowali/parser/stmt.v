@@ -114,6 +114,9 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_require {
 			return ast.Stmt(p.parse_require_stmt() ?)
 		}
+		.key_sh {
+			return ast.Stmt(p.parse_inline_shell() ?)
+		}
 		.key_type {
 			return p.parse_type_decl()
 		}

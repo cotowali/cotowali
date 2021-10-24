@@ -332,10 +332,13 @@ fn (mut r Resolver) if_stmt(stmt IfStmt) {
 	}
 }
 
+pub type InlineShellPart = Token | Var
+
 pub struct InlineShell {
 pub:
-	pos  Pos
-	text string
+	pos Pos
+pub mut:
+	parts []InlineShellPart
 }
 
 fn (mut r Resolver) inline_shell(stmt InlineShell) {
@@ -343,6 +346,12 @@ fn (mut r Resolver) inline_shell(stmt InlineShell) {
 		r.trace_begin(@FN)
 		defer {
 			r.trace_end()
+		}
+	}
+
+	for mut part in stmt.parts {
+		if mut part is Var {
+			r.var_(mut part)
 		}
 	}
 }
