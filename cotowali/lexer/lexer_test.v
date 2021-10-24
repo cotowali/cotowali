@@ -341,8 +341,65 @@ fn test_string_expr_substitution() {
 }
 
 fn test_inline_shell() {
-	test(@FN, @LINE, code(r'${echo 1}'), [t(.inline_shell, 'echo 1')])
-	test(@FN, @LINE, code(r'${echo ${n}}'), [t(.inline_shell, r'echo ${n}')])
+	test(@FN, @LINE, code('sh {} x'), [
+		t(.key_sh, 'sh'),
+		t(.l_brace, '{'),
+		t(.inline_shell_content_text, ''),
+		t(.r_brace, '}'),
+		t(.ident, 'x'),
+	])
+
+	test(@FN, @LINE, code(r'sh { echo 1 } x'), [
+		t(.key_sh, 'sh'),
+		t(.l_brace, '{'),
+		t(.inline_shell_content_text, ' echo 1 '),
+		t(.r_brace, '}'),
+		t(.ident, 'x'),
+	])
+	test(@FN, @LINE, code(r'sh { echo ${n} } x'), [
+		t(.key_sh, 'sh'),
+		t(.l_brace, '{'),
+		t(.inline_shell_content_text, r' echo ${n} '),
+		t(.r_brace, '}'),
+		t(.ident, 'x'),
+	])
+
+	test(@FN, @LINE, code(r'sh { echo $%n } x'), [
+		t(.key_sh, 'sh'),
+		t(.l_brace, '{'),
+		t(.inline_shell_content_text, r' echo $'),
+		t(.inline_shell_content_var, '%n'),
+		t(.inline_shell_content_text, ' '),
+		t(.r_brace, '}'),
+		t(.ident, 'x'),
+	])
+
+	test(@FN, @LINE, code([
+		r'sh { ',
+		r'  %n=10',
+		r'  echo $%n',
+		r'}',
+	]), [
+		t(.key_sh, 'sh'),
+		t(.l_brace, '{'),
+		t(.inline_shell_content_text, ' \n  '),
+		t(.inline_shell_content_var, '%n'),
+		t(.inline_shell_content_text, '=10\n  echo \$'),
+		t(.inline_shell_content_var, '%n'),
+		t(.inline_shell_content_text, '\n'),
+		t(.r_brace, '}'),
+		t(.eol, '\n'),
+	])
+
+	// escaped %
+	test(@FN, @LINE, code(r"sh { printf '%%s' $%str }"), [
+		t(.key_sh, 'sh'),
+		t(.l_brace, '{'),
+		t(.inline_shell_content_text, r" printf '%s' $"),
+		t(.inline_shell_content_var, '%str'),
+		t(.inline_shell_content_text, ' '),
+		t(.r_brace, '}'),
+	])
 }
 
 fn test_number() {

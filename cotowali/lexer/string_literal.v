@@ -152,6 +152,7 @@ pub fn (mut lex Lexer) try_read_for_string_literal() ?Token {
 				}
 			}
 		}
+		.inside_inline_shell {}
 	}
 	return none
 }

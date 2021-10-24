@@ -22,13 +22,13 @@ pub enum TokenKind {
 	key_namespace
 	key_require
 	key_return
+	key_sh
 	key_struct
 	key_type
 	key_use
 	key_var
 	key_while
 	key_yield
-	inline_shell
 	compiler_directive
 	colon
 	coloncolon
@@ -45,6 +45,8 @@ pub enum TokenKind {
 	single_quote_with_r_prefix
 	double_quote
 	double_quote_with_r_prefix
+	inline_shell_content_text
+	inline_shell_content_var
 	string_literal_content_text
 	string_literal_content_var
 	string_literal_content_expr_open

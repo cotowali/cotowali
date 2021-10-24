@@ -114,6 +114,9 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_require {
 			return ast.Stmt(p.parse_require_stmt() ?)
 		}
+		.key_sh {
+			return ast.Stmt(p.parse_inline_shell() ?)
+		}
 		.key_type {
 			return p.parse_type_decl()
 		}
@@ -123,13 +126,6 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.doc_comment {
 			return ast.DocComment{
 				token: p.consume()
-			}
-		}
-		.inline_shell {
-			tok := p.consume()
-			return ast.InlineShell{
-				pos: tok.pos
-				text: tok.text
 			}
 		}
 		.key_yield {

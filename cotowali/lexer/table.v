@@ -69,6 +69,7 @@ const (
 		'namespace': tk(.key_namespace)
 		'require':   tk(.key_require)
 		'return':    tk(.key_return)
+		'sh':        tk(.key_sh)
 		'struct':    tk(.key_struct)
 		'type':      tk(.key_type)
 		'use':       tk(.key_use)
