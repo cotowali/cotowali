@@ -81,7 +81,7 @@ fn (mut r Resolver) stmt(stmt Stmt) {
 		FnDecl { r.fn_decl(stmt) }
 		ForInStmt { r.for_in_stmt(mut stmt) }
 		IfStmt { r.if_stmt(stmt) }
-		InlineShell { r.inline_shell(stmt) }
+		InlineShell { r.inline_shell(mut stmt) }
 		NamespaceDecl { r.namespace_decl(stmt) }
 		RequireStmt { r.require_stmt(stmt) }
 		ReturnStmt { r.return_stmt(stmt) }
@@ -341,7 +341,7 @@ pub mut:
 	parts []InlineShellPart
 }
 
-fn (mut r Resolver) inline_shell(stmt InlineShell) {
+fn (mut r Resolver) inline_shell(mut stmt InlineShell) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
