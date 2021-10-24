@@ -72,6 +72,10 @@ pub fn (mut lex Lexer) do_read() ?Token {
 			continue
 		}
 
+		if lex.lex_ctx.current.kind == .inside_inline_shell {
+			return lex.read_inline_shell_content()
+		}
+
 		// --
 
 		c0, c1, c2 := lex.char(0), lex.char(1), lex.char(2)
@@ -102,7 +106,11 @@ pub fn (mut lex Lexer) do_read() ?Token {
 		kind = table_for_one_char_symbols[c.byte()] or { tk(.unknown) }
 		if kind != .unknown {
 			if kind == .l_brace {
-				lex.lex_ctx.current.brace_depth += 1
+				if lex.prev_tok.kind == .key_sh {
+					lex.lex_ctx.push(kind: .inside_inline_shell, inline_shell_brace_depth: 1)
+				} else {
+					lex.lex_ctx.current.brace_depth += 1
+				}
 			}
 			if kind == .r_brace {
 				if lex.lex_ctx.current.kind == .inside_string_literal_expr_substitution

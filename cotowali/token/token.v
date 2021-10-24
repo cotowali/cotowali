@@ -45,6 +45,8 @@ pub enum TokenKind {
 	single_quote_with_r_prefix
 	double_quote
 	double_quote_with_r_prefix
+	inline_shell_content_text
+	inline_shell_content_var
 	string_literal_content_text
 	string_literal_content_var
 	string_literal_content_expr_open
