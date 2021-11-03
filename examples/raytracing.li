@@ -1,0 +1,717 @@
+// Copyright (c) 2021 zakuro <z@kuro.red>. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+
+// --------------------
+
+var eps = 1e-4
+var pi = 3.1415926535
+
+fn eps_eq(a: float, b: float): bool {
+  return abs(a - b) < eps
+}
+
+fn abs(v: float): float {
+  if v < 0 {
+    return -v
+  } else {
+    return v
+  }
+}
+
+fn sqrt(v: float): float {
+  return (v |> @awk('{printf "%lf", sqrt($1)}')) as float
+}
+
+fn sin(v: float): float {
+  return (v |> @awk('{printf "%lf", sin($1)}')) as float
+}
+
+fn cos(v: float): float {
+  return (v |> @awk('{printf "%lf", cos($1)}')) as float
+}
+
+fn clamp(v: float, min: float, max: float): float {
+  if v < min {
+    return min
+  } else if v > max {
+    return max
+  } else {
+    return v
+  }
+}
+
+fn floor(v: float): int {
+  return (v |> @awk('{printf "%d", $1}')) as int
+}
+
+fn fmax(values: ...float): float {
+  var res = values[0]
+  for v in values {
+    if v > res {
+      res = v
+    }
+  }
+  return res
+}
+
+fn rand(): float {
+  // NOTE: /dev/urandom exists in most environments. but it is not POSIX compliant.
+  return (@od('-vAn', '-N4', '-tu4', '/dev/urandom') |> @awk('{printf "%lf", $1 / 4294967295}')) as float
+}
+
+fn test_math() {
+  assert(abs(1) == 1)
+  assert(abs(-1) == 1.0)
+
+  assert(sqrt(4) == 2)
+
+  assert(clamp(1, 3, 5) == 3)
+  assert(clamp(4, 3, 5) == 4)
+  assert(clamp(6, 3, 5) == 5)
+
+  for i in seq(10) {
+    assert(0 <= rand() && rand() < 1)
+    assert(rand() != rand())
+  }
+
+  assert(fmax(-1.0, 1.0, 0) == 1.0)
+  assert(fmax(-2.0, -1.0, 0.0) == 0.0)
+}
+test_math()
+
+
+// --------------------
+
+type Vec3 = (float, float, float)
+
+fn vec3(x: float, y: float, z: float): Vec3 {
+  return (x, y, z)
+}
+
+fn vec3_x(v: Vec3): float {
+  var (x, y, z) = v
+  return x
+}
+
+fn vec3_y(v: Vec3): float {
+  var (x, y, z) = v
+  return y
+}
+
+fn vec3_z(v: Vec3): float {
+  var (x, y, z) = v
+  return z
+}
+
+fn vec3_length_squared(v: Vec3): float {
+  var (x, y, z) = v
+  return x * x + y * y + z * z
+}
+
+fn vec3_length(v: Vec3): float {
+  return sqrt(vec3_length_squared(v))
+}
+
+fn vec3_normalize(v: Vec3): Vec3 {
+  var vv = vec3_multiply(v, 1000)
+  return vec3_divide(vv, vec3_length(vv))
+}
+
+fn vec3_add(v1: Vec3, v2: Vec3): Vec3 {
+  return vec3(
+    vec3_x(v1) + vec3_x(v2),
+    vec3_y(v1) + vec3_y(v2),
+    vec3_z(v1) + vec3_z(v2),
+  )
+}
+
+fn vec3_subtract(v1: Vec3, v2: Vec3): Vec3 {
+  return vec3(
+    vec3_x(v1) - vec3_x(v2),
+    vec3_y(v1) - vec3_y(v2),
+    vec3_z(v1) - vec3_z(v2),
+  )
+}
+
+fn vec3_multiply(v: Vec3, n: float): Vec3 {
+  return vec3(vec3_x(v) * n, vec3_y(v) * n, vec3_z(v) * n)
+}
+
+fn vec3_divide(v: Vec3, n: float): Vec3 {
+  return vec3(vec3_x(v) / n, vec3_y(v) / n, vec3_z(v) / n)
+}
+
+fn vec3_cross(v1: Vec3, v2: Vec3): Vec3 {
+  return vec3(
+    vec3_y(v1) * vec3_z(v2) - vec3_z(v1) * vec3_y(v2),
+    vec3_z(v1) * vec3_x(v2) - vec3_x(v1) * vec3_z(v2),
+    vec3_x(v1) * vec3_y(v2) - vec3_y(v1) * vec3_x(v2),
+  )
+}
+
+fn vec3_dot(v1: Vec3, v2: Vec3): float {
+  return vec3_x(v1) * vec3_x(v2) + vec3_y(v1) * vec3_y(v2) + vec3_z(v1) * vec3_z(v2)
+}
+
+fn test_vec3() {
+  var v1 = vec3(1.0, 2.0, 3.0)
+  var v2 = vec3(4.0, 5.0, 6.0)
+
+  assert(vec3_length_squared(v1) == 14)
+  var v1_len = vec3_length(v1)
+  assert(3.7 < v1_len && v1_len < 3.8)
+
+  var normalized_v1 = vec3_normalize(v1)
+  assert(eps_eq(abs(vec3_length(normalized_v1)), 1))
+
+  assert(vec3_add(v1, v2)      == (5.0, 7.0, 9.0))
+  assert(vec3_subtract(v2, v1) == (3.0, 3.0, 3.0))
+  assert(vec3_multiply(v1, 2)  == (2.0, 4.0, 6.0))
+  assert(vec3_divide(v1, 2)    == (0.5, 1.0, 1.5))
+
+  var cross = vec3_cross(v1, v2)
+  assert(vec3_x(cross) == -3 && vec3_y(cross) == 6 && vec3_z(cross) == -3)
+  assert(vec3_dot(v1, v2) == 1 * 4 + 2 * 5 + 3 * 6)
+  assert(vec3_dot(v1, cross) == 0)
+  assert(vec3_dot(v2, cross) == 0)
+}
+test_vec3()
+
+// --------------------
+
+type Ray = (...Vec3, ...Vec3)
+
+fn ray(origin: Vec3, dir: Vec3): Ray {
+  return origin + vec3_normalize(dir)
+}
+
+fn ray_origin(ray: Ray): Vec3 {
+  var (origin_x, origin_y, origin_z, dir_x, dir_y, dir_z) = ray
+  return vec3(origin_x, origin_y, origin_z)
+}
+
+fn ray_dir(ray: Ray): Vec3 {
+  var (origin_x, origin_y, origin_z, dir_x, dir_y, dir_z) = ray
+  return vec3(dir_x, dir_y, dir_z)
+}
+
+fn test_ray() {
+  var origin = vec3(0, 0, 0)
+  var dir = vec3(1, 1, 0)
+  var r = ray(origin, dir)
+
+  var r_origin = ray_origin(r)
+  var r_dir = ray_dir(r)
+  assert(r_origin == origin)
+  assert(eps_eq(vec3_length(r_dir), 1))
+  assert(eps_eq(vec3_x(r_dir), vec3_y(r_dir)))
+}
+test_ray()
+
+// --------------------
+
+type RayHit = (...Vec3, ...Vec3, float) // (point, normal, distance); if not hit, distance == 0
+
+fn ray_hit(point: Vec3, normal: Vec3, distance: float): RayHit {
+  var (p_x, p_y, p_z) = point
+  if eps_eq(vec3_length_squared(normal), 0) || eps_eq(distance, 0) {
+    return ray_hit_null()
+  }
+  var (n_x, n_y, n_z) = vec3_normalize(normal)
+  return (
+    p_x, p_y, p_z,
+    n_x, n_y, n_z,
+    distance,
+  )
+}
+
+fn ray_hit_null(): RayHit {
+  return (0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+}
+
+fn ray_hit_point(hit: RayHit): Vec3 {
+  var (p_x, p_y, p_z, n_x, n_y, n_z, distance) = hit
+  return vec3(p_x, p_y, p_z)
+}
+
+fn ray_hit_normal(hit: RayHit): Vec3 {
+  var (p_x, p_y, p_z, n_x, n_y, n_z, distance) = hit
+  return vec3(n_x, n_y, n_z)
+}
+
+fn ray_hit_distance(hit: RayHit): float {
+  var (p_x, p_y, p_z, n_x, n_y, n_z, distance) = hit
+  return distance
+}
+
+fn ray_hit_is_null(hit: RayHit): bool {
+  return eps_eq(ray_hit_distance(hit), 0)
+}
+
+fn test_ray_hit() {
+  var p = vec3(0, 0, 0)
+  var normal = vec3(1, 1, 0)
+  var distance = 10
+  var rh = ray_hit(p, normal, distance)
+
+  var rh_p = ray_hit_point(rh)
+  var rh_n = ray_hit_normal(rh)
+  var rh_distance = ray_hit_distance(rh)
+  assert(rh_p == p)
+  assert(eps_eq(vec3_length(rh_n), 1))
+  assert(eps_eq(vec3_x(rh_n), vec3_x(normal)))
+  assert(rh_distance == distance)
+
+  assert(!ray_hit_is_null(rh))
+  assert(ray_hit_is_null(ray_hit_null()))
+}
+
+// --------------------
+
+type Color = Vec3
+
+fn color(r: float, g: float, b: float): Color {
+  return vec3(r, g, b)
+}
+
+fn color_r(color: Color): float {
+  return vec3_x(color)
+}
+
+fn color_g(color: Color): float {
+  return vec3_y(color)
+}
+
+fn color_b(color: Color): float {
+  return vec3_y(color)
+}
+
+fn test_color() {
+  var c = color(1.0, 0.5, 0)
+  assert(color_r(c) == 1.0 && color_g(c) == 0.5 && color_b(c) == 0)
+}
+
+// --------------------
+
+type Material = (...Color, ...Color) // color, emission
+
+fn material(color: Color, emission: Color): Material {
+  return (...color, ...emission)
+}
+
+fn material_color(mat: Material): Color {
+  var (color_r, color_g, color_b, emission_r, emission_g, emission_b) = mat
+  return color(color_r, color_b, color_g)
+}
+
+fn material_emission(mat: Material): Color {
+  var (color_r, color_g, color_b, emission_r, emission_g, emission_b) = mat
+  return color(emission_r, emission_g, emission_b)
+}
+
+fn test_material() {
+  var mat = material(color(1.0, 0.5, 0), color(1, 1, 1))
+  assert(material_color(mat) == color(1.0, 0.5, 0))
+  assert(material_emission(mat) == color(1, 1, 1))
+}
+
+// --------------------
+
+type Sphere = (...Vec3, float)
+
+fn sphere(center: Vec3, radius: float): Sphere {
+  var (x, y, z) = center
+  return (x, y, z, radius)
+}
+
+fn sphere_center(sphere: Sphere): Vec3 {
+  var (x, y, z, radius) = sphere
+  return vec3(x, y, z)
+}
+
+fn sphere_radius(sphere: Sphere): float {
+  var (x, y, z, radius) = sphere
+  return radius
+}
+
+fn sphere_intersect(sphere: Sphere, ray: Ray): RayHit {
+  var center = sphere_center(sphere)
+  var radius = sphere_radius(sphere)
+  var origin = ray_origin(ray)
+  var dir    = ray_dir(ray)
+
+  var center_o = vec3_subtract(center, origin)
+
+  var b = vec3_dot(center_o, dir)
+  var d4 = b * b - vec3_dot(center_o, center_o) + radius * radius
+  if (d4 < 0) {
+    return ray_hit_null()
+  }
+  var sqrt_d4 = sqrt(d4)
+
+  var (t1, t2) = (b - sqrt_d4, b + sqrt_d4)
+  if t1 < eps && t2 < eps {
+    return ray_hit_null()
+  }
+
+  var distance = t1
+  if t1 < eps {
+    distance = t2
+  }
+
+  var hit_p = vec3_add(origin, vec3_multiply(dir, distance))
+  var hit_normal = vec3_normalize(vec3_subtract(hit_p, center))
+  return ray_hit(hit_p, hit_normal, distance)
+}
+
+fn test_sphere_intersect() {
+  var radius = 3.0
+  var sp = sphere(vec3(0, 0, 0), radius)
+  var hit1 = sphere_intersect(sp, ray(vec3(10, 0, 0), vec3(-1, 0, 0)))
+  assert(!ray_hit_is_null(hit1))
+  assert(hit1 == (...vec3(3.0, 0.0, 0.0), ...vec3(1.0, 0.0, 0.0), 10 - radius))
+
+  var hit2 = sphere_intersect(sp, ray(vec3(10, 10, 10), vec3(-1, -1, -1)))
+  var hit2_p = ray_hit_point(hit2)
+  var hit2_n = ray_hit_normal(hit2)
+  assert(eps_eq(vec3_x(hit2_p), vec3_y(hit2_p)))
+  assert(eps_eq(vec3_x(hit2_n), vec3_y(hit2_n)))
+  assert(eps_eq(ray_hit_distance(hit2), sqrt(10.0 ** 2 + 10.0 ** 2 + 10.0 ** 2) - radius))
+}
+test_sphere_intersect()
+
+fn test_sphere() {
+  var center = vec3(0, -1, 1)
+  var sp = sphere(center, 3)
+
+  var c = sphere_center(sp)
+  assert(
+    vec3_x(c) == 0 &&
+    vec3_y(c) == -1 &&
+    vec3_z(c) == 1
+  )
+  assert(sphere_radius(sp) == 3)
+}
+test_sphere()
+
+// --------------------
+
+type Object = (...Sphere, ...Material)
+
+fn object(sp: Sphere, mat: Material): Object {
+  return (...sp, ...mat)
+}
+
+fn object_sphere(obj: Object): Sphere {
+  return sphere(vec3(obj[0], obj[1], obj[2]), obj[3])
+}
+
+fn object_material(obj: Object): Material {
+  return material(color(obj[4], obj[5], obj[6]), color(obj[7], obj[8], obj[9]))
+}
+
+fn object_intersect(obj: Object, ray: Ray): RayHit {
+  return sphere_intersect(object_sphere(obj), ray)
+}
+
+fn test_object() {
+  var sp = sphere(vec3(0, -1, 1), 2)
+  var mat = material(color(0, 0.5, 1), color(0.1, 0.2, 0.3))
+  var obj = object(sp, mat)
+  assert(object_sphere(obj) == sp)
+  assert(object_material(obj) == mat)
+
+  var hit = object_intersect(obj, ray(vec3(-10, -1, 1), vec3(1, 0, 0)))
+  assert(hit == ray_hit(vec3(-2.0, -1.0, 1.0), vec3(-1.0, 0.0, 0.0), 8.0))
+  assert(ray_hit_is_null(object_intersect(obj, ray(vec3(-10, 0, 0), vec3(0, 1, 0)))))
+}
+test_object()
+
+// --------------------
+
+// pos, dir, up, screen_dist, screen_width screen_height
+type Camera = (...Vec3, ...Vec3, ...Vec3, float, float, float)
+
+fn camera(pos: Vec3, dir: Vec3, up: Vec3, dist: float, width: float, height: float): Camera {
+  return (...pos, ...vec3_normalize(dir), ...vec3_normalize(up), dist, width, height)
+}
+
+fn camera_pos(camera: Camera): Vec3 {
+  var (
+    pos_x, pos_y, pos_z,
+    dir_x, dir_y, dir_z,
+    up_x, up_y, up_z,
+    dist, width, height
+  ) = camera
+  return vec3(pos_x, pos_y, pos_z)
+}
+
+fn camera_dir(camera: Camera): Vec3 {
+  var (
+    pos_x, pos_y, pos_z,
+    dir_x, dir_y, dir_z,
+    up_x, up_y, up_z,
+    dist, width, height
+  ) = camera
+  return vec3(dir_x, dir_y, dir_z)
+}
+
+fn camera_up(camera: Camera): Vec3 {
+  var (
+    pos_x, pos_y, pos_z,
+    dir_x, dir_y, dir_z,
+    up_x, up_y, up_z,
+    dist, width, height
+  ) = camera
+  return vec3(up_x, up_y, up_z)
+}
+
+fn camera_screen_dist(camera: Camera): float {
+  var (
+    pos_x, pos_y, pos_z,
+    dir_x, dir_y, dir_z,
+    up_x, up_y, up_z,
+    dist, width, height
+  ) = camera
+  return dist
+}
+
+fn camera_screen_width(camera: Camera): float {
+  var (
+    pos_x, pos_y, pos_z,
+    dir_x, dir_y, dir_z,
+    up_x, up_y, up_z,
+    dist, width, height
+  ) = camera
+  return width
+}
+
+fn camera_screen_height(camera: Camera): float {
+  var (
+    pos_x, pos_y, pos_z,
+    dir_x, dir_y, dir_z,
+    up_x, up_y, up_z,
+    dist, width, height
+  ) = camera
+  return height
+}
+
+fn camera_test() {
+  var pos = vec3(0, 10, -10)
+  var dir = vec3(0, 0, 2)
+  var up = vec3(0, 2, 0)
+  var dist = 10
+  var width = 120
+  var height = 90
+
+  var cam = camera(pos, dir, up, dist, width, height)
+  assert(camera_pos(cam) == pos)
+  assert(camera_dir(cam) == vec3_normalize(dir))
+  assert(camera_up(cam) == vec3_normalize(up))
+  assert(camera_screen_dist(cam) == dist)
+  assert(camera_screen_width(cam) == width)
+  assert(camera_screen_height(cam) == height)
+}
+camera_test()
+
+// --------------------
+
+type ObjectIndex = int
+
+type Intersection = (ObjectIndex, ...RayHit)
+
+fn intersection_hit(v: Intersection): RayHit {
+  return ray_hit(vec3(v[1], v[2], v[3]), vec3(v[4], v[5], v[6]), v[7])
+}
+
+fn intersection_object_index(v: Intersection): ObjectIndex {
+  return v[0]
+}
+
+fn objects_intersect(objects: []Object, ray: Ray): Intersection {
+  var out_hit = ray_hit_null()
+  var out_index = -1
+
+  var index = 0
+  for obj in objects {
+    var hit = object_intersect(obj, ray)
+    if !ray_hit_is_null(hit) {
+      if ray_hit_distance(hit) < ray_hit_distance(out_hit) || ray_hit_is_null(out_hit) {
+        out_hit = hit
+        out_index = index
+      }
+    }
+    index = index + 1
+  }
+  return (out_index, ...out_hit)
+}
+
+fn test_objects_intersection() {
+  var mat = material(color(1, 1, 1), color(0, 0, 0))
+  var objects = [
+    object(sphere(vec3(0, 0, 0), 1), material(color(1, 1, 1), color(0, 0, 0))),
+    object(sphere(vec3(-2, 0, 0), 1), material(color(1, 1, 1), color(0, 0, 0))),
+  ]
+  var inter = objects_intersect(objects, ray(vec3(-10, 0, 0), vec3(1, 0, 0)))
+  assert(intersection_object_index(inter) == 1)
+
+  assert(ray_hit_is_null(intersection_hit(objects_intersect(objects, ray(vec3(-10, 0, 0), vec3(0, 1, 0))))))
+}
+test_objects_intersection()
+
+// --------------------
+var cornell_box_scene = [
+  // walls
+  object(sphere(vec3( 1e+5 + 1  , 40.8 , 81.6), 1e+5), material(color(0.75, 0.25, 0.25), color(0, 0, 0))),
+  object(sphere(vec3(-1e+5 + 99 , 40.8 , 81.6), 1e+5), material(color(0.25, 0.25, 0.75), color(0, 0, 0))),
+  object(sphere(vec3(50.0, 40.8 ,  1e+5      ), 1e+5), material(color(0.75, 0.75, 0.75), color(0, 0, 0))),
+  object(sphere(vec3(50.0, 40.8 , -1e+5 + 250), 1e+5), material(color(0.00, 0.00, 0.00), color(0, 0, 0))),
+  object(sphere(vec3(50.0,  1e+5,        81.6), 1e+5), material(color(0.75, 0.25, 0.75), color(0, 0, 0))),
+  object(sphere(vec3(50.0, -1e+5 + 81.6, 81.6), 1e+5), material(color(0.75, 0.75, 0.75), color(0, 0, 0))),
+
+  // obj
+  object(sphere(vec3(65.0, 20.0, 20.0), 20), material(color(0.25, 0.75, 0.25), color(0, 0, 0))),
+
+  // light
+  object(sphere(vec3(50.0, 90.0, 81.6), 15), material(color(0, 0, 0), color(24, 24, 24))),
+]
+// --------------------
+
+var DEPTH_LIMIT = 24
+var MIN_DEPTH = 2
+
+// TODO: escpape sequence
+var ln = "
+"
+
+fn calc_radiance(objects: []Object, input_ray: Ray, depth: int): Color {
+  var intersection = objects_intersect(objects, input_ray)
+  var hit = intersection_hit(intersection)
+  if ray_hit_is_null(hit) {
+    return color(0.0, 0.0, 0.0)
+  }
+  var obj = objects[intersection_object_index(intersection)]
+  var mat = object_material(obj)
+  var mat_color = material_color(mat)
+  var mat_emission = material_emission(mat)
+
+  var orienting_normal = ray_hit_normal(hit)
+  if vec3_dot(orienting_normal, ray_dir(input_ray)) > 0.0 {
+    orienting_normal = vec3_multiply(orienting_normal, -1.0)
+  }
+
+  var probability = fmax(color_r(mat_color), color_g(mat_color), color_b(mat_color))
+  if depth > DEPTH_LIMIT {
+    probability *= 0.5 ** (depth - DEPTH_LIMIT)
+  }
+  if depth <= MIN_DEPTH {
+    probability = 1.0
+  }
+
+  if rand() > probability {
+    return mat_emission
+  }
+
+  var incoming_radiance: Color
+  var weight = color(1.0, 1.0, 1.0)
+  var w = orienting_normal
+  var u: Vec3
+  if vec3_x(w) > eps {
+    u = vec3_normalize(vec3_cross(vec3(0.0, 1.0, 0.0), w))
+  } else {
+    u = vec3_normalize(vec3_cross(vec3(1.0, 0.0, 0.0), w))
+  }
+  var v = vec3_cross(w, u)
+
+  var r1 = 2 * pi * rand()
+  var r2 = rand()
+  var r2s = sqrt(r2)
+  var dir = vec3_normalize(
+    vec3_add(
+      vec3_add(
+        vec3_multiply(u, cos(r1) * r2s),
+        vec3_multiply(v, sin(r1) * r2s),
+      ),
+      vec3_multiply(w, sqrt(1.0 - r2)),
+    ),
+  )
+  incoming_radiance = calc_radiance(objects, ray(ray_hit_point(hit), dir), depth + 1)
+  weight = vec3_divide(mat_color, probability)
+  return vec3_add(
+    mat_emission,
+    color(
+      vec3_x(incoming_radiance) * vec3_x(weight),
+      vec3_y(incoming_radiance) * vec3_y(weight),
+      vec3_z(incoming_radiance) * vec3_z(weight),
+    ),
+  )
+}
+
+fn render(out_path: string, camera: Camera, objects: []Object, width: int, height: int, samples: int, supersamples: int) {
+  var screen_width = camera_screen_width(camera)
+  var screen_height = camera_screen_height(camera)
+  var cam_dir = camera_dir(camera)
+  var screen_x = vec3_multiply(vec3_normalize(vec3_cross(cam_dir, camera_up(camera))), screen_width)
+  var screen_y = vec3_multiply(vec3_normalize(vec3_cross(screen_x, cam_dir)), screen_height)
+  var camera_p = camera_pos(camera)
+  var screen_center = vec3_add(camera_p, vec3_multiply(cam_dir, camera_screen_dist(camera)))
+
+  println("P3") |> out_path
+  println("$width $height") |>> out_path
+  println("255") |>> out_path
+
+  for y in range(0, height) {
+    var line: string
+    for x in range(0, width) {
+      var pix_color: Color
+      for sy in range(0, supersamples) {
+        for sx in range(0, supersamples) {
+          var accumulated_radiance: Color
+          for s in range(0, samples) {
+            var rate = 1.0 / supersamples
+            var r1 = sx * rate + rate / 2.0
+            var r2 = sy * rate + rate / 2.0
+            var screen_position = vec3_add(
+              screen_center,
+              vec3_add(
+                vec3_multiply(screen_x, (r1 + x) / width - 0.5),
+                vec3_multiply(screen_y, (r2 + y) / height - 0.5),
+              ),
+            )
+            var dir = vec3_normalize(vec3_subtract(screen_position, camera_p))
+            var rad: Color
+            rad = calc_radiance(objects, ray(camera_p, dir), 0)
+            accumulated_radiance = vec3_add(accumulated_radiance, vec3_divide(rad, samples * supersamples * supersamples))
+          }
+          pix_color = vec3_add(pix_color, accumulated_radiance)
+        }
+      }
+      var out_r = floor(clamp(color_r(pix_color), 0.0, 1.0) * 255)
+      var out_g = floor(clamp(color_g(pix_color), 0.0, 1.0) * 255)
+      var out_b = floor(clamp(color_b(pix_color), 0.0, 1.0) * 255)
+      line="$line$out_r $out_g $out_b "
+      eprint(".")
+    }
+    eprintln('')
+    println(line) |>> out_path
+  }
+}
+
+fn main() {
+  echo('Ray tracing example')
+
+  var (width, height) = (400, 300)
+  var cam = camera(
+    vec3(50.0, 52.0, 220.0),
+    vec3(0.0, -0.04, -1.0),
+    vec3(0.0, 1.0, 0.0),
+    40, 40, 30
+  )
+
+  render('./tmp/image.ppm', cam, cornell_box_scene, width, height, 2, 1)
+}
+main()

@@ -73,6 +73,11 @@ tasks:
   tokens: z run tools tokens $@
   scope: z run tools scope $@
 
+  raytracing: |
+    mkdir -p {{tmp}}
+    z examples/raytracing.li | sh
+    convert {{tmp}}/image.ppm {{tmp}}/image.png
+
   fix:
     - z fmt
 
