@@ -1,9 +1,18 @@
-assert('ababc'.replace('ab', 'x') == 'xxc')
-assert('ababc'.replace('ab', 'x').replace('xx', 'y') == 'yc')
+fn test_len() {
+  assert(''.len() == 0)
+  assert('abc'.len() == 3)
+}
+test_len()
 
-assert('00112'.index('01') == 1)
-assert('00112'.index('x') == -1)
-assert('ab"cd"ef'.index('"') == 2)
+fn test_index() {
+  assert('00112'.index('01') == 1)
+  assert('00112'.index('x') == -1)
+  assert('ab"cd"ef'.index('"') == 2)
+}
+test_index()
 
-assert(''.len() == 0)
-assert('abc'.len() == 3)
+fn test_replace() {
+  assert('ababc'.replace('ab', 'x') == 'xxc')
+  assert('ababc'.replace('ab', 'x').replace('xx', 'y') == 'yc')
+}
+test_replace()
