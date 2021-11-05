@@ -8,8 +8,15 @@ fn test_glob() {
   for name in names {
     @touch(name)
   }
+
+  var prefix = 'glob_tmp'
+  var i = 1
   assert((@'glob_tmp*.txt'.join(' ')) == names.join(' '))
-  assert((@'glob_tmp1_*.txt'.join(' ')) == [names[0], names[1]].join(' '))
+  assert((@"$prefix*.txt".join(' '))  == names.join(' '))
+
+  assert((@'glob_tmp1_*.txt'.join(' '))  == [names[0], names[1]].join(' '))
+  assert((@"$prefix$i*.txt".join(' '))   == [names[0], names[1]].join(' '))
+  assert((@"$prefix${1}*.txt".join(' ')) == [names[0], names[1]].join(' '))
 
   for name in names {
     rm(name)
