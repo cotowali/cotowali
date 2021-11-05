@@ -294,6 +294,30 @@ fn test_string() {
 	])
 }
 
+fn test_glob() {
+	ktest(@FN, @LINE, '"**"', [.double_quote, .string_literal_content_text, .double_quote])
+	ktest(@FN, @LINE, "'**'", [.single_quote, .string_literal_content_text, .single_quote])
+	test(@FN, @LINE, code('@"a/**/*.txt"'), [
+		t(.double_quote_with_at_prefix, '@"'),
+		t(.string_literal_content_text, 'a/'),
+		t(.string_literal_content_glob, '**'),
+		t(.string_literal_content_text, '/'),
+		t(.string_literal_content_glob, '*'),
+		t(.string_literal_content_text, '.txt'),
+		t(.double_quote, '"'),
+	])
+
+	test(@FN, @LINE, code("@'a/**/*.txt'"), [
+		t(.single_quote_with_at_prefix, "@'"),
+		t(.string_literal_content_text, 'a/'),
+		t(.string_literal_content_glob, '**'),
+		t(.string_literal_content_text, '/'),
+		t(.string_literal_content_glob, '*'),
+		t(.string_literal_content_text, '.txt'),
+		t(.single_quote, "'"),
+	])
+}
+
 fn test_string_expr_substitution() {
 	ktest(@FN, @LINE, r"'${x}'", [.single_quote, .string_literal_content_text, .single_quote])
 	test(@FN, @LINE, code(r'"${x}"'), [

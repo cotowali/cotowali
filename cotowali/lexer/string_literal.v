@@ -14,12 +14,28 @@ const (
 	bs = `\\`
 )
 
-fn (mut lex Lexer) read_single_quote_string_literal_content() Token {
+[params]
+struct StringLiteralParams {
+	is_glob bool
+}
+
+fn is_glob_char(c Char) bool {
+	return c in ['*', '?']
+}
+
+fn (mut lex Lexer) read_single_quote_string_literal_content(params StringLiteralParams) Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
 		defer {
 			lex.trace_end()
 		}
+	}
+
+	if params.is_glob && is_glob_char(lex.char(0)) {
+		lex.consume_for(fn (c Char) bool {
+			return is_glob_char(c)
+		})
+		return lex.new_token(.string_literal_content_glob)
 	}
 
 	if lex.byte() == lexer.bs {
@@ -39,6 +55,9 @@ fn (mut lex Lexer) read_single_quote_string_literal_content() Token {
 			// next is \\ or \'
 			break
 		}
+		if params.is_glob && is_glob_char(lex.char(0)) {
+			break
+		}
 
 		lex.consume()
 	}
@@ -47,12 +66,19 @@ fn (mut lex Lexer) read_single_quote_string_literal_content() Token {
 	return tok
 }
 
-fn (mut lex Lexer) read_double_quote_string_literal_content() Token {
+fn (mut lex Lexer) read_double_quote_string_literal_content(params StringLiteralParams) Token {
 	$if trace_lexer ? {
 		lex.trace_begin(@FN)
 		defer {
 			lex.trace_end()
 		}
+	}
+
+	if params.is_glob && is_glob_char(lex.char(0)) {
+		lex.consume_for(fn (c Char) bool {
+			return is_glob_char(c)
+		})
+		return lex.new_token(.string_literal_content_glob)
 	}
 
 	if lex.byte() == `$` {
@@ -80,9 +106,16 @@ fn (mut lex Lexer) read_double_quote_string_literal_content() Token {
 		}
 	}
 
-	lex.consume_not_for(fn (c Char) bool {
-		return c.byte() in [lexer.dq, lexer.bs, `$`]
-	})
+	for !lex.is_eof() {
+		if lex.byte() in [lexer.dq, lexer.bs, `$`] {
+			break
+		}
+		if params.is_glob && is_glob_char(lex.char(0)) {
+			break
+		}
+
+		lex.consume()
+	}
 
 	tok := lex.new_token(.string_literal_content_text)
 	return tok
@@ -119,6 +152,20 @@ pub fn (mut lex Lexer) try_read_for_string_literal() ?Token {
 			}
 			return lex.read_double_quote_string_literal_content()
 		}
+		.inside_single_quoted_glob_literal {
+			if lex.byte() == lexer.sq {
+				lex.lex_ctx.pop()
+				return lex.new_token_with_consume(.single_quote)
+			}
+			return lex.read_single_quote_string_literal_content(is_glob: true)
+		}
+		.inside_double_quoted_glob_literal {
+			if lex.byte() == lexer.dq {
+				lex.lex_ctx.pop()
+				return lex.new_token_with_consume(.double_quote)
+			}
+			return lex.read_double_quote_string_literal_content(is_glob: true)
+		}
 		.inside_raw_single_quoted_string_literal {
 			if lex.byte() == lexer.sq {
 				lex.lex_ctx.pop()
@@ -135,6 +182,7 @@ pub fn (mut lex Lexer) try_read_for_string_literal() ?Token {
 		}
 		.inside_string_literal_expr_substitution, .inside_inline_shell_expr_substitution, .normal {
 			b := lex.byte()
+			b2 := lex.char(1)[0]
 			if b == lexer.sq {
 				lex.lex_ctx.push(kind: .inside_single_quoted_string_literal)
 				return lex.new_token_with_consume(.single_quote)
@@ -142,13 +190,20 @@ pub fn (mut lex Lexer) try_read_for_string_literal() ?Token {
 				lex.lex_ctx.push(kind: .inside_double_quoted_string_literal)
 				return lex.new_token_with_consume(.double_quote)
 			} else if b == `r` {
-				b2 := lex.char(1)[0]
 				if b2 == lexer.sq {
 					lex.lex_ctx.push(kind: .inside_raw_single_quoted_string_literal)
 					return lex.new_token_with_consume_n(2, .single_quote_with_r_prefix)
 				} else if b2 == lexer.dq {
 					lex.lex_ctx.push(kind: .inside_raw_double_quoted_string_literal)
 					return lex.new_token_with_consume_n(2, .double_quote_with_r_prefix)
+				}
+			} else if b == `@` {
+				if b2 == lexer.sq {
+					lex.lex_ctx.push(kind: .inside_single_quoted_glob_literal)
+					return lex.new_token_with_consume_n(2, .single_quote_with_at_prefix)
+				} else if b2 == lexer.dq {
+					lex.lex_ctx.push(kind: .inside_double_quoted_glob_literal)
+					return lex.new_token_with_consume_n(2, .double_quote_with_at_prefix)
 				}
 			}
 		}
