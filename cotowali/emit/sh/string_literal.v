@@ -24,6 +24,9 @@ fn (mut e Emitter) single_quote_string_literal_value(expr StringLiteral) {
 				.string_literal_content_text {
 					e.write("'$v.text'")
 				}
+				.string_literal_content_glob {
+					e.write(v.text) // @'a*b' -> 'a'*'b'
+				}
 				else {
 					panic(sh.invalid_string_literal)
 				}
@@ -39,12 +42,18 @@ fn (mut e Emitter) double_quote_string_literal_value(expr StringLiteral) {
 	{
 		for v in expr.contents {
 			if v is Token {
-				if v.kind == .string_literal_content_escaped_newline {
-					e.write('"')
-					e.write("'\n'")
-					e.write('"')
-				} else {
-					e.write(v.text)
+				match v.kind {
+					.string_literal_content_escaped_newline {
+						e.write('"')
+						e.write("'\n'")
+						e.write('"')
+					}
+					.string_literal_content_glob {
+						e.write('"$v.text"') // close quote, write glob, open quote. "a*b" -> "a"*"b"
+					}
+					else {
+						e.write(v.text)
+					}
 				}
 			} else if v is Expr {
 				e.expr(v, quote: false)
@@ -91,10 +100,22 @@ fn (mut e Emitter) string_literal(expr StringLiteral, opt ExprOpt) {
 	e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, arg ExprWithValue<StringLiteral, string>) {
 		expr := arg.expr
 		tmp_var := arg.value
-		e.write('$tmp_var=')
+		if expr.is_glob() {
+			array_ident := e.new_tmp_ident()
+			e.write('array_assign $array_ident ')
+			defer {
+				e.writeln('')
+				e.writeln('$tmp_var=$array_ident')
+			}
+		} else {
+			e.write('$tmp_var=')
+			defer {
+				e.writeln('')
+			}
+		}
 		match expr.open.kind {
-			.single_quote { e.single_quote_string_literal_value(expr) }
-			.double_quote { e.double_quote_string_literal_value(expr) }
+			.single_quote, .single_quote_with_at_prefix { e.single_quote_string_literal_value(expr) }
+			.double_quote, .double_quote_with_at_prefix { e.double_quote_string_literal_value(expr) }
 			.single_quote_with_r_prefix { e.single_quote_raw_string_literal_value(expr) }
 			.double_quote_with_r_prefix { e.double_quote_raw_string_literal_value(expr) }
 			else { panic(unreachable('not a string')) }
