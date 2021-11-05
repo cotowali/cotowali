@@ -16,3 +16,17 @@ fn test_replace() {
   assert('ababc'.replace('ab', 'x').replace('xx', 'y') == 'yc')
 }
 test_replace()
+
+fn test_join() {
+  assert([]string{}.join('') == '')
+  assert([]string{}.join(':') == '')
+  assert([]string{}.join('< >') == '')
+  assert(['a'].join('') == 'a')
+  assert(['a'].join(':') == 'a')
+  assert(['a'].join('< >') == 'a')
+
+  assert(['a', 'b', 'c'].join('') == 'abc')
+  assert(['a', 'b', 'c'].join(':') == 'a:b:c')
+  assert(['a', 'b', 'c'].join(' < > ') == 'a < > b < > c')
+}
+test_join()

@@ -58,6 +58,20 @@ fn (arr: []any) len(): int {
   return n
 }
 
+fn (ss: []string) join(sep: string): string {
+  if ss.len() == 0 {
+    return ''
+  }
+  var ret: string
+  for i in range(0, ss.len()) {
+    if i > 0 {
+      ret += sep
+    }
+    ret += ss[i]
+  }
+  return ret
+}
+
 // ---
 
 namespace math {
