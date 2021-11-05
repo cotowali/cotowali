@@ -10,10 +10,13 @@ import cotowali.token { TokenKind }
 import cotowali.messages { unreachable }
 
 fn (mut p Parser) parse_string_literal() ?ast.StringLiteral {
-	tok := p.check(.single_quote, .double_quote, .single_quote_with_r_prefix, .double_quote_with_r_prefix) ?
+	tok := p.check(.single_quote, .double_quote, .single_quote_with_r_prefix, .double_quote_with_r_prefix,
+		.single_quote_with_at_prefix, .double_quote_with_at_prefix) ?
 	match tok.kind {
 		.single_quote { return p.parse_single_quote_string_literal() }
 		.double_quote { return p.parse_double_quote_string_literal() }
+		.single_quote_with_at_prefix { return p.parse_single_quote_string_literal() }
+		.double_quote_with_at_prefix { return p.parse_double_quote_string_literal() }
 		.single_quote_with_r_prefix { return p.parse_raw_string_literal(.single_quote) }
 		.double_quote_with_r_prefix { return p.parse_raw_string_literal(.double_quote) }
 		else { panic(unreachable('expected quote')) }
@@ -43,7 +46,7 @@ fn (mut p Parser) parse_raw_string_literal(quote TokenKind) ?ast.StringLiteral {
 }
 
 fn (mut p Parser) parse_single_quote_string_literal() ?ast.StringLiteral {
-	open := p.consume_with_assert(.single_quote)
+	open := p.consume_with_assert(.single_quote, .single_quote_with_at_prefix)
 
 	if close := p.consume_if_kind_eq(.single_quote) {
 		return ast.StringLiteral{
@@ -56,7 +59,8 @@ fn (mut p Parser) parse_single_quote_string_literal() ?ast.StringLiteral {
 	mut contents := []ast.StringLiteralContent{}
 	for {
 		match p.kind(0) {
-			.string_literal_content_text, .string_literal_content_escaped_back_slash,
+			.string_literal_content_text, .string_literal_content_glob,
+			.string_literal_content_escaped_back_slash,
 			.string_literal_content_escaped_single_quote {
 				contents << p.consume()
 			}
@@ -75,7 +79,7 @@ fn (mut p Parser) parse_single_quote_string_literal() ?ast.StringLiteral {
 }
 
 fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
-	open := p.consume_with_assert(.double_quote)
+	open := p.consume_with_assert(.double_quote, .double_quote_with_at_prefix)
 
 	if close := p.consume_if_kind_eq(.double_quote) {
 		return ast.StringLiteral{
@@ -107,8 +111,8 @@ fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
 			continue
 		}
 		match p.kind(0) {
-			.string_literal_content_text, .string_literal_content_escaped_dollar,
-			.string_literal_content_escaped_back_slash,
+			.string_literal_content_text, .string_literal_content_glob,
+			.string_literal_content_escaped_dollar, .string_literal_content_escaped_back_slash,
 			.string_literal_content_escaped_double_quote, .string_literal_content_escaped_newline {
 				contents << p.consume()
 			}
