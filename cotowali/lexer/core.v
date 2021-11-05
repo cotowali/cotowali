@@ -17,8 +17,10 @@ enum LexicalContextKind {
 	normal
 	inside_single_quoted_string_literal
 	inside_raw_single_quoted_string_literal
+	inside_single_quoted_glob_literal
 	inside_double_quoted_string_literal
 	inside_raw_double_quoted_string_literal
+	inside_double_quoted_glob_literal
 	inside_string_literal_expr_substitution
 	inside_inline_shell
 	inside_inline_shell_expr_substitution

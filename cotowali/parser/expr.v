@@ -490,7 +490,8 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 				token: tok
 			}
 		}
-		.single_quote, .double_quote, .single_quote_with_r_prefix, .double_quote_with_r_prefix {
+		.single_quote, .double_quote, .single_quote_with_r_prefix, .double_quote_with_r_prefix,
+		.single_quote_with_at_prefix, .double_quote_with_at_prefix {
 			return ast.Expr(p.parse_string_literal() ?)
 		}
 		.bool_literal {

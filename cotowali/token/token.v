@@ -43,13 +43,16 @@ pub enum TokenKind {
 	bool_literal
 	single_quote
 	single_quote_with_r_prefix
+	single_quote_with_at_prefix
 	double_quote
 	double_quote_with_r_prefix
+	double_quote_with_at_prefix
 	inline_shell_content_text
 	inline_shell_content_var
 	inline_shell_content_expr_substitution_open
 	inline_shell_content_expr_substitution_close
 	string_literal_content_text
+	string_literal_content_glob
 	string_literal_content_var
 	string_literal_content_expr_open
 	string_literal_content_expr_close

@@ -1,0 +1,26 @@
+fn test_glob() {
+  var names = [
+    'glob_tmp1_1.txt',
+    'glob_tmp1_2.txt',
+    'glob_tmp2_1.txt',
+    'glob_tmp2_2.txt',
+  ]
+  for name in names {
+    @touch(name)
+  }
+
+  var prefix = 'glob_tmp'
+  var i = 1
+  assert((@'glob_tmp*.txt'.join(' ')) == names.join(' '))
+  assert((@"$prefix*.txt".join(' '))  == names.join(' '))
+
+  assert((@'glob_tmp1_*.txt'.join(' '))  == [names[0], names[1]].join(' '))
+  assert((@"$prefix$i*.txt".join(' '))   == [names[0], names[1]].join(' '))
+  assert((@"$prefix${1}*.txt".join(' ')) == [names[0], names[1]].join(' '))
+
+  for name in names {
+    rm(name)
+  }
+}
+
+test_glob()
