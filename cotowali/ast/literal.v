@@ -145,8 +145,9 @@ pub fn (c StringLiteralContent) is_const() bool {
 }
 
 pub struct StringLiteral {
+pub mut:
+	scope &Scope
 pub:
-	scope    &Scope
 	open     Token
 	contents []StringLiteralContent
 	close    Token
@@ -154,6 +155,11 @@ pub:
 
 pub fn (s &StringLiteral) pos() Pos {
 	return s.open.pos.merge(s.close.pos)
+}
+
+pub fn (mut s StringLiteral) typ() Type {
+	str := builtin_type(.string)
+	return if s.is_glob() { s.scope.lookup_or_register_array_type(elem: str).typ } else { str }
 }
 
 pub fn (s &StringLiteral) is_const() bool {
@@ -169,6 +175,10 @@ pub fn (s &StringLiteral) const_text() ?string {
 
 pub fn (s &StringLiteral) is_raw() bool {
 	return s.open.kind in [.single_quote_with_r_prefix, .double_quote_with_r_prefix]
+}
+
+pub fn (s &StringLiteral) is_glob() bool {
+	return s.open.kind in [.single_quote_with_at_prefix, .double_quote_with_at_prefix]
 }
 
 [inline]

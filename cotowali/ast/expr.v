@@ -218,7 +218,7 @@ pub fn (e Expr) typ() Type {
 		DecomposeExpr { e.expr.typ() }
 		DefaultValue { e.typ }
 		FloatLiteral { builtin_type(.float) }
-		StringLiteral { builtin_type(.string) }
+		StringLiteral { e.typ() }
 		IntLiteral { builtin_type(.int) }
 		NamespaceItem { e.typ() }
 		ParenExpr { e.typ() }
