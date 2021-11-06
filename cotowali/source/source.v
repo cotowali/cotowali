@@ -12,7 +12,7 @@ import cotowali.util.checksum
 
 const std_file = $embed_file('../../builtin/std.li')
 
-pub const std = new_source('std.ri', std_file.to_string())
+pub const std = new_source('std.li', std_file.to_string())
 
 pub enum SourceScheme {
 	local
