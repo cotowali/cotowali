@@ -6,7 +6,7 @@ fn test_glob() {
     'glob_tmp2_2.txt',
   ]
   for name in names {
-    @touch(name)
+    touch(name)
   }
 
   var prefix = 'glob_tmp'

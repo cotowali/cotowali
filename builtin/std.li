@@ -33,6 +33,8 @@ fn range(begin: int, end: int) |> ...int {
 
 fn rm(paths: ...string)
 
+fn touch(files: ...string)
+
 // --- string methods ---
 
 fn (s: string) replace(a: string, b: string): string {
