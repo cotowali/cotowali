@@ -23,3 +23,5 @@ var tuple_b_2 = -1
 (tuple_b_1, tuple_b_2) = tuple_b
 assert(tuple_b_1 == 0 && tuple_b_2 == 0)
 
+var arr: []string
+assert(arr == []string{})

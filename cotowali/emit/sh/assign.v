@@ -16,7 +16,6 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 		e.writeln('array_copy "$name" "$value"')
 	} else {
 		expr := value as ast.Expr
-		ident := e.ident_for(expr)
 		match expr {
 			ast.ArrayLiteral {
 				if expr.is_init_syntax {
@@ -34,7 +33,11 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 				e.writeln('')
 			}
 			ast.Var {
+				ident := e.ident_for(ast.Expr(expr))
 				e.array_assign(name, ident)
+			}
+			ast.DefaultValue {
+				e.writeln('array_init "$name" 0')
 			}
 			else {}
 		}
