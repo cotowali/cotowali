@@ -10,6 +10,7 @@ import cotowali.source { Source, new_source }
 import cotowali.parser
 import cotowali.ast
 import cotowali.checker
+import os
 
 fn (mut q Kuqi) did_open(id int, params lsp.DidOpenTextDocumentParams) {
 	q.log_message('did open: { id: $id, uri: $params.text_document.uri }', .log)
@@ -41,7 +42,8 @@ fn (mut q Kuqi) did_save(id int, params lsp.DidSaveTextDocumentParams) {
 }
 
 fn (mut q Kuqi) process_source(s &Source) {
-	mut ctx := new_context()
+	is_std := s.path == os.join_path(os.real_path(@VMODROOT), 'builtin/std.li')
+	mut ctx := new_context(no_std: is_std)
 	q.ctx = ctx
 
 	mut f := parser.parse(s, ctx)

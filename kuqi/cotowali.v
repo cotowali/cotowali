@@ -22,6 +22,15 @@ fn pos_to_range(p Pos) lsp.Range {
 	}
 }
 
-fn new_context() &Context {
-	return context.new_context(no_emit: true, feature: .warn_all)
+[params]
+struct ContextOpts {
+	no_std bool
+}
+
+fn new_context(opts ContextOpts) &Context {
+	return context.new_context(
+		no_emit: true
+		no_std: opts.no_std
+		feature: .warn_all
+	)
 }
