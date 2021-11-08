@@ -10,9 +10,16 @@ import cotowali.symbols { builtin_fn_id }
 
 fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
 	if opt.mode != .command {
-		e.write('\$(')
-		defer {
-			e.write(')')
+		if opt.mode != .inside_arithmetic && opt.quote {
+			e.write('"\$(')
+			defer {
+				e.write(')"')
+			}
+		} else {
+			e.write('\$(')
+			defer {
+				e.write(')')
+			}
 		}
 	}
 
