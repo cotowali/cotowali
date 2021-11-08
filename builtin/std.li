@@ -95,3 +95,10 @@ namespace math {
     return (v |> @awk('{printf "%g", sqrt($1)}')) as float
   }
 }
+
+namespace os {
+  var args: []string
+  sh {
+    array_assign %args "$@"
+  }
+}
