@@ -264,6 +264,10 @@ pub fn (e Expr) scope() &Scope {
 	}
 }
 
+pub fn (e Expr) is_glob_literal() bool {
+	return if e is StringLiteral { e.is_glob() } else { false }
+}
+
 pub struct AsExpr {
 pub:
 	pos  Pos

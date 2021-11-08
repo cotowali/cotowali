@@ -58,14 +58,23 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 		else {}
 	}
 
+	fn_info := expr.function_info()
+
 	e.write(e.ident_for(expr.func))
 	if receiver := expr.receiver() {
 		e.write(' ')
 		e.expr(receiver)
 	}
 	mut args := expr.args
-	for arg in args {
+	for i, arg in args {
 		e.write(' ')
+
+		if arg is ast.StringLiteral {
+			if arg.is_glob() && fn_info.variadic && i >= fn_info.params.len - 1 {
+				e.string_literal_value(arg as ast.StringLiteral)
+				continue
+			}
+		}
 		e.expr(arg)
 	}
 }

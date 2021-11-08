@@ -129,6 +129,11 @@ fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	for i, arg in args {
 		arg_ts := arg.type_symbol()
 		param_ts := if function_info.variadic && i >= params.len - 1 {
+			if arg.is_glob_literal() && varargs_elem_ts.typ == builtin_type(.string) {
+				// allow glob literal as string varargs
+				continue
+			}
+
 			varargs_elem_ts
 		} else {
 			scope.must_lookup_type(params[i])

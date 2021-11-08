@@ -82,6 +82,16 @@ fn (mut e Emitter) double_quote_raw_string_literal_value(expr StringLiteral) {
 	}
 }
 
+fn (mut e Emitter) string_literal_value(expr StringLiteral) {
+	match expr.open.kind {
+		.single_quote, .single_quote_with_at_prefix { e.single_quote_string_literal_value(expr) }
+		.double_quote, .double_quote_with_at_prefix { e.double_quote_string_literal_value(expr) }
+		.single_quote_with_r_prefix { e.single_quote_raw_string_literal_value(expr) }
+		.double_quote_with_r_prefix { e.double_quote_raw_string_literal_value(expr) }
+		else { panic(unreachable('not a string')) }
+	}
+}
+
 fn (mut e Emitter) string_literal(expr StringLiteral, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
@@ -113,13 +123,7 @@ fn (mut e Emitter) string_literal(expr StringLiteral, opt ExprOpt) {
 				e.writeln('')
 			}
 		}
-		match expr.open.kind {
-			.single_quote, .single_quote_with_at_prefix { e.single_quote_string_literal_value(expr) }
-			.double_quote, .double_quote_with_at_prefix { e.double_quote_string_literal_value(expr) }
-			.single_quote_with_r_prefix { e.single_quote_raw_string_literal_value(expr) }
-			.double_quote_with_r_prefix { e.double_quote_raw_string_literal_value(expr) }
-			else { panic(unreachable('not a string')) }
-		}
+		e.string_literal_value(expr)
 		e.writeln('')
 	}, expr_with_value(expr, tmp_var))
 

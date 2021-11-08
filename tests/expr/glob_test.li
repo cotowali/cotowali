@@ -1,4 +1,11 @@
 fn test_glob() {
+  fn varargs_count(vals: ...string): int {
+    return vals.len()
+  }
+  fn varargs_join(sep: string, vals: ...string): string {
+    return vals.join(sep)
+  }
+
   var names = [
     'glob_tmp1_1.txt',
     'glob_tmp1_2.txt',
@@ -14,13 +21,20 @@ fn test_glob() {
   assert((@'glob_tmp*.txt'.join(' ')) == names.join(' '))
   assert((@"$prefix*.txt".join(' '))  == names.join(' '))
 
-  assert((@'glob_tmp1_*.txt'.join(' '))  == [names[0], names[1]].join(' '))
-  assert((@"$prefix$i*.txt".join(' '))   == [names[0], names[1]].join(' '))
-  assert((@"$prefix${1}*.txt".join(' ')) == [names[0], names[1]].join(' '))
+  assert(varargs_join(' ', @'glob_tmp*.txt') == names.join(' '))
+  assert(varargs_count(@'glob_tmp*.txt') == names.len())
+  assert(varargs_count('a', @'glob_tmp*.txt', 'b') == names.len() + 2)
+
+  var tmp1_names = [names[0], names[1]]
+  assert((@'glob_tmp1_*.txt'.join(' '))  == tmp1_names.join(' '))
+  assert((@"$prefix$i*.txt".join(' '))   == tmp1_names.join(' '))
+  assert((@"$prefix${1}*.txt".join(' ')) == tmp1_names.join(' '))
+
+  assert(varargs_count(@'glob_tmp1*.txt') == tmp1_names.len())
+  assert(varargs_count('a', @'glob_tmp1*.txt', 'b') == tmp1_names.len() + 2)
 
   for name in names {
     rm(name)
   }
 }
-
 test_glob()
