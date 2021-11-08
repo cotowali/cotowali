@@ -6,7 +6,7 @@
 module ast
 
 import cotowali.source { Pos }
-import cotowali.symbols { ArrayTypeInfo, FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id }
+import cotowali.symbols { FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id }
 import cotowali.messages { undefined, unreachable }
 
 pub struct FnDecl {
@@ -26,17 +26,6 @@ pub fn (f FnDecl) children() []Node {
 	children << f.params.map(Node(Expr(it)))
 	children << Stmt(f.body)
 	return children
-}
-
-pub fn (f FnDecl) is_varargs() bool {
-	syms := f.function_info().params.map(f.parent_scope.must_lookup_type(it))
-	if syms.len > 0 {
-		last := syms.last()
-		if last.info is ArrayTypeInfo {
-			return last.info.variadic
-		}
-	}
-	return false
 }
 
 pub fn (f FnDecl) function_info() FunctionTypeInfo {
@@ -157,17 +146,6 @@ pub fn (e CallExpr) receiver() ?Expr {
 		return e.func.left
 	}
 	return none
-}
-
-pub fn (e CallExpr) is_varargs() bool {
-	syms := e.function_info().params.map(e.scope.must_lookup_type(it))
-	if syms.len > 0 {
-		last := syms.last()
-		if last.info is ArrayTypeInfo {
-			return last.info.variadic
-		}
-	}
-	return false
 }
 
 pub fn (e CallExpr) function_info() FunctionTypeInfo {

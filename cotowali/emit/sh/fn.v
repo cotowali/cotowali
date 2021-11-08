@@ -90,7 +90,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 
 	e.sh_define_function(e.ident_for(node), fn (mut e Emitter, node FnDecl) {
 		for i, param in node.params {
-			value := if i == node.params.len - 1 && node.is_varargs() {
+			value := if i == node.params.len - 1 && node.function_info().variadic {
 				name := e.new_tmp_ident()
 				e.writeln('array_assign "$name" "\$@"')
 				name

@@ -104,10 +104,9 @@ fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	function_info := expr.function_info()
 	params := function_info.params
 	param_syms := params.map(scope.must_lookup_type(it))
-	is_varargs := expr.is_varargs()
 
 	args := expr.args
-	if is_varargs {
+	if function_info.variadic {
 		min_len := params.len - 1
 		if args.len < min_len {
 			c.error('expected $min_len or more arguments, but got $args.len', pos)
@@ -121,7 +120,7 @@ fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	c.exprs(args)
 
 	mut call_args_types_ok := true
-	varargs_elem_ts := if is_varargs {
+	varargs_elem_ts := if function_info.variadic {
 		scope.must_lookup_type((param_syms.last().info as ArrayTypeInfo).elem)
 	} else {
 		// ?TypeSymbol(none)
@@ -129,7 +128,7 @@ fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	}
 	for i, arg in args {
 		arg_ts := arg.type_symbol()
-		param_ts := if is_varargs && i >= params.len - 1 {
+		param_ts := if function_info.variadic && i >= params.len - 1 {
 			varargs_elem_ts
 		} else {
 			scope.must_lookup_type(params[i])

@@ -17,6 +17,7 @@ pub:
 	receiver Type = builtin_type(.placeholder)
 	pipe_in  Type = builtin_type(.void)
 	params   []Type
+	variadic bool
 	ret      Type = builtin_type(.void)
 }
 

@@ -25,6 +25,7 @@ mut:
 	name      Token
 	pipe_in   Type = builtin_type(.void)
 	params    []FnParamParsingInfo
+	variadic  bool
 	ret_typ   Type = builtin_type(.void)
 }
 
@@ -35,6 +36,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 			name: info.name.text
 			pos: info.name.pos
 			params: info.params[1..].map(it.ts.typ)
+			variadic: info.variadic
 			pipe_in: info.pipe_in
 			ret: info.ret_typ
 		)
@@ -43,6 +45,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 			name: info.name.text
 			pos: info.name.pos
 			params: info.params.map(it.ts.typ)
+			variadic: info.variadic
 			pipe_in: info.pipe_in
 			ret: info.ret_typ
 		)
@@ -69,6 +72,11 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 		if array_info := ts.array_info() {
 			if array_info.variadic {
 				p.consume_with_check(.r_paren) ?
+				// varargs is normal (non variadic) array
+				info.params[info.params.len - 1].ts = p.scope.lookup_or_register_array_type(
+					elem: array_info.elem
+				)
+				info.variadic = true
 				break
 			}
 		}

@@ -48,3 +48,11 @@ fn test_nested_func() {
   assert(v == 'v 11')
 }
 test_nested_func()
+
+fn test_varargs_array_method() {
+  fn varargs_join(sep: string, vals: ...string): string {
+    return vals.join(sep)
+  }
+  assert(varargs_join(':', 'a', 'b', 'c') == 'a:b:c')
+}
+test_varargs_array_method()
