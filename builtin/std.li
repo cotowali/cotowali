@@ -24,6 +24,8 @@ fn string |> cat(files: ...string) |> string
 
 fn seq(n: int) |> ...int
 
+fn ls(files: ...string) |> ...string
+
 fn range(begin: int, end: int) |> ...int {
   // cannot use negative number on busybox
   for i in @seq(0, end - begin - 1) as ...int {
