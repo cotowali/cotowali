@@ -48,6 +48,7 @@ pub mut:
 	backend Backend = .sh
 	feature Feature
 	no_emit bool
+	no_std  bool
 	indent  string = '  '
 }
 

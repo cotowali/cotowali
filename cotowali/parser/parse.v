@@ -21,7 +21,7 @@ pub fn (mut p Parser) parse(scope &Scope) &ast.File {
 	}
 
 	mut ctx := p.ctx
-	if !ctx.std_loaded() {
+	if !(ctx.std_loaded() || ctx.config.no_std) {
 		ctx.std_source = source.std
 		mut std_parser := new_parser(ctx.std_source, ctx)
 		file.stmts << ast.RequireStmt{

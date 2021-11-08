@@ -29,6 +29,11 @@ const (
 		name: 'no-emit'
 		global: true
 	}
+	no_std_flag = Flag{
+		flag: .bool
+		name: 'no-std'
+		global: true
+	}
 	no_shebang_flag = Flag{
 		flag: .bool
 		name: 'no-shebang'
@@ -40,7 +45,7 @@ const (
 		abbrev: 'W'
 		global: true
 	}
-	flags = [backend_flag, no_emit_flag, no_shebang_flag, warn_flag]
+	flags = [backend_flag, no_emit_flag, no_std_flag, no_shebang_flag, warn_flag]
 )
 
 fn new_source_from_args(args []string) ?&Source {
@@ -62,6 +67,7 @@ fn new_source_from_args(args []string) ?&Source {
 
 fn new_ctx_from_cmd(cmd Command) &Context {
 	no_emit := cmd.flags.get_bool(no_emit_flag.name) or { panic(unreachable('')) }
+	no_std := cmd.flags.get_bool(no_std_flag.name) or { panic(unreachable('')) }
 
 	backend_str := cmd.flags.get_string(backend_flag.name) or { panic(unreachable('')) }
 	backend := backend_from_str(backend_str) or {
@@ -82,7 +88,7 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 		}
 	}
 
-	return new_context(no_emit: no_emit, backend: backend, feature: feature)
+	return new_context(no_emit: no_emit, no_std: no_std, backend: backend, feature: feature)
 }
 
 fn execute_run(cmd Command) ? {
