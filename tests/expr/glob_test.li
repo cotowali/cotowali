@@ -33,6 +33,8 @@ fn test_glob() {
   assert(varargs_count(@'glob_tmp1*.txt') == tmp1_names.len())
   assert(varargs_count('a', @'glob_tmp1*.txt', 'b') == tmp1_names.len() + 2)
 
+  assert(@printf('%s %s', @'glob_tmp1*.txt') == tmp1_names.join(' '))
+
   for name in names {
     rm(name)
   }

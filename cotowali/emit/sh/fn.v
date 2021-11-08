@@ -26,6 +26,12 @@ fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
 	e.write('$expr.command')
 	for arg in expr.args {
 		e.write(' ')
+		if arg is ast.StringLiteral {
+			if arg.is_glob() {
+				e.string_literal_value(arg)
+				continue
+			}
+		}
 		e.expr(arg)
 	}
 }
