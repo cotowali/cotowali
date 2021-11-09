@@ -14,6 +14,7 @@ import cotowali.errors { PrettyFormatter }
 
 fn (shell &Shell) welcome() {
 	println('Welcome to lish (Cotowali interactive shell)')
+	println('Type "help" for more information')
 }
 
 fn (mut shell Shell) execute_compiled_code(code string) {
@@ -47,6 +48,21 @@ pub fn (mut shell Shell) run() {
 		prompt := if sb.len == 0 { '>>>' } else { '...' }
 		if input := shell.input('$prompt ') {
 			mut s := input.trim_space()
+
+			match s {
+				'exit' {
+					break
+				}
+				'help' {
+					println([
+						'exit\texit lish',
+						'help\tprint this help message',
+					].join('\n'))
+					continue
+				}
+				else {}
+			}
+
 			mut is_continue := false
 			if s.ends_with(r'\') {
 				is_continue = true
