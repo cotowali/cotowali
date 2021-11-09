@@ -8,6 +8,7 @@ module shell
 import strings
 import os
 import cotowali { compile }
+import cotowali.context { new_context }
 import cotowali.lexer { new_lexer }
 import cotowali.source { Source }
 import cotowali.errors { PrettyFormatter }
@@ -50,11 +51,16 @@ pub fn (mut shell Shell) run() {
 			mut s := input.trim_space()
 
 			match s {
+				'clear' {
+					shell.ctx = new_context(shell.ctx.config)
+					continue
+				}
 				'exit' {
 					break
 				}
 				'help' {
 					println([
+						'clear\tclear variables, functions, and other environment',
 						'exit\texit lish',
 						'help\tprint this help message',
 					].join('\n'))
