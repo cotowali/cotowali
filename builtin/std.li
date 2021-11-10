@@ -32,6 +32,12 @@ fn dirname(path: string): string
 
 fn mkdir(args: ...string)
 
+fn mkdir_p(args: ...string) {
+  sh {
+    mkdir -p "$@"
+  }
+}
+
 fn pwd(): string
 
 fn ls(files: ...string) |> ...string

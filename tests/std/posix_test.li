@@ -1,6 +1,6 @@
 fn test_wd() {
   var start = pwd()
-  mkdir('abc')
+  mkdir_p('abc/efg')
   cd('abc')
   assert(dirname(pwd()) == start)
   assert(basename(pwd()) == 'abc')
