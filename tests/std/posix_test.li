@@ -1,0 +1,11 @@
+fn test_wd() {
+  var start = pwd()
+  mkdir('abc')
+  cd('abc')
+  assert(dirname(pwd()) == start)
+  assert(basename(pwd()) == 'abc')
+  cd('../')
+  assert(pwd() == start)
+  rm('-r', 'abc')
+}
+test_wd()
