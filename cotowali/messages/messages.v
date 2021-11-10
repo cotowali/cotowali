@@ -7,6 +7,17 @@ module messages
 
 import cotowali.util.checksum
 
+[params]
+pub struct Expects<T> {
+	expects []T
+}
+
+[params]
+pub struct ExpectedActual<T, J> {
+	expected T [required]
+	actual   J [required]
+}
+
 pub enum SymbolKind {
 	typ
 	variable
@@ -40,12 +51,7 @@ pub fn undefined(kind SymbolKind, name string) string {
 	return '$kind `$name` is not defined'
 }
 
-[params]
-pub struct ParamsForInvalid {
-	expects []string
-}
-
-pub fn invalid_key(key string, v ParamsForInvalid) string {
+pub fn invalid_key(key string, v Expects<string>) string {
 	return 'invalid key `$key`' + (match v.expects.len {
 		0 {
 			''
@@ -68,13 +74,7 @@ pub fn duplicated_key(key string) string {
 	return 'duplicated key `$key`'
 }
 
-[params]
-pub struct ParamsForMismatch {
-	expected string [required]
-	actual   string [required]
-}
-
 [inline]
-pub fn checksum_mismatch(algo checksum.Algorithm, v ParamsForMismatch) string {
+pub fn checksum_mismatch(algo checksum.Algorithm, v ExpectedActual<string, string>) string {
 	return '$algo checksum mismatch: $v.expected (expected) != $v.actual (actual)'
 }
