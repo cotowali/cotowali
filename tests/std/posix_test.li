@@ -6,6 +6,6 @@ fn test_wd() {
   assert(basename(pwd()) == 'abc')
   cd('../')
   assert(pwd() == start)
-  rm('-r', 'abc')
+  rm_r('abc')
 }
 test_wd()

@@ -45,6 +45,12 @@ fn range(begin: int, end: int) |> ...int {
 
 fn rm(paths: ...string)
 
+fn rm_r(paths: ...string) {
+  sh {
+    rm -r "$@"
+  }
+}
+
 fn touch(files: ...string)
 
 // --- string methods ---
