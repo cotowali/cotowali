@@ -24,6 +24,8 @@ fn string |> cat(files: ...string) |> string
 
 fn seq(n: int) |> ...int
 
+fn cd(path: string)
+
 fn ls(files: ...string) |> ...string
 
 fn range(begin: int, end: int) |> ...int {
