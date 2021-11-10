@@ -34,6 +34,8 @@ fn test_token_str() {
 	t2 := Token{.ident, text, p}
 	assert t2.str() == "Token{ .ident, '$text_want', $p }"
 	assert t2.short_str() == "{ .ident, '$text_want' }"
+
+	assert TokenKind.eq.str_for_ident() == '__eq__'
 }
 
 fn test_is() {
