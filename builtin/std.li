@@ -30,7 +30,7 @@ fn cd(path: string)
 
 fn dirname(path: string): string
 
-fn mkdir(args: ...string): string
+fn mkdir(args: ...string)
 
 fn pwd(): string
 
