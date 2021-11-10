@@ -24,6 +24,8 @@ fn string |> cat(files: ...string) |> string
 
 fn seq(n: int) |> ...int
 
+fn basename(path: string): string
+
 fn cd(path: string)
 
 fn pwd(): string
