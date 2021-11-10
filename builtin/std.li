@@ -26,6 +26,8 @@ fn seq(n: int) |> ...int
 
 fn cd(path: string)
 
+fn pwd(): string
+
 fn ls(files: ...string) |> ...string
 
 fn range(begin: int, end: int) |> ...int {
