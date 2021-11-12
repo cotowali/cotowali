@@ -126,6 +126,10 @@ pub fn (expr Expr) pos() Pos {
 }
 
 pub fn (mut e InfixExpr) typ() Type {
+	if f := e.overloaded_function() {
+		return (f.type_symbol().function_info() or { panic(unreachable('not a function')) }).ret
+	}
+
 	if e.op.kind.@is(.comparsion_op) || e.op.kind.@is(.logical_infix_op) {
 		return builtin_type(.bool)
 	} else if e.left.typ() == builtin_type(.float) || e.right.typ() == builtin_type(.float) {
@@ -334,6 +338,31 @@ pub mut:
 	scope &Scope
 	left  Expr
 	right Expr
+}
+
+pub fn (expr &InfixExpr) overloaded_function() ?&symbols.Var {
+	left_ts := expr.left.type_symbol()
+	right_ts := expr.right.type_symbol()
+	fn_var := expr.scope.lookup_infix_op(expr.op, left_ts.typ, right_ts.typ) ?
+	if !fn_var.is_function() {
+		panic(unreachable('not a function'))
+	}
+	return fn_var
+}
+
+pub fn (expr &InfixExpr) overloaded_function_call_expr() ?CallExpr {
+	sym := expr.overloaded_function() ?
+	return CallExpr{
+		scope: expr.scope
+		func: Var{
+			sym: sym
+			ident: Ident{
+				scope: expr.scope
+				text: sym.name
+			}
+		}
+		args: [expr.left, expr.right]
+	}
 }
 
 [inline]
