@@ -27,7 +27,6 @@ assert(vec2_2 / 2 == (1, 1))
 // ---
 
 type Strange = int
-var (strange_1, strange_2): (Strange, Strange) = (1, 2)
 
 fn (lhs: Strange) + (rhs: Strange): bool {
   return (lhs as int) == (rhs as int)
@@ -37,13 +36,16 @@ fn (lhs: Strange) - (rhs: Strange): bool {
   return (lhs as int) != (rhs as int)
 }
 
-fn (lhs: Strange) == (rhs: Strange): int {
+fn (lhs: Strange) == (rhs: Strange): Strange {
   return (lhs as int) + (rhs as int)
 }
 
-fn (lhs: Strange) != (rhs: Strange): int {
+fn (lhs: Strange) != (rhs: Strange): Strange {
   return (lhs as int) - (rhs as int)
 }
+
+
+var (strange_1, strange_2): (Strange, Strange) = (1, 2)
 
 // + is ==
 assert(strange_1 + strange_1)
