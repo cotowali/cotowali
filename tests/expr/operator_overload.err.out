@@ -10,3 +10,9 @@ error: operator_overload.err.li 5,22: infix operator function cannot have pipe i
 error: operator_overload.err.li 6,15: `++` is not infix operator
     6 | fn (w1: Word) ++ (w2: Word, w3: Word): Word
       |               ^^
+error: operator_overload.err.li 12,5: mismatched types: `string` (left) and `Strange` (right)
+   12 | _ = strange1 == strange2 == strange1
+      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: operator_overload.err.li 13,5: mismatched types: `Strange` (left) and `void` (right)
+   13 | _ = strange1 == !strange2
+      |     ^^^^^^^^^^^^^^^^^^^^^

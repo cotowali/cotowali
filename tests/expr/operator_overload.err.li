@@ -4,3 +4,10 @@ fn (w1: Word) == (): bool
 fn (w1: Word) + (w2: Word, w3: Word): Word
 fn (w1: Word) int |> + (w2: Word): Word
 fn (w1: Word) ++ (w2: Word, w3: Word): Word
+
+type Strange = int
+fn (v1: Strange) == (v2: Strange): string
+fn !(v: Strange)
+var (strange1, strange2): (Strange, Strange)
+_ = strange1 == strange2 == strange1
+_ = strange1 == !strange2
