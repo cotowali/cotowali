@@ -70,3 +70,35 @@ pub fn (s &Scope) lookup_infix_op(op Token, lhs Type, rhs Type) ?&Var {
 		return none
 	}
 }
+
+pub fn (mut s Scope) register_prefix_op(op Token, f RegisterFnArgs) ?&Var {
+	fn_info := f.FunctionTypeInfo
+	verify_op_fn_signature(.prefix_op, op, fn_info) ?
+
+	operand_ts := s.lookup_type(fn_info.params[0]) ?
+	fn_typ := s.lookup_or_register_fn_type(fn_info).typ
+
+	v := &Var{
+		...f.Var
+		id: if f.Var.id == 0 { auto_id() } else { f.Var.id }
+		name: '$op.kind.str_for_ident()' + operand_ts.name
+		typ: fn_typ
+		scope: s
+	}
+
+	if operand_ts.typ in s.prefix_op_fns[op.kind] {
+		return error(already_defined(.operator, op.text))
+	}
+	s.prefix_op_fns[op.kind][operand_ts.typ] = v
+
+	return v
+}
+
+pub fn (s &Scope) lookup_prefix_op(op Token, operand Type) ?&Var {
+	return s.prefix_op_fns[op.kind][operand] or {
+		if p := s.parent() {
+			return p.lookup_prefix_op(op, operand)
+		}
+		return none
+	}
+}

@@ -30,6 +30,7 @@ enum FnSignatureKind {
 	default
 	method
 	infix_op
+	prefix_op
 }
 
 struct FnSignatureParsingInfo {
@@ -67,6 +68,15 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 		}
 		.infix_op {
 			scope.register_infix_op(info.name, // name is op token
+				pos: info.name.pos
+				params: info.params.map(it.ts.typ)
+				variadic: info.variadic
+				pipe_in: info.pipe_in
+				ret: info.ret_typ
+			) ?
+		}
+		.prefix_op {
+			scope.register_prefix_op(info.name, // name is op token
 				pos: info.name.pos
 				params: info.params.map(it.ts.typ)
 				variadic: info.variadic
@@ -145,12 +155,15 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 		// fn f ( )
 		//      ^ kind(1) == .l_paren
 		//
-		// fn (lhs: int) + (rhs: int)
-		//               ^ kind(0).@is(.op)
-		//
 		//    vvv kind(0) == .ident
 		// fn int |> f()
 		//        ^^ kind(1) != .l_paren
+		//
+		// fn + (v: int)
+		//    ^ kind(0).@is(.op)
+		//
+		// fn (lhs: int) + (rhs: int)
+		//               ^ kind(0).@is(.op)
 		//
 		//    v kind(0) != .ident
 		// fn [ ] int |> f()
@@ -171,6 +184,8 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 		info.name = name
 		if has_receiver {
 			info.kind = .infix_op
+		} else {
+			info.kind = .prefix_op
 		}
 	} else {
 		info.name = p.consume_with_check(.ident) ?

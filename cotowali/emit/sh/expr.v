@@ -438,6 +438,11 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		panic(unreachable('not a prefix op'))
 	}
 
+	if call_expr := expr.overloaded_function_call_expr() {
+		e.call_expr(call_expr, opt)
+		return
+	}
+
 	mut subexpr_opt := ExprOpt{
 		...opt
 	}
