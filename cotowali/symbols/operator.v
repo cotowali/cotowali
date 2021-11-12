@@ -5,34 +5,41 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-import cotowali.token { Token }
-import cotowali.messages {
-	OpNotation,
-	already_defined,
-	invalid_operator_kind,
-	invalid_operator_signature,
-}
+import cotowali.token { Token, TokenKindClass }
+import cotowali.messages { already_defined, unreachable }
+import cotowali.util { panic_and_value }
 
-fn verify_op_fn_signature(op OpNotation, fn_info FunctionTypeInfo) ? {
-	params_n := if op == .infix { 2 } else { 1 }
+fn verify_op_fn_signature(expected TokenKindClass, op Token, fn_info FunctionTypeInfo) ? {
+	expected_s := match expected {
+		.infix_op { 'infix' }
+		.prefix_op { 'prefix' }
+		.postfix_op { 'postfix' }
+		else { panic_and_value(unreachable('not op kind'), '') }
+	} + ' operator'
+
+	if !op.kind.@is(expected) {
+		return error('`$op.text` is not $expected_s')
+	}
+
+	subject := '$expected_s function'
+	params_n := if expected == .infix_op { 2 } else { 1 }
 	if fn_info.params.len != params_n {
-		return error(invalid_operator_signature(.parameters_count, op))
+		expected_params := if params_n == 1 { '1 parameter' } else { '$params_n parameters' }
+		return error('$subject must have $expected_params')
 	}
+
 	if fn_info.variadic {
-		return error(invalid_operator_signature(.variadic, op))
+		return error('$subject cannot be variadic')
 	}
+
 	if fn_info.pipe_in != builtin_type(.void) {
-		return error(invalid_operator_signature(.have_pipe_in, op))
+		return error('$subject cannot have pipe in')
 	}
 }
 
 pub fn (mut s Scope) register_infix_op(op Token, f RegisterFnArgs) ?&Var {
-	if !op.kind.@is(.infix_op) {
-		return error(invalid_operator_kind(.infix, op.text))
-	}
-
 	fn_info := f.FunctionTypeInfo
-	verify_op_fn_signature(.infix, fn_info) ?
+	verify_op_fn_signature(.infix_op, op, fn_info) ?
 
 	lhs_ts := s.lookup_type(fn_info.params[0]) ?
 	rhs_ts := s.lookup_type(fn_info.params[1]) ?
