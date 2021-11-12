@@ -31,6 +31,15 @@ mut:
 
 fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 	if info.is_method {
+		if info.name.kind.@is(.op) {
+			return scope.register_infix_op(info.name, // name is op token
+				pos: info.name.pos
+				params: info.params.map(it.ts.typ)
+				variadic: info.variadic
+				pipe_in: info.pipe_in
+				ret: info.ret_typ
+			)
+		}
 		mut receiver := info.params[0].ts
 		return receiver.register_method(
 			name: info.name.text
@@ -100,6 +109,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 		//    +-|--- kind(0) == .l_paren
 		//    | | +  kind(2) == .ident
 		// fn ( x Type ) f() // frequently encountered invalid syntax.
+		//
 		info.is_method = true
 		p.consume_with_assert(.l_paren)
 		rec_name_tok := p.consume_with_assert(.ident)
@@ -113,10 +123,13 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 		p.consume_with_check(.r_paren) ?
 	}
 
-	if !(p.kind(0) == .ident && p.kind(1) == .l_paren) {
+	if !((p.kind(0) == .ident || p.kind(0).@is(.op)) && p.kind(1) == .l_paren) {
 		//    v kind(0) == .ident
 		// fn f ( )
 		//      ^ kind(1) == .l_paren
+		//
+		// fn (lhs: int) + (rhs: int)
+		//               ^ kind(0).@is(.op)
 		//
 		//    vvv kind(0) == .ident
 		// fn int |> f()
@@ -137,7 +150,11 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 		p.consume_with_check(.pipe) ?
 	}
 
-	info.name = p.consume_with_check(.ident) ?
+	if name := p.consume_if_kind_is(.op) {
+		info.name = name
+	} else {
+		info.name = p.consume_with_check(.ident) ?
+	}
 
 	p.parse_fn_params(mut info) ?
 	if p.kind(0) in [.l_brace, .eol] {
@@ -168,7 +185,13 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	sym := info.register_sym(mut outer_scope) or { return p.error(err.msg, info.name.pos) }
 
-	p.open_scope(info.name.text)
+	p.open_scope(if info.name.kind == .ident {
+		info.name.text
+	} else {
+		op_ident := info.name.kind.str_for_ident()
+		type_names := info.params.map(it.ts.name).join('_')
+		op_ident + type_names
+	})
 	defer {
 		p.close_scope()
 	}

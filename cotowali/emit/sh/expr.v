@@ -223,6 +223,11 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 		panic(unreachable('not a infix op'))
 	}
 
+	if call_expr := expr.overloaded_function_call_expr() {
+		e.call_expr(call_expr, opt)
+		return
+	}
+
 	ts := expr.left.type_symbol().resolved()
 
 	match ts.typ {

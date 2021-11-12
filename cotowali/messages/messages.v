@@ -24,6 +24,7 @@ pub enum SymbolKind {
 	function
 	method
 	namespace
+	operator
 }
 
 pub fn (k SymbolKind) str() string {
@@ -33,6 +34,7 @@ pub fn (k SymbolKind) str() string {
 		.function { 'function' }
 		.method { 'method' }
 		.namespace { 'namespace' }
+		.operator { 'operator' }
 	}
 }
 
@@ -77,4 +79,44 @@ pub fn duplicated_key(key string) string {
 [inline]
 pub fn checksum_mismatch(algo checksum.Algorithm, v ExpectedActual<string, string>) string {
 	return '$algo checksum mismatch: $v.expected (expected) != $v.actual (actual)'
+}
+
+pub enum OpNotation {
+	infix
+	prefix
+	postfix
+}
+
+fn (v OpNotation) str() string {
+	return match v {
+		.infix { 'infix' }
+		.prefix { 'prefix' }
+		.postfix { 'postfix' }
+	} + ' operator'
+}
+
+pub fn invalid_operator_kind(expected OpNotation, op_text string) string {
+	return '`$op_text` is not $expected'
+}
+
+pub enum OpSignatureErrorKind {
+	parameters_count
+	variadic
+	have_pipe_in
+}
+
+pub fn invalid_operator_signature(err_kind OpSignatureErrorKind, op OpNotation) string {
+	s := '$op ${SymbolKind.function}'
+	return match err_kind {
+		.parameters_count {
+			params := if op == .infix { '2 parameters' } else { '1 parameter' }
+			'$s must have $params'
+		}
+		.variadic {
+			'$s cannot be variadic'
+		}
+		.have_pipe_in {
+			'$s cannot have pipe in'
+		}
+	}
 }

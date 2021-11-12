@@ -1,0 +1,57 @@
+type Vec2 = (int, int)
+
+fn (lhs: Vec2) + (rhs: Vec2): Vec2 {
+  return (lhs[0] + rhs[0], lhs[1] + rhs[1])
+}
+
+fn (lhs: Vec2) - (rhs: Vec2): Vec2 {
+  return (lhs[0] - rhs[0], lhs[1] - rhs[1])
+}
+
+fn (lhs: Vec2) * (rhs: int): Vec2 {
+  return (lhs[0] * rhs, lhs[1] * rhs)
+}
+
+fn (lhs: Vec2) / (rhs: int): Vec2 {
+  return (lhs[0] / rhs, lhs[1] / rhs)
+}
+
+var vec2_2: Vec2 = (2, 2)
+var vec3_4: Vec2 = (3, 4)
+assert(vec2_2 + vec3_4 == (5, 6))
+assert(vec2_2 - vec3_4 == (-1, -2))
+assert(vec2_2 * 2 == (4, 4))
+assert(vec2_2 / 2 == (1, 1))
+
+
+// ---
+
+type Strange = int
+var (strange_1, strange_2): (Strange, Strange) = (1, 2)
+
+fn (lhs: Strange) + (rhs: Strange): bool {
+  return (lhs as int) == (rhs as int)
+}
+
+fn (lhs: Strange) - (rhs: Strange): bool {
+  return (lhs as int) != (rhs as int)
+}
+
+fn (lhs: Strange) == (rhs: Strange): int {
+  return (lhs as int) + (rhs as int)
+}
+
+fn (lhs: Strange) != (rhs: Strange): int {
+  return (lhs as int) - (rhs as int)
+}
+
+// + is ==
+assert(strange_1 + strange_1)
+assert(!(strange_1 + strange_2))
+// - is !=
+assert(!(strange_1 - strange_1))
+assert(strange_1 - strange_2)
+// == is +
+assert((strange_1 == strange_2) == 3)
+// != is -
+assert((strange_1 != strange_2) == -1)

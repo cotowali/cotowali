@@ -239,6 +239,10 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 	c.expr(expr.left)
 	c.expr(expr.right)
 
+	if _ := expr.overloaded_function() {
+		return
+	}
+
 	pos := expr.pos()
 	op := expr.op
 	left_ts := expr.left.type_symbol()

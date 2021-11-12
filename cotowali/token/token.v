@@ -98,6 +98,10 @@ pub enum TokenKind {
 	eof
 }
 
+pub fn (k TokenKind) str_for_ident() string {
+	return '__${k}__'
+}
+
 [inline]
 fn (k TokenKind) is_string_literal_content_escaped_char() bool {
 	return k in [
