@@ -5,11 +5,24 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-import cotowali.token { Token }
+import cotowali.token { Token, TokenKindClass }
 import cotowali.messages {
 	already_defined,
 	invalid_operator_kind,
 	invalid_operator_signature,
+}
+
+fn verify_op_fn_signature(op_token_class TokenKindClass, fn_info FunctionTypeInfo) ? {
+	params_n := if op_token_class == .infix_op { 2 } else { 1 }
+	if fn_info.params.len != params_n {
+		return error(invalid_operator_signature(.parameters_count, .infix))
+	}
+	if fn_info.variadic {
+		return error(invalid_operator_signature(.variadic, .infix))
+	}
+	if fn_info.pipe_in != builtin_type(.void) {
+		return error(invalid_operator_signature(.have_pipe_in, .infix))
+	}
 }
 
 pub fn (mut s Scope) register_infix_op(op Token, f RegisterFnArgs) ?&Var {
@@ -18,17 +31,10 @@ pub fn (mut s Scope) register_infix_op(op Token, f RegisterFnArgs) ?&Var {
 	}
 
 	fn_info := f.FunctionTypeInfo
-	if fn_info.params.len != 2 {
-		return error(invalid_operator_signature(.parameters_count, .infix))
-	}
 	lhs_ts := s.lookup_type(fn_info.params[0]) ?
 	rhs_ts := s.lookup_type(fn_info.params[1]) ?
-	if fn_info.variadic {
-		return error(invalid_operator_signature(.variadic, .infix))
-	}
-	if fn_info.pipe_in != builtin_type(.void) {
-		return error(invalid_operator_signature(.have_pipe_in, .infix))
-	}
+
+	verify_op_fn_signature(.infix_op, fn_info) ?
 
 	fn_typ := s.lookup_or_register_fn_type(fn_info).typ
 
