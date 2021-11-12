@@ -4,9 +4,13 @@ HEAD
 monthly.2021.11
 ---------------
 
+- support `require 'http:...'` and `require 'github:...'`
+- Supports checksum verification in `require`
+- `#error` and `#warning` compiler directive
+- inline shell
+- macOS サポート
 - 関数の戻り値の型の前に `:` を必要とするように構文を変更
-
-記録忘れ
+- bug fixes
 
 monthly.2021.10
 ---------------
