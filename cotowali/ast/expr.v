@@ -198,6 +198,10 @@ pub fn (mut e ParenExpr) typ() Type {
 }
 
 pub fn (e PrefixExpr) typ() Type {
+	if f := e.overloaded_function() {
+		return (f.type_symbol().function_info() or { panic(unreachable('not a function')) }).ret
+	}
+
 	match e.op.kind {
 		.amp {
 			return if ref := e.scope.lookup_reference_type(target: e.expr.typ()) {
@@ -545,6 +549,30 @@ pub fn (expr &PrefixExpr) int() int {
 		else { 0 }
 	}
 	return if expr.op.kind == .minus { -n } else { n }
+}
+
+pub fn (expr &PrefixExpr) overloaded_function() ?&symbols.Var {
+	operand_typ := expr.expr.typ()
+	fn_var := expr.scope.lookup_prefix_op(expr.op, operand_typ) ?
+	if !fn_var.is_function() {
+		panic(unreachable('not a function'))
+	}
+	return fn_var
+}
+
+pub fn (expr &PrefixExpr) overloaded_function_call_expr() ?CallExpr {
+	sym := expr.overloaded_function() ?
+	return CallExpr{
+		scope: expr.scope
+		func: Var{
+			sym: sym
+			ident: Ident{
+				scope: expr.scope
+				text: sym.name
+			}
+		}
+		args: [expr.expr]
+	}
 }
 
 fn (mut r Resolver) prefix_expr(mut expr PrefixExpr, opt ResolveExprOpt) {
