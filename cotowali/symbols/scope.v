@@ -8,6 +8,7 @@ module symbols
 import cotowali.util { nil_to_none }
 import cotowali.messages { unreachable }
 import cotowali.source { Pos }
+import cotowali.token { TokenKind }
 
 pub type ID = u64
 
@@ -27,6 +28,7 @@ mut:
 	type_symbols     map[u64]&TypeSymbol     // map[Type]&TypeSymbol
 	methods          map[u64]map[string]&Var // map[receiverType]map[name]&Var
 	name_to_type     map[string]Type
+	infix_op_fns     map[TokenKind]map[u64]map[u64]&Var // op lhs rhs
 }
 
 pub fn (s &Scope) owner() ?&Var {
