@@ -5,23 +5,24 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-import cotowali.token { Token, TokenKindClass }
+import cotowali.token { Token }
 import cotowali.messages {
+	OpNotation,
 	already_defined,
 	invalid_operator_kind,
 	invalid_operator_signature,
 }
 
-fn verify_op_fn_signature(op_token_class TokenKindClass, fn_info FunctionTypeInfo) ? {
-	params_n := if op_token_class == .infix_op { 2 } else { 1 }
+fn verify_op_fn_signature(op OpNotation, fn_info FunctionTypeInfo) ? {
+	params_n := if op == .infix { 2 } else { 1 }
 	if fn_info.params.len != params_n {
-		return error(invalid_operator_signature(.parameters_count, .infix))
+		return error(invalid_operator_signature(.parameters_count, op))
 	}
 	if fn_info.variadic {
-		return error(invalid_operator_signature(.variadic, .infix))
+		return error(invalid_operator_signature(.variadic, op))
 	}
 	if fn_info.pipe_in != builtin_type(.void) {
-		return error(invalid_operator_signature(.have_pipe_in, .infix))
+		return error(invalid_operator_signature(.have_pipe_in, op))
 	}
 }
 
@@ -31,10 +32,10 @@ pub fn (mut s Scope) register_infix_op(op Token, f RegisterFnArgs) ?&Var {
 	}
 
 	fn_info := f.FunctionTypeInfo
+	verify_op_fn_signature(.infix, fn_info) ?
+
 	lhs_ts := s.lookup_type(fn_info.params[0]) ?
 	rhs_ts := s.lookup_type(fn_info.params[1]) ?
-
-	verify_op_fn_signature(.infix_op, fn_info) ?
 
 	fn_typ := s.lookup_or_register_fn_type(fn_info).typ
 
