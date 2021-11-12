@@ -96,3 +96,7 @@ assert(-&-strange_2== -1)
 // ! is '* -1'
 assert(!strange_1 == -1)
 assert(!!strange_1 == 1)
+
+// lol
+assert( (!strange_2 == strange_1 != strange_2) - (strange_2 != strange_1 == strange_2))
+assert(!(!strange_2 == strange_1 != strange_2) + (strange_2 != strange_1 == strange_2))
