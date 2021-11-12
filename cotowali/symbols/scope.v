@@ -28,7 +28,7 @@ mut:
 	type_symbols     map[u64]&TypeSymbol     // map[Type]&TypeSymbol
 	methods          map[u64]map[string]&Var // map[receiverType]map[name]&Var
 	name_to_type     map[string]Type
-	infix_op_fns     map[TokenKind]map[u64]map[u64]&Var // op lhs rhs
+	infix_op_fns     map[TokenKind]map[u64]map[u64]&Var // map[op TokenKind]map[lhs Type]map[rhs Type]&Var
 }
 
 pub fn (s &Scope) owner() ?&Var {
