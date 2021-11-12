@@ -5,7 +5,14 @@ fn g(i: int): string {
   yield '0'
   return i
 }
-fn g(i: int) {}
+fn g(i: int) {
+  fn g(i: int) {
+    return 0
+  }
+
+  fn g(i: int, i: int) {
+  }
+}
 
 fn sequence(n: int): ...string {
   for v in seq(n) {

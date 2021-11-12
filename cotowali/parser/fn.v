@@ -8,7 +8,14 @@ module parser
 import cotowali.ast
 import cotowali.source { Pos }
 import cotowali.token { Token }
-import cotowali.symbols { Scope, Type, TypeSymbol, Var, builtin_type }
+import cotowali.symbols {
+	Scope,
+	Type,
+	TypeSymbol,
+	Var,
+	builtin_type,
+	new_placeholder_var,
+}
 import cotowali.messages { unreachable }
 import cotowali.util { struct_name }
 
@@ -196,18 +203,26 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		}
 	}
 
+	mut has_error := false
 	info := p.parse_fn_signature_info() ?
 	mut outer_scope := p.scope
 
-	sym := info.register_sym(mut outer_scope) or { return p.error(err.msg, info.name.pos) }
-
-	p.open_scope(if info.name.kind == .ident {
+	mut sym_name := if info.name.kind == .ident {
 		info.name.text
 	} else {
 		op_ident := info.name.kind.str_for_ident()
 		type_names := info.params.map(it.ts.name).join('_')
 		op_ident + type_names
-	})
+	}
+	sym := info.register_sym(mut outer_scope) or {
+		has_error = true
+		p.error(err.msg, info.name.pos)
+		// use different name for duplicated function to create another scope
+		sym_name += util.rand<u64>().str()
+		new_placeholder_var(sym_name, info.name.pos)
+	}
+
+	p.open_scope(sym_name)
 	defer {
 		p.close_scope()
 	}
@@ -215,15 +230,18 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	mut params := []ast.Var{len: info.params.len}
 	for i, param in info.params {
+		param_sym := p.scope.register_var(name: param.name, pos: param.pos, typ: param.ts.typ) or {
+			p.error(err.msg, param.pos)
+			has_error = true
+			new_placeholder_var(param.name, param.pos)
+		}
 		params[i] = ast.Var{
 			ident: ast.Ident{
 				scope: p.scope
 				pos: param.pos
 				text: param.name
 			}
-			sym: p.scope.register_var(name: param.name, pos: param.pos, typ: param.ts.typ) or {
-				return p.error(err.msg, param.pos)
-			}
+			sym: param_sym
 		}
 	}
 
@@ -236,7 +254,14 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		is_method: info.kind == .method
 	}
 	if has_body {
-		node.body = p.parse_block_without_new_scope() ?
+		if body := p.parse_block_without_new_scope() {
+			node.body = body
+		} else {
+			has_error = true
+		}
+	}
+	if has_error {
+		return none
 	}
 	return node
 }
