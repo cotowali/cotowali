@@ -19,45 +19,54 @@ mut:
 	pos  Pos
 }
 
+enum FnSignatureKind {
+	default
+	method
+	infix_op
+}
+
 struct FnSignatureParsingInfo {
 mut:
-	is_method bool
-	name      Token
-	pipe_in   Type = builtin_type(.void)
-	params    []FnParamParsingInfo
-	variadic  bool
-	ret_typ   Type = builtin_type(.void)
+	kind     FnSignatureKind = .default
+	name     Token
+	pipe_in  Type = builtin_type(.void)
+	params   []FnParamParsingInfo
+	variadic bool
+	ret_typ  Type = builtin_type(.void)
 }
 
 fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
-	if info.is_method {
-		if info.name.kind.@is(.op) {
-			return scope.register_infix_op(info.name, // name is op token
+	return match info.kind {
+		.default {
+			scope.register_fn(
+				name: info.name.text
 				pos: info.name.pos
 				params: info.params.map(it.ts.typ)
 				variadic: info.variadic
 				pipe_in: info.pipe_in
 				ret: info.ret_typ
-			)
+			) ?
 		}
-		mut receiver := info.params[0].ts
-		return receiver.register_method(
-			name: info.name.text
-			pos: info.name.pos
-			params: info.params[1..].map(it.ts.typ)
-			variadic: info.variadic
-			pipe_in: info.pipe_in
-			ret: info.ret_typ
-		)
-	} else {
-		return scope.register_fn(
-			name: info.name.text
-			pos: info.name.pos
-			params: info.params.map(it.ts.typ)
-			variadic: info.variadic
-			pipe_in: info.pipe_in
-			ret: info.ret_typ
-		)
+		.method {
+			mut receiver := info.params[0].ts
+			receiver.register_method(
+				name: info.name.text
+				pos: info.name.pos
+				params: info.params[1..].map(it.ts.typ)
+				variadic: info.variadic
+				pipe_in: info.pipe_in
+				ret: info.ret_typ
+			) ?
+		}
+		.infix_op {
+			scope.register_infix_op(info.name, // name is op token
+				pos: info.name.pos
+				params: info.params.map(it.ts.typ)
+				variadic: info.variadic
+				pipe_in: info.pipe_in
+				ret: info.ret_typ
+			) ?
+		}
 	}
 }
 
@@ -102,15 +111,16 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 	p.consume_with_assert(.key_fn)
 	mut info := FnSignatureParsingInfo{}
 
-	if p.kind(0) == .l_paren && p.kind(1) == .ident && p.kind(2) in [.colon, .ident] {
-		// fn ( x : Type ) (int, int) |> f()
-		//    | | +- kind(2) == .colon
-		//    | +--- kind(1) == .ident
-		//    +-|--- kind(0) == .l_paren
-		//    | | +  kind(2) == .ident
-		// fn ( x Type ) f() // frequently encountered invalid syntax.
-		//
-		info.is_method = true
+	// fn ( x : Type ) (int, int) |> f()
+	//    | | +- kind(2) == .colon
+	//    | +--- kind(1) == .ident
+	//    +-|--- kind(0) == .l_paren
+	//    | | +  kind(2) == .ident
+	// fn ( x Type ) f() // frequently encountered invalid syntax.
+	//
+	has_receiver := p.kind(0) == .l_paren && p.kind(1) == .ident && p.kind(2) in [.colon, .ident]
+
+	if has_receiver {
 		p.consume_with_assert(.l_paren)
 		rec_name_tok := p.consume_with_assert(.ident)
 		p.consume_with_check(.colon) ?
@@ -152,8 +162,14 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 
 	if name := p.consume_if_kind_is(.op) {
 		info.name = name
+		if has_receiver {
+			info.kind = .infix_op
+		}
 	} else {
 		info.name = p.consume_with_check(.ident) ?
+		if has_receiver {
+			info.kind = .method
+		}
 	}
 
 	p.parse_fn_params(mut info) ?
@@ -217,7 +233,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		sym: sym
 		params: params
 		has_body: has_body
-		is_method: info.is_method
+		is_method: info.kind == .method
 	}
 	if has_body {
 		node.body = p.parse_block_without_new_scope() ?
