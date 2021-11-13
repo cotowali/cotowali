@@ -102,102 +102,116 @@ pub fn (k TokenKind) str_for_ident() string {
 	return '__${k}__'
 }
 
-[inline]
-fn (k TokenKind) is_string_literal_content_escaped_char() bool {
-	return k in [
-		.string_literal_content_escaped_single_quote,
-		.string_literal_content_escaped_back_slash,
-	]
-}
+pub fn token_kinds(class TokenKindClass) []TokenKind {
+	kinds := fn (kinds []TokenKind) []TokenKind {
+		return kinds
+	}
 
-[inline]
-fn (k TokenKind) is_op() bool {
-	return k.is_prefix_op() || k.is_postfix_op() || k.is_infix_op() || k.is_assign_op()
-}
-
-[inline]
-fn (k TokenKind) is_assign_op() bool {
-	return k in [
-		.assign,
-		.plus_assign,
-		.minus_assign,
-		.mul_assign,
-		.div_assign,
-		.mod_assign,
-	]
-}
-
-[inline]
-fn (k TokenKind) is_comparsion_op() bool {
-	return k in [
-		.eq,
-		.ne,
-		.gt,
-		.ge,
-		.lt,
-		.le,
-	]
-}
-
-[inline]
-fn (k TokenKind) is_logical_infix_op() bool {
-	return k in [.logical_and, .logical_or]
-}
-
-[inline]
-fn (k TokenKind) is_prefix_op() bool {
-	return k in [
-		.amp,
-		.plus,
-		.minus,
-		.not,
-	]
-}
-
-[inline]
-fn (k TokenKind) is_postfix_op() bool {
-	return k in [
-		.plus_plus,
-		.minus_minus,
-	]
-}
-
-[inline]
-fn (k TokenKind) is_infix_op() bool {
-	return k.is_comparsion_op() || k.is_logical_infix_op()
-		|| k in [.key_as, .pipe_append, .pipe, .plus, .minus, .mul, .div, .mod, .pow]
-}
-
-[inline]
-fn (k TokenKind) is_literal() bool {
-	return k in [
-		.int_literal,
-		.float_literal,
-		.bool_literal,
-	]
-}
-
-[inline]
-fn (k TokenKind) is_keyword() bool {
-	return k in [
-		.key_as,
-		.key_assert,
-		.key_else,
-		.key_export,
-		.key_fn,
-		.key_for,
-		.key_if,
-		.key_in,
-		.key_map,
-		.key_require,
-		.key_return,
-		.key_struct,
-		.key_type,
-		.key_use,
-		.key_var,
-		.key_while,
-		.key_yield,
-	]
+	return match class {
+		.op {
+			v1 := token_kinds(.assign_op)
+			v2 := token_kinds(.infix_op)
+			v3 := token_kinds(.prefix_op)
+			v4 := token_kinds(.postfix_op)
+			mut list := []TokenKind{cap: v1.len + v2.len + v3.len + v4.len}
+			list << v1
+			list << v2
+			list << v3
+			list << v4
+			list
+		}
+		.assign_op {
+			kinds([
+				.assign,
+				.plus_assign,
+				.minus_assign,
+				.mul_assign,
+				.div_assign,
+				.mod_assign,
+			])
+		}
+		.comparsion_op {
+			kinds([
+				.eq,
+				.ne,
+				.gt,
+				.ge,
+				.lt,
+				.le,
+			])
+		}
+		.logical_infix_op {
+			kinds([.logical_and, .logical_or])
+		}
+		.prefix_op {
+			kinds([
+				.amp,
+				.plus,
+				.minus,
+				.not,
+			])
+		}
+		.postfix_op {
+			kinds([
+				.plus_plus,
+				.minus_minus,
+			])
+		}
+		.infix_op {
+			v1 := kinds([
+				.key_as,
+				.pipe_append,
+				.pipe,
+				.plus,
+				.minus,
+				.mul,
+				.div,
+				.mod,
+				.pow,
+			])
+			v2 := token_kinds(.comparsion_op)
+			v3 := token_kinds(.logical_infix_op)
+			mut list := []TokenKind{cap: v1.len + v2.len + v3.len}
+			list << v1
+			list << v2
+			list << v3
+			list
+		}
+		.literal {
+			kinds([
+				.int_literal,
+				.float_literal,
+				.bool_literal,
+			])
+		}
+		.keyword {
+			kinds([
+				.key_as,
+				.key_assert,
+				.key_else,
+				.key_export,
+				.key_fn,
+				.key_for,
+				.key_if,
+				.key_in,
+				.key_map,
+				.key_require,
+				.key_return,
+				.key_struct,
+				.key_type,
+				.key_use,
+				.key_var,
+				.key_while,
+				.key_yield,
+			])
+		}
+		.string_literal_content_escaped_char {
+			kinds([
+				.string_literal_content_escaped_single_quote,
+				.string_literal_content_escaped_back_slash,
+			])
+		}
+	}
 }
 
 pub enum TokenKindClass {
@@ -215,18 +229,7 @@ pub enum TokenKindClass {
 
 [inline]
 pub fn (k TokenKind) @is(class TokenKindClass) bool {
-	return match class {
-		.op { k.is_op() }
-		.assign_op { k.is_assign_op() }
-		.comparsion_op { k.is_comparsion_op() }
-		.logical_infix_op { k.is_logical_infix_op() }
-		.infix_op { k.is_infix_op() }
-		.prefix_op { k.is_prefix_op() }
-		.postfix_op { k.is_postfix_op() }
-		.literal { k.is_literal() }
-		.keyword { k.is_keyword() }
-		.string_literal_content_escaped_char { k.is_string_literal_content_escaped_char() }
-	}
+	return k in token_kinds(class)
 }
 
 pub struct Token {
