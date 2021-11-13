@@ -575,6 +575,27 @@ pub fn (expr &PrefixExpr) overloaded_function_call_expr() ?CallExpr {
 	}
 }
 
+pub fn (expr &PrefixExpr) convert_to_infix_expr() ?InfixExpr {
+	if expr.op.kind == .minus {
+		return InfixExpr{
+			scope: expr.scope
+			left: IntLiteral{
+				scope: expr.scope
+				token: Token{
+					kind: .int_literal
+					text: '-1'
+				}
+			}
+			right: expr.expr
+			op: Token{
+				kind: .mul
+				text: '*'
+			}
+		}
+	}
+	return none
+}
+
 fn (mut r Resolver) prefix_expr(mut expr PrefixExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)

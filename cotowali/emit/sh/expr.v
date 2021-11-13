@@ -6,7 +6,7 @@
 module sh
 
 import cotowali.ast
-import cotowali.token { Token }
+import cotowali.token
 import cotowali.symbols { builtin_type }
 import cotowali.util { Tuple2, panic_and_value, tuple2 }
 import cotowali.messages { unreachable }
@@ -456,21 +456,10 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 			e.expr(expr.expr, subexpr_opt)
 		}
 		.minus {
-			e.expr(ast.InfixExpr{
-				scope: expr.scope
-				left: ast.IntLiteral{
-					scope: expr.scope
-					token: Token{
-						kind: .int_literal
-						text: '-1'
-					}
-				}
-				right: expr.expr
-				op: Token{
-					kind: .mul
-					text: '*'
-				}
-			}, subexpr_opt)
+			infix_expr := expr.convert_to_infix_expr() or {
+				panic(unreachable('faild to convert to infix expr'))
+			}
+			e.infix_expr(infix_expr, subexpr_opt)
 		}
 		.amp {
 			e.reference(expr.expr)
