@@ -6,7 +6,7 @@
 module parser
 
 import cotowali.token { Token }
-import cotowali.messages { unreachable }
+import cotowali.compiler_directives { CompilerDirectiveKind, compiler_directive_kind_from_name }
 
 fn (mut p Parser) process_compiler_directives() {
 	$if trace_parser ? {
@@ -43,24 +43,26 @@ fn (mut p Parser) process_compiler_directive() {
 	start_pos := hash.pos
 
 	ident := p.consume_with_assert(.ident)
-	name := ident.text
 
-	match name {
-		'error', 'warning' {
-			p.process_compiler_directive_error_or_warning(hash, ident)
-		}
-		else {
-			p.skip_until_eol()
-			p.error('unknown compiler directive `#$name`', start_pos.merge(p.pos(-1)))
+	defer {
+		p.consume_with_check(.eol) or {
+			// error was reported in consume_with_check
 		}
 	}
 
-	p.consume_with_check(.eol) or {
-		// error was reported in consume_with_check
+	kind := compiler_directive_kind_from_name(ident.text) or {
+		p.skip_until_eol()
+		p.error(err.msg, start_pos.merge(p.pos(-1)))
+		return
+	}
+	match kind {
+		.error, .warning {
+			p.process_compiler_directive_error_or_warning(hash, kind)
+		}
 	}
 }
 
-fn (mut p Parser) process_compiler_directive_error_or_warning(hash Token, directive Token) {
+fn (mut p Parser) process_compiler_directive_error_or_warning(hash Token, kind CompilerDirectiveKind) {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
@@ -75,9 +77,9 @@ fn (mut p Parser) process_compiler_directive_error_or_warning(hash Token, direct
 	pos := hash.pos.merge(last_pos)
 
 	msg := p.source().slice(msg_pos.begin(), msg_pos.end())
-	match directive.text {
-		'error' { p.error(msg, pos) }
-		'warning' { p.warn(msg, pos) }
-		else { panic(unreachable('invalid directive ${directive.text}. expecting error or warning')) }
+	match kind {
+		.error { p.error(msg, pos) }
+		.warning { p.warn(msg, pos) }
+		// else { panic(unreachable('invalid directive ${directive.text}. expecting error or warning')) }
 	}
 }
