@@ -16,8 +16,11 @@ fn test_glob() {
     touch(name)
   }
 
+  var files = @'glob_tmp*.txt'
+  assert(typeof(files) == '[]string')
   var prefix = 'glob_tmp'
   var i = 1
+  assert((@'glob_tmp*.txt'.join(' ')) == files.join(' '))
   assert((@'glob_tmp*.txt'.join(' ')) == names.join(' '))
   assert((@"$prefix*.txt".join(' '))  == names.join(' '))
 

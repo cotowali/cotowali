@@ -39,7 +39,17 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 			ast.DefaultValue {
 				e.writeln('array_init "$name" 0')
 			}
-			else {}
+			ast.StringLiteral {
+				if !expr.is_glob() {
+					panic(unreachable('not a array value'))
+				}
+				e.write('array_copy "$name" ')
+				e.string_literal(expr)
+				e.writeln('')
+			}
+			else {
+				panic(unreachable('not a array value'))
+			}
 		}
 	}
 }
