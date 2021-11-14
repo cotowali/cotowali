@@ -32,7 +32,7 @@ fn (mut p Parser) process_compiler_directives() {
 }
 
 fn (mut p Parser) is_compiler_directive(i int) bool {
-	return p.kind(i) == .hash && p.kind(i + 1) in [.ident, .key_if]
+	return p.kind(i) == .hash && p.kind(i + 1) in [.ident, .key_if, .key_else]
 }
 
 fn (mut p Parser) process_compiler_directive() {
@@ -69,7 +69,7 @@ fn (mut p Parser) process_compiler_directive() {
 		.error, .warning {
 			p.process_compiler_directive_error_or_warning(hash, kind)
 		}
-		.if_, .endif {
+		.if_, .else_, .endif {
 			p.process_compiler_directive_if_else(hash, kind)
 		}
 	}
@@ -134,17 +134,43 @@ fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDi
 			p.check(.eol) or {}
 
 			if cond == expected_cond {
-				p.inside_compiler_if_directive = true
+				p.inside_compiler_if_directive_active_branch = true
 			} else {
-				p.skip_if_directive_branch()
+				p.skip_if_else_directive_branch(.if_)
+				if !p.is_compiler_directive(0) {
+					// without #else
+					return
+				}
+
+				next_kind := compiler_directive_kind_from_name(p.token(1).text) or {
+					p.skip_until_eol()
+					p.error(err.msg, start_pos.merge(p.pos(-1)))
+					return
+				}
+				if next_kind != .else_ {
+					panic(unreachable('expecting #else'))
+				}
+
+				p.inside_compiler_if_directive_active_branch = true
+				p.consume_with_assert(.hash)
+				p.consume_with_assert(.key_else)
+				p.check(.eol) or {}
 			}
 		}
-		.endif {
-			if !p.inside_compiler_if_directive {
+		.else_ {
+			if p.inside_compiler_if_directive_active_branch {
+				p.skip_if_else_directive_branch(.else_)
+			} else {
 				p.error(missing_if_directive(kind), start_pos.merge(p.pos(-1)))
 				p.skip_until_eol()
 			}
-			p.inside_compiler_if_directive = false
+		}
+		.endif {
+			if !p.inside_compiler_if_directive_active_branch {
+				p.error(missing_if_directive(kind), start_pos.merge(p.pos(-1)))
+				p.skip_until_eol()
+			}
+			p.inside_compiler_if_directive_active_branch = false
 		}
 		else {
 			panic(unreachable('invalid directive ${kind}. expecting #if or #endif'))
@@ -152,7 +178,7 @@ fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDi
 	}
 }
 
-fn (mut p Parser) skip_if_directive_branch() {
+fn (mut p Parser) skip_if_else_directive_branch(kind CompilerDirectiveKind) {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
@@ -168,10 +194,19 @@ fn (mut p Parser) skip_if_directive_branch() {
 			break
 		}
 		if p.is_compiler_directive(0) {
-			if kind := compiler_directive_kind_from_name(p.token(1).text) {
-				match kind {
-					.if_ { depth++ }
-					.endif { depth-- }
+			if next_kind := compiler_directive_kind_from_name(p.token(1).text) {
+				match next_kind {
+					.if_ {
+						depth++
+					}
+					.else_ {
+						if depth == 1 && kind != .else_ {
+							break
+						}
+					}
+					.endif {
+						depth--
+					}
 					else {}
 				}
 			}

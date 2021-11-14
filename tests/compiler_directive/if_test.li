@@ -8,8 +8,12 @@
 
 #if !true
   assert(false)
+#else
+  assert(true)
 #endif
 
 #if !!true
   assert(true)
+#else
+  assert(false)
 #endif

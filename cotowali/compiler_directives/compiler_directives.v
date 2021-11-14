@@ -11,6 +11,7 @@ pub enum CompilerDirectiveKind {
 	error
 	warning
 	if_
+	else_
 	endif
 }
 
@@ -19,6 +20,7 @@ pub fn (k CompilerDirectiveKind) str() string {
 		.error { '#error' }
 		.warning { '#warning' }
 		.if_ { '#if' }
+		.else_ { '#else' }
 		.endif { '#endif' }
 	}
 }
@@ -28,6 +30,7 @@ pub fn compiler_directive_kind_from_name(name string) ?CompilerDirectiveKind {
 		'error' { return .error }
 		'warning' { return .warning }
 		'if' { return .if_ }
+		'else' { return .else_ }
 		'endif' { return .endif }
 		else { return error('unknown compiler directive `#$name`') }
 	}
