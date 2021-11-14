@@ -146,6 +146,10 @@ fn (mut p Parser) process_compiler_directive_define_undef(hash Token, kind Compi
 }
 
 fn (mut p Parser) if_directive_cond_is_true() bool {
+	return p.if_directive_cond_calc_expr()
+}
+
+fn (mut p Parser) if_directive_cond_calc_expr() bool {
 	return p.if_directive_cond_calc_or_expr()
 }
 
