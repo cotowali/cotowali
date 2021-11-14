@@ -1,9 +1,13 @@
 #if true
   assert(true)
+#else
+  assert(false)
 #endif
 
 #if false
   assert(false)
+#else
+  assert(true)
 #endif
 
 #if !true
