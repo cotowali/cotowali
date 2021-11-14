@@ -170,8 +170,7 @@ fn (mut p Parser) if_directive_cond_calc_and_expr() bool {
 }
 
 fn (mut p Parser) if_directive_cond_value() bool {
-	if p.kind(0) == .not {
-		p.consume()
+	if _ := p.consume_if_kind_eq(.not) {
 		return !p.if_directive_cond_value()
 	}
 
