@@ -151,8 +151,21 @@ fn (mut p Parser) if_directive_cond_is_true() bool {
 
 fn (mut p Parser) if_directive_cond_calc_or_expr() bool {
 	mut value := p.if_directive_cond_calc_and_expr()
-	for p.kind(0) == .logical_or {
+	for {
+		if p.kind(0) == .eol && p.kind(1) == .logical_or {
+			//       v p.kind(0) == .eol
+			// #if a
+			//     || b
+			// //  ^^ p.kind(1) == .logical_or
+			p.consume()
+		}
+
+		if p.kind(0) != .logical_or {
+			break
+		}
+
 		p.consume()
+		p.skip_eol()
 		right := p.if_directive_cond_calc_and_expr()
 		value = value || right
 	}
@@ -161,8 +174,18 @@ fn (mut p Parser) if_directive_cond_calc_or_expr() bool {
 
 fn (mut p Parser) if_directive_cond_calc_and_expr() bool {
 	mut value := p.if_directive_cond_value()
-	for p.kind(0) == .logical_and {
+	for {
+		if p.kind(0) == .eol && p.kind(1) == .logical_and {
+			// same as `||` expr
+			p.consume()
+		}
+
+		if p.kind(0) != .logical_and {
+			break
+		}
+
 		p.consume()
+		p.skip_eol()
 		right := p.if_directive_cond_value()
 		value = value && right
 	}

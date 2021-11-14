@@ -42,6 +42,8 @@
 #endif
 
 
+// --
+
 #if true && true
   assert(true)
 #else
@@ -63,6 +65,8 @@
 #else
   assert(false)
 #endif
+
+// --
 
 #if true || true
   assert(true)
@@ -86,6 +90,8 @@
   assert(false)
 #endif
 
+// --
+
 #if true && false || true
   assert(true)
 #else
@@ -95,4 +101,22 @@
   assert(false)
 #else
   assert(true)
+#endif
+
+// ---
+
+#if true
+||  true  ||
+    true
+  assert(true)
+#else
+  assert(false)
+#endif
+
+#if true
+&&  true  &&
+    true
+  assert(true)
+#else
+  assert(false)
 #endif
