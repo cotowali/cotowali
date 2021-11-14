@@ -63,3 +63,25 @@
 #else
   assert(false)
 #endif
+
+#if true || true
+  assert(true)
+#else
+  assert(false)
+#endif
+#if true || false
+  assert(true)
+#else
+  assert(false)
+#endif
+#if false || false
+  assert(false)
+#else
+  assert(true)
+#endif
+
+#if false || false || !false
+  assert(true)
+#else
+  assert(false)
+#endif

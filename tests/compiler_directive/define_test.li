@@ -42,3 +42,9 @@
 #else
   assert(false)
 #endif
+
+#if true1 || false1
+  assert(true)
+#else
+  assert(false)
+#endif
