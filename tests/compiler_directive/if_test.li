@@ -47,6 +47,17 @@
 #else
   assert(false)
 #endif
+#if true && false
+  assert(false)
+#else
+  assert(true)
+#endif
+#if false && false
+  assert(false)
+#else
+  assert(true)
+#endif
+
 #if true && true && !false && !!!false
   assert(true)
 #else
