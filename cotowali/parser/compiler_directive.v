@@ -267,6 +267,9 @@ fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDi
 				p.error(missing_if_directive(kind), start_pos.merge(p.pos(-1)))
 				p.skip_until_eol()
 			}
+			// active else branch is handled in `.if_`
+			// just skip branch here
+			p.if_directive_depth--
 			p.skip_if_else_directive_branch(.else_)
 		}
 		.endif {
