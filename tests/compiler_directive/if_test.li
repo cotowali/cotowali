@@ -21,3 +21,28 @@
 #else
   assert(false)
 #endif
+
+
+#if true
+  #if 0
+    assert(false)
+  #else
+    assert(true)
+  #endif
+
+  #if 1
+    #if -1
+      assert(true)
+    #else
+      assert(false)
+    #endif
+  #else
+    #if 1
+      assert(false)
+    #else
+      assert(false)
+    #endif
+  #endif
+#else
+  assert(false)
+#endif

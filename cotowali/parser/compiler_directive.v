@@ -163,12 +163,12 @@ fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDi
 				expected_cond = !expected_cond
 			}
 
-			cond := if p.kind(0).@is(.keyword) || p.kind(0) in [.ident, .bool_literal] {
+			cond := if p.kind(0).@is(.keyword) || p.kind(0) in [.ident, .bool_literal, .int_literal] {
 				cond_tok := p.consume()
-				if cond_tok.kind == .bool_literal {
-					cond_tok.bool()
-				} else {
-					p.ctx.compiler_symbols.get_bool(cond_tok.text)
+				match cond_tok.kind {
+					.bool_literal { cond_tok.bool() }
+					.int_literal { cond_tok.text.int() != 0 }
+					else { p.ctx.compiler_symbols.get_bool(cond_tok.text) }
 				}
 			} else {
 				p.skip_until_eol()
