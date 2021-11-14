@@ -40,3 +40,15 @@
 #else
   assert(false)
 #endif
+
+
+#if true && true
+  assert(true)
+#else
+  assert(false)
+#endif
+#if true && true && !false && !!!false
+  assert(true)
+#else
+  assert(false)
+#endif

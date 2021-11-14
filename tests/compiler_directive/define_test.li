@@ -31,3 +31,14 @@
 #else
   assert(true)
 #endif
+
+#define true1
+#define true2
+#define false1 false
+#define false2 false
+
+#if true1 && true2 && !false1 && !!!false2
+  assert(true)
+#else
+  assert(false)
+#endif

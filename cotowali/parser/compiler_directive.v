@@ -146,25 +146,35 @@ fn (mut p Parser) process_compiler_directive_define_undef(hash Token, kind Compi
 }
 
 fn (mut p Parser) if_directive_cond_is_true() bool {
-	mut expected_cond := true
+	return p.if_directive_cond_calc_and_expr()
+}
+
+fn (mut p Parser) if_directive_cond_calc_and_expr() bool {
+	mut value := p.if_directive_cond_value()
+	for p.kind(0) == .logical_and {
+		p.consume()
+		value = value && p.if_directive_cond_value()
+	}
+	return value
+}
+
+fn (mut p Parser) if_directive_cond_value() bool {
 	for p.kind(0) == .not {
 		p.consume()
-		expected_cond = !expected_cond
+		return !p.if_directive_cond_value()
 	}
 
 	if p.kind(0).@is(.keyword) || p.kind(0) in [.ident, .bool_literal, .int_literal] {
 		cond_tok := p.consume()
-		cond := match cond_tok.kind {
+		return match cond_tok.kind {
 			.bool_literal { cond_tok.bool() }
 			.int_literal { cond_tok.text.int() != 0 }
 			else { p.ctx.compiler_symbols.get_bool(cond_tok.text) }
 		}
-		return cond == expected_cond
 	}
 
 	p.unexpected_token_error(p.token(0))
-	p.skip_until_eol()
-	return expected_cond // to parse branch, use same value as expected_cond
+	return true // when error, use true to try to parse branch to show better error
 }
 
 fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDirectiveKind) {
