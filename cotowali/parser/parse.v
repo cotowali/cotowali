@@ -10,6 +10,7 @@ import cotowali.source { Source, SourceScheme, source_scheme_from_str }
 import cotowali.symbols { Scope }
 import cotowali.ast
 import cotowali.messages { unreachable }
+import cotowali.compiler_directives { missing_endif_directive }
 import net.urllib { URL }
 import net.http
 import os
@@ -35,6 +36,10 @@ pub fn (mut p Parser) parse(scope &Scope) &ast.File {
 	for p.kind(0) != .eof {
 		file.stmts << p.parse_stmt()
 	}
+	if p.if_directive_depth > 0 {
+		p.error(missing_endif_directive(), p.pos(0))
+	}
+
 	return file
 }
 

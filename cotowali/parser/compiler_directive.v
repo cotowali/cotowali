@@ -220,6 +220,7 @@ fn (mut p Parser) if_directive_cond_value() bool {
 	}
 
 	p.unexpected_token_error(p.token(0))
+	p.skip_until_eol()
 	return true // when error, use true to try to parse branch to show better error
 }
 
@@ -236,7 +237,7 @@ fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDi
 	match kind {
 		.if_ {
 			cond_is_true := p.if_directive_cond_is_true()
-			p.check(.eol) or {}
+			p.check(.eol) or { p.skip_until_eol() }
 
 			if cond_is_true {
 				p.if_directive_depth++

@@ -60,6 +60,9 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 	}
 
 	p.process_compiler_directives()
+	if p.kind(0) == .eof {
+		return ast.EmptyStmt{}
+	}
 
 	attrs := p.parse_attrs()
 	mut stmt := p.try_parse_stmt() or {
