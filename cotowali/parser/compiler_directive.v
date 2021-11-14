@@ -145,6 +145,28 @@ fn (mut p Parser) process_compiler_directive_define_undef(hash Token, kind Compi
 	}
 }
 
+fn (mut p Parser) if_directive_cond_is_true() bool {
+	mut expected_cond := true
+	for p.kind(0) == .not {
+		p.consume()
+		expected_cond = !expected_cond
+	}
+
+	if p.kind(0).@is(.keyword) || p.kind(0) in [.ident, .bool_literal, .int_literal] {
+		cond_tok := p.consume()
+		cond := match cond_tok.kind {
+			.bool_literal { cond_tok.bool() }
+			.int_literal { cond_tok.text.int() != 0 }
+			else { p.ctx.compiler_symbols.get_bool(cond_tok.text) }
+		}
+		return cond == expected_cond
+	}
+
+	p.unexpected_token_error(p.token(0))
+	p.skip_until_eol()
+	return expected_cond // to parse branch, use same value as expected_cond
+}
+
 fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDirectiveKind) {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
@@ -157,28 +179,7 @@ fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDi
 
 	match kind {
 		.if_ {
-			mut expected_cond := true
-			for p.kind(0) == .not {
-				p.consume()
-				expected_cond = !expected_cond
-			}
-
-			cond := if p.kind(0).@is(.keyword) || p.kind(0) in [.ident, .bool_literal, .int_literal] {
-				cond_tok := p.consume()
-				match cond_tok.kind {
-					.bool_literal { cond_tok.bool() }
-					.int_literal { cond_tok.text.int() != 0 }
-					else { p.ctx.compiler_symbols.get_bool(cond_tok.text) }
-				}
-			} else {
-				p.skip_until_eol()
-				if expected_cond {
-					true // to parse branch, set the same value as expected_cond
-				} else {
-					false // same as above
-				}
-			}
-
+			cond_is_true := p.if_directive_cond_is_true()
 			p.check(.eol) or {}
 
 			if cond_is_true {
