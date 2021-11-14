@@ -26,7 +26,7 @@ mut:
 	token_idx   int
 	scope       &Scope
 
-	inside_compiler_if_directive_active_branch bool
+	if_directive_depth int
 
 	restore_strategy RestoreStrategy
 

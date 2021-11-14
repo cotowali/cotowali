@@ -24,17 +24,11 @@
 
 
 #if true
-  #if 0
-    assert(false)
-  #else
-    assert(true)
-  #endif
-
   #if 1
-    #if -1
-      assert(true)
-    #else
+    #if 0
       assert(false)
+    #else
+      assert(true)
     #endif
   #else
     #if 1

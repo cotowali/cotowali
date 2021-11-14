@@ -181,8 +181,8 @@ fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDi
 
 			p.check(.eol) or {}
 
-			if cond == expected_cond {
-				p.inside_compiler_if_directive_active_branch = true
+			if cond_is_true {
+				p.if_directive_depth++
 			} else {
 				p.skip_if_else_directive_branch(.if_)
 				if !p.is_compiler_directive(0) {
@@ -199,26 +199,25 @@ fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDi
 					panic(unreachable('expecting #else'))
 				}
 
-				p.inside_compiler_if_directive_active_branch = true
+				p.if_directive_depth++
 				p.consume_with_assert(.hash)
 				p.consume_with_assert(.key_else)
 				p.check(.eol) or {}
 			}
 		}
 		.else_ {
-			if p.inside_compiler_if_directive_active_branch {
-				p.skip_if_else_directive_branch(.else_)
-			} else {
+			if p.if_directive_depth == 0 {
 				p.error(missing_if_directive(kind), start_pos.merge(p.pos(-1)))
 				p.skip_until_eol()
 			}
+			p.skip_if_else_directive_branch(.else_)
 		}
 		.endif {
-			if !p.inside_compiler_if_directive_active_branch {
+			if p.if_directive_depth == 0 {
 				p.error(missing_if_directive(kind), start_pos.merge(p.pos(-1)))
 				p.skip_until_eol()
 			}
-			p.inside_compiler_if_directive_active_branch = false
+			p.if_directive_depth--
 		}
 		else {
 			panic(unreachable('invalid directive ${kind}. expecting #if or #endif'))
