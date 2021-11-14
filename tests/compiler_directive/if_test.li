@@ -85,3 +85,14 @@
 #else
   assert(false)
 #endif
+
+#if true && false || true
+  assert(true)
+#else
+  assert(false)
+#endif
+#if false || true && false
+  assert(false)
+#else
+  assert(true)
+#endif
