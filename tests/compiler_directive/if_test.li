@@ -1,0 +1,163 @@
+#if true
+  assert(true)
+#else
+  assert(false)
+#endif
+
+#if false
+  assert(false)
+#else
+  assert(true)
+#endif
+
+#if !true
+  assert(false)
+#else
+  assert(true)
+#endif
+
+#if !!true
+  assert(true)
+#else
+  assert(false)
+#endif
+
+
+#if true
+  #if 1
+    #if 0
+      assert(false)
+    #else
+      assert(true)
+    #endif
+  #else
+    #if 1
+      assert(false)
+    #else
+      assert(false)
+    #endif
+  #endif
+#else
+  assert(false)
+#endif
+
+
+// --
+
+#if true && true
+  assert(true)
+#else
+  assert(false)
+#endif
+#if true && false
+  assert(false)
+#else
+  assert(true)
+#endif
+#if false && false
+  assert(false)
+#else
+  assert(true)
+#endif
+
+#if true && true && !false && !!!false
+  assert(true)
+#else
+  assert(false)
+#endif
+
+// --
+
+#if true || true
+  assert(true)
+#else
+  assert(false)
+#endif
+#if true || false
+  assert(true)
+#else
+  assert(false)
+#endif
+#if false || false
+  assert(false)
+#else
+  assert(true)
+#endif
+
+#if false || false || !false
+  assert(true)
+#else
+  assert(false)
+#endif
+
+// --
+
+#if true && false || true
+  assert(true)
+#else
+  assert(false)
+#endif
+#if false || true && false
+  assert(false)
+#else
+  assert(true)
+#endif
+
+// --
+
+#if (false)
+  assert(false)
+#else
+  assert(true)
+#endif
+
+#if (!false && true) || !(false || !(false && true))
+  assert(true)
+#else
+  assert(false)
+#endif
+
+#if (true) && !(true) || (((true)))
+  assert(true)
+#else
+  assert(false)
+#endif
+
+
+// --
+
+#if true
+||  true  ||
+    true
+  assert(true)
+#else
+  assert(false)
+#endif
+
+#if true
+&&  true  &&
+    true
+  assert(true)
+#else
+  assert(false)
+#endif
+
+// --
+
+#if (
+
+   true
+|| true ||
+   true
+&& true &&
+(
+ ( true )
+)
+||
+! ( true )
+
+)
+  assert(true)
+#else
+  assert(false)
+#endif

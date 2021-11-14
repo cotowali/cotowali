@@ -104,7 +104,7 @@ pub type IntLiteral = PrimitiveLiteral
 pub type FloatLiteral = PrimitiveLiteral
 
 pub fn (e BoolLiteral) bool() bool {
-	return e.token.text != 'false'
+	return e.token.bool()
 }
 
 pub fn (e IntLiteral) int() int {
