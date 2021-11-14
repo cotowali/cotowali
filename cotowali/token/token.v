@@ -255,6 +255,10 @@ fn (t Token) text_for_str() string {
 	return t.text.replace_each(['\\', '\\\\', '\n', r'\n', '\r', r'\r'])
 }
 
+pub fn (t Token) bool() bool {
+	return t.kind == .bool_literal && t.text != 'false'
+}
+
 pub fn (t Token) str() string {
 	return "Token{ .$t.kind, '$t.text_for_str()', $t.pos }"
 }
