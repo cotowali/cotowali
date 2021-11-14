@@ -22,11 +22,6 @@ pub fn nil_to_none<T>(ref &T) ?&T {
 	return if isnil(ref) { none } else { ref }
 }
 
-pub fn panic_and_value<T>(msg string, v T) T {
-	panic(msg)
-	return v
-}
-
 pub fn struct_name<T>(v T) string {
 	// SumTypeName(SumTypeName2(mod.Struct{
 	mut s := v.str().split_into_lines()[0]

@@ -8,7 +8,6 @@ module sh
 import cotowali.ast { ArrayLiteral, Expr, FnDecl, MapLiteral }
 import cotowali.symbols
 import cotowali.messages { unreachable }
-import cotowali.util { panic_and_value }
 
 type IdentForValue = ArrayLiteral | Expr | FnDecl | MapLiteral | ast.Var | symbols.Var
 
@@ -25,11 +24,8 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 			e.ident_for(v.sym)
 		}
 		ast.Var {
-			if sym := v.sym() {
-				e.ident_for(sym)
-			} else {
-				panic_and_value(unreachable('sym is nil'), '')
-			}
+			sym := v.sym() or { panic(unreachable('sym is nil')) }
+			e.ident_for(sym)
 		}
 		ArrayLiteral, MapLiteral {
 			e.new_tmp_ident()
@@ -39,11 +35,8 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 				// v bug: Segfault
 				// ast.Var, ArrayLiteral, MapLiteral { e.ident_for(v) }
 				ast.Var {
-					if sym := v.sym() {
-						e.ident_for(sym)
-					} else {
-						panic_and_value(unreachable('sym is nil'), '')
-					}
+					sym := v.sym() or { panic(unreachable('sym is nil')) }
+					e.ident_for(sym)
 				}
 				ArrayLiteral, MapLiteral {
 					e.new_tmp_ident()
@@ -55,7 +48,7 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 					e.ident_for(v.ident)
 				}
 				else {
-					panic_and_value(unreachable('cannot take ident'), '')
+					panic(unreachable('cannot take ident'))
 				}
 			}
 		}
