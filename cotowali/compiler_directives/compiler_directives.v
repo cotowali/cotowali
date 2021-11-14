@@ -10,6 +10,8 @@ import cotowali.config { Config }
 pub enum CompilerDirectiveKind {
 	error
 	warning
+	define
+	undef
 	if_
 	else_
 	endif
@@ -19,6 +21,8 @@ pub fn (k CompilerDirectiveKind) str() string {
 	return match k {
 		.error { '#error' }
 		.warning { '#warning' }
+		.define { '#define' }
+		.undef { '#undef' }
 		.if_ { '#if' }
 		.else_ { '#else' }
 		.endif { '#endif' }
@@ -29,6 +33,8 @@ pub fn compiler_directive_kind_from_name(name string) ?CompilerDirectiveKind {
 	match name {
 		'error' { return .error }
 		'warning' { return .warning }
+		'define' { return .define }
+		'undef' { return .undef }
 		'if' { return .if_ }
 		'else' { return .else_ }
 		'endif' { return .endif }

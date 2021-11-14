@@ -1,0 +1,33 @@
+#if variable
+  assert(false)
+#else
+  assert(true)
+#endif
+
+#define variable
+#if variable
+  assert(true)
+#else
+  assert(false)
+#endif
+
+#undef variable
+#if variable
+  assert(false)
+#else
+  assert(true)
+  #define variable true
+#endif
+
+#if variable
+  assert(true)
+  #define variable false
+#else
+  assert(false)
+#endif
+
+#if variable
+  assert(false)
+#else
+  assert(true)
+#endif

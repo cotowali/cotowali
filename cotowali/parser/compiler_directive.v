@@ -69,6 +69,9 @@ fn (mut p Parser) process_compiler_directive() {
 		.error, .warning {
 			p.process_compiler_directive_error_or_warning(hash, kind)
 		}
+		.define, .undef {
+			p.process_compiler_directive_define_undef(hash, kind)
+		}
 		.if_, .else_, .endif {
 			p.process_compiler_directive_if_else(hash, kind)
 		}
@@ -94,6 +97,51 @@ fn (mut p Parser) process_compiler_directive_error_or_warning(hash Token, kind C
 		.error { p.error(msg, pos) }
 		.warning { p.warn(msg, pos) }
 		else { panic(unreachable('invalid directive ${kind}. expecting error or warning')) }
+	}
+}
+
+fn (mut p Parser) read_define_directive_value() string {
+	mut value_pos := p.pos(0)
+	p.skip_until_eol()
+	value_pos = value_pos.merge(p.pos(-1))
+	mut value := p.source().slice(value_pos.begin(), value_pos.end())
+	first, last := value[0], value[value.len - 1]
+	if (first == `"` && last == `"`) || (first == `'` && last == `'`) {
+		value = value[1..value.len - 1]
+	}
+	return value
+}
+
+fn (mut p Parser) process_compiler_directive_define_undef(hash Token, kind CompilerDirectiveKind) {
+	$if trace_parser ? {
+		p.trace_begin(@FN)
+		defer {
+			p.trace_end()
+		}
+	}
+
+	if p.kind(0) in [.eol, .eof] {
+		p.unexpected_token_error(p.token(0))
+		return
+	}
+
+	key := p.consume()
+
+	match kind {
+		.define {
+			if p.kind(0) in [.eol, .eof] {
+				p.ctx.compiler_symbols.define(key.text)
+			} else {
+				value := p.read_define_directive_value()
+				p.ctx.compiler_symbols.define_with_value(key.text, value)
+			}
+		}
+		.undef {
+			p.ctx.compiler_symbols.undef(key.text)
+		}
+		else {
+			panic(unreachable('invalid directive ${kind}. expecting #define or #undef'))
+		}
 	}
 }
 
