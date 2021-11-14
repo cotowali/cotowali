@@ -1,0 +1,15 @@
+#if true
+  assert(true)
+#endif
+
+#if false
+  assert(false)
+#endif
+
+#if !true
+  assert(false)
+#endif
+
+#if !!true
+  assert(true)
+#endif

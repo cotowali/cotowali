@@ -26,7 +26,8 @@ mut:
 	token_idx   int
 	scope       &Scope
 
-	restore_strategy RestoreStrategy
+	inside_compiler_if_directive bool
+	restore_strategy             RestoreStrategy
 
 	tracer Tracer [if trace_parser ?]
 }
