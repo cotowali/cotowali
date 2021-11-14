@@ -201,6 +201,15 @@ fn (mut p Parser) if_directive_cond_value() bool {
 		return !p.if_directive_cond_value()
 	}
 
+	if _ := p.consume_if_kind_eq(.l_paren) {
+		p.skip_eol()
+		defer {
+			p.skip_eol()
+			p.consume_with_check(.r_paren) or {}
+		}
+		return p.if_directive_cond_calc_expr()
+	}
+
 	if p.kind(0).@is(.keyword) || p.kind(0) in [.ident, .bool_literal, .int_literal] {
 		cond_tok := p.consume()
 		return match cond_tok.kind {
