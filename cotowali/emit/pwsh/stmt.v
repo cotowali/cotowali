@@ -46,7 +46,9 @@ fn (mut e Emitter) block(block ast.Block) {
 }
 
 fn (mut e Emitter) doc_comment(comment ast.DocComment) {
-	panic('unimplemented')
+	for line in comment.lines() {
+		e.writeln('#$line')
+	}
 }
 
 fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
