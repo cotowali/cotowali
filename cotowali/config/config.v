@@ -5,6 +5,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module config
 
+import os
+
 pub enum Backend {
 	sh
 	dash
@@ -21,6 +23,22 @@ pub fn (b Backend) shebang() string {
 		.zsh { '#!/usr/bin/env dash' }
 		.powershell { '#!/usr/bin/env pwsh' }
 	}
+}
+
+pub fn (backend Backend) find_executable_path() ?string {
+	cmds := match backend {
+		.powershell { ['pwsh', 'pwsh.exe', 'powershell.exe'] }
+		.sh { ['sh'] }
+		.dash { ['dash'] }
+		.bash { ['bash', 'bash.exe'] }
+		.zsh { ['zsh'] }
+	}
+	for cmd in cmds {
+		if found := os.find_abs_path_of_executable(cmd) {
+			return found
+		}
+	}
+	return error('$backend not found')
 }
 
 [flag]
