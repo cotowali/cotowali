@@ -58,6 +58,7 @@ pub fn backend_from_str(s string) ?Backend {
 		'dash' { return .dash }
 		'bash' { return .bash }
 		'zsh' { return .zsh }
+		'pwsh', 'powershell' { return .powershell }
 		else { return error('unknown backend `$s`') }
 	}
 }
