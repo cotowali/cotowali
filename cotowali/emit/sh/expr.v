@@ -8,7 +8,7 @@ module sh
 import cotowali.ast
 import cotowali.token
 import cotowali.symbols { builtin_type }
-import cotowali.util { Tuple2, panic_and_value, tuple2 }
+import cotowali.util { Tuple2, tuple2 }
 import cotowali.messages { unreachable }
 
 type ExprOrString = ast.Expr | string
@@ -194,7 +194,7 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 		e.write(match left_ts.kind() {
 			.array { 'array_get ' }
 			.map { 'map_get ' }
-			else { panic_and_value(unreachable('invalid index left'), '') }
+			else { panic(unreachable('invalid index left')) }
 		})
 
 		e.expr(v.expr.left)
@@ -270,7 +270,7 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 	op := match expr.op.kind {
 		.logical_and { '&&' }
 		.logical_or { '||' }
-		else { panic_and_value(unreachable('invalid op'), '') }
+		else { panic(unreachable('invalid op')) }
 	}
 
 	e.expr(expr.left, mode: .condition)
@@ -321,7 +321,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 				.ge { '-ge' }
 				.lt { '-lt' }
 				.le { '-le' }
-				else { panic_and_value(unreachable('invalid op'), '') }
+				else { panic(unreachable('invalid op')) }
 			}
 			e.sh_test_cond_infix(expr.left, op, expr.right)
 		}, expr, opt)

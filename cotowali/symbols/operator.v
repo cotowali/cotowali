@@ -7,14 +7,13 @@ module symbols
 
 import cotowali.token { Token, TokenKindClass }
 import cotowali.messages { already_defined, unreachable }
-import cotowali.util { panic_and_value }
 
 fn verify_op_fn_signature(expected TokenKindClass, op Token, fn_info FunctionTypeInfo) ? {
 	expected_s := match expected {
 		.infix_op { 'infix' }
 		.prefix_op { 'prefix' }
 		.postfix_op { 'postfix' }
-		else { panic_and_value(unreachable('not op kind'), '') }
+		else { panic(unreachable('not op kind')) }
 	} + ' operator'
 
 	if !op.kind.@is(expected) {

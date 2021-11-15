@@ -8,7 +8,6 @@ module sh
 import cotowali.ast
 import cotowali.symbols { TypeSymbol }
 import cotowali.messages { unreachable }
-import cotowali.util { panic_and_value }
 
 fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 	// v bug: `match value` occurs c error at `e.ident_for`
@@ -119,7 +118,7 @@ fn (mut e Emitter) index_assign(left ast.Expr, index ast.Expr, right ast.Expr) {
 	e.write(match left.type_symbol().resolved().kind() {
 		.array { 'array_set $name ' }
 		.map { 'map_set $name ' }
-		else { panic_and_value(unreachable('invalid index left'), '') }
+		else { panic(unreachable('invalid index left')) }
 	})
 	e.expr(index)
 	e.write(' ')

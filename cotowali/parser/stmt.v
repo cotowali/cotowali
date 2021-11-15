@@ -10,7 +10,6 @@ import cotowali.messages { checksum_mismatch, duplicated_key, invalid_key, unrea
 import cotowali.token { Token, TokenKind }
 import cotowali.source { none_pos }
 import cotowali.symbols { builtin_type }
-import cotowali.util { panic_and_value }
 import net.urllib
 
 fn (mut p Parser) parse_attr() ?ast.Attr {
@@ -262,7 +261,7 @@ fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
 		.mul_assign { TokenKind.mul }
 		.div_assign { TokenKind.div }
 		.mod_assign { TokenKind.mod }
-		else { panic_and_value(unreachable(''), TokenKind.unknown) }
+		else { panic(unreachable('')) }
 	}
 	match infix_op_kind {
 		.plus, .minus, .mul, .div, .mod {
