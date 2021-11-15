@@ -37,14 +37,32 @@ fn compile_to_temp_file(s Source, ctx &Context) ?string {
 	return temp_path
 }
 
+fn find_backend_executable(ctx Context) ?string {
+	cmds := match ctx.config.backend {
+		.powershell { ['pwsh', 'pwsh.exe', 'powershell.exe'] }
+		.sh { ['sh'] }
+		.dash { ['dash'] }
+		.bash { ['bash', 'bash.exe'] }
+		.zsh { ['zsh'] }
+	}
+	for cmd in cmds {
+		if found := os.find_abs_path_of_executable(cmd) {
+			return found
+		}
+	}
+	return error('$ctx.config.backend not found')
+}
+
 pub fn run(s Source, ctx &Context) ?int {
 	temp_file := compile_to_temp_file(s, ctx) ?
 	defer {
 		os.rm(temp_file) or { panic(err) }
 	}
-	code := match ctx.config.backend {
-		.powershell { os.system('powershell.exe $temp_file') }
-		else { os.system('sh "$temp_file"') }
+	executable := find_backend_executable(ctx) or {
+		eprintln(err.msg)
+		exit(1)
 	}
-	return code
+
+	exit_code := os.system('$executable "$temp_file"')
+	return exit_code
 }
