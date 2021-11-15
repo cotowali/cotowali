@@ -104,6 +104,7 @@ tasks:
       compile: v run tests/tester.v --compile $@
       fix: z test integration --fix $@
       prod: z test integration --prod $@
+      pwsh: z test integration --pwsh $@
       hello: z run examples/hello.li
       watch: |
         watch=""
