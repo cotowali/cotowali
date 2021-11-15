@@ -1,0 +1,23 @@
+// Copyright (c) 2021 zakuro <z@kuro.red>. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+module powershell
+
+import cotowali.ast { File }
+import cotowali.util { must_write }
+
+pub fn (mut e Emitter) emit(f &File) {
+	if e.ctx.config.feature.has(.shebang) {
+		must_write(mut &e.out, e.ctx.config.backend.shebang() + '\n\n')
+	}
+
+	e.file(f)
+	must_write(mut &e.out, e.code.bytes())
+}
+
+fn (mut e Emitter) file(f &File) {
+	e.writeln('# file: $f.source.path')
+	e.writeln('write-output "Hello Powershell"')
+}

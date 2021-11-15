@@ -9,6 +9,7 @@ import io
 import cotowali.ast { File }
 import cotowali.context { Context }
 import cotowali.emit.sh
+import cotowali.emit.powershell
 
 pub interface Emitter {
 mut:
@@ -17,9 +18,14 @@ mut:
 
 pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 	// avoid V's bug (segfault) by store to variable
-	mut e := match ctx.config.backend {
-		.sh, .dash, .bash, .zsh { sh.new_emitter(out, ctx) }
-		.powershell { panic('powershell backend is not yet implemented.') }
+	match ctx.config.backend {
+		.sh, .dash, .bash, .zsh {
+			mut e := sh.new_emitter(out, ctx)
+			return e
+		}
+		.powershell {
+			mut e := powershell.new_emitter(out, ctx)
+			return e
+		}
 	}
-	return e
 }

@@ -38,7 +38,7 @@ pub fn (c &Compiler) compile() ?string {
 pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	ctx := c.ctx
 	config := ctx.config
-	if config.backend != .sh {
+	if config.backend !in [.sh, .powershell] {
 		return error('$config.backend backend is not yet implemented.')
 	}
 	mut f := parser.parse(c.source, ctx)
