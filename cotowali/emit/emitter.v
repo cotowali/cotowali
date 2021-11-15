@@ -9,7 +9,7 @@ import io
 import cotowali.ast { File }
 import cotowali.context { Context }
 import cotowali.emit.sh
-import cotowali.emit.powershell
+import cotowali.emit.pwsh
 
 pub interface Emitter {
 mut:
@@ -23,8 +23,8 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 			mut e := sh.new_emitter(out, ctx)
 			return e
 		}
-		.powershell {
-			mut e := powershell.new_emitter(out, ctx)
+		.pwsh {
+			mut e := pwsh.new_emitter(out, ctx)
 			return e
 		}
 	}

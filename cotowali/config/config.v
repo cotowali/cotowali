@@ -12,7 +12,7 @@ pub enum Backend {
 	dash
 	bash
 	zsh
-	powershell
+	pwsh
 }
 
 pub fn (b Backend) shebang() string {
@@ -21,13 +21,13 @@ pub fn (b Backend) shebang() string {
 		.dash { '#!/usr/bin/env dash' }
 		.bash { '#!/usr/bin/env dash' }
 		.zsh { '#!/usr/bin/env dash' }
-		.powershell { '#!/usr/bin/env pwsh' }
+		.pwsh { '#!/usr/bin/env pwsh' }
 	}
 }
 
 pub fn (backend Backend) find_executable_path() ?string {
 	cmds := match backend {
-		.powershell { ['pwsh', 'pwsh.exe', 'powershell.exe'] }
+		.pwsh { ['pwsh', 'pwsh.exe', 'powershell.exe'] }
 		.sh { ['sh'] }
 		.dash { ['dash'] }
 		.bash { ['bash', 'bash.exe'] }
@@ -46,7 +46,7 @@ pub fn (backend Backend) script_ext() string {
 		.sh, .dash { '.sh' }
 		.bash { '.bash' }
 		.zsh { '.zsh' }
-		.powershell { '.ps1' }
+		.pwsh { '.ps1' }
 	}
 }
 
@@ -85,7 +85,7 @@ pub fn backend_from_str(s string) ?Backend {
 		'dash' { return .dash }
 		'bash' { return .bash }
 		'zsh' { return .zsh }
-		'pwsh', 'powershell' { return .powershell }
+		'pwsh', 'powershell' { return .pwsh }
 		else { return error('unknown backend `$s`') }
 	}
 }
