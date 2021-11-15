@@ -22,14 +22,14 @@ jobs:
     strategy:
       matrix:
         cc: [clang, gcc]
+        test_arg: ['', 'prod']
     env:
       VFLAGS: "-cc ${{ matrix.cc }}"
     steps:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
       - run: z ci setup-v
-      - run: z ci test
-      - run: z ci test prod
+      - run: z ci test ${{ matrix.test_arg }}
   test-alpine:
     runs-on: ubuntu-latest
     env:
@@ -53,7 +53,6 @@ jobs:
           export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/opt/openssl/lib/"
       - run: z ci setup-v
       - run: z ci test
-      - run: z ci test prod
 # shellcheck:
 #   runs-on: ubuntu-latest
 #   strategy:
