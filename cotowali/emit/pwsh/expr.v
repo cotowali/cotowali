@@ -56,7 +56,15 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	if !op.kind.@is(.infix_op) {
 		panic(unreachable('not a infix op'))
 	}
-	panic('unimplemented')
+
+	op_text := match op.kind {
+		.eq { '-eq' }
+		.ne { '-ne' }
+		else { panic('unimplemented') }
+	}
+	e.expr(expr.left)
+	e.write(' $op_text ')
+	e.expr(expr.right)
 }
 
 fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {
