@@ -54,7 +54,10 @@ fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
 
 fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 	e.write('if ')
-	e.expr(stmt.args[0], mode: .condition, writeln: true)
+	e.expr(stmt.cond(),
+		mode: .condition
+		writeln: true
+	)
 
 	e.writeln('then')
 	e.indent()
@@ -68,9 +71,9 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 	e.indent()
 	{
 		mut msg := "'LINE $stmt.pos.line: Assertion Failed'"
-		if stmt.args.len > 1 {
+		if msg_expr := stmt.message_expr() {
 			tmp := e.new_tmp_ident()
-			e.assign(tmp, stmt.args[1], stmt.args[1].type_symbol())
+			e.assign(tmp, msg_expr, msg_expr.type_symbol())
 			msg += '" (\$$tmp)"'
 		}
 		e.writeln('echo $msg >&2')

@@ -8,6 +8,7 @@ module ast
 import cotowali.token { Token }
 import cotowali.source { Pos }
 import cotowali.symbols { Scope, Type, builtin_type }
+import cotowali.messages { unreachable }
 import cotowali.util.checksum
 
 pub struct Attr {
@@ -191,6 +192,22 @@ pub:
 	pos Pos
 pub mut:
 	args []Expr
+}
+
+pub fn (s &AssertStmt) cond() Expr {
+	$if !prod {
+		if s.args.len == 0 {
+			panic(unreachable('assert cond is not set'))
+		}
+	}
+	return s.args[0]
+}
+
+pub fn (s &AssertStmt) message_expr() ?Expr {
+	if s.args.len > 1 {
+		return s.args[1]
+	}
+	return none
 }
 
 pub fn (s &AssertStmt) children() []Node {
