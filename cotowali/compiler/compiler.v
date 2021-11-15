@@ -12,7 +12,7 @@ import cotowali.source { Source }
 import cotowali.parser
 import cotowali.checker
 import cotowali.ast
-import cotowali.emit.sh
+import cotowali.emit
 
 pub struct Compiler {
 pub:
@@ -55,6 +55,6 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 		return
 	}
 
-	mut e := sh.new_emitter(w, ctx)
+	mut e := emit.new_emitter(w, ctx)
 	e.emit(f)
 }
