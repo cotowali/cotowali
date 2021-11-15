@@ -74,7 +74,7 @@ fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {
 }
 
 fn (mut e Emitter) require_stmt(stmt ast.RequireStmt) {
-	panic('unimplemented')
+	e.file(stmt.file)
 }
 
 fn (mut e Emitter) while_stmt(stmt ast.WhileStmt) {

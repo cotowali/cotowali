@@ -14,7 +14,7 @@ import runtime
 
 const (
 	skip_list       = ['raytracing.li']
-	pwsh_test_files = ['nothing']
+	pwsh_test_files = ['empty.li']
 )
 
 // --
