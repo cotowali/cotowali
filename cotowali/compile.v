@@ -24,7 +24,11 @@ pub fn compile_to(w io.Writer, s Source, ctx &Context) ? {
 
 fn compile_to_temp_file(s Source, ctx &Context) ?string {
 	c := new_compiler(s, ctx)
-	temp_path := os.join_path(os.temp_dir(), '${os.file_name(s.path)}_${ulid()}.sh')
+
+	base := '${os.file_name(s.path)}_$ulid()'
+	ext := if ctx.config.backend == .powershell { '.ps1' } else { '.sh' }
+	temp_path := os.join_path(os.temp_dir(), '${base}.$ext')
+
 	mut f := os.create(temp_path) or { panic(err) }
 	c.compile_to(f) ?
 	defer {
