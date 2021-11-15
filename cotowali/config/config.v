@@ -41,6 +41,15 @@ pub fn (backend Backend) find_executable_path() ?string {
 	return error('$backend not found')
 }
 
+pub fn (backend Backend) script_ext() string {
+	return match backend {
+		.sh, .dash { '.sh' }
+		.bash { '.bash' }
+		.zsh { '.zsh' }
+		.powershell { '.ps1' }
+	}
+}
+
 [flag]
 pub enum Feature {
 	warn_all

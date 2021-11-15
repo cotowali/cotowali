@@ -26,8 +26,8 @@ fn compile_to_temp_file(s Source, ctx &Context) ?string {
 	c := new_compiler(s, ctx)
 
 	base := '${os.file_name(s.path)}_$ulid()'
-	ext := if ctx.config.backend == .powershell { '.ps1' } else { '.sh' }
-	temp_path := os.join_path(os.temp_dir(), '${base}.$ext')
+	ext := ctx.config.backend.script_ext()
+	temp_path := os.join_path(os.temp_dir(), '$base$ext')
 
 	mut f := os.create(temp_path) or { panic(err) }
 	c.compile_to(f) ?
