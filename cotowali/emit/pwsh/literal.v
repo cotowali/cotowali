@@ -12,15 +12,15 @@ fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 }
 
 fn (mut e Emitter) bool_literal(expr ast.BoolLiteral, opt ExprOpt) {
-	panic('unimplemented')
+	e.write(expr.token.text)
 }
 
 fn (mut e Emitter) float_literal(expr ast.FloatLiteral, opt ExprOpt) {
-	panic('unimplemented')
+	e.write(expr.token.text)
 }
 
 fn (mut e Emitter) int_literal(expr ast.IntLiteral, opt ExprOpt) {
-	panic('unimplemented')
+	e.write(expr.token.text)
 }
 
 fn (mut e Emitter) map_literal(expr ast.MapLiteral, opt ExprOpt) {
