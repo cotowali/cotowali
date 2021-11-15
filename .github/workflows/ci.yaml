@@ -65,19 +65,19 @@ jobs:
 #     - uses: actions/checkout@v2
 #     - run: z ci setup-v
 #     - run: z ci test shellcheck
-#  sanitize:
-#   runs-on: ubuntu-latest
-#   strategy:
-#     matrix:
-#       fsanitize: [memory, address, undefined]
-#   env:
-#     ASAN_OPTIONS: "detect_leaks=0"
-#     VFLAGS: "-cc clang -cflags '-fsanitize=${{ matrix.fsanitize }}'"
-#   steps:
-#     - uses: zakuro9715/setup-z@main
-#     - uses: actions/checkout@v2
-#     - run: z ci setup-v
-#     - run: z ci test
+  sanitize:
+   runs-on: ubuntu-latest
+   strategy:
+     matrix:
+       fsanitize: address
+   env:
+     ASAN_OPTIONS: "detect_leaks=0"
+     VFLAGS: "-cc clang -cflags '-fsanitize=${{ matrix.fsanitize }}'"
+   steps:
+     - uses: zakuro9715/setup-z@main
+     - uses: actions/checkout@v2
+     - run: z ci setup-v
+     - run: z ci test
   run-on-all-conditions:
     runs-on: ubuntu-latest
     steps:
@@ -87,7 +87,7 @@ jobs:
       - run: z ci run-on-all-conditions
   slack-notify:
     if: failure()
-    needs: [format, test, test-alpine, test-macos, run-on-all-conditions]
+    needs: [format, test, test-alpine, test-macos, sanitize, run-on-all-conditions]
     runs-on: ubuntu-latest
     steps:
       - uses: Gamesight/slack-workflow-status@master
