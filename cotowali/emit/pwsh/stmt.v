@@ -38,7 +38,35 @@ fn (mut e Emitter) assign_stmt(stmt ast.AssignStmt) {
 }
 
 fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
-	panic('unimplemented')
+	e.write('if ( -not (')
+	e.expr(stmt.args[0])
+	e.writeln(') )')
+
+	e.writeln('{')
+	{
+		e.indent()
+
+		e.write('[Console]::Error.WriteLine(')
+		{
+			e.write("'LINE $stmt.pos.line: Assertion Failed'")
+			if msg_expr := stmt.message_expr() {
+				// ...WriteLine(...Assertion Failed' + ' (' + msg_expr + ')')
+				//                                  ^^^^^^^^^^        ^^^^^^
+				e.write(" + ' (' + ") //            |                 |
+				//       ^^^^^^---------------------+                 |
+				e.expr(msg_expr) //                                   |
+				//                                                    |
+				e.write(" + ')'") //                                  |
+				//       ^^^^^^---------------------------------------+
+			}
+		}
+		e.writeln(')')
+
+		e.writeln('exit 1')
+
+		e.unindent()
+	}
+	e.writeln('}')
 }
 
 fn (mut e Emitter) block(block ast.Block) {
