@@ -86,9 +86,10 @@ fn get_sources(paths []string) []string {
 }
 
 struct Lic {
-	source string [required]
-	bin    string [required]
-	prod   bool
+	source   string [required]
+	bin      string [required]
+	prod     bool
+	autofree bool
 }
 
 enum LicCommand {
@@ -100,7 +101,10 @@ enum LicCommand {
 }
 
 fn (lic Lic) compile() ? {
-	flags := if lic.prod { '-prod' } else { '-g' }
+	mut flags := if lic.prod { '-prod' } else { '-g' }
+	if lic.autofree {
+		flags += ' -autofree'
+	}
 	res := os.execute('v $flags $lic.source -o $lic.bin')
 	if res.exit_code != 0 {
 		return error_with_code(res.output, res.exit_code)
@@ -137,6 +141,7 @@ struct TestOption {
 	fix_mode     bool
 	compile_only bool
 	prod         bool
+	autofree     bool
 	parallel     bool = true
 }
 
@@ -291,6 +296,7 @@ fn new_test_suite(paths []string, opt TestOption) TestSuite {
 
 	lic := Lic{
 		prod: opt.prod
+		autofree: opt.autofree
 		source: lic_dir
 		bin: os.join_path(lic_dir, 'lic')
 	}
@@ -388,6 +394,7 @@ fn main() {
 		println('  --fix-mode     auto fix failed tests')
 		println('  --compile      compile tests instead of run tests')
 		println("  --prod         enable V's -prod")
+		println('  --autofree     enable autofree')
 		println('  --no-parallel  disable parallel test')
 		return
 	}
@@ -396,6 +403,7 @@ fn main() {
 	fix_mode := '--fix' in os.args
 	compile_only := '--compile' in os.args
 	prod := '--prod' in os.args
+	autofree := '--autofree' in os.args
 	parallel := '--no-parallel' !in os.args
 	if compile_only && (fix_mode || shellcheck) {
 		eprintln('cannot use --compile with another flags')
@@ -415,6 +423,7 @@ fn main() {
 		shellcheck: shellcheck
 		fix_mode: fix_mode
 		compile_only: compile_only
+		autofree: autofree
 		prod: prod
 		parallel: parallel
 	)
