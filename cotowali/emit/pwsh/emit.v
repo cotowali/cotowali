@@ -19,5 +19,5 @@ pub fn (mut e Emitter) emit(f &File) {
 
 fn (mut e Emitter) file(f &File) {
 	e.writeln('# file: $f.source.path')
-	e.writeln('write-output "Hello Powershell"')
+	e.stmts(f.stmts)
 }
