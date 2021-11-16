@@ -101,6 +101,14 @@ fn (mut p Parser) process_compiler_directive_error_or_warning(hash Token, kind C
 }
 
 fn (mut p Parser) read_define_directive_value() string {
+	if p.kind(0) == .ident && p.kind(1) == .eol {
+		name := p.token(0).text
+		if p.ctx.compiler_symbols.has(name) {
+			p.consume_with_assert(.ident)
+			return p.ctx.compiler_symbols.get(name)
+		}
+	}
+
 	mut value_pos := p.pos(0)
 	p.skip_until_eol()
 	value_pos = value_pos.merge(p.pos(-1))

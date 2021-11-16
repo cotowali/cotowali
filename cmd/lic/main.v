@@ -45,7 +45,14 @@ const (
 		abbrev: 'W'
 		global: true
 	}
-	flags = [backend_flag, no_emit_flag, no_std_flag, no_shebang_flag, warn_flag]
+	define_flag = Flag{
+		flag: .string_array
+		name: 'define'
+		abbrev: 'd'
+		description: '<name>=[<value>] define compiler variable'
+		global: true
+	}
+	flags = [backend_flag, no_emit_flag, no_std_flag, no_shebang_flag, warn_flag, define_flag]
 )
 
 fn new_source_from_args(args []string) ?&Source {
@@ -88,7 +95,18 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 		}
 	}
 
-	return new_context(no_emit: no_emit, no_std: no_std, backend: backend, feature: feature)
+	mut ctx := new_context(no_emit: no_emit, no_std: no_std, backend: backend, feature: feature)
+	defines := cmd.flags.get_strings(define_flag.name) or { panic('unreachable') }
+	for define in defines {
+		parts := define.split_nth('=', 2)
+		match parts.len {
+			1 { ctx.compiler_symbols.define(parts[0]) }
+			2 { ctx.compiler_symbols.define_with_value(parts[0], parts[1]) }
+			else { panic(unreachable('')) }
+		}
+	}
+
+	return ctx
 }
 
 fn execute_run(cmd Command) ? {

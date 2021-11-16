@@ -122,7 +122,7 @@ docker compose run dev
 
 ## Author
 
-zakuro &lt;z@kuro.red&gt;
+[zakuro](https://twitter.com/zakuro9715) &lt;z@kuro.red&gt;
 
 ## Acknowledgements
 
