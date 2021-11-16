@@ -99,7 +99,7 @@ pub fn (mut table CompilerSymbolTable) define_with_value(name string, value stri
 }
 
 pub fn (mut table CompilerSymbolTable) define(name string) {
-	table.define_with_value(name, 'true')
+	table.define_with_value(name, '1')
 }
 
 pub fn (mut table CompilerSymbolTable) undef(name string) {
