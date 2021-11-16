@@ -32,10 +32,12 @@
   assert(true)
 #endif
 
+// --
+
 #define true1
-#define true2
+#define true2 true1
 #define false1 false
-#define false2 false
+#define false2 false1
 
 #if true1 && true2 && !false1 && !!!false2
   assert(true)
