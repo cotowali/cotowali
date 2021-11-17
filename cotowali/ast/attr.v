@@ -19,15 +19,10 @@ pub enum AttrKind {
 	unknown
 }
 
-const attr_name_kind_table = (fn () map[string]AttrKind {
-	k := fn (k AttrKind) AttrKind {
-		return k
-	}
-
-	return {
-		'mangle': k(.mangle)
-	}
-}())
+const attr_name_kind_table = {
+	'unknown': AttrKind.unknown
+	'mangle':  .mangle
+}
 
 pub fn (attr Attr) kind() AttrKind {
 	return ast.attr_name_kind_table[attr.name] or { AttrKind.unknown }
