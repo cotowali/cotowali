@@ -87,15 +87,13 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 		mut element_pushed := false
 
 		// Check element types. If element is invalid, report error but dont stop to parse
-		if array_info := ts.array_info() {
-			if array_info.variadic {
-				if elem_tuple := p.scope.must_lookup_type(array_info.elem).tuple_info() {
-					// expand tuple element like `(...(int, int))`
-					elements << elem_tuple.elements.map(it)
-					element_pushed = true
-				} else {
-					p.error(tuple_element_error_msg('variadic type'), ts.pos)
-				}
+		if sequence_info := ts.sequence_info() {
+			if elem_tuple := p.scope.must_lookup_type(sequence_info.elem).tuple_info() {
+				// expand tuple element like `(...(int, int))`
+				elements << elem_tuple.elements.map(it)
+				element_pushed = true
+			} else {
+				p.error(tuple_element_error_msg('sequence type'), ts.pos)
 			}
 		}
 		if _ := ts.tuple_info() {
@@ -121,7 +119,7 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 	}
 }
 
-fn (mut p Parser) parse_variadic_type() ?&TypeSymbol {
+fn (mut p Parser) parse_sequence_type() ?&TypeSymbol {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
@@ -131,7 +129,7 @@ fn (mut p Parser) parse_variadic_type() ?&TypeSymbol {
 
 	p.consume_with_assert(.dotdotdot)
 	elem := p.parse_type() ?
-	return p.scope.lookup_or_register_array_type(elem: elem.typ, variadic: true)
+	return p.scope.lookup_or_register_sequence_type(elem: elem.typ)
 }
 
 fn (mut p Parser) parse_type() ?&TypeSymbol {
@@ -148,7 +146,7 @@ fn (mut p Parser) parse_type() ?&TypeSymbol {
 		.l_bracket { p.parse_array_type() ? }
 		.key_map { p.parse_map_type() ? }
 		.amp { p.parse_reference_type() ? }
-		.dotdotdot { p.parse_variadic_type() ? }
+		.dotdotdot { p.parse_sequence_type() ? }
 		.l_paren { p.parse_tuple_type() ? }
 		else { p.parse_ident_type() ? }
 	}

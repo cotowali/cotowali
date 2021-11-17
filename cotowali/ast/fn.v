@@ -228,10 +228,8 @@ fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 				panic(unreachable(err))
 			}
 			mut pipe_in := e.scope.must_lookup_type(owner_function_info.pipe_in)
-			if pipe_in_array_info := pipe_in.array_info() {
-				if pipe_in_array_info.variadic {
-					pipe_in = e.scope.must_lookup_type(pipe_in_array_info.elem)
-				}
+			if pipe_in_sequence_info := pipe_in.sequence_info() {
+				pipe_in = e.scope.must_lookup_type(pipe_in_sequence_info.elem)
 			}
 			new_fn_params := if pipe_in_tuple_info := pipe_in.tuple_info() {
 				elements := pipe_in_tuple_info.elements

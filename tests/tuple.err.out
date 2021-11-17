@@ -31,7 +31,7 @@ error: tuple.err.li 20,1: invalid operation: `(int, int)` / `(int, int)`
 error: tuple.err.li 21,1: mismatched types: `(int, int)` (left) and `int` (right)
    21 | (0, 1) + 2
       | ^^^^^^^^^^
-error: tuple.err.li 23,9: cannot use variadic type as tuple element
+error: tuple.err.li 23,9: cannot use sequence type as tuple element
    23 | var v: (...int)
       |         ^^^^^^
 error: tuple.err.li 24,14: cannot use tuple as tuple element

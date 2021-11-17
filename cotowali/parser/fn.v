@@ -104,16 +104,14 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 			ts: ts
 		}
 
-		if array_info := ts.array_info() {
-			if array_info.variadic {
-				p.consume_with_check(.r_paren) ?
-				// varargs is normal (non variadic) array
-				info.params[info.params.len - 1].ts = p.scope.lookup_or_register_array_type(
-					elem: array_info.elem
-				)
-				info.variadic = true
-				break
-			}
+		if sequence_info := ts.sequence_info() {
+			p.consume_with_check(.r_paren) ?
+			// varargs is normal (non variadic) array
+			info.params[info.params.len - 1].ts = p.scope.lookup_or_register_array_type(
+				elem: sequence_info.elem
+			)
+			info.variadic = true
+			break
 		}
 		tail_tok := p.consume_with_check(.comma, .r_paren) ?
 		match tail_tok.kind {

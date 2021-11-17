@@ -286,11 +286,16 @@ fn (mut r Resolver) for_in_stmt(mut stmt ForInStmt) {
 
 	r.expr(stmt.expr)
 
-	if array_info := stmt.expr.type_symbol().array_info() {
-		name, pos, typ := stmt.var_.ident.text, stmt.var_.ident.pos, array_info.elem
-		stmt.var_.sym = stmt.body.scope.must_register_var(name: name, pos: pos, typ: typ)
-		r.var_(mut stmt.var_)
+	var_typ := if array_info := stmt.expr.type_symbol().array_info() {
+		array_info.elem
+	} else if sequence_info := stmt.expr.type_symbol().sequence_info() {
+		sequence_info.elem
+	} else {
+		builtin_type(.placeholder)
 	}
+	name, pos, typ := stmt.var_.ident.text, stmt.var_.ident.pos, var_typ
+	stmt.var_.sym = stmt.body.scope.must_register_var(name: name, pos: pos, typ: typ)
+	r.var_(mut stmt.var_)
 
 	r.block(stmt.body)
 }
