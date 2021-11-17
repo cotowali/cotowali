@@ -1,6 +1,8 @@
 Before first release
 ====================
 
+- pipe input as parameter `fn (pipe_in: int) |> f()`
+
 monthly.2021.11
 ---------------
 
