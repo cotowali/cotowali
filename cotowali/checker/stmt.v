@@ -186,8 +186,8 @@ fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {
 
 	c.expr(stmt.expr)
 	ts := stmt.expr.type_symbol()
-	if ts.kind() != .array {
-		c.error('non-array type `$ts.name` is not iterable', stmt.expr.pos())
+	if !ts.is_iterable() {
+		c.error('`$ts.name` is not iterable', stmt.expr.pos())
 	}
 	c.block(stmt.body)
 }
@@ -273,10 +273,8 @@ fn (mut c Checker) yield_stmt(stmt ast.YieldStmt) {
 	c.expr(stmt.expr)
 
 	mut want_typ := builtin_type(.placeholder)
-	if array_info := c.current_fn.ret_type_symbol().array_info() {
-		if array_info.variadic {
-			want_typ = array_info.elem
-		}
+	if sequence_info := c.current_fn.ret_type_symbol().sequence_info() {
+		want_typ = sequence_info.elem
 	}
 
 	if want_typ == builtin_type(.placeholder) {

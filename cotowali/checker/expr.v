@@ -347,18 +347,14 @@ fn (mut c Checker) pipeline(expr ast.Pipeline) {
 			left := expr.exprs[i - 1]
 
 			mut left_ts := left.type_symbol()
-			if left_array_info := left_ts.array_info() {
-				if left_array_info.variadic {
-					left_ts = left.scope().must_lookup_type(left_array_info.elem)
-				}
+			if left_sequence_info := left_ts.sequence_info() {
+				left_ts = left.scope().must_lookup_type(left_sequence_info.elem)
 			}
 
 			fn_info := right.function_info()
 			mut pipe_in := right.scope.must_lookup_type(fn_info.pipe_in)
-			if pipe_in_array_info := pipe_in.array_info() {
-				if pipe_in_array_info.variadic {
-					pipe_in = right.scope.must_lookup_type(pipe_in_array_info.elem)
-				}
+			if pipe_in_sequence_info := pipe_in.sequence_info() {
+				pipe_in = right.scope.must_lookup_type(pipe_in_sequence_info.elem)
 			}
 
 			c.check_types(
