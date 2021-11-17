@@ -16,9 +16,10 @@ pub:
 	has_body     bool
 	is_method    bool
 pub mut:
-	attrs  []Attr
-	params []Var
-	body   Block
+	attrs         []Attr
+	pipe_in_param Var
+	params        []Var
+	body          Block
 }
 
 pub fn (f FnDecl) children() []Node {
@@ -42,6 +43,13 @@ pub fn (f FnDecl) signature() string {
 
 pub fn (f FnDecl) ret_type_symbol() &TypeSymbol {
 	return f.parent_scope.must_lookup_type(f.function_info().ret)
+}
+
+pub fn (f FnDecl) pipe_in_param() ?Var {
+	if f.pipe_in_param.name() == '' {
+		return none
+	}
+	return f.pipe_in_param
 }
 
 fn (mut r Resolver) fn_decl(decl FnDecl) {

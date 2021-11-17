@@ -171,6 +171,14 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 		c.current_fn = old_fn
 	}
 
+	if pipe_in_param := stmt.pipe_in_param() {
+		pipe_in_param_ts := ast.Expr(pipe_in_param).type_symbol()
+		if _ := pipe_in_param_ts.sequence_info() {
+			pos := pipe_in_param.pos().merge(pipe_in_param_ts.pos)
+			c.error('sequence type cannot be used for pipe-in parameter', pos)
+		}
+	}
+
 	c.attrs(stmt.attrs)
 	c.exprs(stmt.params.map(ast.Expr(it)))
 	c.block(stmt.body)
