@@ -69,7 +69,8 @@ jobs:
    runs-on: ubuntu-latest
    strategy:
      matrix:
-       fsanitize: address
+       fsanitize:
+         - address
    env:
      ASAN_OPTIONS: "detect_leaks=0"
      VFLAGS: "-cc clang -cflags '-fsanitize=${{ matrix.fsanitize }}'"
