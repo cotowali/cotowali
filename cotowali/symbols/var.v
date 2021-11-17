@@ -12,9 +12,10 @@ pub struct Var {
 mut:
 	scope &Scope = 0
 pub:
-	name string [required]
-	id   u64
-	pos  Pos = none_pos()
+	name           string [required]
+	id             u64
+	pos            Pos = none_pos()
+	is_placeholder bool
 pub mut:
 	typ          Type = builtin_type(.placeholder)
 	receiver_typ Type = builtin_type(.placeholder)
@@ -87,6 +88,7 @@ pub fn new_placeholder_var(name string, pos Pos) &Var {
 	return &Var{
 		name: name
 		typ: builtin_type(.placeholder)
+		is_placeholder: true
 		pos: pos
 	}
 }

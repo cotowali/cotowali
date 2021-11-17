@@ -124,6 +124,16 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 				e.writeln('shift')
 			}
 		}
+
+		if pipe_in_param := node.pipe_in_param() {
+			pipe_in_param_ts := ast.Expr(pipe_in_param).type_symbol()
+			if _ := pipe_in_param_ts.sequence_info() {
+				panic('pipe in variable for sequence type is unimplemented')
+			}
+			tmp_to_read := e.new_tmp_ident()
+			e.writeln('read $tmp_to_read')
+			e.assign(e.ident_for(pipe_in_param), '\$$tmp_to_read', pipe_in_param_ts)
+		}
 		e.block(node.body)
 	}, node)
 }
