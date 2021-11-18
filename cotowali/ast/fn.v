@@ -22,13 +22,6 @@ pub mut:
 	body          Block
 }
 
-pub fn (f FnDecl) children() []Node {
-	mut children := []Node{cap: f.params.len + 1}
-	children << f.params.map(Node(Expr(it)))
-	children << Stmt(f.body)
-	return children
-}
-
 pub fn (f FnDecl) function_info() FunctionTypeInfo {
 	return f.type_symbol().function_info() or { panic(unreachable(err)) }
 }
@@ -50,6 +43,13 @@ pub fn (f FnDecl) pipe_in_param() ?Var {
 		return none
 	}
 	return f.pipe_in_param
+}
+
+pub fn (f FnDecl) children() []Node {
+	mut children := []Node{cap: f.params.len + 1}
+	children << f.params.map(Node(Expr(it)))
+	children << Stmt(f.body)
+	return children
 }
 
 fn (mut r Resolver) fn_decl(decl FnDecl) {
