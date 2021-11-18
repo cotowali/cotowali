@@ -19,6 +19,7 @@ pub:
 	pipe_in  Type = builtin_type(.void)
 	params   []Type
 	variadic bool
+	is_test  bool
 	ret      Type = builtin_type(.void)
 }
 
@@ -37,6 +38,9 @@ pub fn (f &FunctionTypeInfo) has_pipe_in() bool {
 
 fn (f &FunctionTypeInfo) signature(s &Scope) string {
 	mut sb := strings.new_builder(10)
+	if f.is_test {
+		sb.write_string('#[test] ')
+	}
 	sb.write_string('fn ')
 	if f.is_method() {
 		sb.write_string('(${s.must_lookup_type(f.receiver).name}) ')
