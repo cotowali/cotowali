@@ -16,12 +16,14 @@ pub:
 
 pub enum AttrKind {
 	mangle
+	test
 	unknown
 }
 
 const attr_name_kind_table = {
 	'unknown': AttrKind.unknown
 	'mangle':  .mangle
+	'test':    .test
 }
 
 pub fn (attr Attr) kind() AttrKind {
