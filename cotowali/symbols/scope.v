@@ -88,6 +88,10 @@ pub fn (s &Scope) is_global() bool {
 	return s.id == symbols.global_id
 }
 
+pub fn (s &Scope) root() &Scope {
+	return s.parent() or { s }
+}
+
 [inline]
 pub fn (s &Scope) parent() ?&Scope {
 	return nil_to_none(s.parent)
