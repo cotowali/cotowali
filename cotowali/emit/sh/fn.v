@@ -111,7 +111,18 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 		e.cur_fn = old_cur_fn
 	}
 
-	e.sh_define_function(e.ident_for(node), fn (mut e Emitter, node FnDecl) {
+	fn_ident := e.ident_for(node)
+
+	if node.is_test() {
+		if !e.ctx.config.is_test {
+			return
+		}
+		defer {
+			e.stmt(ast.Expr(node.get_run_test_call_expr()))
+		}
+	}
+
+	e.sh_define_function(fn_ident, fn (mut e Emitter, node FnDecl) {
 		for i, param in node.params {
 			value := if i == node.params.len - 1 && node.function_info().variadic {
 				name := e.new_tmp_ident()

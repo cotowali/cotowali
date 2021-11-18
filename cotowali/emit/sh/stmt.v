@@ -76,7 +76,8 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 			msg += '" (\$$tmp)"'
 		}
 		e.writeln('echo $msg >&2')
-		e.writeln('exit 1')
+		is_test := if f := e.cur_fn() { f.is_test() } else { false }
+		e.writeln(if is_test { 'return 1' } else { 'exit 1' })
 	}
 	e.unindent()
 	e.writeln('fi')
