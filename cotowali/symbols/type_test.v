@@ -37,11 +37,18 @@ fn test_fn_signature() ? {
 			ret: builtin_type(.int)
 		}
 	) ?
+	f5 := s.register_type(
+		name: 'f5'
+		info: FunctionTypeInfo{
+			is_test: true
+		}
+	) ?
 
 	assert f1.fn_signature() ? == 'fn (int, bool)'
 	assert f2.fn_signature() ? == 'fn (int, bool): int'
 	assert f3.fn_signature() ? == 'fn int |> (int, bool) |> int'
 	assert f4.fn_signature() ? == 'fn int |> (int, ...int) |> int'
+	assert f5.fn_signature() ? == '#[test] fn ()'
 	if _ := s.must_lookup_type(builtin_type(.int)).fn_signature() {
 		assert false
 	}
