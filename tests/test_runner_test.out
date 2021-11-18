@@ -1,8 +1,14 @@
-testing mod::test_ok ... OK
 testing mod::test_fail ... FAILED
 
 Output:
-LINE 9: Assertion Failed
+LINE 4: Assertion Failed
 
+testing mod::test_ok ... OK
+testing test_fail ... FAILED
+
+Output:
+LINE 15: Assertion Failed
+
+testing test_ok ... OK
 test result: FAILED
-2 total; 1 passed; 1 failed;
+4 total; 2 passed; 2 failed;

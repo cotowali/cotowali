@@ -109,7 +109,7 @@ namespace testing {
   fn run_test(label: string, command: string) {
     print("testing $label ... ")
     sh {
-      %total_count=$(( %passed_count + 1 ))
+      %total_count=$(( %total_count + 1 ))
       out="$($%command 2>&1)"
       if [ "$?" -eq 0 ]
       then
