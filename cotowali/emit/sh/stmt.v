@@ -42,12 +42,14 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 }
 
 fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
-	discard_stdout := e.inside_fn && if stmt is ast.CallExpr {
-		e.cur_fn.function_info().ret != builtin_type(.void)
-	} else if stmt is ast.Pipeline {
-		!stmt.has_redirect()
+	discard_stdout := if cur_fn := e.cur_fn() {
+		match stmt {
+			ast.CallExpr { cur_fn.function_info().ret != builtin_type(.void) }
+			ast.Pipeline { !stmt.has_redirect() }
+			else { true }
+		}
 	} else {
-		true
+		false
 	}
 	e.expr(stmt, mode: .command, discard_stdout: discard_stdout, writeln: true)
 }
@@ -77,7 +79,8 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 			msg += '" (\$$tmp)"'
 		}
 		e.writeln('echo $msg >&2')
-		e.writeln('exit 1')
+		is_test := if f := e.cur_fn() { f.is_test() } else { false }
+		e.writeln(if is_test { 'return 1' } else { 'exit 1' })
 	}
 	e.unindent()
 	e.writeln('fi')

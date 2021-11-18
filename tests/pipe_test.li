@@ -1,26 +1,49 @@
-fn int |> inc() |> int {
-  var n = 0
-  read(&n)
-  return n + 1
-}
-
-fn ...int |> sum() |> int {
-  var n: int
-  var v: int
-  while read(&v) {
-    n = n + v
+fn test_normal() {
+  fn int |> inc() |> int {
+    var n = 0
+    read(&n)
+    return n + 1
   }
-  return n
-}
 
-fn ...int |> twice() |> ...int {
-  var v: int
-  while read(&v) {
-    yield v * 2
+  fn ...int |> sum() |> int {
+    var n: int
+    var v: int
+    while read(&v) {
+      n = n + v
+    }
+    return n
   }
-}
 
-assert((10 |> inc()) == 11)
-assert((10 |> sum()) == 10)
-assert((seq(3) |> sum()) == 6)
-assert((seq(3) |> twice() |> sum()) == 12)
+  fn ...int |> twice() |> ...int {
+    var v: int
+    while read(&v) {
+      yield v * 2
+    }
+  }
+
+  assert((10 |> inc()) == 11)
+  assert((10 |> sum()) == 10)
+  assert((seq(3) |> sum()) == 6)
+  assert((seq(3) |> twice() |> sum()) == 12)
+}
+test_normal()
+
+fn test_var() {
+  fn (n: int) |> inc() |> int {
+    return n + 1
+  }
+
+  fn (input: (int, int)) |> add() |> int {
+    return input[0] + input[1]
+  }
+
+  type Num = int
+  fn (a: Num) (b: int) |> add() |> int {
+    return a + b
+  }
+
+  assert((10 |> inc()) == 11)
+  assert(((1, 2) |> add()) == 3)
+  assert((1 |> (2 as Num).add()) == 3)
+}
+test_var()

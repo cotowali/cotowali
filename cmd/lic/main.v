@@ -34,6 +34,11 @@ const (
 		name: 'no-std'
 		global: true
 	}
+	test_flag = Flag{
+		flag: .bool
+		name: 'test'
+		global: true
+	}
 	no_shebang_flag = Flag{
 		flag: .bool
 		name: 'no-shebang'
@@ -52,7 +57,15 @@ const (
 		description: '<name>=[<value>] define compiler variable'
 		global: true
 	}
-	flags = [backend_flag, no_emit_flag, no_std_flag, no_shebang_flag, warn_flag, define_flag]
+	flags = [
+		backend_flag,
+		no_emit_flag,
+		no_std_flag,
+		test_flag,
+		no_shebang_flag,
+		warn_flag,
+		define_flag,
+	]
 )
 
 fn new_source_from_args(args []string) ?&Source {
@@ -75,6 +88,7 @@ fn new_source_from_args(args []string) ?&Source {
 fn new_ctx_from_cmd(cmd Command) &Context {
 	no_emit := cmd.flags.get_bool(no_emit_flag.name) or { panic(unreachable('')) }
 	no_std := cmd.flags.get_bool(no_std_flag.name) or { panic(unreachable('')) }
+	is_test := cmd.name == 'test' || cmd.flags.get_bool(test_flag.name) or { panic('unreachable') }
 
 	backend_str := cmd.flags.get_string(backend_flag.name) or { panic(unreachable('')) }
 	backend := backend_from_str(backend_str) or {
@@ -95,7 +109,13 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 		}
 	}
 
-	mut ctx := new_context(no_emit: no_emit, no_std: no_std, backend: backend, feature: feature)
+	mut ctx := new_context(
+		no_emit: no_emit
+		no_std: no_std
+		is_test: is_test
+		backend: backend
+		feature: feature
+	)
 	defines := cmd.flags.get_strings(define_flag.name) or { panic('unreachable') }
 	for define in defines {
 		parts := define.split_nth('=', 2)
@@ -109,7 +129,7 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 	return ctx
 }
 
-fn execute_run(cmd Command) ? {
+fn execute_run_or_test(cmd Command) ? {
 	mut ctx := new_ctx_from_cmd(cmd)
 	s := new_source_from_args(cmd.args) or {
 		eprintln(err)
@@ -146,7 +166,12 @@ fn main() {
 			Command{
 				name: 'run'
 				description: 'run script'
-				execute: execute_run
+				execute: execute_run_or_test
+			},
+			Command{
+				name: 'test'
+				description: 'execute tests'
+				execute: execute_run_or_test
 			},
 			tools.command,
 		]

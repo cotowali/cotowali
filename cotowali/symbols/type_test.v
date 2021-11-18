@@ -16,13 +16,39 @@ fn test_fn_signature() ? {
 	f2 := s.register_type(
 		name: 'f2'
 		info: FunctionTypeInfo{
+			params: [builtin_type(.int), builtin_type(.bool)]
+			ret: builtin_type(.int)
+		}
+	) ?
+	f3 := s.register_type(
+		name: 'f3'
+		info: FunctionTypeInfo{
 			pipe_in: builtin_type(.int)
 			params: [builtin_type(.int), builtin_type(.bool)]
 			ret: builtin_type(.int)
 		}
 	) ?
-	assert f1.fn_signature() ? == 'fn void | (int, bool) void'
-	assert f2.fn_signature() ? == 'fn int | (int, bool) int'
+	f4 := s.register_type(
+		name: 'f4'
+		info: FunctionTypeInfo{
+			pipe_in: builtin_type(.int)
+			params: [builtin_type(.int), s.must_lookup_array_type(elem: builtin_type(.int)).typ]
+			variadic: true
+			ret: builtin_type(.int)
+		}
+	) ?
+	f5 := s.register_type(
+		name: 'f5'
+		info: FunctionTypeInfo{
+			is_test: true
+		}
+	) ?
+
+	assert f1.fn_signature() ? == 'fn (int, bool)'
+	assert f2.fn_signature() ? == 'fn (int, bool): int'
+	assert f3.fn_signature() ? == 'fn int |> (int, bool) |> int'
+	assert f4.fn_signature() ? == 'fn int |> (int, ...int) |> int'
+	assert f5.fn_signature() ? == '#[test] fn ()'
 	if _ := s.must_lookup_type(builtin_type(.int)).fn_signature() {
 		assert false
 	}
@@ -172,5 +198,5 @@ fn test_method() ? {
 		assert false
 	}
 
-	assert (method2.type_symbol().fn_signature() ?) == 'fn (Type2) int | (int) void'
+	assert (method2.type_symbol().fn_signature() ?) == 'fn (Type2) int |> (int)'
 }

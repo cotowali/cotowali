@@ -7,6 +7,7 @@ module sh
 
 import cotowali.ast { CallCommandExpr, CallExpr, FnDecl }
 import cotowali.symbols { builtin_fn_id }
+import cotowali.messages { unreachable }
 
 fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
 	if opt.mode != .command {
@@ -110,7 +111,18 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 		e.cur_fn = old_cur_fn
 	}
 
-	e.sh_define_function(e.ident_for(node), fn (mut e Emitter, node FnDecl) {
+	fn_ident := e.ident_for(node)
+
+	if node.is_test() {
+		if !e.ctx.config.is_test {
+			return
+		}
+		defer {
+			e.stmt(ast.Expr(node.get_run_test_call_expr()))
+		}
+	}
+
+	e.sh_define_function(fn_ident, fn (mut e Emitter, node FnDecl) {
 		for i, param in node.params {
 			value := if i == node.params.len - 1 && node.function_info().variadic {
 				name := e.new_tmp_ident()
@@ -123,6 +135,17 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			if i < node.params.len - 1 {
 				e.writeln('shift')
 			}
+		}
+
+		if pipe_in_param := node.pipe_in_param() {
+			pipe_in_param_ts := ast.Expr(pipe_in_param).type_symbol()
+			tmp_to_read := e.new_tmp_ident()
+			pipe_in_param_ident := e.ident_for(pipe_in_param)
+			if _ := pipe_in_param_ts.sequence_info() {
+				panic(unreachable('pipe in param cannot be sequence'))
+			}
+			e.writeln('read $tmp_to_read')
+			e.assign(pipe_in_param_ident, '\$$tmp_to_read', pipe_in_param_ts)
 		}
 		e.block(node.body)
 	}, node)

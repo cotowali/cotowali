@@ -171,6 +171,29 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 		c.current_fn = old_fn
 	}
 
+	fn_info := stmt.function_info()
+
+	if stmt.is_test() {
+		if fn_info.has_pipe_in() {
+			c.error('test function cannot have pipe-in', stmt.sym.pos)
+		}
+		if stmt.params.len != 0 {
+			pos := stmt.params[0].pos().merge(stmt.params.last().pos())
+			c.error('test function cannot have parameters', pos)
+		}
+		if fn_info.ret != builtin_type(.void) {
+			c.error('test function cannot have return values', stmt.sym.pos)
+		}
+	}
+
+	if pipe_in_param := stmt.pipe_in_param() {
+		pipe_in_param_ts := ast.Expr(pipe_in_param).type_symbol()
+		if _ := pipe_in_param_ts.sequence_info() {
+			pos := pipe_in_param.pos().merge(pipe_in_param_ts.pos)
+			c.error('sequence type cannot be used for pipe-in parameter', pos)
+		}
+	}
+
 	c.attrs(stmt.attrs)
 	c.exprs(stmt.params.map(ast.Expr(it)))
 	c.block(stmt.body)
@@ -186,8 +209,8 @@ fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {
 
 	c.expr(stmt.expr)
 	ts := stmt.expr.type_symbol()
-	if ts.kind() != .array {
-		c.error('non-array type `$ts.name` is not iterable', stmt.expr.pos())
+	if !ts.is_iterable() {
+		c.error('`$ts.name` is not iterable', stmt.expr.pos())
 	}
 	c.block(stmt.body)
 }
@@ -273,10 +296,8 @@ fn (mut c Checker) yield_stmt(stmt ast.YieldStmt) {
 	c.expr(stmt.expr)
 
 	mut want_typ := builtin_type(.placeholder)
-	if array_info := c.current_fn.ret_type_symbol().array_info() {
-		if array_info.variadic {
-			want_typ = array_info.elem
-		}
+	if sequence_info := c.current_fn.ret_type_symbol().sequence_info() {
+		want_typ = sequence_info.elem
 	}
 
 	if want_typ == builtin_type(.placeholder) {

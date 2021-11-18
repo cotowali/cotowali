@@ -26,6 +26,21 @@ mut:
 	pos  Pos
 }
 
+fn (mut p Parser) register_fn_param(param FnParamParsingInfo) ?ast.Var {
+	param_sym := p.scope.register_var(name: param.name, pos: param.pos, typ: param.ts.typ) or {
+		new_placeholder_var(param.name, param.pos)
+		return p.error(err.msg, param.pos)
+	}
+	return ast.Var{
+		ident: ast.Ident{
+			scope: p.scope
+			pos: param.pos
+			text: param.name
+		}
+		sym: param_sym
+	}
+}
+
 enum FnSignatureKind {
 	default
 	method
@@ -35,12 +50,12 @@ enum FnSignatureKind {
 
 struct FnSignatureParsingInfo {
 mut:
-	kind     FnSignatureKind = .default
-	name     Token
-	pipe_in  Type = builtin_type(.void)
-	params   []FnParamParsingInfo
-	variadic bool
-	ret_typ  Type = builtin_type(.void)
+	kind          FnSignatureKind = .default
+	name          Token
+	pipe_in_param FnParamParsingInfo
+	params        []FnParamParsingInfo
+	variadic      bool
+	ret_typ       Type = builtin_type(.void)
 }
 
 fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
@@ -51,7 +66,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 				pos: info.name.pos
 				params: info.params.map(it.ts.typ)
 				variadic: info.variadic
-				pipe_in: info.pipe_in
+				pipe_in: info.pipe_in_param.ts.typ
 				ret: info.ret_typ
 			) ?
 		}
@@ -62,7 +77,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 				pos: info.name.pos
 				params: info.params[1..].map(it.ts.typ)
 				variadic: info.variadic
-				pipe_in: info.pipe_in
+				pipe_in: info.pipe_in_param.ts.typ
 				ret: info.ret_typ
 			) ?
 		}
@@ -71,7 +86,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 				pos: info.name.pos
 				params: info.params.map(it.ts.typ)
 				variadic: info.variadic
-				pipe_in: info.pipe_in
+				pipe_in: info.pipe_in_param.ts.typ
 				ret: info.ret_typ
 			) ?
 		}
@@ -80,7 +95,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 				pos: info.name.pos
 				params: info.params.map(it.ts.typ)
 				variadic: info.variadic
-				pipe_in: info.pipe_in
+				pipe_in: info.pipe_in_param.ts.typ
 				ret: info.ret_typ
 			) ?
 		}
@@ -104,16 +119,14 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 			ts: ts
 		}
 
-		if array_info := ts.array_info() {
-			if array_info.variadic {
-				p.consume_with_check(.r_paren) ?
-				// varargs is normal (non variadic) array
-				info.params[info.params.len - 1].ts = p.scope.lookup_or_register_array_type(
-					elem: array_info.elem
-				)
-				info.variadic = true
-				break
-			}
+		if sequence_info := ts.sequence_info() {
+			p.consume_with_check(.r_paren) ?
+			// varargs is normal (non variadic) array
+			info.params[info.params.len - 1].ts = p.scope.lookup_or_register_array_type(
+				elem: sequence_info.elem
+			)
+			info.variadic = true
+			break
 		}
 		tail_tok := p.consume_with_check(.comma, .r_paren) ?
 		match tail_tok.kind {
@@ -124,33 +137,63 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 	}
 }
 
-fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
-	p.consume_with_assert(.key_fn)
-	mut info := FnSignatureParsingInfo{}
-
+fn (mut p Parser) next_is_receiver_syntax() bool {
 	// fn ( x : Type ) (int, int) |> f()
 	//    | | +- kind(2) == .colon
 	//    | +--- kind(1) == .ident
 	//    +-|--- kind(0) == .l_paren
 	//    | | +  kind(2) == .ident
 	// fn ( x Type ) f() // frequently encountered invalid syntax.
-	//
-	has_receiver := p.kind(0) == .l_paren && p.kind(1) == .ident && p.kind(2) in [.colon, .ident]
+	return p.kind(0) == .l_paren && p.kind(1) == .ident && p.kind(2) in [.colon, .ident]
+}
 
-	if has_receiver {
-		p.consume_with_assert(.l_paren)
-		rec_name_tok := p.consume_with_assert(.ident)
+fn (mut p Parser) parse_receiver() ?FnParamParsingInfo {
+	p.consume_with_assert(.l_paren)
+	{
+		name_tok := p.consume_with_assert(.ident)
+		name := name_tok.text
+		name_pos := name_tok.pos
+
 		p.consume_with_check(.colon) ?
-		rec_ts := (p.parse_type() ?)
-		info.params << FnParamParsingInfo{
-			name: rec_name_tok.text
-			pos: rec_name_tok.pos
-			ts: rec_ts
-		}
+		ts := (p.parse_type() ?)
+
 		p.consume_with_check(.r_paren) ?
+		return FnParamParsingInfo{
+			name: name
+			pos: name_pos
+			ts: ts
+		}
+	}
+}
+
+fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
+	p.consume_with_assert(.key_fn)
+	mut info := FnSignatureParsingInfo{}
+	info.pipe_in_param.ts = p.scope.must_lookup_type(builtin_type(.void))
+
+	// fn ( x : Type ) (int, int) |> f()
+	mut has_receiver := false
+	if p.next_is_receiver_syntax() {
+		rec := p.parse_receiver() ?
+		//     vvvvvvvvvvv parsed receiver
+		// fn ( x : Type ) |> f()
+		//                 ^^ kind == .pipe
+		if _ := p.consume_if_kind_eq(.pipe) {
+			info.pipe_in_param = rec
+		} else {
+			info.params << rec
+			has_receiver = true
+		}
 	}
 
-	if !((p.kind(0) == .ident || p.kind(0).@is(.op)) && p.kind(1) == .l_paren) {
+	if p.next_is_receiver_syntax() {
+		pipe_in := p.parse_receiver() ?
+		//                vvvvvvvvvv
+		// fn (rec: Type) (in: Type) |> f()
+		if _ := p.consume_with_check(.pipe) {
+			info.pipe_in_param = pipe_in
+		}
+	} else if !((p.kind(0) == .ident || p.kind(0).@is(.op)) && p.kind(1) == .l_paren) {
 		//    v kind(0) == .ident
 		// fn f ( )
 		//      ^ kind(1) == .l_paren
@@ -176,7 +219,7 @@ fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
 		//    vvv kind(0) != .ident
 		// fn ... ( int, int ) |> f()
 		//        ^ kind(1) == .l_paren
-		info.pipe_in = (p.parse_type() ?).typ
+		info.pipe_in_param.ts = (p.parse_type() ?)
 		p.consume_with_check(.pipe) ?
 	}
 
@@ -245,18 +288,11 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	mut params := []ast.Var{len: info.params.len}
 	for i, param in info.params {
-		param_sym := p.scope.register_var(name: param.name, pos: param.pos, typ: param.ts.typ) or {
-			p.error(err.msg, param.pos)
+		if registered := p.register_fn_param(param) {
+			params[i] = registered
+		} else {
 			has_error = true
-			new_placeholder_var(param.name, param.pos)
-		}
-		params[i] = ast.Var{
-			ident: ast.Ident{
-				scope: p.scope
-				pos: param.pos
-				text: param.name
-			}
-			sym: param_sym
+			continue
 		}
 	}
 
@@ -268,6 +304,14 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		has_body: has_body
 		is_method: info.kind == .method
 	}
+	if info.pipe_in_param.name != '' {
+		if registered := p.register_fn_param(info.pipe_in_param) {
+			node.pipe_in_param = registered
+		} else {
+			has_error = true
+		}
+	}
+
 	if has_body {
 		if body := p.parse_block_without_new_scope() {
 			node.body = body

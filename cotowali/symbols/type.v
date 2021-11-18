@@ -24,6 +24,7 @@ pub type TypeInfo = AliasTypeInfo
 	| PlaceholderTypeInfo
 	| PrimitiveTypeInfo
 	| ReferenceTypeInfo
+	| SequenceTypeInfo
 	| StructTypeInfo
 	| TupleTypeInfo
 	| UnknownTypeInfo
@@ -57,6 +58,10 @@ pub fn (v TypeSymbol) name_for_ident() string {
 	return Symbol(v).name_for_ident()
 }
 
+pub fn (v TypeSymbol) display_name() string {
+	return Symbol(v).display_name()
+}
+
 pub fn (ts &TypeSymbol) base() ?&TypeSymbol {
 	return nil_to_none(ts.base)
 }
@@ -69,6 +74,7 @@ pub enum TypeKind {
 	alias
 	array
 	map
+	sequence
 	struct_
 	reference
 	tuple
@@ -88,10 +94,15 @@ pub fn (t TypeSymbol) kind() TypeKind {
 		AliasTypeInfo { k(.alias) }
 		ArrayTypeInfo { k(.array) }
 		MapTypeInfo { k(.map) }
+		SequenceTypeInfo { k(.sequence) }
 		StructTypeInfo { k(.struct_) }
 		ReferenceTypeInfo { k(.reference) }
 		TupleTypeInfo { k(.tuple) }
 	}
+}
+
+pub fn (t TypeSymbol) is_iterable() bool {
+	return t.resolved().kind() in [.array, .sequence]
 }
 
 pub fn (v TypeSymbol) str() string {

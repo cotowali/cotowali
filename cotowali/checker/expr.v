@@ -104,8 +104,12 @@ fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	function_info := expr.function_info()
 	params := function_info.params
 	param_syms := params.map(scope.must_lookup_type(it))
-
 	args := expr.args
+
+	if function_info.is_test {
+		c.error('cannot explicitly call test function', pos)
+	}
+
 	if function_info.variadic {
 		min_len := params.len - 1
 		if args.len < min_len {
@@ -347,18 +351,14 @@ fn (mut c Checker) pipeline(expr ast.Pipeline) {
 			left := expr.exprs[i - 1]
 
 			mut left_ts := left.type_symbol()
-			if left_array_info := left_ts.array_info() {
-				if left_array_info.variadic {
-					left_ts = left.scope().must_lookup_type(left_array_info.elem)
-				}
+			if left_sequence_info := left_ts.sequence_info() {
+				left_ts = left.scope().must_lookup_type(left_sequence_info.elem)
 			}
 
 			fn_info := right.function_info()
 			mut pipe_in := right.scope.must_lookup_type(fn_info.pipe_in)
-			if pipe_in_array_info := pipe_in.array_info() {
-				if pipe_in_array_info.variadic {
-					pipe_in = right.scope.must_lookup_type(pipe_in_array_info.elem)
-				}
+			if pipe_in_sequence_info := pipe_in.sequence_info() {
+				pipe_in = right.scope.must_lookup_type(pipe_in_sequence_info.elem)
 			}
 
 			c.check_types(

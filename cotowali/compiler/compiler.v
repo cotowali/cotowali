@@ -8,7 +8,7 @@ module compiler
 import io
 import strings
 import cotowali.context { Context }
-import cotowali.source { Source }
+import cotowali.source { Source, new_source }
 import cotowali.parser
 import cotowali.checker
 import cotowali.ast
@@ -44,6 +44,27 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	mut f := parser.parse(c.source, ctx)
 
 	if !ctx.errors.has_syntax_error() {
+		if config.is_test {
+			f.stmts << parser.parse(new_source('finish_test', 'testing::finish()'), ctx).stmts
+		}
+		/*
+		f.stmts << ast.Expr(ast.CallExpr(
+				func: ast.NamespaceItem{
+					scope: ctx.global_scope
+					namespace: ast.Ident{
+						scope: ctx.global_scope
+						text: 'testing'
+					}
+					func: ast.Var{
+						ident: ast.Ident{
+							scope: ctx.global_scope
+							text: 'finish'
+						}
+					}
+				}
+			})
+		*/
+
 		ast.resolve(mut f, ctx)
 		checker.check(mut f, ctx)
 	}

@@ -9,14 +9,12 @@ import cotowali.messages { unreachable }
 
 pub struct ArrayTypeInfo {
 pub:
-	elem     Type
-	variadic bool
+	elem Type
 }
 
 fn (info ArrayTypeInfo) typename(s &Scope) string {
 	elem_ts := s.must_lookup_type(info.elem)
-	prefix := if info.variadic { '...' } else { '[]' }
-	return '$prefix$elem_ts.name'
+	return '[]$elem_ts.name'
 }
 
 pub fn (ts &TypeSymbol) array_info() ?ArrayTypeInfo {

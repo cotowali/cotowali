@@ -6,6 +6,7 @@
 module ast
 
 import cotowali.source { Pos }
+import cotowali.token { Token }
 import cotowali.symbols { FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id }
 import cotowali.messages { undefined, unreachable }
 
@@ -16,16 +17,10 @@ pub:
 	has_body     bool
 	is_method    bool
 pub mut:
-	attrs  []Attr
-	params []Var
-	body   Block
-}
-
-pub fn (f FnDecl) children() []Node {
-	mut children := []Node{cap: f.params.len + 1}
-	children << f.params.map(Node(Expr(it)))
-	children << Stmt(f.body)
-	return children
+	attrs         []Attr
+	pipe_in_param Var
+	params        []Var
+	body          Block
 }
 
 pub fn (f FnDecl) function_info() FunctionTypeInfo {
@@ -42,6 +37,69 @@ pub fn (f FnDecl) signature() string {
 
 pub fn (f FnDecl) ret_type_symbol() &TypeSymbol {
 	return f.parent_scope.must_lookup_type(f.function_info().ret)
+}
+
+pub fn (f FnDecl) pipe_in_param() ?Var {
+	if f.pipe_in_param.name() == '' {
+		return none
+	}
+	return f.pipe_in_param
+}
+
+pub fn (f FnDecl) is_test() bool {
+	return f.attrs.any(it.kind() == .test)
+}
+
+pub fn (f FnDecl) get_run_test_call_expr() CallExpr {
+	scope := f.sym.scope() or { panic(unreachable('scope is nil')) }
+	testing := scope.root().must_get_child('testing')
+	sq_token := Token{
+		kind: .single_quote
+		text: "'"
+	}
+	return CallExpr{
+		scope: testing
+		func: Var{
+			sym: testing.must_lookup_var('run_test')
+			ident: Ident{
+				text: 'run_test'
+				scope: testing
+			}
+		}
+		args: [
+			// label
+			Expr(StringLiteral{
+				scope: scope
+				open: sq_token
+				close: sq_token
+				contents: [
+					StringLiteralContent(Token{
+						kind: .string_literal_content_text
+						text: f.sym.display_name()
+					}),
+				]
+			}),
+			// test function name
+			Expr(StringLiteral{
+				scope: scope
+				open: sq_token
+				close: sq_token
+				contents: [
+					StringLiteralContent(Token{
+						kind: .string_literal_content_text
+						text: f.sym.name_for_ident()
+					}),
+				]
+			}),
+		]
+	}
+}
+
+pub fn (f FnDecl) children() []Node {
+	mut children := []Node{cap: f.params.len + 1}
+	children << f.params.map(Node(Expr(it)))
+	children << Stmt(f.body)
+	return children
 }
 
 fn (mut r Resolver) fn_decl(decl FnDecl) {
@@ -228,10 +286,8 @@ fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 				panic(unreachable(err))
 			}
 			mut pipe_in := e.scope.must_lookup_type(owner_function_info.pipe_in)
-			if pipe_in_array_info := pipe_in.array_info() {
-				if pipe_in_array_info.variadic {
-					pipe_in = e.scope.must_lookup_type(pipe_in_array_info.elem)
-				}
+			if pipe_in_sequence_info := pipe_in.sequence_info() {
+				pipe_in = e.scope.must_lookup_type(pipe_in_sequence_info.elem)
 			}
 			new_fn_params := if pipe_in_tuple_info := pipe_in.tuple_info() {
 				elements := pipe_in_tuple_info.elements

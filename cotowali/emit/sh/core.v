@@ -47,6 +47,13 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 	}
 }
 
+fn (e &Emitter) cur_fn() ?FnDecl {
+	if !e.inside_fn {
+		return none
+	}
+	return e.cur_fn
+}
+
 [inline]
 fn (mut e Emitter) code() &code.Builder {
 	return e.codes[e.cur_kind]

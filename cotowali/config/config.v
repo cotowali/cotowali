@@ -76,6 +76,7 @@ pub mut:
 	feature Feature
 	no_emit bool
 	no_std  bool
+	is_test bool
 	indent  string = '  '
 }
 

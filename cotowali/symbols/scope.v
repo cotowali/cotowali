@@ -10,8 +10,6 @@ import cotowali.messages { unreachable }
 import cotowali.source { Pos }
 import cotowali.token { TokenKind }
 
-pub type ID = u64
-
 [heap]
 pub struct Scope {
 pub:
@@ -43,7 +41,7 @@ pub fn (s &Scope) owner() ?&Var {
 }
 
 pub fn (s &Scope) str() string {
-	return s.full_name()
+	return s.display_name()
 }
 
 pub fn (s &Scope) debug_str() string {
@@ -65,10 +63,6 @@ pub fn (s &Scope) debug_str() string {
 		'    ]',
 		'}',
 	].join('\n')
-}
-
-fn join_name(names ...string) string {
-	return names.join('_')
 }
 
 pub const global_id = 1
@@ -94,16 +88,8 @@ pub fn (s &Scope) is_global() bool {
 	return s.id == symbols.global_id
 }
 
-pub fn (s &Scope) full_name() string {
-	name := if s.name.len > 0 { s.name } else { 'scope$s.id' }
-	if p := s.parent() {
-		if p.is_global() {
-			return name
-		}
-		return join_name(p.full_name(), name)
-	} else {
-		return name
-	}
+pub fn (s &Scope) root() &Scope {
+	return s.parent() or { s }
 }
 
 [inline]
@@ -125,7 +111,7 @@ pub fn (s &Scope) is_ancestor_of(target &Scope) bool {
 
 type NameOrID = ID | string
 
-pub fn (mut s Scope) get_child(key NameOrID) ?&Scope {
+pub fn (s &Scope) get_child(key NameOrID) ?&Scope {
 	match key {
 		string {
 			id := s.name_to_child_id[key] or { return none }
@@ -135,6 +121,10 @@ pub fn (mut s Scope) get_child(key NameOrID) ?&Scope {
 			return s.children[key] or { return none }
 		}
 	}
+}
+
+pub fn (s &Scope) must_get_child(key NameOrID) &Scope {
+	return s.get_child(key) or { panic(unreachable('child scope `$key` not found')) }
 }
 
 pub fn (mut s Scope) create_child(name string) ?&Scope {

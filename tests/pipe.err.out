@@ -1,0 +1,3 @@
+error: pipe.err.li 2,5: sequence type cannot be used for pipe-in parameter
+    2 | fn (v: ...Num) |> f() {}
+      |     ^^^^^^^^^

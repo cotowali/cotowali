@@ -12,9 +12,10 @@ pub struct Var {
 mut:
 	scope &Scope = 0
 pub:
-	name string [required]
-	id   u64
-	pos  Pos = none_pos()
+	name           string [required]
+	id             u64
+	pos            Pos = none_pos()
+	is_placeholder bool
 pub mut:
 	typ          Type = builtin_type(.placeholder)
 	receiver_typ Type = builtin_type(.placeholder)
@@ -42,6 +43,10 @@ fn (v Var) scope_str() string {
 
 pub fn (v Var) name_for_ident() string {
 	return Symbol(v).name_for_ident()
+}
+
+pub fn (v Var) display_name() string {
+	return Symbol(v).display_name()
 }
 
 pub fn (v Var) type_symbol() &TypeSymbol {
@@ -87,6 +92,7 @@ pub fn new_placeholder_var(name string, pos Pos) &Var {
 	return &Var{
 		name: name
 		typ: builtin_type(.placeholder)
+		is_placeholder: true
 		pos: pos
 	}
 }
