@@ -6,6 +6,7 @@
 module symbols
 
 import cotowali.messages { unreachable }
+import strings
 
 pub struct RegisterFnArgs {
 	Var
@@ -30,16 +31,25 @@ pub fn (f &FunctionTypeInfo) is_method() bool {
 	return f.receiver != builtin_type(.placeholder)
 }
 
-fn (f &FunctionTypeInfo) signature(s &Scope) string {
-	params_str := f.params.map(s.must_lookup_type(it).name).join(', ')
-	in_str := s.must_lookup_type(f.pipe_in).name
-	ret_str := s.must_lookup_type(f.ret).name
+pub fn (f &FunctionTypeInfo) has_pipe_in() bool {
+	return f.pipe_in != builtin_type(.void)
+}
 
-	return (if f.is_method() {
-		'fn (${s.must_lookup_type(f.receiver).name})'
-	} else {
-		'fn'
-	}) + ' $in_str | ($params_str) $ret_str'
+fn (f &FunctionTypeInfo) signature(s &Scope) string {
+	mut sb := strings.new_builder(10)
+	sb.write_string('fn ')
+	if f.is_method() {
+		sb.write_string('(${s.must_lookup_type(f.receiver).name}) ')
+	}
+	if f.has_pipe_in() {
+		sb.write_string('${s.must_lookup_type(f.pipe_in).name} |> ')
+	}
+	sb.write_string('(' + f.params.map(s.must_lookup_type(it).name).join(', ') + ')')
+	if f.ret != builtin_type(.void) {
+		sb.write_string(if f.has_pipe_in() { ' |> ' } else { ': ' })
+		sb.write_string(s.must_lookup_type(f.ret).name)
+	}
+	return sb.str()
 }
 
 pub fn (t TypeSymbol) fn_signature() ?string {
