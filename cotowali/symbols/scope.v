@@ -41,7 +41,7 @@ pub fn (s &Scope) owner() ?&Var {
 }
 
 pub fn (s &Scope) str() string {
-	return s.name_for_ident()
+	return s.display_name()
 }
 
 pub fn (s &Scope) debug_str() string {
