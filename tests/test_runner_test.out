@@ -1,0 +1,8 @@
+testing mod::test_ok ... OK
+testing mod::test_fail ... FAILED
+
+Output:
+LINE 9: Assertion Failed
+
+test result: FAILED
+2 total; 1 passed; 1 failed
