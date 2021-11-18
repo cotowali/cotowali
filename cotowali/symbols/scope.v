@@ -43,7 +43,7 @@ pub fn (s &Scope) owner() ?&Var {
 }
 
 pub fn (s &Scope) str() string {
-	return s.full_name()
+	return s.name_for_ident()
 }
 
 pub fn (s &Scope) debug_str() string {
@@ -67,10 +67,6 @@ pub fn (s &Scope) debug_str() string {
 	].join('\n')
 }
 
-fn join_name(names ...string) string {
-	return names.join('_')
-}
-
 pub const global_id = 1
 
 pub fn new_global_scope() &Scope {
@@ -92,18 +88,6 @@ pub fn new_scope(name string, parent &Scope) &Scope {
 
 pub fn (s &Scope) is_global() bool {
 	return s.id == symbols.global_id
-}
-
-pub fn (s &Scope) full_name() string {
-	name := if s.name.len > 0 { s.name } else { 'scope$s.id' }
-	if p := s.parent() {
-		if p.is_global() {
-			return name
-		}
-		return join_name(p.full_name(), name)
-	} else {
-		return name
-	}
 }
 
 [inline]
