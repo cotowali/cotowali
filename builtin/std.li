@@ -134,7 +134,7 @@ namespace testing {
       println('FAILED')
       exit_code = 1
     }
-    println("$total_count total; $passed_count passed; $failed_count failed")
+    println("$total_count total; $passed_count passed; $failed_count failed;")
     exit(exit_code)
   }
 #endif
