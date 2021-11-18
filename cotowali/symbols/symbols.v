@@ -12,6 +12,8 @@ const (
 	reserved_id_max = 1000
 )
 
+type ID = u64
+
 fn auto_id() ID {
 	return util.rand_more_than<u64>(symbols.reserved_id_max)
 }
@@ -23,30 +25,15 @@ pub fn (v Symbol) scope() ?&Scope {
 	return nil_to_none(v.scope)
 }
 
-pub fn (v Symbol) name_for_ident() string {
-	id := match v {
+fn (v Symbol) scope_str() string {
+	return if scope := v.scope() { scope.str() } else { 'none' }
+}
+
+fn (v Symbol) id() ID {
+	return match v {
 		Var { v.id }
 		TypeSymbol { u64(v.typ) }
 	}
-	mut name := if v.name.len > 0 { v.name } else { 'sym$id' }
-	if v is Var {
-		if v.is_member() {
-			name = v.receiver_type_symbol().name_for_ident() + '__$name'
-		}
-	}
-	name = name.replace('[]', '__array__')
-	if s := v.scope() {
-		if s.is_global() {
-			return name
-		}
-		return join_name(s.full_name(), name)
-	} else {
-		return name
-	}
-}
-
-fn (v Symbol) scope_str() string {
-	return if scope := v.scope() { scope.str() } else { 'none' }
 }
 
 fn (v Symbol) pos() Pos {

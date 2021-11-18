@@ -6,6 +6,7 @@
 module symbols
 
 import cotowali.messages { unreachable }
+import strings
 
 pub struct RegisterFnArgs {
 	Var
@@ -18,6 +19,7 @@ pub:
 	pipe_in  Type = builtin_type(.void)
 	params   []Type
 	variadic bool
+	is_test  bool
 	ret      Type = builtin_type(.void)
 }
 
@@ -30,16 +32,42 @@ pub fn (f &FunctionTypeInfo) is_method() bool {
 	return f.receiver != builtin_type(.placeholder)
 }
 
-fn (f &FunctionTypeInfo) signature(s &Scope) string {
-	params_str := f.params.map(s.must_lookup_type(it).name).join(', ')
-	in_str := s.must_lookup_type(f.pipe_in).name
-	ret_str := s.must_lookup_type(f.ret).name
+pub fn (f &FunctionTypeInfo) has_pipe_in() bool {
+	return f.pipe_in != builtin_type(.void)
+}
 
-	return (if f.is_method() {
-		'fn (${s.must_lookup_type(f.receiver).name})'
-	} else {
-		'fn'
-	}) + ' $in_str | ($params_str) $ret_str'
+fn (f &FunctionTypeInfo) signature(s &Scope) string {
+	mut sb := strings.new_builder(10)
+	if f.is_test {
+		sb.write_string('#[test] ')
+	}
+	sb.write_string('fn ')
+	if f.is_method() {
+		sb.write_string('(${s.must_lookup_type(f.receiver).name}) ')
+	}
+	if f.has_pipe_in() {
+		sb.write_string('${s.must_lookup_type(f.pipe_in).name} |> ')
+	}
+
+	sb.write_string('(')
+	for i, param in f.params {
+		ts := s.must_lookup_type(param)
+		if i < f.params.len - 1 {
+			sb.write_string('$ts.name, ')
+		} else if f.variadic {
+			array := ts.array_info() or { panic(unreachable('')) }
+			sb.write_string('...${s.must_lookup_type(array.elem).name}')
+		} else {
+			sb.write_string('$ts.name')
+		}
+	}
+	sb.write_string(')')
+
+	if f.ret != builtin_type(.void) {
+		sb.write_string(if f.has_pipe_in() { ' |> ' } else { ': ' })
+		sb.write_string(s.must_lookup_type(f.ret).name)
+	}
+	return sb.str()
 }
 
 pub fn (t TypeSymbol) fn_signature() ?string {

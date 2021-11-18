@@ -1,0 +1,21 @@
+namespace mod {
+  #[test]
+  fn test_fail() {
+    assert(false)
+  }
+
+  #[test]
+  fn test_ok() {
+    assert(true)
+  }
+}
+
+#[test]
+fn test_fail() {
+  assert(1 == 2)
+}
+
+#[test]
+fn test_ok() {
+  assert(1 == 1)
+}

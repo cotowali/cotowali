@@ -98,6 +98,7 @@ enum LicCommand {
 	compile_to_file
 	noemit
 	run
+	test
 }
 
 fn (lic Lic) compile() ? {
@@ -114,11 +115,12 @@ fn (lic Lic) compile() ? {
 
 fn (lic Lic) execute(c LicCommand, file string) os.Result {
 	return match c {
-		.shellcheck { os.execute('$lic.bin $file | shellcheck -') }
-		.compile { os.execute('$lic.bin $file') }
-		.compile_to_file { os.execute('$lic.bin $file > ${file.trim_suffix(suffix(.li))}${suffix(.sh)}') }
+		.shellcheck { os.execute('$lic.bin -test $file | shellcheck -') }
+		.compile { os.execute('$lic.bin -test $file') }
+		.compile_to_file { os.execute('$lic.bin -test $file > ${file.trim_suffix(suffix(.li))}${suffix(.sh)}') }
 		.noemit { os.execute('$lic.bin -no-emit $file') }
 		.run { os.execute('$lic.bin run $file') }
+		.test { os.execute('$lic.bin test $file') }
 	}
 }
 
@@ -196,9 +198,12 @@ fn (t &TestCase) run() TestResult {
 		t.lic.execute(.compile_to_file, t.path)
 	} else if t.is_noemit_test {
 		t.lic.execute(.noemit, t.path)
+	} else if t.path.contains('test_runner_test') {
+		t.lic.execute(.test, t.path)
 	} else {
 		t.lic.execute(.run, t.path)
 	}
+
 	sw.stop()
 	mut result := TestResult{
 		path: t.path

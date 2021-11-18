@@ -104,8 +104,12 @@ fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	function_info := expr.function_info()
 	params := function_info.params
 	param_syms := params.map(scope.must_lookup_type(it))
-
 	args := expr.args
+
+	if function_info.is_test {
+		c.error('cannot explicitly call test function', pos)
+	}
+
 	if function_info.variadic {
 		min_len := params.len - 1
 		if args.len < min_len {

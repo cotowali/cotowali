@@ -45,6 +45,10 @@ pub fn (v Var) name_for_ident() string {
 	return Symbol(v).name_for_ident()
 }
 
+pub fn (v Var) display_name() string {
+	return Symbol(v).display_name()
+}
+
 pub fn (v Var) type_symbol() &TypeSymbol {
 	if scope := v.scope() {
 		return scope.lookup_type(v.typ) or { unresolved_type_symbol }

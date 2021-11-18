@@ -91,6 +91,9 @@ pub fn new_compiler_symbol_table(config Config) CompilerSymbolTable {
 	if config.feature.has(.interactive) {
 		table.define('lish')
 	}
+	if config.is_test {
+		table.define('test')
+	}
 	return table
 }
 

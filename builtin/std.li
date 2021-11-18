@@ -20,6 +20,8 @@ fn eprintln(s: string) {
   sh { printf '%%s\n' "$%s" >&2 }
 }
 
+fn exit(code: int)
+
 fn string |> cat(files: ...string) |> string
 
 fn seq(n: int) |> ...int
@@ -96,6 +98,46 @@ fn (ss: []string) join(sep: string): string {
     ret += ss[i]
   }
   return ret
+}
+
+//
+namespace testing {
+#if test
+  var total_count = 0
+  var passed_count = 0
+  var failed_count = 0
+  fn run_test(label: string, command: string) {
+    print("testing $label ... ")
+    sh {
+      %total_count=$(( %total_count + 1 ))
+      out="$($%command 2>&1)"
+      if [ "$?" -eq 0 ]
+      then
+        printf 'OK\n'
+        %passed_count=$(( %passed_count + 1 ))
+      else
+        printf 'FAILED\n'
+        %failed_count=$(( %failed_count + 1 ))
+      fi
+      if [ -n "$out" ]
+      then
+        printf '\nOutput:\n%%s\n\n' "$out"
+      fi
+    }
+  }
+  fn finish() {
+    var exit_code = 0
+    print('test result: ')
+    if failed_count == 0 {
+      println('OK')
+    } else {
+      println('FAILED')
+      exit_code = 1
+    }
+    println("$total_count total; $passed_count passed; $failed_count failed;")
+    exit(exit_code)
+  }
+#endif
 }
 
 // ---

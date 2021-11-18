@@ -6,6 +6,7 @@
 module ast
 
 import cotowali.source { Pos }
+import cotowali.token { Token }
 import cotowali.symbols { FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id }
 import cotowali.messages { undefined, unreachable }
 
@@ -20,13 +21,6 @@ pub mut:
 	pipe_in_param Var
 	params        []Var
 	body          Block
-}
-
-pub fn (f FnDecl) children() []Node {
-	mut children := []Node{cap: f.params.len + 1}
-	children << f.params.map(Node(Expr(it)))
-	children << Stmt(f.body)
-	return children
 }
 
 pub fn (f FnDecl) function_info() FunctionTypeInfo {
@@ -50,6 +44,62 @@ pub fn (f FnDecl) pipe_in_param() ?Var {
 		return none
 	}
 	return f.pipe_in_param
+}
+
+pub fn (f FnDecl) is_test() bool {
+	return f.attrs.any(it.kind() == .test)
+}
+
+pub fn (f FnDecl) get_run_test_call_expr() CallExpr {
+	scope := f.sym.scope() or { panic(unreachable('scope is nil')) }
+	testing := scope.root().must_get_child('testing')
+	sq_token := Token{
+		kind: .single_quote
+		text: "'"
+	}
+	return CallExpr{
+		scope: testing
+		func: Var{
+			sym: testing.must_lookup_var('run_test')
+			ident: Ident{
+				text: 'run_test'
+				scope: testing
+			}
+		}
+		args: [
+			// label
+			Expr(StringLiteral{
+				scope: scope
+				open: sq_token
+				close: sq_token
+				contents: [
+					StringLiteralContent(Token{
+						kind: .string_literal_content_text
+						text: f.sym.display_name()
+					}),
+				]
+			}),
+			// test function name
+			Expr(StringLiteral{
+				scope: scope
+				open: sq_token
+				close: sq_token
+				contents: [
+					StringLiteralContent(Token{
+						kind: .string_literal_content_text
+						text: f.sym.name_for_ident()
+					}),
+				]
+			}),
+		]
+	}
+}
+
+pub fn (f FnDecl) children() []Node {
+	mut children := []Node{cap: f.params.len + 1}
+	children << f.params.map(Node(Expr(it)))
+	children << Stmt(f.body)
+	return children
 }
 
 fn (mut r Resolver) fn_decl(decl FnDecl) {

@@ -171,6 +171,21 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 		c.current_fn = old_fn
 	}
 
+	fn_info := stmt.function_info()
+
+	if stmt.is_test() {
+		if fn_info.has_pipe_in() {
+			c.error('test function cannot have pipe-in', stmt.sym.pos)
+		}
+		if stmt.params.len != 0 {
+			pos := stmt.params[0].pos().merge(stmt.params.last().pos())
+			c.error('test function cannot have parameters', pos)
+		}
+		if fn_info.ret != builtin_type(.void) {
+			c.error('test function cannot have return values', stmt.sym.pos)
+		}
+	}
+
 	if pipe_in_param := stmt.pipe_in_param() {
 		pipe_in_param_ts := ast.Expr(pipe_in_param).type_symbol()
 		if _ := pipe_in_param_ts.sequence_info() {

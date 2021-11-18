@@ -3,7 +3,7 @@ basedir=$(cd $(dirname $0); pwd)
 exit_code=0
 
 is_fail_test() {
-  [ "$1" = "$basedir/assert.sh" ]
+  [ "$1" = "$basedir/assert.sh" ] || [ "$1" = "$basedir/test_runner_test.sh" ]
 }
 
 success() {

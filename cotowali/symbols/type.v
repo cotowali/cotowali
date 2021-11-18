@@ -58,6 +58,10 @@ pub fn (v TypeSymbol) name_for_ident() string {
 	return Symbol(v).name_for_ident()
 }
 
+pub fn (v TypeSymbol) display_name() string {
+	return Symbol(v).display_name()
+}
+
 pub fn (ts &TypeSymbol) base() ?&TypeSymbol {
 	return nil_to_none(ts.base)
 }

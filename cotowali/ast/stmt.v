@@ -10,32 +10,6 @@ import cotowali.source { Pos }
 import cotowali.symbols { Scope, Type, builtin_type }
 import cotowali.util.checksum
 
-pub struct Attr {
-pub:
-	// #[name]
-	pos  Pos
-	name string
-}
-
-pub enum AttrKind {
-	mangle
-	unknown
-}
-
-const attr_name_kind_table = (fn () map[string]AttrKind {
-	k := fn (k AttrKind) AttrKind {
-		return k
-	}
-
-	return {
-		'mangle': k(.mangle)
-	}
-}())
-
-pub fn (attr Attr) kind() AttrKind {
-	return ast.attr_name_kind_table[attr.name] or { AttrKind.unknown }
-}
-
 pub type Stmt = AssertStmt
 	| AssignStmt
 	| Block
