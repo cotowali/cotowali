@@ -22,11 +22,7 @@ pub fn (s &Scope) name_for_ident() string {
 }
 
 pub fn (v Symbol) name_for_ident() string {
-	id := match v {
-		Var { v.id }
-		TypeSymbol { u64(v.typ) }
-	}
-	mut name := if v.name.len > 0 { v.name } else { 'sym$id' }
+	mut name := if v.name.len > 0 { v.name } else { 'sym$v.id()' }
 	if v is Var {
 		if v.is_member() {
 			name = v.receiver_type_symbol().name_for_ident() + '__$name'

@@ -10,8 +10,6 @@ import cotowali.messages { unreachable }
 import cotowali.source { Pos }
 import cotowali.token { TokenKind }
 
-pub type ID = u64
-
 [heap]
 pub struct Scope {
 pub:
