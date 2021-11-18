@@ -28,9 +28,20 @@ fn test_fn_signature() ? {
 			ret: builtin_type(.int)
 		}
 	) ?
+	f4 := s.register_type(
+		name: 'f4'
+		info: FunctionTypeInfo{
+			pipe_in: builtin_type(.int)
+			params: [builtin_type(.int), s.must_lookup_array_type(elem: builtin_type(.int)).typ]
+			variadic: true
+			ret: builtin_type(.int)
+		}
+	) ?
+
 	assert f1.fn_signature() ? == 'fn (int, bool)'
 	assert f2.fn_signature() ? == 'fn (int, bool): int'
 	assert f3.fn_signature() ? == 'fn int |> (int, bool) |> int'
+	assert f4.fn_signature() ? == 'fn int |> (int, ...int) |> int'
 	if _ := s.must_lookup_type(builtin_type(.int)).fn_signature() {
 		assert false
 	}

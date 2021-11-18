@@ -44,7 +44,21 @@ fn (f &FunctionTypeInfo) signature(s &Scope) string {
 	if f.has_pipe_in() {
 		sb.write_string('${s.must_lookup_type(f.pipe_in).name} |> ')
 	}
-	sb.write_string('(' + f.params.map(s.must_lookup_type(it).name).join(', ') + ')')
+
+	sb.write_string('(')
+	for i, param in f.params {
+		ts := s.must_lookup_type(param)
+		if i < f.params.len - 1 {
+			sb.write_string('$ts.name, ')
+		} else if f.variadic {
+			array := ts.array_info() or { panic(unreachable('')) }
+			sb.write_string('...${s.must_lookup_type(array.elem).name}')
+		} else {
+			sb.write_string('$ts.name')
+		}
+	}
+	sb.write_string(')')
+
 	if f.ret != builtin_type(.void) {
 		sb.write_string(if f.has_pipe_in() { ' |> ' } else { ': ' })
 		sb.write_string(s.must_lookup_type(f.ret).name)
