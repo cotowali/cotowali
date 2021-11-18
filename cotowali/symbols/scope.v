@@ -111,7 +111,7 @@ pub fn (s &Scope) is_ancestor_of(target &Scope) bool {
 
 type NameOrID = ID | string
 
-pub fn (mut s Scope) get_child(key NameOrID) ?&Scope {
+pub fn (s &Scope) get_child(key NameOrID) ?&Scope {
 	match key {
 		string {
 			id := s.name_to_child_id[key] or { return none }
@@ -121,6 +121,10 @@ pub fn (mut s Scope) get_child(key NameOrID) ?&Scope {
 			return s.children[key] or { return none }
 		}
 	}
+}
+
+pub fn (s &Scope) must_get_child(key NameOrID) &Scope {
+	return s.get_child(key) or { panic(unreachable('child scope `$key` not found')) }
 }
 
 pub fn (mut s Scope) create_child(name string) ?&Scope {
