@@ -58,6 +58,23 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 		panic(unreachable('not a infix op'))
 	}
 
+	typ := Expr(expr).resolved_typ()
+	is_int := typ == builtin_type(.int)
+
+	if op.kind == .pow {
+		if is_int {
+			e.write('[int]')
+		}
+		e.write('[Math]::Pow(')
+		{
+			e.expr(expr.left)
+			e.write(', ')
+			e.expr(expr.right)
+		}
+		e.write(')')
+		return
+	}
+
 	op_text := match op.kind {
 		.eq { '-eq' }
 		.ne { '-ne' }
@@ -69,7 +86,7 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 		else { panic('unimplemented') }
 	}
 
-	if op.kind == .div && Expr(expr).resolved_typ() == builtin_type(.int) {
+	if op.kind == .div && is_int {
 		e.write('[int][Math]::Floor(')
 		defer {
 			e.write(')')

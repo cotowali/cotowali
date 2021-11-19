@@ -5,8 +5,8 @@ assert(6 / 2 % 2 == 1)
 assert(1 / 2 == 0)
 assert(3 / 2 == 1)
 
-#if !pwsh
 assert(2 ** 2 == 4)
+#if !pwsh
 assert(typeof(2 ** 2) == 'int')
 
 var v = 1
