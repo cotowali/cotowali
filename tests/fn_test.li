@@ -1,3 +1,9 @@
+fn empty() {
+  assert(true)
+}
+empty()
+
+#if !pwsh
 fn git(command: string): string
 fn add(a: int, b: int): int {
   return a + b
@@ -56,3 +62,4 @@ fn test_varargs_array_method() {
   assert(varargs_join(':', 'a', 'b', 'c') == 'a:b:c')
 }
 test_varargs_array_method()
+#endif

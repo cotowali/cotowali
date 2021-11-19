@@ -16,6 +16,7 @@ const (
 	skip_list       = ['raytracing.li']
 	pwsh_test_files = [
 		'empty.li',
+		'fn_test.li',
 		'comments_only.li',
 		'bool_test.li',
 		'int_test.li',
