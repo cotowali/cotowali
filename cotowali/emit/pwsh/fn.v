@@ -52,7 +52,9 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 	e.writeln(')')
 	e.writeln('{')
 	{
+		e.indent()
 		e.block(node.body)
+		e.unindent()
 	}
 	e.writeln('}')
 }
