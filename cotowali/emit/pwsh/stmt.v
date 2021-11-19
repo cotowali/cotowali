@@ -118,7 +118,9 @@ fn (mut e Emitter) namespace_decl(ns ast.NamespaceDecl) {
 }
 
 fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {
-	panic('unimplemented')
+	e.write('return ')
+	e.expr(stmt.expr)
+	e.writeln('')
 }
 
 fn (mut e Emitter) require_stmt(stmt ast.RequireStmt) {
