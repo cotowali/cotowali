@@ -44,10 +44,6 @@ fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
 	panic('unimplemented')
 }
 
-fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
-	panic('unimplemented')
-}
-
 fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 	panic('unimplemented')
 }
@@ -137,4 +133,8 @@ fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
 fn (mut e Emitter) selector_expr(expr ast.SelectorExpr, opt ExprOpt) {
 	// selector expr is used for only method call now.
 	// method call is handled by call_expr. Nothing to do
+}
+
+fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
+	e.write('\$${e.ident_for(v)}')
 }

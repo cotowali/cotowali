@@ -34,7 +34,19 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 }
 
 fn (mut e Emitter) assign_stmt(stmt ast.AssignStmt) {
-	panic('unimplemented')
+	match stmt.left {
+		ast.IndexExpr {
+			panic('index assignment is unimplemented')
+		}
+		ast.ParenExpr {
+			panic('destrucuture assignment is unimplemented')
+		}
+		else {
+			e.write('\$${e.ident_for(stmt.left)} = ')
+			e.expr(stmt.right)
+			e.writeln('')
+		}
+	}
 }
 
 fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {

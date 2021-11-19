@@ -1,5 +1,6 @@
 var a = 1
 assert(a == 1)
+#if !pwsh
 var b: int
 assert(b == 0)
 var c: string
@@ -25,3 +26,4 @@ assert(tuple_b_1 == 0 && tuple_b_2 == 0)
 
 var arr: []string
 assert(arr == []string{})
+#endif
