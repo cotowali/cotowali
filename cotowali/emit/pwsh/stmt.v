@@ -98,6 +98,7 @@ fn (mut e Emitter) doc_comment(comment ast.DocComment) {
 
 fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
 	e.expr(stmt)
+	e.writeln('')
 }
 
 fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
