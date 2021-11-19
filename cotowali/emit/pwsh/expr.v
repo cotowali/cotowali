@@ -5,14 +5,14 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module pwsh
 
-import cotowali.ast
+import cotowali.ast { Expr }
 import cotowali.messages { unreachable }
 import cotowali.symbols { builtin_type }
 
 [params]
 struct ExprOpt {}
 
-fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
+fn (mut e Emitter) expr(expr Expr, opt ExprOpt) {
 	match expr {
 		ast.AsExpr { e.expr(expr.expr, opt) }
 		ast.BoolLiteral { e.bool_literal(expr, opt) }
@@ -80,7 +80,19 @@ fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {
 }
 
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
-	panic('unimplemented')
+	if Expr(expr).type_symbol().resolved().kind() == .tuple {
+		panic('tuple unimplemented')
+		return
+	}
+
+	e.write('(')
+	for i, subexpr in expr.exprs {
+		if i > 0 {
+			e.write(' ')
+		}
+		e.expr(subexpr, opt)
+	}
+	e.write(')')
 }
 
 fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
