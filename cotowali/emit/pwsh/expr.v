@@ -125,7 +125,7 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 	e.write('(')
 	for i, subexpr in expr.exprs {
 		if i > 0 {
-			e.write(' ')
+			e.write(', ')
 		}
 		e.expr(subexpr, opt)
 	}

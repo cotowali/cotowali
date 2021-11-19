@@ -47,9 +47,9 @@ fn (mut e Emitter) assign_stmt(stmt ast.AssignStmt) {
 		else {
 			e.write('\$${e.ident_for(stmt.left)} = ')
 			e.expr(stmt.right)
-			e.writeln('')
 		}
 	}
+	e.writeln('')
 }
 
 fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
