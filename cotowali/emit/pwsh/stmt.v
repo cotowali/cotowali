@@ -92,7 +92,7 @@ fn (mut e Emitter) doc_comment(comment ast.DocComment) {
 }
 
 fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
-	panic('unimplemented')
+	e.expr(stmt)
 }
 
 fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
