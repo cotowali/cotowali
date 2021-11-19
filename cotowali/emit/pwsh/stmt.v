@@ -39,7 +39,10 @@ fn (mut e Emitter) assign_stmt(stmt ast.AssignStmt) {
 			panic('index assignment is unimplemented')
 		}
 		ast.ParenExpr {
-			panic('destrucuture assignment is unimplemented')
+			// pwsh supports assiginig multiple variables : ($a, $b) = (0, 1)
+			e.paren_expr(stmt.left)
+			e.write(' = ')
+			e.expr(stmt.right)
 		}
 		else {
 			e.write('\$${e.ident_for(stmt.left)} = ')

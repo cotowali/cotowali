@@ -6,7 +6,6 @@ var c: string
 assert(c == '')
 var d: int = 0
 assert(d == 0)
-#if !pwsh
 var (e1, e2) = (1, 2)
 assert(e1 == 1 && e2 == 2)
 var (f1, f2): (int, int)
@@ -18,6 +17,7 @@ var tuple_a_2: int
 (tuple_a_1, tuple_a_2) = tuple_a
 assert(tuple_a_1 == 2 && tuple_a_2 == 3)
 
+#if !pwsh
 var tuple_b: (int, int)
 var tuple_b_1 = -1
 var tuple_b_2 = -1

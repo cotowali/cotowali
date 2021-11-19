@@ -122,11 +122,6 @@ fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {
 }
 
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
-	if Expr(expr).type_symbol().resolved().kind() == .tuple {
-		panic('tuple unimplemented')
-		return
-	}
-
 	e.write('(')
 	for i, subexpr in expr.exprs {
 		if i > 0 {
