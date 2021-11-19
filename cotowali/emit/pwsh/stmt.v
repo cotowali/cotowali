@@ -85,7 +85,9 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 }
 
 fn (mut e Emitter) block(block ast.Block) {
-	panic('unimplemented')
+	for stmt in block.stmts {
+		e.stmt(stmt)
+	}
 }
 
 fn (mut e Emitter) doc_comment(comment ast.DocComment) {
