@@ -8,10 +8,11 @@ module pwsh
 import cotowali.ast { Expr }
 
 fn (mut e Emitter) pwsh_compare_object(left Expr, right Expr) {
-	e.write('Compare-Object ')
+	e.write('Compare-Object (')
 	e.expr(left)
-	e.write(' ')
+	e.write(') (')
 	e.expr(right)
+	e.write(')')
 }
 
 fn (mut e Emitter) pwsh_array_eq(left Expr, right Expr) {
@@ -24,4 +25,10 @@ fn (mut e Emitter) pwsh_array_ne(left Expr, right Expr) {
 	e.write('[bool](')
 	e.pwsh_compare_object(left, right)
 	e.write(')')
+}
+
+fn (mut e Emitter) pwsh_array_concat(left Expr, right Expr) {
+	e.expr(left)
+	e.write(' + ')
+	e.expr(right)
 }

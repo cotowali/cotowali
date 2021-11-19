@@ -22,6 +22,7 @@ const (
 		'int_test.li',
 		'float_test.li',
 		'expr/string_test.li',
+		'expr/tuple_test.li',
 		'var_test.li',
 	]
 )

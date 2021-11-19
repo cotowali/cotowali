@@ -123,6 +123,7 @@ fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
 	match expr.op.kind {
 		.eq { e.pwsh_array_eq(expr.left, expr.right) }
 		.ne { e.pwsh_array_ne(expr.left, expr.right) }
+		.plus { e.pwsh_array_concat(expr.left, expr.right) }
 		else { panic('unimplemented') }
 	}
 }
