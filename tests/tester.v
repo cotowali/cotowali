@@ -21,7 +21,7 @@ const (
 		'bool_test.li',
 		'int_test.li',
 		'float_test.li',
-		'string_test.li',
+		'expr/string_test.li',
 		'var_test.li',
 	]
 )
