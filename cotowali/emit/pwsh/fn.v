@@ -12,6 +12,12 @@ fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
+	e.write('${e.ident_for(expr.func)}')
+	for arg in expr.args {
+		e.write(' (')
+		e.expr(arg)
+		e.write(')')
+	}
 }
 
 fn (mut e Emitter) fn_decl(node FnDecl) {
