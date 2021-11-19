@@ -17,6 +17,7 @@ const (
 	pwsh_test_files = [
 		'empty.li',
 		'comments_only.li',
+		'bool_test.li',
 		'int_test.li',
 		'float_test.li',
 		'string_test.li',

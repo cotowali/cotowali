@@ -70,8 +70,9 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 		panic(unreachable('not a infix op'))
 	}
 
-	typ := Expr(expr).resolved_typ()
-	is_int := typ == builtin_type(.int)
+	ts := Expr(expr).type_symbol()
+	ts_resolved := ts.resolved()
+	is_int := ts_resolved.typ == builtin_type(.int)
 
 	if op.kind == .pow {
 		if is_int {
@@ -90,6 +91,8 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op_text := match op.kind {
 		.eq { '-eq' }
 		.ne { '-ne' }
+		.logical_and { '-and' }
+		.logical_or { '-or' }
 		.plus { '+' }
 		.minus { '-' }
 		.mul { '*' }
@@ -139,7 +142,12 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 	if !op.kind.@is(.prefix_op) {
 		panic(unreachable('not a prefix op'))
 	}
-	panic('unimplemented')
+
+	e.write(match op.kind {
+		.not { '! ' }
+		else { panic('unimplemented') }
+	})
+	e.expr(expr.expr)
 }
 
 fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
