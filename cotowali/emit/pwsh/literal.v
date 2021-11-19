@@ -12,7 +12,7 @@ fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 }
 
 fn (mut e Emitter) bool_literal(expr ast.BoolLiteral, opt ExprOpt) {
-	e.write(expr.token.text)
+	e.write(if expr.token.bool() { r'$true' } else { r'$false' })
 }
 
 fn (mut e Emitter) float_literal(expr ast.FloatLiteral, opt ExprOpt) {
