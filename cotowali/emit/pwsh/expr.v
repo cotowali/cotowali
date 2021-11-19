@@ -41,7 +41,23 @@ fn (mut e Emitter) decompose_expr(expr ast.DecomposeExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
-	panic('unimplemented')
+	ts := Expr(expr).type_symbol()
+	if tuple_info := ts.tuple_info() {
+		e.paren_expr(ast.ParenExpr{
+			scope: expr.scope
+			exprs: tuple_info.elements.map(Expr(ast.DefaultValue{
+				typ: it.typ
+				scope: expr.scope
+			}))
+		}, opt)
+		return
+	}
+
+	e.write(match ts.resolved().typ {
+		builtin_type(.bool) { r'$false' }
+		builtin_type(.int), builtin_type(.float) { '0' }
+		else { '""' }
+	})
 }
 
 fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {

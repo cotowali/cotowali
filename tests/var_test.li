@@ -1,12 +1,12 @@
 var a = 1
 assert(a == 1)
-#if !pwsh
 var b: int
 assert(b == 0)
 var c: string
 assert(c == '')
 var d: int = 0
 assert(d == 0)
+#if !pwsh
 var (e1, e2) = (1, 2)
 assert(e1 == 1 && e2 == 2)
 var (f1, f2): (int, int)
