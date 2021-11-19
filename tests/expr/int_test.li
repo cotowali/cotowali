@@ -1,5 +1,6 @@
-assert(6 / 2 + 3 * 3 == 12)
 assert(1 + 1 - 1 == 1)
+#if !pwsh
+assert(6 / 2 + 3 * 3 == 12)
 assert(6 / 2 % 2 == 1)
 
 assert(1 / 2 == 0)
@@ -46,3 +47,4 @@ fn as_int(v: any): int {
 assert(zero() == 0)
 assert(add(3, 4) == 7)
 assert(add(as_int("1"), 2) == 3)
+#endif

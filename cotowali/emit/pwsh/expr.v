@@ -7,6 +7,7 @@ module pwsh
 
 import cotowali.ast
 import cotowali.messages { unreachable }
+import cotowali.symbols { builtin_type }
 
 [params]
 struct ExprOpt {}
@@ -60,8 +61,11 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op_text := match op.kind {
 		.eq { '-eq' }
 		.ne { '-ne' }
+		.plus { '+' }
+		.minus { '-' }
 		else { panic('unimplemented') }
 	}
+
 	e.expr(expr.left)
 	e.write(' $op_text ')
 	e.expr(expr.right)
