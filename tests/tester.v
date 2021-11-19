@@ -14,7 +14,13 @@ import runtime
 
 const (
 	skip_list       = ['raytracing.li']
-	pwsh_test_files = ['empty.li', 'comments_only.li', 'int_test.li', 'float_test.li']
+	pwsh_test_files = [
+		'empty.li',
+		'comments_only.li',
+		'int_test.li',
+		'float_test.li',
+		'string_test.li',
+	]
 )
 
 // --

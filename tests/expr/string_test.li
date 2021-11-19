@@ -8,6 +8,7 @@ assert("a\nb" == 'a
 b')
 assert("\"\\" == r'"\')
 
+#if !pwsh
 var n = 10
 assert("n=$n" == 'n=10')
 assert('$n' == r'$n')
@@ -17,6 +18,7 @@ assert(" $n  $n " == " 10  10 ")
 
 var nx = "nx"
 assert("${n}x$nx" == "10xnx")
+#endif
 
 assert(
 '
@@ -30,6 +32,7 @@ b
 '
 )
 
+#if !pwsh
 fn test_string_index() {
   fn twice(n: int): int {
     return n * 2
@@ -52,3 +55,4 @@ fn test_string_index() {
   assert(s[3 |> twice_input()] == '7')
 }
 test_string_index()
+#endif

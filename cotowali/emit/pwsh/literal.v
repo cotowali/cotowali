@@ -26,7 +26,3 @@ fn (mut e Emitter) int_literal(expr ast.IntLiteral, opt ExprOpt) {
 fn (mut e Emitter) map_literal(expr ast.MapLiteral, opt ExprOpt) {
 	panic('unimplemented')
 }
-
-fn (mut e Emitter) string_literal(expr ast.StringLiteral, opt ExprOpt) {
-	panic('unimplemented')
-}
