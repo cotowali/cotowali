@@ -414,6 +414,22 @@ pub fn (s &RequireStmt) checksum_pos(algo checksum.Algorithm) Pos {
 	}
 }
 
+pub fn (stmt &RequireStmt) str() string {
+	mut prop_strs := []string{}
+	if stmt.has_checksum(.md5) {
+		prop_strs << 'md5: ...'
+	}
+	if stmt.has_checksum(.sha1) {
+		prop_strs << 'sha1: ...'
+	}
+	if stmt.has_checksum(.sha256) {
+		prop_strs << 'sha256: ...'
+	}
+	s := 'require "$stmt.file.source.path"' +
+		(if prop_strs.len > 0 { ' { ${prop_strs.join(', ')} }' } else { '' })
+	return 'RequireStmt{$s}'
+}
+
 [inline]
 pub fn (s &RequireStmt) children() []Node {
 	return [Node(s.file)]
