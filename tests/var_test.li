@@ -15,6 +15,7 @@ var tuple_a = (2, 3)
 var tuple_a_1: int
 var tuple_a_2: int
 (tuple_a_1, tuple_a_2) = tuple_a
+assert(tuple_a == (tuple_a_1, tuple_a_2))
 assert(tuple_a_1 == 2 && tuple_a_2 == 3)
 
 #if !pwsh

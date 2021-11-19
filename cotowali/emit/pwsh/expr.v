@@ -74,6 +74,12 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	ts_resolved := ts.resolved()
 	is_int := ts_resolved.typ == builtin_type(.int)
 
+	if expr.left.type_symbol().resolved().kind() == .tuple
+		|| expr.right.type_symbol().resolved().kind() == .tuple {
+		e.infix_expr_for_tuple(expr, opt)
+		return
+	}
+
 	if op.kind == .pow {
 		if is_int {
 			e.write('[int]')
@@ -111,6 +117,14 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	e.expr(expr.left)
 	e.write(' $op_text ')
 	e.expr(expr.right)
+}
+
+fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
+	match expr.op.kind {
+		.eq { e.pwsh_array_eq(expr.left, expr.right) }
+		.ne { e.pwsh_array_ne(expr.left, expr.right) }
+		else { panic('unimplemented') }
+	}
 }
 
 fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {
