@@ -63,7 +63,17 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 		.ne { '-ne' }
 		.plus { '+' }
 		.minus { '-' }
+		.mul { '*' }
+		.div { '/' }
+		.mod { '%' }
 		else { panic('unimplemented') }
+	}
+
+	if op.kind == .div && Expr(expr).resolved_typ() == builtin_type(.int) {
+		e.write('[int][Math]::Floor(')
+		defer {
+			e.write(')')
+		}
 	}
 
 	e.expr(expr.left)
