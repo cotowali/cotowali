@@ -37,7 +37,7 @@ pub enum BuiltinFunctionKey {
 	read
 }
 
-pub fn builtin_function_id(key BuiltinFunctionKey) u64 {
+pub fn builtin_function_id(key BuiltinFunctionKey) ID {
 	return u64(key)
 }
 
