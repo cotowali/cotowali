@@ -8,6 +8,7 @@ assert(3 / 2 == 1)
 assert(2 ** 2 == 4)
 #if !pwsh
 assert(typeof(2 ** 2) == 'int')
+#endif
 
 var v = 1
 v = 10
@@ -17,15 +18,14 @@ assert(-+v == +-v)
 assert(- -v == + +v)
 assert(- - -v == -v)
 
-#endif
 
-#if !pwsh
 assert(0 < 1)
 assert(0 <= 1)
 assert(0 <= 0)
 assert(1 > 0)
 assert(1 >= 0)
 assert(0 >= 0)
+#if !pwsh
 
 fn zero(): int {
   var v = 0

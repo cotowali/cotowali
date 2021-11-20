@@ -181,20 +181,22 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		panic(unreachable('not a prefix op'))
 	}
 
-	needs_paren := op.kind == .amp // [ref] needs paren
-	if needs_paren {
-		e.write('(')
-		defer {
-			e.write(')')
-		}
+	if op.kind == .amp {
+		e.write('([ref]')
+		e.expr(expr.expr)
+		e.write(')')
+		return
 	}
 
 	e.write(match op.kind {
 		.not { '! ' }
-		.amp { '[ref]' }
+		.plus { '+' }
+		.minus { '-' }
 		else { panic('unimplemented') }
 	})
+	e.write('(')
 	e.expr(expr.expr)
+	e.write(')')
 }
 
 fn (mut e Emitter) pipeline(pipeline ast.Pipeline, opt ExprOpt) {
