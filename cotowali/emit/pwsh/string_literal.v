@@ -50,7 +50,7 @@ fn (mut e Emitter) double_quote_string_literal(expr StringLiteral) {
 		if v is Token {
 			match v.kind {
 				.string_literal_content_escaped_newline {
-					e.write('\n')
+					e.write('`n')
 				}
 				.string_literal_content_escaped_double_quote {
 					e.write('""')
