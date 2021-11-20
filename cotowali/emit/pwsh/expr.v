@@ -153,8 +153,17 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		panic(unreachable('not a prefix op'))
 	}
 
+	needs_paren := op.kind == .amp // [ref] needs paren
+	if needs_paren {
+		e.write('(')
+		defer {
+			e.write(')')
+		}
+	}
+
 	e.write(match op.kind {
 		.not { '! ' }
+		.amp { '[ref]' }
 		else { panic('unimplemented') }
 	})
 	e.expr(expr.expr)
