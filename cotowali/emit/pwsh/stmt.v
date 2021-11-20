@@ -102,7 +102,15 @@ fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
 }
 
 fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
-	panic('unimplemented')
+	e.write('foreach(${e.pwsh_var(stmt.var_)} in ')
+	e.expr(stmt.expr)
+	e.writeln(')')
+
+	e.writeln('{')
+	e.indent()
+	e.block(stmt.body)
+	e.unindent()
+	e.writeln('}')
 }
 
 fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
