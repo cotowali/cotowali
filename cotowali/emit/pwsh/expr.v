@@ -170,5 +170,5 @@ fn (mut e Emitter) selector_expr(expr ast.SelectorExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
-	e.write('\$${e.ident_for(v)}')
+	e.write(e.pwsh_var(v))
 }

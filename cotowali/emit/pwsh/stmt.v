@@ -45,7 +45,7 @@ fn (mut e Emitter) assign_stmt(stmt ast.AssignStmt) {
 			e.expr(stmt.right)
 		}
 		else {
-			e.write('\$${e.ident_for(stmt.left)} = ')
+			e.write('${e.pwsh_var(stmt.left)} = ')
 			e.expr(stmt.right)
 		}
 	}

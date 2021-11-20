@@ -9,10 +9,13 @@ import cotowali.ast { ArrayLiteral, Expr, FnDecl, MapLiteral }
 import cotowali.symbols
 import cotowali.messages { unreachable }
 
-type IdentForValue = ArrayLiteral | Expr | FnDecl | MapLiteral | ast.Var | symbols.Var
+type ValueOfIdentFor = ArrayLiteral | Expr | FnDecl | MapLiteral | ast.Var | string | symbols.Var
 
-fn (mut e Emitter) ident_for(v IdentForValue) string {
+fn (mut e Emitter) ident_for(v ValueOfIdentFor) string {
 	return match v {
+		string {
+			v
+		}
 		symbols.Var {
 			if v.name == '_' {
 				'null'

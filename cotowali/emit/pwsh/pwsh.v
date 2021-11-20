@@ -32,3 +32,7 @@ fn (mut e Emitter) pwsh_array_concat(left Expr, right Expr) {
 	e.write(' + ')
 	e.expr(right)
 }
+
+fn (mut e Emitter) pwsh_var(v ValueOfIdentFor) string {
+	return '\$${e.ident_for(v)}'
+}

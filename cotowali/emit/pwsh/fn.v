@@ -46,7 +46,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			if i > 0 {
 				e.write(', ')
 			}
-			e.write('\$${e.ident_for(param)}')
+			e.write(e.pwsh_var(param))
 		}
 	}
 	e.writeln(')')
