@@ -101,3 +101,4 @@ fn test_array_init() {
   var (len, init) = (3, -2)
   assert([]int{len: len, init: init} == [-2, -2, -2])
 }
+test_array_init()
