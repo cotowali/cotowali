@@ -28,7 +28,7 @@ fn test_redirect_with_var_and_func() {
 }
 test_redirect_with_var_and_func()
 
-fn test_redirect_dev_null() {
-  "garbage" |> "/dev/null"
+fn test_redirect_to_null() {
+  "garbage" |> null
 }
-test_redirect_dev_null()
+test_redirect_to_null()
