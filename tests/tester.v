@@ -18,6 +18,7 @@ const (
 		'empty.li',
 		'fn_test.li',
 		'pipe_test.li',
+		'redirect_test.li',
 		'while_test.li',
 		'comments_only.li',
 		'bool_test.li',

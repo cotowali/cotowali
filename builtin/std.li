@@ -4,9 +4,8 @@
 /// License, v. 2.0. If a copy of the MPL was not distributed with this
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#if pwsh
-  // if powershell, skip std for now
-#else
+#if !pwsh
+// if powershell, skip most parts of std for now
 
 fn print(s: string) {
   sh { printf '%%s' "$%s" }
@@ -26,7 +25,9 @@ fn eprintln(s: string) {
 
 fn exit(code: int)
 
+#endif
 fn string |> cat(files: ...string) |> string
+#if !pwsh
 
 fn seq(n: int) |> ...int
 

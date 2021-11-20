@@ -1,16 +1,20 @@
 fn test_redirect_with_literal() {
   "hello" |> "tmp.txt"
   assert(cat("tmp.txt") == "hello")
+#if !pwsh
   "world" |>> "tmp.txt"
   assert(cat("tmp.txt") == "hello\nworld")
+#endif
   @rm("tmp.txt")
 }
 test_redirect_with_literal()
 
 fn test_redirect_with_var_and_func() {
+#if !pwsh
   fn hello(msg: string): string {
     return "hello $msg"
   }
+#endif
 
   fn tmp_file(): string {
     return "/tmp/cotowali_redirect_tmp.txt"
@@ -22,9 +26,11 @@ fn test_redirect_with_var_and_func() {
   assert(cat(f) == msg)
   @rm(f)
 
+#if !pwsh
   hello(msg) |> tmp_file()
   assert(cat(tmp_file()) == hello(msg))
   @rm(tmp_file())
+#endif
 }
 test_redirect_with_var_and_func()
 
