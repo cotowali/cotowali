@@ -5,7 +5,6 @@ fn test_normal() {
     return n + 1
   }
 
-#if !pwsh
   fn ...int |> sum() |> int {
     var n: int
     var v: int
@@ -15,6 +14,7 @@ fn test_normal() {
     return n
   }
 
+#if !pwsh
   fn ...int |> twice() |> ...int {
     var v: int
     while read(&v) {
@@ -24,8 +24,8 @@ fn test_normal() {
 #endif
 
   assert((10 |> inc()) == 11)
-#if !pwsh
   assert((10 |> sum()) == 10)
+#if !pwsh
   assert((seq(3) |> sum()) == 6)
   assert((seq(3) |> twice() |> sum()) == 12)
 #endif

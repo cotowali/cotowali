@@ -128,7 +128,17 @@ fn (mut e Emitter) require_stmt(stmt ast.RequireStmt) {
 }
 
 fn (mut e Emitter) while_stmt(stmt ast.WhileStmt) {
-	panic('unimplemented')
+	e.write('while (')
+	e.expr(stmt.cond)
+	e.writeln(')')
+
+	e.writeln('{')
+	e.indent()
+	{
+		e.block(stmt.body)
+	}
+	e.unindent()
+	e.writeln('}')
 }
 
 fn (mut e Emitter) yield_stmt(stmt ast.YieldStmt) {
