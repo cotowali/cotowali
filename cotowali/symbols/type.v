@@ -197,7 +197,7 @@ pub fn (mut s Scope) lookup_or_register_type(ts TypeSymbol) &TypeSymbol {
 // -- methods --
 
 pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) ?&Var {
-	fn_typ := ts.scope.lookup_or_register_fn_type(FunctionTypeInfo{
+	fn_typ := ts.scope.lookup_or_register_function_type(FunctionTypeInfo{
 		...f.FunctionTypeInfo
 		receiver: ts.typ
 	}).typ

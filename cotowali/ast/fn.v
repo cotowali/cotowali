@@ -7,7 +7,14 @@ module ast
 
 import cotowali.source { Pos }
 import cotowali.token { Token }
-import cotowali.symbols { FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_fn_id }
+import cotowali.symbols {
+	BuiltinFunctionKey,
+	FunctionTypeInfo,
+	Scope,
+	Type,
+	TypeSymbol,
+	builtin_function_id,
+}
 import cotowali.messages { undefined, unreachable }
 
 pub struct FnDecl {
@@ -32,7 +39,7 @@ pub fn (f FnDecl) type_symbol() &TypeSymbol {
 }
 
 pub fn (f FnDecl) signature() string {
-	return f.type_symbol().fn_signature() or { panic(unreachable(err)) }
+	return f.type_symbol().signature() or { panic(unreachable(err)) }
 }
 
 pub fn (f FnDecl) ret_type_symbol() &TypeSymbol {
@@ -210,6 +217,10 @@ pub fn (e CallExpr) function_info() FunctionTypeInfo {
 	return e.func.type_symbol().function_info() or { panic(unreachable(err)) }
 }
 
+pub fn (e CallExpr) is_builtin_function_call(key BuiltinFunctionKey) bool {
+	return e.func_id == builtin_function_id(key)
+}
+
 pub fn (expr &CallExpr) children() []Node {
 	mut children := []Node{cap: expr.args.len + 1}
 	children << expr.func
@@ -281,7 +292,7 @@ fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 	e.typ = function_info.ret
 	e.func_id = sym.id
 	if owner := e.scope.owner() {
-		if sym.id == builtin_fn_id(.read) {
+		if sym.id == builtin_function_id(.read) {
 			owner_function_info := owner.type_symbol().function_info() or {
 				panic(unreachable(err))
 			}
@@ -295,7 +306,7 @@ fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 			} else {
 				[e.scope.lookup_or_register_reference_type(target: pipe_in.typ).typ]
 			}
-			func.sym = if new_fn := e.scope.register_fn(name: sym.name, params: new_fn_params) {
+			func.sym = if new_fn := e.scope.register_function(name: sym.name, params: new_fn_params) {
 				new_fn
 			} else {
 				// already registered

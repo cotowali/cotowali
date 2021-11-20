@@ -31,24 +31,19 @@ pub fn (t Type) is_number() bool {
 	return t in symbols.number_types
 }
 
-pub enum BuiltinFnKey {
+pub enum BuiltinFunctionKey {
 	echo = 1
 	@typeof
 	read
 }
 
-pub fn builtin_fn_id(key BuiltinFnKey) u64 {
+pub fn builtin_function_id(key BuiltinFunctionKey) ID {
 	return u64(key)
 }
 
-struct BuiltinFnInfo {
-	key           BuiltinFnKey
+struct BuiltinFunctionInfo {
+	key           BuiltinFunctionKey
 	function_info FunctionTypeInfo
-}
-
-fn (mut s Scope) must_register_builtin_fn(key BuiltinFnKey, info FunctionTypeInfo) &Var {
-	typ := s.lookup_or_register_fn_type(info).typ
-	return s.must_register_var(id: builtin_fn_id(key), name: key.str(), typ: typ)
 }
 
 pub fn (mut s Scope) register_builtin() {
@@ -85,8 +80,8 @@ pub fn (mut s Scope) register_builtin() {
 		}
 	}
 
-	f_ := fn (k BuiltinFnKey, function_info FunctionTypeInfo) BuiltinFnInfo {
-		return BuiltinFnInfo{k, function_info}
+	f_ := fn (k BuiltinFunctionKey, function_info FunctionTypeInfo) BuiltinFunctionInfo {
+		return BuiltinFunctionInfo{k, function_info}
 	}
 
 	fns := [
@@ -95,6 +90,7 @@ pub fn (mut s Scope) register_builtin() {
 		f_(.@typeof, params: [t_(.any)], ret: t_(.string)),
 	]
 	for f in fns {
-		s.must_register_builtin_fn(f.key, f.function_info)
+		typ := s.lookup_or_register_function_type(f.function_info).typ
+		s.must_register_var(id: builtin_function_id(f.key), name: f.key.str(), typ: typ)
 	}
 }

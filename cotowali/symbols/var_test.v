@@ -78,9 +78,9 @@ fn test_lookup_var_with_pos() ? {
 	assert child.must_lookup_var_with_pos(name_v_none, pos(i: 1)).id == child_v_none.id
 }
 
-fn test_register_fn() ? {
+fn test_register_function() ? {
 	mut s := new_global_scope()
-	f := s.register_fn(name: 'f', params: [builtin_type(.int)], ret: builtin_type(.void)) ?
+	f := s.register_function(name: 'f', params: [builtin_type(.int)], ret: builtin_type(.void)) ?
 	assert f.id != 0
 	assert f.is_function()
 }

@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-fn test_fn_signature() ? {
+fn test_signature() ? {
 	mut s := new_global_scope()
 	f1 := s.register_type(
 		name: 'f1'
@@ -44,12 +44,12 @@ fn test_fn_signature() ? {
 		}
 	) ?
 
-	assert f1.fn_signature() ? == 'fn (int, bool)'
-	assert f2.fn_signature() ? == 'fn (int, bool): int'
-	assert f3.fn_signature() ? == 'fn int |> (int, bool) |> int'
-	assert f4.fn_signature() ? == 'fn int |> (int, ...int) |> int'
-	assert f5.fn_signature() ? == '#[test] fn ()'
-	if _ := s.must_lookup_type(builtin_type(.int)).fn_signature() {
+	assert f1.signature() ? == 'fn (int, bool)'
+	assert f2.signature() ? == 'fn (int, bool): int'
+	assert f3.signature() ? == 'fn int |> (int, bool) |> int'
+	assert f4.signature() ? == 'fn int |> (int, ...int) |> int'
+	assert f5.signature() ? == '#[test] fn ()'
+	if _ := s.must_lookup_type(builtin_type(.int)).signature() {
 		assert false
 	}
 }
@@ -198,5 +198,5 @@ fn test_method() ? {
 		assert false
 	}
 
-	assert (method2.type_symbol().fn_signature() ?) == 'fn (Type2) int |> (int)'
+	assert (method2.type_symbol().signature() ?) == 'fn (Type2) int |> (int)'
 }

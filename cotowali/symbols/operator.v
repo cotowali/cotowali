@@ -8,7 +8,7 @@ module symbols
 import cotowali.token { Token, TokenKindClass }
 import cotowali.messages { already_defined, unreachable }
 
-fn verify_op_fn_signature(expected TokenKindClass, op Token, fn_info FunctionTypeInfo) ? {
+fn verify_op_signature(expected TokenKindClass, op Token, fn_info FunctionTypeInfo) ? {
 	expected_s := match expected {
 		.infix_op { 'infix' }
 		.prefix_op { 'prefix' }
@@ -36,14 +36,14 @@ fn verify_op_fn_signature(expected TokenKindClass, op Token, fn_info FunctionTyp
 	}
 }
 
-pub fn (mut s Scope) register_infix_op(op Token, f RegisterFnArgs) ?&Var {
+pub fn (mut s Scope) register_infix_op_function(op Token, f RegisterFnArgs) ?&Var {
 	fn_info := f.FunctionTypeInfo
-	verify_op_fn_signature(.infix_op, op, fn_info) ?
+	verify_op_signature(.infix_op, op, fn_info) ?
 
 	lhs_ts := s.lookup_type(fn_info.params[0]) ?
 	rhs_ts := s.lookup_type(fn_info.params[1]) ?
 
-	fn_typ := s.lookup_or_register_fn_type(fn_info).typ
+	fn_typ := s.lookup_or_register_function_type(fn_info).typ
 
 	v := &Var{
 		...f.Var
@@ -53,29 +53,29 @@ pub fn (mut s Scope) register_infix_op(op Token, f RegisterFnArgs) ?&Var {
 		scope: s
 	}
 
-	if rhs_ts.typ in s.infix_op_fns[op.kind][lhs_ts.typ] {
+	if rhs_ts.typ in s.infix_op_functions[op.kind][lhs_ts.typ] {
 		return error(already_defined(.operator, op.text))
 	}
-	s.infix_op_fns[op.kind][lhs_ts.typ][rhs_ts.typ] = v
+	s.infix_op_functions[op.kind][lhs_ts.typ][rhs_ts.typ] = v
 
 	return v
 }
 
-pub fn (s &Scope) lookup_infix_op(op Token, lhs Type, rhs Type) ?&Var {
-	return s.infix_op_fns[op.kind][lhs][rhs] or {
+pub fn (s &Scope) lookup_infix_op_function(op Token, lhs Type, rhs Type) ?&Var {
+	return s.infix_op_functions[op.kind][lhs][rhs] or {
 		if p := s.parent() {
-			return p.lookup_infix_op(op, lhs, rhs)
+			return p.lookup_infix_op_function(op, lhs, rhs)
 		}
 		return none
 	}
 }
 
-pub fn (mut s Scope) register_prefix_op(op Token, f RegisterFnArgs) ?&Var {
+pub fn (mut s Scope) register_prefix_op_function(op Token, f RegisterFnArgs) ?&Var {
 	fn_info := f.FunctionTypeInfo
-	verify_op_fn_signature(.prefix_op, op, fn_info) ?
+	verify_op_signature(.prefix_op, op, fn_info) ?
 
 	operand_ts := s.lookup_type(fn_info.params[0]) ?
-	fn_typ := s.lookup_or_register_fn_type(fn_info).typ
+	fn_typ := s.lookup_or_register_function_type(fn_info).typ
 
 	v := &Var{
 		...f.Var
@@ -85,18 +85,18 @@ pub fn (mut s Scope) register_prefix_op(op Token, f RegisterFnArgs) ?&Var {
 		scope: s
 	}
 
-	if operand_ts.typ in s.prefix_op_fns[op.kind] {
+	if operand_ts.typ in s.prefix_op_functions[op.kind] {
 		return error(already_defined(.operator, op.text))
 	}
-	s.prefix_op_fns[op.kind][operand_ts.typ] = v
+	s.prefix_op_functions[op.kind][operand_ts.typ] = v
 
 	return v
 }
 
-pub fn (s &Scope) lookup_prefix_op(op Token, operand Type) ?&Var {
-	return s.prefix_op_fns[op.kind][operand] or {
+pub fn (s &Scope) lookup_prefix_op_function(op Token, operand Type) ?&Var {
+	return s.prefix_op_functions[op.kind][operand] or {
 		if p := s.parent() {
-			return p.lookup_prefix_op(op, operand)
+			return p.lookup_prefix_op_function(op, operand)
 		}
 		return none
 	}
