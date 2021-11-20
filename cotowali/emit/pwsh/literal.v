@@ -23,6 +23,10 @@ fn (mut e Emitter) int_literal(expr ast.IntLiteral, opt ExprOpt) {
 	e.write(expr.token.text)
 }
 
+fn (mut e Emitter) null_literal(expr ast.NullLiteral, opt ExprOpt) {
+	e.write('\$null')
+}
+
 fn (mut e Emitter) map_literal(expr ast.MapLiteral, opt ExprOpt) {
 	panic('unimplemented')
 }

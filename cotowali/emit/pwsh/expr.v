@@ -28,6 +28,7 @@ fn (mut e Emitter) expr(expr Expr, opt ExprOpt) {
 		ast.IndexExpr { e.index_expr(expr, opt) }
 		ast.MapLiteral { e.map_literal(expr, opt) }
 		ast.NamespaceItem { e.namespace_item(expr, opt) }
+		ast.NullLiteral { e.null_literal(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
 		ast.SelectorExpr { e.selector_expr(expr, opt) }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
