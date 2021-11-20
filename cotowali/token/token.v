@@ -20,6 +20,7 @@ pub enum TokenKind {
 	key_in
 	key_map
 	key_namespace
+	key_null
 	key_require
 	key_return
 	key_sh

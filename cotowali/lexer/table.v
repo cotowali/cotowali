@@ -67,6 +67,7 @@ const (
 		'in':        tk(.key_in)
 		'map':       tk(.key_map)
 		'namespace': tk(.key_namespace)
+		'null':      tk(.key_null)
 		'require':   tk(.key_require)
 		'return':    tk(.key_return)
 		'sh':        tk(.key_sh)

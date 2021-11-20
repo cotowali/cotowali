@@ -476,6 +476,13 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 		.ident {
 			return p.parse_ident()
 		}
+		.key_null {
+			p.consume()
+			return ast.NullLiteral{
+				scope: p.scope
+				token: tok
+			}
+		}
 		.int_literal {
 			p.consume()
 			return ast.IntLiteral{

@@ -37,6 +37,7 @@ fn (mut c Checker) expr(expr Expr) {
 		ast.IntLiteral {}
 		ast.MapLiteral { c.map_literal(expr) }
 		ast.NamespaceItem { c.namespace_item(expr) }
+		ast.NullLiteral {}
 		ast.ParenExpr { c.paren_expr(expr) }
 		ast.Pipeline { c.pipeline(expr) }
 		ast.PrefixExpr { c.prefix_expr(expr) }

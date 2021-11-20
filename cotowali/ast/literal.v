@@ -102,6 +102,7 @@ pub:
 pub type BoolLiteral = PrimitiveLiteral
 pub type IntLiteral = PrimitiveLiteral
 pub type FloatLiteral = PrimitiveLiteral
+pub type NullLiteral = PrimitiveLiteral
 
 pub fn (e BoolLiteral) bool() bool {
 	return e.token.bool()
@@ -130,6 +131,15 @@ fn (mut r Resolver) int_literal(expr IntLiteral, opt ResolveExprOpt) {
 }
 
 fn (mut r Resolver) float_literal(expr FloatLiteral, opt ResolveExprOpt) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+}
+
+fn (mut r Resolver) null_literal(expr NullLiteral, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {

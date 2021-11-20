@@ -30,6 +30,7 @@ pub type Expr = ArrayLiteral
 	| IntLiteral
 	| MapLiteral
 	| NamespaceItem
+	| NullLiteral
 	| ParenExpr
 	| Pipeline
 	| PrefixExpr
@@ -39,7 +40,7 @@ pub type Expr = ArrayLiteral
 
 pub fn (expr Expr) children() []Node {
 	return match expr {
-		DefaultValue, BoolLiteral, FloatLiteral, IntLiteral, Var {
+		DefaultValue, BoolLiteral, FloatLiteral, IntLiteral, NullLiteral, Var {
 			[]Node{}
 		}
 		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DecomposeExpr, IndexExpr, InfixExpr,
@@ -79,6 +80,7 @@ fn (mut r Resolver) expr(expr Expr, opt ResolveExprOpt) {
 		IntLiteral { r.int_literal(expr, opt) }
 		MapLiteral { r.map_literal(mut expr, opt) }
 		NamespaceItem { r.namespace_item(mut expr, opt) }
+		NullLiteral { r.null_literal(expr, opt) }
 		ParenExpr { r.paren_expr(expr, opt) }
 		Pipeline { r.pipeline(expr, opt) }
 		PrefixExpr { r.prefix_expr(mut expr, opt) }
@@ -116,7 +118,7 @@ pub fn (expr Expr) pos() Pos {
 		PrefixExpr {
 			expr.op.pos.merge(expr.expr.pos())
 		}
-		IntLiteral, FloatLiteral, BoolLiteral {
+		IntLiteral, FloatLiteral, BoolLiteral, NullLiteral {
 			expr.token.pos
 		}
 		StringLiteral {
@@ -228,6 +230,7 @@ pub fn (e Expr) typ() Type {
 		FloatLiteral { builtin_type(.float) }
 		StringLiteral { e.typ() }
 		IntLiteral { builtin_type(.int) }
+		NullLiteral { builtin_type(.null) }
 		NamespaceItem { e.typ() }
 		ParenExpr { e.typ() }
 		Pipeline { e.exprs.last().typ() }
@@ -266,7 +269,8 @@ pub fn (e Expr) scope() &Scope {
 			e.scope()
 		}
 		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, FloatLiteral,
-		InfixExpr, IntLiteral, MapLiteral, ParenExpr, Pipeline, PrefixExpr, StringLiteral {
+		InfixExpr, IntLiteral, MapLiteral, NullLiteral, ParenExpr, Pipeline, PrefixExpr,
+		StringLiteral {
 			e.scope
 		}
 	}
@@ -495,13 +499,17 @@ pub mut:
 	exprs []Expr
 }
 
+fn is_str_or_null(t Type) bool {
+	return t in [builtin_type(.string), builtin_type(.null)]
+}
+
 pub fn (expr &Pipeline) has_redirect() bool {
 	last := expr.exprs.last()
 	return if last is CallExpr {
 		fn_info := last.function_info()
-		fn_info.pipe_in == builtin_type(.void) && fn_info.ret == builtin_type(.string)
+		fn_info.pipe_in == builtin_type(.void) && is_str_or_null(fn_info.ret)
 	} else {
-		last !is CallCommandExpr && last.resolved_typ() == builtin_type(.string)
+		last !is CallCommandExpr && is_str_or_null(last.resolved_typ())
 	}
 }
 

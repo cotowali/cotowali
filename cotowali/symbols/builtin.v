@@ -19,6 +19,7 @@ pub enum BuiltinTypeKey {
 	float
 	string
 	bool
+	null
 }
 
 pub fn builtin_type(key BuiltinTypeKey) Type {
@@ -66,6 +67,7 @@ pub fn (mut s Scope) register_builtin() {
 		ts_(.float, PrimitiveTypeInfo{}),
 		ts_(.string, PrimitiveTypeInfo{}),
 		ts_(.bool, PrimitiveTypeInfo{}),
+		ts_(.null, PrimitiveTypeInfo{}),
 	]
 	mut array_types := map[int]Type{}
 	mut sequence_types := map[int]Type{}

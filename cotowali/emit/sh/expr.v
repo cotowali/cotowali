@@ -71,6 +71,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.IndexExpr { e.index_expr(expr, opt) }
 		ast.MapLiteral { e.map_literal(expr, opt) }
 		ast.NamespaceItem { e.namespace_item(expr, opt) }
+		ast.NullLiteral { e.null_literal(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
 		ast.SelectorExpr { e.selector_expr(expr, opt) }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
@@ -117,6 +118,10 @@ fn (mut e Emitter) float_literal(expr ast.FloatLiteral, opt ExprOpt) {
 
 fn (mut e Emitter) int_literal(expr ast.IntLiteral, opt ExprOpt) {
 	e.write_echo_if_command_then_write(expr.token.text, opt)
+}
+
+fn (mut e Emitter) null_literal(expr ast.NullLiteral, opt ExprOpt) {
+	e.write_echo_if_command_then_write('/dev/null', opt)
 }
 
 fn (mut e Emitter) decompose_expr(expr ast.DecomposeExpr, opt ExprOpt) {
