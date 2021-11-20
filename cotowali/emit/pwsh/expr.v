@@ -160,8 +160,19 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 	e.expr(expr.expr)
 }
 
-fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
-	panic('unimplemented')
+fn (mut e Emitter) pipeline(pipeline ast.Pipeline, opt ExprOpt) {
+	for i, expr in pipeline.exprs {
+		if i > 0 && i == pipeline.exprs.len - 1 && pipeline.has_redirect() {
+			e.write(if pipeline.is_append { ' >> ' } else { ' > ' })
+			e.expr(expr)
+			return
+		}
+
+		if i > 0 {
+			e.write(' | ')
+		}
+		e.expr(expr)
+	}
 }
 
 fn (mut e Emitter) selector_expr(expr ast.SelectorExpr, opt ExprOpt) {
