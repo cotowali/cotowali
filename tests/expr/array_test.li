@@ -45,6 +45,7 @@ var arr = [0
 
 // ---
 
+#if !pwsh
 fn for_in_test() {
   var n = 0
   for i in [1, 2, 3] {
@@ -101,3 +102,4 @@ fn test_array_init() {
   var (len, init) = (3, -2)
   assert([]int{len: len, init: init} == [-2, -2, -2])
 }
+#endif

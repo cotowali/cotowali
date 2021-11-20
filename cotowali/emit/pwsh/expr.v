@@ -43,7 +43,9 @@ fn (mut e Emitter) decompose_expr(expr ast.DecomposeExpr, opt ExprOpt) {
 
 fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
 	ts := Expr(expr).type_symbol()
-	if tuple_info := ts.tuple_info() {
+	ts_resolved := ts.resolved()
+
+	if tuple_info := ts_resolved.tuple_info() {
 		e.paren_expr(ast.ParenExpr{
 			scope: expr.scope
 			exprs: tuple_info.elements.map(Expr(ast.DefaultValue{
@@ -54,7 +56,12 @@ fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
 		return
 	}
 
-	e.write(match ts.resolved().typ {
+	if ts_resolved.kind() == .array {
+		e.write('@()')
+		return
+	}
+
+	e.write(match ts_resolved.typ {
 		builtin_type(.bool) { r'$false' }
 		builtin_type(.int), builtin_type(.float) { '0' }
 		else { '""' }
@@ -75,10 +82,16 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	ts_resolved := ts.resolved()
 	is_int := ts_resolved.typ == builtin_type(.int)
 
-	if expr.left.type_symbol().resolved().kind() == .tuple
-		|| expr.right.type_symbol().resolved().kind() == .tuple {
-		e.infix_expr_for_tuple(expr, opt)
-		return
+	match expr.left.type_symbol().resolved().kind() {
+		.tuple {
+			e.infix_expr_for_tuple(expr, opt)
+			return
+		}
+		.array {
+			e.infix_expr_for_array(expr, opt)
+			return
+		}
+		else {}
 	}
 
 	if op.kind == .pow {
@@ -126,13 +139,21 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	e.write(')')
 }
 
-fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
+fn (mut e Emitter) infix_expr_for_pwsh_array(expr ast.InfixExpr, opt ExprOpt) {
 	match expr.op.kind {
 		.eq { e.pwsh_array_eq(expr.left, expr.right) }
 		.ne { e.pwsh_array_ne(expr.left, expr.right) }
 		.plus { e.pwsh_array_concat(expr.left, expr.right) }
-		else { panic('unimplemented') }
+		else { panic('wrong operation for array') }
 	}
+}
+
+fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
+	e.infix_expr_for_pwsh_array(expr, opt)
+}
+
+fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
+	e.infix_expr_for_pwsh_array(expr, opt)
 }
 
 fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {

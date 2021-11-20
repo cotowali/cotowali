@@ -8,7 +8,23 @@ module pwsh
 import cotowali.ast
 
 fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
-	panic('unimplemented')
+	if expr.is_init_syntax {
+		// (@(init) * (len))
+		e.write('(@(')
+		e.expr(expr.init)
+		e.write(') * (')
+		e.expr(expr.len)
+		e.write('))')
+	} else {
+		e.write('@(')
+		for i, elem in expr.elements {
+			if i > 0 {
+				e.write(', ')
+			}
+			e.expr(elem)
+		}
+		e.write(')')
+	}
 }
 
 fn (mut e Emitter) bool_literal(expr ast.BoolLiteral, opt ExprOpt) {
