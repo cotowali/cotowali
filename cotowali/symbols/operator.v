@@ -36,7 +36,7 @@ fn verify_op_signature(expected TokenKindClass, op Token, fn_info FunctionTypeIn
 	}
 }
 
-pub fn (mut s Scope) register_infix_op(op Token, f RegisterFnArgs) ?&Var {
+pub fn (mut s Scope) register_infix_op_function(op Token, f RegisterFnArgs) ?&Var {
 	fn_info := f.FunctionTypeInfo
 	verify_op_signature(.infix_op, op, fn_info) ?
 
@@ -61,16 +61,16 @@ pub fn (mut s Scope) register_infix_op(op Token, f RegisterFnArgs) ?&Var {
 	return v
 }
 
-pub fn (s &Scope) lookup_infix_op(op Token, lhs Type, rhs Type) ?&Var {
+pub fn (s &Scope) lookup_infix_op_function(op Token, lhs Type, rhs Type) ?&Var {
 	return s.infix_op_functions[op.kind][lhs][rhs] or {
 		if p := s.parent() {
-			return p.lookup_infix_op(op, lhs, rhs)
+			return p.lookup_infix_op_function(op, lhs, rhs)
 		}
 		return none
 	}
 }
 
-pub fn (mut s Scope) register_prefix_op(op Token, f RegisterFnArgs) ?&Var {
+pub fn (mut s Scope) register_prefix_op_function(op Token, f RegisterFnArgs) ?&Var {
 	fn_info := f.FunctionTypeInfo
 	verify_op_signature(.prefix_op, op, fn_info) ?
 
@@ -93,10 +93,10 @@ pub fn (mut s Scope) register_prefix_op(op Token, f RegisterFnArgs) ?&Var {
 	return v
 }
 
-pub fn (s &Scope) lookup_prefix_op(op Token, operand Type) ?&Var {
+pub fn (s &Scope) lookup_prefix_op_function(op Token, operand Type) ?&Var {
 	return s.prefix_op_functions[op.kind][operand] or {
 		if p := s.parent() {
-			return p.lookup_prefix_op(op, operand)
+			return p.lookup_prefix_op_function(op, operand)
 		}
 		return none
 	}

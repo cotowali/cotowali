@@ -82,7 +82,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 			) ?
 		}
 		.infix_op {
-			scope.register_infix_op(info.name, // name is op token
+			scope.register_infix_op_function(info.name, // name is op token
 				pos: info.name.pos
 				params: info.params.map(it.ts.typ)
 				variadic: info.variadic
@@ -91,7 +91,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 			) ?
 		}
 		.prefix_op {
-			scope.register_prefix_op(info.name, // name is op token
+			scope.register_prefix_op_function(info.name, // name is op token
 				pos: info.name.pos
 				params: info.params.map(it.ts.typ)
 				variadic: info.variadic

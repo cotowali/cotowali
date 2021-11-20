@@ -347,7 +347,7 @@ pub mut:
 pub fn (expr &InfixExpr) overloaded_function() ?&symbols.Var {
 	left_ts := expr.left.type_symbol()
 	right_ts := expr.right.type_symbol()
-	fn_var := expr.scope.lookup_infix_op(expr.op, left_ts.typ, right_ts.typ) ?
+	fn_var := expr.scope.lookup_infix_op_function(expr.op, left_ts.typ, right_ts.typ) ?
 	if !fn_var.is_function() {
 		panic(unreachable('not a function'))
 	}
@@ -553,7 +553,7 @@ pub fn (expr &PrefixExpr) int() int {
 
 pub fn (expr &PrefixExpr) overloaded_function() ?&symbols.Var {
 	operand_typ := expr.expr.typ()
-	fn_var := expr.scope.lookup_prefix_op(expr.op, operand_typ) ?
+	fn_var := expr.scope.lookup_prefix_op_function(expr.op, operand_typ) ?
 	if !fn_var.is_function() {
 		panic(unreachable('not a function'))
 	}
