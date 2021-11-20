@@ -106,7 +106,23 @@ fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
 }
 
 fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
-	panic('unimplemented')
+	for i, branch in stmt.branches {
+		if i == stmt.branches.len - 1 && stmt.has_else {
+			e.write('else')
+		} else {
+			e.write(if i == 0 { 'if' } else { 'elseif' })
+			e.write(' (')
+			e.expr(branch.cond)
+			e.write(')')
+		}
+		e.writeln('')
+
+		e.writeln('{')
+		e.indent()
+		e.block(branch.body)
+		e.unindent()
+		e.writeln('}')
+	}
 }
 
 fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
