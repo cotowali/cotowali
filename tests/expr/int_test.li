@@ -17,7 +17,9 @@ assert(-+v == +-v)
 assert(- -v == + +v)
 assert(- - -v == -v)
 
+#endif
 
+#if !pwsh
 assert(0 < 1)
 assert(0 <= 1)
 assert(0 <= 0)

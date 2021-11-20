@@ -97,6 +97,10 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op_text := match op.kind {
 		.eq { '-eq' }
 		.ne { '-ne' }
+		.lt { '-lt' }
+		.le { '-le' }
+		.gt { '-gt' }
+		.ge { '-ge' }
 		.logical_and { '-and' }
 		.logical_or { '-or' }
 		.plus { '+' }
