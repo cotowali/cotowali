@@ -69,7 +69,10 @@ fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
 }
 
 fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
-	panic('unimplemented')
+	e.expr(expr.left)
+	e.write('[')
+	e.expr(expr.index)
+	e.write(']')
 }
 
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {

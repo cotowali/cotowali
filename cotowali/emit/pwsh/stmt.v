@@ -36,7 +36,9 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 fn (mut e Emitter) assign_stmt(stmt ast.AssignStmt) {
 	match stmt.left {
 		ast.IndexExpr {
-			panic('index assignment is unimplemented')
+			e.index_expr(stmt.left)
+			e.write(' = ')
+			e.expr(stmt.right)
 		}
 		ast.ParenExpr {
 			// pwsh supports assiginig multiple variables : ($a, $b) = (0, 1)
