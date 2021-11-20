@@ -12,7 +12,11 @@ fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
-	e.write('${e.ident_for(expr.func)}')
+	if expr.is_builtin_function_call(.read) {
+		e.write('read \$input')
+	} else {
+		e.write('${e.ident_for(expr.func)}')
+	}
 	for arg in expr.args {
 		e.write(' (')
 		e.expr(arg)

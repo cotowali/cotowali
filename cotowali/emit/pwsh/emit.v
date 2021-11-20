@@ -13,6 +13,7 @@ pub fn (mut e Emitter) emit(f &File) {
 		must_write(mut &e.out, e.ctx.config.backend.shebang() + '\n\n')
 	}
 
+	e.builtin()
 	e.file(f)
 	must_write(mut &e.out, e.code.bytes())
 }
@@ -20,4 +21,22 @@ pub fn (mut e Emitter) emit(f &File) {
 fn (mut e Emitter) file(f &File) {
 	e.writeln('# file: $f.source.path')
 	e.stmts(f.stmts)
+}
+
+fn (mut e Emitter) builtin() {
+	e.writeln(r'
+function read() {
+	# read ($original_input) ([ref]$a) ([ref]$b)
+  $original_input = $args[0]
+  $ok = $original_input.MoveNext()
+  if ($ok) {
+    $i = 0
+    foreach($v in @($original_input.Current)) {
+      $args[$i + 1].Value=$v;
+      $i++
+    }
+  }
+  return $ok
+}
+')
 }
