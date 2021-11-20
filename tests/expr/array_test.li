@@ -94,6 +94,7 @@ fn array_of_tuple_test() {
   assert(n == 6)
 }
 array_of_tuple_test()
+#endif
 
 fn test_array_init() {
   assert([]int{len: 0} == []int{})
@@ -103,4 +104,3 @@ fn test_array_init() {
   assert([]int{len: len, init: init} == [-2, -2, -2])
 }
 test_array_init()
-#endif
