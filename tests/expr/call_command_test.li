@@ -1,1 +1,6 @@
+#if sh
 assert(@printf('%s %s', 'a', 'b') == 'a b')
+#endif
+#if pwsh
+assert(@write-output('a b') == 'a b')
+#endif

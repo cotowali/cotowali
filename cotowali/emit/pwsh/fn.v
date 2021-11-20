@@ -8,7 +8,21 @@ module pwsh
 import cotowali.ast { CallCommandExpr, CallExpr, FnDecl }
 
 fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
-	panic('unimplemented')
+	e.write('$expr.command')
+	for arg in expr.args {
+		e.write(' ')
+		/*
+		if arg is ast.StringLiteral {
+			if arg.is_glob() {
+				e.string_literal_value(arg)
+				continue
+			}
+		}
+		*/
+		e.write('(')
+		e.expr(arg)
+		e.write(')')
+	}
 }
 
 fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {

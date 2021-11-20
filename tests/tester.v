@@ -23,6 +23,7 @@ const (
 		'bool_test.li',
 		'int_test.li',
 		'float_test.li',
+		'expr/call_command_test.li',
 		'expr/string_test.li',
 		'expr/tuple_test.li',
 		'var_test.li',
