@@ -119,9 +119,11 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 		}
 	}
 
+	e.write('(')
 	e.expr(expr.left)
-	e.write(' $op_text ')
+	e.write(') $op_text (')
 	e.expr(expr.right)
+	e.write(')')
 }
 
 fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
