@@ -7,7 +7,14 @@ module ast
 
 import cotowali.source { Pos }
 import cotowali.token { Token }
-import cotowali.symbols { FunctionTypeInfo, Scope, Type, TypeSymbol, builtin_function_id }
+import cotowali.symbols {
+	BuiltinFunctionKey,
+	FunctionTypeInfo,
+	Scope,
+	Type,
+	TypeSymbol,
+	builtin_function_id,
+}
 import cotowali.messages { undefined, unreachable }
 
 pub struct FnDecl {
@@ -208,6 +215,10 @@ pub fn (e CallExpr) receiver() ?Expr {
 
 pub fn (e CallExpr) function_info() FunctionTypeInfo {
 	return e.func.type_symbol().function_info() or { panic(unreachable(err)) }
+}
+
+pub fn (e CallExpr) is_builtin_function_call(key BuiltinFunctionKey) bool {
+	return e.func_id == builtin_function_id(key)
 }
 
 pub fn (expr &CallExpr) children() []Node {
