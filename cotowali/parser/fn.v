@@ -26,7 +26,7 @@ mut:
 	pos  Pos
 }
 
-fn (mut p Parser) register_fn_param(param FnParamParsingInfo) ?ast.Var {
+fn (mut p Parser) register_function_param(param FnParamParsingInfo) ?ast.Var {
 	param_sym := p.scope.register_var(name: param.name, pos: param.pos, typ: param.ts.typ) or {
 		new_placeholder_var(param.name, param.pos)
 		return p.error(err.msg, param.pos)
@@ -61,7 +61,7 @@ mut:
 fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 	return match info.kind {
 		.default {
-			scope.register_fn(
+			scope.register_function(
 				name: info.name.text
 				pos: info.name.pos
 				params: info.params.map(it.ts.typ)
@@ -166,7 +166,7 @@ fn (mut p Parser) parse_receiver() ?FnParamParsingInfo {
 	}
 }
 
-fn (mut p Parser) parse_fn_signature_info() ?FnSignatureParsingInfo {
+fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
 	p.consume_with_assert(.key_fn)
 	mut info := FnSignatureParsingInfo{}
 	info.pipe_in_param.ts = p.scope.must_lookup_type(builtin_type(.void))
@@ -262,7 +262,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	}
 
 	mut has_error := false
-	info := p.parse_fn_signature_info() ?
+	info := p.parse_signature_info() ?
 	mut outer_scope := p.scope
 
 	mut sym_name := if info.name.kind == .ident {
@@ -288,7 +288,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	mut params := []ast.Var{len: info.params.len}
 	for i, param in info.params {
-		if registered := p.register_fn_param(param) {
+		if registered := p.register_function_param(param) {
 			params[i] = registered
 		} else {
 			has_error = true
@@ -305,7 +305,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		is_method: info.kind == .method
 	}
 	if info.pipe_in_param.name != '' {
-		if registered := p.register_fn_param(info.pipe_in_param) {
+		if registered := p.register_function_param(info.pipe_in_param) {
 			node.pipe_in_param = registered
 		} else {
 			has_error = true

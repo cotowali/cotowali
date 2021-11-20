@@ -70,7 +70,7 @@ fn (f &FunctionTypeInfo) signature(s &Scope) string {
 	return sb.str()
 }
 
-pub fn (t TypeSymbol) fn_signature() ?string {
+pub fn (t TypeSymbol) signature() ?string {
 	return if t.info is FunctionTypeInfo {
 		t.info.signature(t.scope() or { panic(unreachable(err)) })
 	} else {
@@ -78,26 +78,26 @@ pub fn (t TypeSymbol) fn_signature() ?string {
 	}
 }
 
-pub fn (mut s Scope) lookup_or_register_fn_type(info FunctionTypeInfo) &TypeSymbol {
+pub fn (mut s Scope) lookup_or_register_function_type(info FunctionTypeInfo) &TypeSymbol {
 	typename := info.signature(s)
 	return s.lookup_or_register_type(name: typename, info: info)
 }
 
-pub fn (s Scope) lookup_fn_type(info FunctionTypeInfo) ?&TypeSymbol {
+pub fn (s Scope) lookup_function_type(info FunctionTypeInfo) ?&TypeSymbol {
 	typename := info.signature(s)
 	return s.lookup_type(typename)
 }
 
-pub fn (s &Scope) lookup_fn(name string) ?&Var {
+pub fn (s &Scope) lookup_function(name string) ?&Var {
 	v := s.lookup_var(name) ?
 	return if v.is_function() { v } else { none }
 }
 
-pub fn (mut s Scope) register_fn(f RegisterFnArgs) ?&Var {
-	typ := s.lookup_or_register_fn_type(f.FunctionTypeInfo).typ
+pub fn (mut s Scope) register_function(f RegisterFnArgs) ?&Var {
+	typ := s.lookup_or_register_function_type(f.FunctionTypeInfo).typ
 	return s.register_var(Var{ ...f.Var, typ: typ })
 }
 
-fn (mut s Scope) must_register_fn(f RegisterFnArgs) &Var {
-	return s.register_fn(f) or { panic(unreachable(err)) }
+fn (mut s Scope) must_register_function(f RegisterFnArgs) &Var {
+	return s.register_function(f) or { panic(unreachable(err)) }
 }

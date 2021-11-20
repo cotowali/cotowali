@@ -6,7 +6,7 @@
 module sh
 
 import cotowali.ast { CallCommandExpr, CallExpr, FnDecl }
-import cotowali.symbols { builtin_fn_id }
+import cotowali.symbols { builtin_function_id }
 import cotowali.messages { unreachable }
 
 fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
@@ -38,7 +38,7 @@ fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
-	if expr.func_id == builtin_fn_id(.read) {
+	if expr.func_id == builtin_function_id(.read) {
 		e.write('read')
 		for arg in expr.args {
 			e.write(' ')
@@ -65,7 +65,7 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 	}
 
 	match expr.func_id {
-		builtin_fn_id(.@typeof) {
+		builtin_function_id(.@typeof) {
 			e.write("echo '${expr.args[0].type_symbol().name}'")
 			return
 		}
