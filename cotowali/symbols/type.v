@@ -202,20 +202,23 @@ pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) ?&Var {
 		receiver: ts.typ
 	}).typ
 
+	name := f.Var.name
 	v := &Var{
 		...f.Var
+		name: ts.name + '.' + name
 		id: if f.Var.id == 0 { auto_id() } else { f.Var.id }
 		typ: fn_typ
 		receiver_typ: ts.typ
 		scope: ts.must_scope()
 	}
-	if v.name == '' {
+	if name == '' {
 		panic(unreachable('method name is empty'))
 	}
-	if v.name in ts.methods {
-		return error(already_defined(.method, '${ts.name}.$v.name'))
+	if name in ts.methods {
+		return error(already_defined(.method, '$v.name'))
 	}
-	ts.methods[v.name] = v
+	ts.methods[name] = v
+
 	return v
 }
 

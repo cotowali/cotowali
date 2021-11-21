@@ -22,11 +22,35 @@ fn eprint(s: string) {
 fn eprintln(s: string) {
   sh { printf '%%s\n' "$%s" >&2 }
 }
+#endif
+
+fn ...string |> join(sep: string) |> string {
+  var ret = ''
+  var (i, s): (int, string)
+  while read(&s) {
+    if i > 0 {
+      ret += sep
+    }
+    ret += s
+    i += 1
+  }
+  return ret
+}
+
+#if !pwsh
+fn range(begin: int, end: int) |> ...int {
+  // cannot use negative number on busybox
+  for i in @seq(0, end - begin - 1) as ...int {
+    yield (i as int) + begin
+  }
+}
+
+// -- posix --
 
 fn exit(code: int)
 
 #endif
-fn string |> cat(files: ...string) |> string
+fn string |> cat(files: ...string) |> ...string
 #if !pwsh
 
 fn seq(n: int) |> ...int
@@ -48,13 +72,6 @@ fn mkdir_p(args: ...string) {
 fn pwd(): string
 
 fn ls(files: ...string) |> ...string
-
-fn range(begin: int, end: int) |> ...int {
-  // cannot use negative number on busybox
-  for i in @seq(0, end - begin - 1) as ...int {
-    yield (i as int) + begin
-  }
-}
 
 fn rm(paths: ...string)
 
@@ -86,7 +103,7 @@ fn (s: string) len(): int {
 // All array inherits []any
 
 fn (arr: []any) len(): int {
-  var v: int
+  var n: int
   sh { %n=$(array_len %arr) }
   return n
 }

@@ -280,10 +280,15 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		new_placeholder_var(sym_name, info.name.pos)
 	}
 
-	p.open_scope(sym_name)
+	p.open_scope(if sym.is_method() {
+		'${sym.receiver_type_symbol().name}.$sym_name'
+	} else {
+		sym_name
+	})
 	defer {
 		p.close_scope()
 	}
+
 	p.scope.owner = sym
 
 	mut params := []ast.Var{len: info.params.len}

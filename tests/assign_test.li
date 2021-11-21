@@ -86,7 +86,7 @@ fn test_discard_value() {
     return tmp
   }
   var _ = mktemp() // right of assignment to _ is evaluated
-  var tmp_content = cat(tmp)
+  var tmp_content = cat(tmp) |> join('')
   rm(tmp)
   assert(tmp_content == msg)
 }
