@@ -3,6 +3,7 @@ disable_help: true
 var:
   bin: $(pwd)/bin
   tmp: $(pwd)/tmp
+  dist: $(pwd)/dist
   install_dir: /usr/local/bin
   lic_path: cmd/lic
   lish_path: cmd/lish
@@ -27,6 +28,14 @@ tasks:
   build.win: z lic build.win && z lish build.win && z kuqi build.win
   symlink: z lic symlink && z lish symlink && z kuqi symlink
   install: z lic install && z lish install && z kuqi install
+
+  dist:
+    - z build
+    - mkdir -p {{dist}}
+    - cp -r {{bin}} {{dist}}/
+    - cp -r builtin {{dist}}/
+    - cp CREDITS {{dist}}/
+    - cp LICENSE {{dist}}/
 
   lic:
     run: z lic build
