@@ -81,7 +81,7 @@ fn (s: string) len(): int {
 // All array inherits []any
 
 fn (arr: []any) len(): int {
-  var v: int
+  var n: int
   sh { %n=$(array_len %arr) }
   return n
 }
