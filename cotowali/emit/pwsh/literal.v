@@ -10,11 +10,11 @@ import cotowali.ast
 fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 	if expr.is_init_syntax {
 		// (@(init) * (len))
-		e.write('(@(')
-		e.expr(expr.init)
-		e.write(') * (')
-		e.expr(expr.len)
-		e.write('))')
+		e.write('(@')
+		e.expr(expr.init, paren: true)
+		e.write(' * ')
+		e.expr(expr.len, paren: true)
+		e.write(')')
 	} else {
 		e.write('@(')
 		for i, elem in expr.elements {

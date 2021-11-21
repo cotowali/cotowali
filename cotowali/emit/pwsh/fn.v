@@ -19,9 +19,7 @@ fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
 			}
 		}
 		*/
-		e.write('(')
-		e.expr(arg)
-		e.write(')')
+		e.expr(arg, paren: true)
 	}
 }
 
@@ -32,9 +30,8 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 		e.write('${e.ident_for(expr.func)}')
 	}
 	for arg in expr.args {
-		e.write(' (')
-		e.expr(arg)
-		e.write(')')
+		e.write(' ')
+		e.expr(arg, paren: true)
 	}
 }
 

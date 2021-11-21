@@ -10,9 +10,17 @@ import cotowali.messages { unreachable }
 import cotowali.symbols { builtin_type }
 
 [params]
-struct ExprOpt {}
+struct ExprOpt {
+	paren bool
+}
 
 fn (mut e Emitter) expr(expr Expr, opt ExprOpt) {
+	if opt.paren {
+		e.write('(')
+		defer {
+			e.write(')')
+		}
+	}
 	match expr {
 		ast.AsExpr { e.expr(expr.expr, opt) }
 		ast.BoolLiteral { e.bool_literal(expr, opt) }
@@ -71,9 +79,9 @@ fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
 
 fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 	e.expr(expr.left)
-	e.write('[(')
-	e.expr(expr.index)
-	e.write(')]')
+	e.write('[')
+	e.expr(expr.index, paren: true)
+	e.write(']')
 }
 
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
@@ -136,11 +144,9 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 		}
 	}
 
-	e.write('(')
-	e.expr(expr.left)
-	e.write(') $op_text (')
-	e.expr(expr.right)
-	e.write(')')
+	e.expr(expr.left, paren: true)
+	e.write(' $op_text ')
+	e.expr(expr.right, paren: true)
 }
 
 fn (mut e Emitter) infix_expr_for_pwsh_array(expr ast.InfixExpr, opt ExprOpt) {
@@ -180,9 +186,7 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 				}
 				e.write(' + ')
 			}
-			e.write('(')
-			e.expr(subexpr.expr)
-			e.write(')')
+			e.expr(subexpr.expr, paren: true)
 			if expr.exprs.len > 1 && i < expr.exprs.len - 1 {
 				if expr.exprs[i + 1] !is ast.DecomposeExpr {
 					e.write('+ @(')
@@ -219,9 +223,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		.minus { '-' }
 		else { panic('unimplemented') }
 	})
-	e.write('(')
-	e.expr(expr.expr)
-	e.write(')')
+	e.expr(expr.expr, paren: true)
 }
 
 fn (mut e Emitter) pipeline(pipeline ast.Pipeline, opt ExprOpt) {
