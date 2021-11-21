@@ -7,14 +7,16 @@ module pwsh
 
 import io
 import cotowali.context { Context }
+import cotowali.ast { FnDecl }
 import cotowali.emit.code
 
 pub struct Emitter {
 mut:
-	out       io.Writer
-	ctx       &Context
-	code      code.Builder
-	tmp_count int
+	out        io.Writer
+	ctx        &Context
+	code       code.Builder
+	tmp_count  int
+	current_fn &FnDecl = 0
 }
 
 [inline]
@@ -25,6 +27,13 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 		out: out
 		code: code.new_builder(100, ctx, language_config)
 	}
+}
+
+fn (e &Emitter) current_fn() ?&FnDecl {
+	if isnil(e.current_fn) {
+		return none
+	}
+	return e.current_fn
 }
 
 [inline]

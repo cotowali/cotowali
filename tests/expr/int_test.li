@@ -25,7 +25,6 @@ assert(0 <= 0)
 assert(1 > 0)
 assert(1 >= 0)
 assert(0 >= 0)
-#if !pwsh
 
 fn zero(): int {
   var v = 0
@@ -42,11 +41,14 @@ fn add(a: int, b: int): int {
   return a + b
 }
 
+#if !pwsh
 fn as_int(v: any): int {
   return v as int
 }
+#endif
 
 assert(zero() == 0)
 assert(add(3, 4) == 7)
+#if !pwsh
 assert(add(as_int("1"), 2) == 3)
 #endif

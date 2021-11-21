@@ -6,6 +6,7 @@
 module pwsh
 
 import cotowali.ast { Stmt }
+import cotowali.symbols { builtin_type }
 
 fn (mut e Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {
@@ -100,7 +101,17 @@ fn (mut e Emitter) doc_comment(comment ast.DocComment) {
 
 fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
 	e.expr(stmt)
-	e.writeln('')
+	redirect_to_null := (if current_fn := e.current_fn() {
+		match stmt {
+			ast.CallExpr { current_fn.function_info().ret != builtin_type(.void) }
+			ast.Pipeline { !stmt.has_redirect() }
+			else { true }
+		}
+	} else {
+		false
+	}) && stmt.typ() != builtin_type(.void)
+
+	e.writeln(if redirect_to_null { r'> $null' } else { '' })
 }
 
 fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {

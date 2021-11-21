@@ -43,6 +43,12 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 		return
 	}
 
+	old_fn := e.current_fn
+	e.current_fn = &node
+	defer {
+		e.current_fn = old_fn
+	}
+
 	if node.is_test() {
 		if !e.ctx.config.is_test {
 			return
