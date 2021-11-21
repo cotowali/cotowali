@@ -1,8 +1,8 @@
 fn test_redirect_with_literal() {
   "hello" |> "tmp.txt"
-  assert(cat("tmp.txt") == "hello")
+  assert((cat("tmp.txt") |> join('')) == "hello")
   "world" |>> "tmp.txt"
-  assert(cat("tmp.txt") == "hello\nworld")
+  assert((cat("tmp.txt") |> join("\n")) == "hello\nworld")
   @rm("tmp.txt")
 }
 test_redirect_with_literal()
@@ -19,11 +19,11 @@ fn test_redirect_with_var_and_func() {
   var f = "tmp.txt"
   var msg = "hello"
   msg |> f
-  assert(cat(f) == msg)
+  assert((cat(f) |> join('')) == msg)
   @rm(f)
 
   hello(msg) |> tmp_file()
-  assert(cat(tmp_file()) == hello(msg))
+  assert((cat(tmp_file()) |> join('')) == hello(msg))
   @rm(tmp_file())
 }
 test_redirect_with_var_and_func()

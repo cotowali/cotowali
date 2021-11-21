@@ -44,7 +44,7 @@ fn range(begin: int, end: int) |> ...int {
 
 fn exit(code: int)
 
-fn string |> cat(files: ...string) |> string
+fn string |> cat(files: ...string) |> ...string
 
 fn seq(n: int) |> ...int
 
