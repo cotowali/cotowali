@@ -1,0 +1,25 @@
+name: Build binaries
+
+on:
+  push:
+    branches: [ main, build-artifacts ]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    env:
+      VFLAGS: "-cc clang"
+    steps:
+      - uses: zakuro9715/setup-z@main
+      - uses: actions/checkout@v2
+      - run: z ci setup-v
+      - run: z build
+      - name: Create artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux
+          path: |
+            ./bin
+            ./builtin
+            ./CREDITS
+            ./LICENSE
