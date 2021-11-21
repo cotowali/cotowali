@@ -20,7 +20,7 @@ fn (mut e Emitter) single_quote_string_literal(expr StringLiteral) {
 		if v is Token {
 			match v.kind {
 				.string_literal_content_escaped_back_slash {
-					e.write(r'\')
+					e.write(r'\') // no need to escape backslash in powershell
 				}
 				.string_literal_content_escaped_single_quote {
 					e.write("''")
@@ -56,7 +56,7 @@ fn (mut e Emitter) double_quote_string_literal(expr StringLiteral) {
 					e.write('""')
 				}
 				.string_literal_content_escaped_back_slash {
-					e.write(r'\')
+					e.write(r'\') // no need to escape backslash in powershell
 				}
 				.string_literal_content_glob {
 					panic('glob is unimplemented')
