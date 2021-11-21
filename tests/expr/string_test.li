@@ -30,7 +30,6 @@ b
 '
 )
 
-#if !pwsh
 fn test_string_index() {
   fn twice(n: int): int {
     return n * 2
@@ -53,4 +52,3 @@ fn test_string_index() {
   assert(s[3 |> twice_input()] == '7')
 }
 test_string_index()
-#endif
