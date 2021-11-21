@@ -58,11 +58,14 @@ fn (mut e Emitter) double_quote_string_literal(expr StringLiteral) {
 				.string_literal_content_escaped_back_slash {
 					e.write(r'\') // no need to escape backslash in powershell
 				}
+				.string_literal_content_escaped_dollar {
+					e.write(r'`$')
+				}
 				.string_literal_content_glob {
 					panic('glob is unimplemented')
 				}
 				else {
-					e.write(v.text)
+					e.write(v.text.replace('`', '``')) // need to escape backquote in double-quoted literal
 				}
 			}
 		} else if v is Expr {
