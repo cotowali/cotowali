@@ -1,7 +1,7 @@
 default: default
 disable_help: true
 var:
-  bin: $(pwd)/.bin
+  bin: $(pwd)/bin
   tmp: $(pwd)/tmp
   install_dir: /usr/local/bin
   lic_path: cmd/lic
