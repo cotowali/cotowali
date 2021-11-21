@@ -163,18 +163,18 @@ fn test_method() ? {
 
 	base_method1 := base.register_method(name: 'f', params: [], ret: int_) ?
 	assert base_method1.id != 0
-	if found := t1.lookup_method(base_method1.name) {
+	if found := t1.lookup_method('f') {
 		assert found.id == base_method1.id
 	} else {
 		assert false
 	}
 
-	method1 := t1.register_method(name: base_method1.name, params: [int_], ret: int_) ?
-	if _ := t1.register_method(name: method1.name, params: [int_], ret: int_) {
+	method1 := t1.register_method(name: 'f', params: [int_], ret: int_) ?
+	if _ := t1.register_method(name: 'f', params: [int_], ret: int_) {
 		assert false
 	}
 	assert method1.id != 0
-	if found := t1.lookup_method(base_method1.name) {
+	if found := t1.lookup_method('f') {
 		assert found.id == method1.id
 		assert found.id != base_method1.id
 	} else {
@@ -189,10 +189,9 @@ fn test_method() ? {
 			int_,
 		]
 	) ?
-	assert method1.name == method2.name
 	assert method2.id != 0
 	assert method1.id != method2.id
-	if found := t2.lookup_method(method2.name) {
+	if found := t2.lookup_method('f') {
 		assert found.id == method2.id
 	} else {
 		assert false

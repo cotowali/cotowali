@@ -29,6 +29,10 @@ pub fn (v Var) is_function() bool {
 	return v.type_symbol().kind() == .function
 }
 
+pub fn (v Var) is_method() bool {
+	return v.is_function() && v.is_member()
+}
+
 pub fn (v Var) str() string {
 	return 'Var{ id: $v.id, name: $v.name, scope: $v.scope_str(), typ: $v.typ }'
 }

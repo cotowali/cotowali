@@ -9,8 +9,12 @@ fn join_name_for_ident(names ...string) string {
 	return names.join('_')
 }
 
+fn replace_name_for_ident(name string) string {
+	return name.replace('.', '__').replace('[]', '__array__')
+}
+
 pub fn (s &Scope) name_for_ident() string {
-	name := if s.name.len > 0 { s.name } else { 'scope$s.id' }
+	name := replace_name_for_ident(if s.name.len > 0 { s.name } else { 'scope$s.id' })
 	if p := s.parent() {
 		if p.is_global() {
 			return name
@@ -22,13 +26,7 @@ pub fn (s &Scope) name_for_ident() string {
 }
 
 pub fn (v Symbol) name_for_ident() string {
-	mut name := if v.name.len > 0 { v.name } else { 'sym$v.id()' }
-	if v is Var {
-		if v.is_member() {
-			name = v.receiver_type_symbol().name_for_ident() + '__$name'
-		}
-	}
-	name = name.replace('[]', '__array__')
+	name := replace_name_for_ident(if v.name.len > 0 { v.name } else { 'sym$v.id()' })
 	if s := v.scope() {
 		if s.is_global() {
 			return name
@@ -57,11 +55,6 @@ pub fn (s &Scope) display_name() string {
 
 pub fn (v Symbol) display_name() string {
 	mut name := if v.name.len > 0 { v.name } else { 'anon_$v.id()' }
-	if v is Var {
-		if v.is_member() {
-			name = v.receiver_type_symbol().display_name() + '.$name'
-		}
-	}
 	if s := v.scope() {
 		if s.is_global() {
 			return name

@@ -8,8 +8,14 @@ fn (n: Num) twice(): Num {
   return n * 2
 }
 
+fn (n: Num) |> twice() |> Num {
+  return n * 2
+}
+
 var two: Num = 2
 assert(two.twice() == 4)
 assert(two.twice().twice() == 8)
+assert((two |> twice()) == 4)
+assert((two |> twice()).twice() == 8)
 assert(two.multiply(3) == 6)
 assert(two.multiply(two.multiply(3)) == 12)
