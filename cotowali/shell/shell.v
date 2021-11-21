@@ -52,6 +52,11 @@ pub fn (mut shell Shell) close() {
 	p.close()
 }
 
+pub fn (shell &Shell) exit_code() int {
+	p := shell.backend_process() or { return -1 }
+	return p.code
+}
+
 pub fn (mut shell Shell) stdin_write(s string) {
 	mut p := shell.backend_process() or { return }
 	p.stdin_write(s)
@@ -68,7 +73,7 @@ pub fn (mut shell Shell) stdout_read() string {
 	done_marker := get_marker()
 	p.stdin_write('printf "$done_marker"\n')
 	mut out := ''
-	for !out.ends_with(done_marker) {
+	for shell.is_alive() && !out.ends_with(done_marker) {
 		out += p.stdout_read()
 	}
 	return out.trim_suffix(done_marker)
@@ -81,7 +86,7 @@ pub fn (mut shell Shell) stderr_read() string {
 	done_marker := get_marker()
 	p.stdin_write('printf "$done_marker" >&2 \n')
 	mut out := ''
-	for !out.ends_with(done_marker) {
+	for shell.is_alive() && !out.ends_with(done_marker) {
 		out += p.stderr_read()
 	}
 	return out.trim_right(done_marker)
