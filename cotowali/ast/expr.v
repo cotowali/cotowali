@@ -302,6 +302,7 @@ fn (mut r Resolver) as_expr(expr AsExpr, opt ResolveExprOpt) {
 	r.expr(expr.expr, opt)
 }
 
+// ...(expr)
 pub struct DecomposeExpr {
 pub:
 	pos  Pos

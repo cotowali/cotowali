@@ -25,6 +25,7 @@ const (
 		'bool_test.li',
 		'int_test.li',
 		'float_test.li',
+		'tuple_test.li',
 		'expr/call_command_test.li',
 		'expr/array_test.li',
 		'expr/string_test.li',

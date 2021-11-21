@@ -38,7 +38,8 @@ fn (mut e Emitter) expr(expr Expr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) decompose_expr(expr ast.DecomposeExpr, opt ExprOpt) {
-	panic('unimplemented')
+	// any decompose expr handled in other places (e.g. paren_expr)
+	panic(unreachable('invalid decompose'))
 }
 
 fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
@@ -168,14 +169,35 @@ fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {
 }
 
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
-	e.write('(')
+	if expr.exprs.len > 0 && expr.exprs[0] !is ast.DecomposeExpr {
+		e.write('(')
+	}
 	for i, subexpr in expr.exprs {
+		if subexpr is ast.DecomposeExpr {
+			if i > 0 {
+				if expr.exprs[i - 1] !is ast.DecomposeExpr {
+					e.write(')')
+				}
+				e.write(' + ')
+			}
+			e.write('(')
+			e.expr(subexpr.expr)
+			e.write(')')
+			if expr.exprs.len > 1 && i < expr.exprs.len - 1 {
+				if expr.exprs[i + 1] !is ast.DecomposeExpr {
+					e.write('+ @(')
+				}
+			}
+			continue
+		}
 		if i > 0 {
 			e.write(', ')
 		}
 		e.expr(subexpr, opt)
 	}
-	e.write(')')
+	if expr.exprs.len > 0 && expr.exprs.last() !is ast.DecomposeExpr {
+		e.write(')')
+	}
 }
 
 fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {

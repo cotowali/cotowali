@@ -12,6 +12,7 @@ fn test_swap() {
 }
 
 test_swap()
+#if !pwsh
 
 fn ...int |> sum() |> int {
   var res = 0
@@ -100,6 +101,7 @@ fn test_tuple_type_expand() {
 }
 test_tuple_type_expand()
 
+#endif
 fn test_decompose() {
   assert((...(0, 1), ...(2, 3)) == (0, 1, 2, 3))
   assert((...(0, 1), ...(...(2, 3), ...(4, 5))) == (0, 1, 2, 3, 4, 5))
@@ -112,6 +114,7 @@ fn test_decompose() {
 }
 test_decompose()
 
+#if !pwsh
 fn test_tuple_index() {
   assert((0, 1)[0] == 0)
   assert((0, "10")[1] == "10")
@@ -121,3 +124,4 @@ fn test_tuple_index() {
   assert(int_str[0] == 1 && int_str[1] == "s")
 }
 test_tuple_index()
+#endif
