@@ -18,3 +18,13 @@ fn test_range() {
   assert(n == -2 + -1 + 0 + 1 + 2)
 }
 test_range()
+
+fn test_join() {
+  fn abc() |> ...string {
+    yield 'a'
+    yield 'b'
+    yield 'c'
+  }
+  assert((abc() |> join('')) == 'abc')
+  assert((abc() |> join(' ')) == 'a b c')
+}

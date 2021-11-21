@@ -20,6 +20,19 @@ fn eprintln(s: string) {
   sh { printf '%%s\n' "$%s" >&2 }
 }
 
+fn ...string |> join(sep: string) |> string {
+  var ret = ''
+  var (i, s): (int, string)
+  while read(&s) {
+    if i > 0 {
+      ret += sep
+    }
+    ret += s
+    i += 1
+  }
+  return ret
+}
+
 fn exit(code: int)
 
 fn string |> cat(files: ...string) |> string
