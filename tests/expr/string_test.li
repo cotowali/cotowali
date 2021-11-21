@@ -8,7 +8,6 @@ assert("a\nb" == 'a
 b')
 assert("\"\\" == r'"\')
 
-#if !pwsh
 var n = 10
 assert("n=$n" == 'n=10')
 assert('$n' == r'$n')
@@ -18,7 +17,6 @@ assert(" $n  $n " == " 10  10 ")
 
 var nx = "nx"
 assert("${n}x$nx" == "10xnx")
-#endif
 
 assert(
 '

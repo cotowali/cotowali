@@ -28,6 +28,7 @@ const (
 		'expr/call_command_test.li',
 		'expr/array_test.li',
 		'expr/string_test.li',
+		'expr/string_expr_substitution.li',
 		'expr/tuple_test.li',
 		'var_test.li',
 	]

@@ -69,7 +69,9 @@ fn (mut e Emitter) double_quote_string_literal(expr StringLiteral) {
 				}
 			}
 		} else if v is Expr {
-			panic('unimplemented')
+			e.write(r'$(')
+			e.expr(v)
+			e.write(r')')
 		} else {
 			panic(pwsh.invalid_string_literal)
 		}
