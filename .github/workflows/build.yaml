@@ -8,7 +8,7 @@ jobs:
   build-linux:
     runs-on: ubuntu-latest
     env:
-      VFLAGS: "-cc clang"
+      VFLAGS: "-cc clang -prod"
     steps:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
@@ -22,7 +22,7 @@ jobs:
   build-macos:
     runs-on: macos-latest
     env:
-      VFLAGS: "-cc clang"
+      VFLAGS: "-cc clang -prod"
     steps:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
