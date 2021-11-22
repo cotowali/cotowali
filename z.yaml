@@ -30,7 +30,6 @@ tasks:
   install: z lic install && z lish install && z kuqi install
 
   dist:
-    - z build
     - mkdir -p {{dist}}
     - cp -r {{bin}} {{dist}}/
     - cp -r builtin {{dist}}/
