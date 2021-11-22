@@ -2,7 +2,7 @@ name: Build binaries
 
 on:
   push:
-    branches: [ main, build-artifacts ]
+    branches: [ main ]
 
 jobs:
   build-linux:
