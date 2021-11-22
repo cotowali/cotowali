@@ -1,0 +1,37 @@
+name: Build binaries
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    env:
+      VFLAGS: "-cc clang -prod"
+    steps:
+      - uses: zakuro9715/setup-z@main
+      - uses: actions/checkout@v2
+      - run: z ci setup-v
+      - run: z build
+      - run: z dist
+      - name: Create artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: linux
+          path: dist/*
+  build-macos:
+    runs-on: macos-latest
+    env:
+      VFLAGS: "-cc clang -prod"
+    steps:
+      - uses: zakuro9715/setup-z@main
+      - uses: actions/checkout@v2
+      - run: z ci setup-v
+      - run: z build
+      - run: z dist
+      - name: Create artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: macos
+          path: dist/*
