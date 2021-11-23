@@ -45,7 +45,7 @@ fn cotowali_home_from_executable() string {
 		}
 	}
 	// cotowali/bin -> cotowali
-	return os.real_path(os.join_path(exec, '../'))
+	return os.real_path(os.join_path(os.dir(exec), '../'))
 }
 
 pub fn cotowali_home() string {
