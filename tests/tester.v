@@ -296,14 +296,14 @@ mut:
 
 fn new_test_suite(paths []string, opt TestOption) TestSuite {
 	dir := os.real_path(@VMODROOT)
-	lic_dir := os.join_path(dir, 'cmd/lic')
+	lic_dir := os.join_path(dir, 'cmd', 'lic')
 	sources := get_sources(paths)
 
 	lic := Lic{
 		prod: opt.prod
 		autofree: opt.autofree
 		source: lic_dir
-		bin: os.join_path(lic_dir, 'lic')
+		bin: os.join_path('tests', 'lic')
 	}
 
 	lic.compile() or {
