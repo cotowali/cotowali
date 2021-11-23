@@ -24,7 +24,7 @@ pub fn (mut p Parser) parse(scope &Scope) &ast.File {
 
 	mut ctx := p.ctx
 	if !(ctx.builtin_loaded() || ctx.config.no_builtin) {
-		ctx.builtin_source = source.builtin
+		ctx.builtin_source = source.read_file(cotowali_builtin()) or { panic(err) }
 		mut builtin_parser := new_parser(ctx.builtin_source, ctx)
 		file.stmts << ast.RequireStmt{
 			file: builtin_parser.parse(ctx.global_scope)
