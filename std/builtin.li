@@ -154,30 +154,3 @@ namespace testing {
   }
 #endif
 }
-
-// ---
-
-namespace math {
-  fn pi(): float {
-    return @awk('BEGIN{ printf "%g", 4 * atan2(1, 1) }') as float
-  }
-
-  fn sin(v: float): float {
-    return (v |> @awk('{printf "%g", sin($1)}')) as float
-  }
-
-  fn cos(v: float): float {
-    return (v |> @awk('{printf "%g", cos($1)}')) as float
-  }
-
-  fn sqrt(v: float): float {
-    return (v |> @awk('{printf "%g", sqrt($1)}')) as float
-  }
-}
-
-namespace os {
-  var args: []string
-  sh {
-    array_assign %args "$@"
-  }
-}

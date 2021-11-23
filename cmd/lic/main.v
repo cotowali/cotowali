@@ -29,9 +29,9 @@ const (
 		name: 'no-emit'
 		global: true
 	}
-	no_std_flag = Flag{
+	no_builtin_flag = Flag{
 		flag: .bool
-		name: 'no-std'
+		name: 'no-builtin'
 		global: true
 	}
 	test_flag = Flag{
@@ -60,7 +60,7 @@ const (
 	flags = [
 		backend_flag,
 		no_emit_flag,
-		no_std_flag,
+		no_builtin_flag,
 		test_flag,
 		no_shebang_flag,
 		warn_flag,
@@ -87,7 +87,7 @@ fn new_source_from_args(args []string) ?&Source {
 
 fn new_ctx_from_cmd(cmd Command) &Context {
 	no_emit := cmd.flags.get_bool(no_emit_flag.name) or { panic(unreachable('')) }
-	no_std := cmd.flags.get_bool(no_std_flag.name) or { panic(unreachable('')) }
+	no_builtin := cmd.flags.get_bool(no_builtin_flag.name) or { panic(unreachable('')) }
 	is_test := cmd.name == 'test' || cmd.flags.get_bool(test_flag.name) or { panic('unreachable') }
 
 	backend_str := cmd.flags.get_string(backend_flag.name) or { panic(unreachable('')) }
@@ -111,7 +111,7 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 
 	mut ctx := new_context(
 		no_emit: no_emit
-		no_std: no_std
+		no_builtin: no_builtin
 		is_test: is_test
 		backend: backend
 		feature: feature

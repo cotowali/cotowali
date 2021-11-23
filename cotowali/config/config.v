@@ -45,12 +45,12 @@ pub fn (mut f Feature) set_by_str(s string) ? {
 
 pub struct Config {
 pub mut:
-	backend Backend = .sh
-	feature Feature
-	no_emit bool
-	no_std  bool
-	is_test bool
-	indent  string = '  '
+	backend    Backend = .sh
+	feature    Feature
+	no_emit    bool
+	no_builtin bool
+	is_test    bool
+	indent     string = '  '
 }
 
 pub fn backend_from_str(s string) ?Backend {

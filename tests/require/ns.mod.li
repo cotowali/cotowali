@@ -1,4 +1,4 @@
-require 'ns2.mod.li'
+require './ns2.mod'
 assert(ns2::hello() == 'hello ns2')
 
 namespace ns {

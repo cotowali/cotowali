@@ -42,8 +42,8 @@ fn (mut q Kuqi) did_save(id int, params lsp.DidSaveTextDocumentParams) {
 }
 
 fn (mut q Kuqi) process_source(s &Source) {
-	is_std := s.path == os.join_path(os.real_path(@VMODROOT), 'builtin/std.li')
-	mut ctx := new_context(no_std: is_std)
+	is_builtin := s.path == os.join_path(os.real_path(@VMODROOT), 'std/builtin.li')
+	mut ctx := new_context(no_builtin: is_builtin)
 	q.ctx = ctx
 
 	mut f := parser.parse(s, ctx)
