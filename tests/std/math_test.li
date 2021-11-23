@@ -1,4 +1,4 @@
-require 'math.li'
+require 'math'
 
 var sqrt2 = math::sqrt(2)
 assert(1.41 <= sqrt2 && sqrt2 <= 1.42)

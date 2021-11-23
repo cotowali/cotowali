@@ -7,7 +7,7 @@ module parser
 
 import cotowali.context { Context }
 import cotowali.environment { cotowali_builtin, find_file_path_in_cotowali_path }
-import cotowali.source { Source, SourceScheme, source_scheme_from_str }
+import cotowali.source { Source, SourceScheme, get_cotowali_source_path, source_scheme_from_str }
 import cotowali.symbols { Scope }
 import cotowali.ast
 import cotowali.messages { unreachable }
@@ -64,12 +64,12 @@ pub fn parse_file_relative(base_source &Source, path string, ctx &Context) ?&ast
 		return parse_remote_file(url, ctx)
 	}
 
-	resolved_path := os.real_path(os.join_path(os.dir(base_source.path), path))
+	resolved_path := os.real_path(os.join_path(os.dir(base_source.path), get_cotowali_source_path(path)))
 	return parse_file(resolved_path, ctx)
 }
 
 pub fn parse_file_in_cotowali_path(file string, ctx &Context) ?&ast.File {
-	path := find_file_path_in_cotowali_path(file) or { return err }
+	path := find_file_path_in_cotowali_path(get_cotowali_source_path(file)) or { return err }
 	return parse_file(path, ctx)
 }
 

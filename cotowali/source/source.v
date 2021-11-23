@@ -100,3 +100,7 @@ pub fn read_file(path string) ?&Source {
 	code := os.read_file(path) ?
 	return new_source(path, code)
 }
+
+pub fn get_cotowali_source_path(path string) string {
+	return if path.ends_with('.li') { path } else { path + '.li' }
+}
