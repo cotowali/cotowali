@@ -57,14 +57,15 @@ pub fn parse_file(path string, ctx &Context) ?&ast.File {
 }
 
 pub fn parse_file_relative(base_source &Source, path string, ctx &Context) ?&ast.File {
+	source_path := get_cotowali_source_path(path)
 	if source_url := base_source.url() {
-		url := source_url.resolve_reference(&URL{ user: 0, path: path }) or {
+		url := source_url.resolve_reference(&URL{ user: 0, path: source_path }) or {
 			panic(unreachable('faild to resolve url'))
 		}
 		return parse_remote_file(url, ctx)
 	}
 
-	resolved_path := os.real_path(os.join_path(os.dir(base_source.path), get_cotowali_source_path(path)))
+	resolved_path := os.real_path(os.join_path(os.dir(base_source.path), source_path))
 	return parse_file(resolved_path, ctx)
 }
 
