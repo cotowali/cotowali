@@ -22,11 +22,11 @@ pub fn (mut p Parser) parse(scope &Scope) &ast.File {
 	}
 
 	mut ctx := p.ctx
-	if !(ctx.std_loaded() || ctx.config.no_std) {
-		ctx.std_source = source.std
-		mut std_parser := new_parser(ctx.std_source, ctx)
+	if !(ctx.builtin_loaded() || ctx.config.no_builtin) {
+		ctx.builtin_source = source.builtin
+		mut builtin_parser := new_parser(ctx.builtin_source, ctx)
 		file.stmts << ast.RequireStmt{
-			file: std_parser.parse(ctx.global_scope)
+			file: builtin_parser.parse(ctx.global_scope)
 		}
 	}
 

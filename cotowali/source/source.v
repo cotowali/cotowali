@@ -10,9 +10,9 @@ import net.urllib { URL }
 import cotowali.messages { unreachable }
 import cotowali.util.checksum
 
-const std_file = $embed_file('../../builtin/std.li')
+const builtin_file = $embed_file('../../std/builtin.li')
 
-pub const std = new_source('std.li', std_file.to_string())
+pub const builtin = new_source('builtin.li', builtin_file.to_string())
 
 pub enum SourceScheme {
 	local
