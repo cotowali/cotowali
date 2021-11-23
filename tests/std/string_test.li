@@ -11,6 +11,20 @@ fn test_index() {
 }
 test_index()
 
+fn test_substr() {
+  assert(''.substr(0, 0) == '')
+  assert(''.substr(0, 1) == '')
+  assert('abc'.substr(0, 0) == '')
+  assert('abc'.substr(0, -1) == '')
+  assert('abc'.substr(0, 1) == 'a')
+  assert('abc'.substr(1, 1) == 'b')
+  assert('abc'.substr(2, 1) == 'c')
+  assert('abc'.substr(0, 2) == 'ab')
+  assert('abc'.substr(1, 2) == 'bc')
+  assert('abc'.substr(2, 2) == 'c')
+}
+test_substr()
+
 fn test_replace() {
   assert('ababc'.replace('ab', 'x') == 'xxc')
   assert('ababc'.replace('ab', 'x').replace('xx', 'y') == 'yc')
