@@ -1,0 +1,42 @@
+/// Copyright (c) 2021 zakuro <z@kuro.red>. All rights reserved.
+///
+/// This Source Code Form is subject to the terms of the Mozilla Public
+/// License, v. 2.0. If a copy of the MPL was not distributed with this
+/// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+namespace testing {
+  var total_count = 0
+  var passed_count = 0
+  var failed_count = 0
+  fn run_test(label: string, command: string) {
+    print("testing $label ... ")
+    sh {
+      %total_count=$(( %total_count + 1 ))
+      out="$($%command 2>&1)"
+      if [ "$?" -eq 0 ]
+      then
+        printf 'OK\n'
+        %passed_count=$(( %passed_count + 1 ))
+      else
+        printf 'FAILED\n'
+        %failed_count=$(( %failed_count + 1 ))
+      fi
+      if [ -n "$out" ]
+      then
+        printf '\nOutput:\n%%s\n\n' "$out"
+      fi
+    }
+  }
+  fn finish() {
+    var exit_code = 0
+    print('test result: ')
+    if failed_count == 0 {
+      println('OK')
+    } else {
+      println('FAILED')
+      exit_code = 1
+    }
+    println("$total_count total; $passed_count passed; $failed_count failed;")
+    exit(exit_code)
+  }
+}

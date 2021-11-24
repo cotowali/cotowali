@@ -6,7 +6,7 @@
 module parser
 
 import cotowali.context { Context }
-import cotowali.environment { cotowali_builtin, find_file_path_in_cotowali_path }
+import cotowali.environment { cotowali_builtin_path, cotowali_testing_path, find_file_path_in_cotowali_path }
 import cotowali.source { Source, SourceScheme, get_cotowali_source_path, source_scheme_from_str }
 import cotowali.symbols { Scope }
 import cotowali.ast
@@ -24,10 +24,17 @@ pub fn (mut p Parser) parse(scope &Scope) &ast.File {
 
 	mut ctx := p.ctx
 	if !(ctx.builtin_loaded() || ctx.config.no_builtin) {
-		ctx.builtin_source = source.read_file(cotowali_builtin()) or { panic(err) }
+		ctx.builtin_source = source.read_file(cotowali_builtin_path()) or { panic(err) }
 		mut builtin_parser := new_parser(ctx.builtin_source, ctx)
 		file.stmts << ast.RequireStmt{
 			file: builtin_parser.parse(ctx.global_scope)
+		}
+	}
+	if ctx.config.is_test && !ctx.testing_loaded() {
+		ctx.testing_source = source.read_file(cotowali_testing_path()) or { panic(err) }
+		mut testing_parser := new_parser(ctx.testing_source, ctx)
+		file.stmts << ast.RequireStmt{
+			file: testing_parser.parse(ctx.global_scope)
 		}
 	}
 
