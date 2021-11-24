@@ -128,10 +128,21 @@ pub fn (mut s Scope) register_prefix_op_function(op Token, f RegisterFnArgs) ?&V
 	return v
 }
 
-pub fn (s &Scope) lookup_prefix_op_function(op Token, operand Type) ?&Var {
+fn (s &Scope) lookup_prefix_op_function_strict(op Token, operand Type) ?&Var {
 	return s.prefix_op_functions[op.kind][operand] or {
 		if p := s.parent() {
 			return p.lookup_prefix_op_function(op, operand)
+		}
+		return none
+	}
+}
+
+pub fn (s &Scope) lookup_prefix_op_function(op Token, operand Type) ?&Var {
+	return s.lookup_prefix_op_function_strict(op, operand) or {
+		// Since type may be defined by child, lookup_type may return none
+		operand_ts := s.lookup_type(operand) or { return none }
+		if alias_info := operand_ts.alias_info() {
+			return s.lookup_prefix_op_function(op, alias_info.target)
 		}
 		return none
 	}

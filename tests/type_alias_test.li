@@ -62,6 +62,34 @@ fn test_inherits_infix_op() {
 }
 test_inherits_infix_op()
 
+fn test_inherits_prefix_op() {
+  type Num = int
+  type Num1 = Num
+  type Num2 = Num1
+  type Num3 = Num2
+  type Num4 = Num3
+
+  var(n, n1, n2, n3, n4): (Num, Num1, Num2, Num3, Num4)
+
+  fn +(n: Num): Num {
+    return n
+  }
+  assert(typeof(+n) == 'Num')
+  assert(typeof(+n1) == 'Num')
+
+  fn +(n: Num2): Num2 {
+    return n
+  }
+  assert(typeof(+n2) == 'Num2')
+  assert(typeof(+n3) == 'Num2')
+
+  fn +(n: Num4): Num4 {
+    return n
+  }
+  assert(typeof(+n4) == 'Num4')
+}
+test_inherits_prefix_op()
+
 fn test_inherits_methods() {
   type Num = float
   fn (n: Num) inc(): Num {
