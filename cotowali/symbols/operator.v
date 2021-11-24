@@ -61,12 +61,47 @@ pub fn (mut s Scope) register_infix_op_function(op Token, f RegisterFnArgs) ?&Va
 	return v
 }
 
-pub fn (s &Scope) lookup_infix_op_function(op Token, lhs Type, rhs Type) ?&Var {
+fn (s &Scope) lookup_infix_op_function_strict(op Token, lhs Type, rhs Type) ?&Var {
 	return s.infix_op_functions[op.kind][lhs][rhs] or {
 		if p := s.parent() {
 			return p.lookup_infix_op_function(op, lhs, rhs)
 		}
 		return none
+	}
+}
+
+pub fn (s &Scope) lookup_infix_op_function(op Token, lhs Type, rhs Type) ?&Var {
+	return s.lookup_infix_op_function_strict(op, lhs, rhs) or {
+		// Since type may be defined by child, lookup_type may return none
+		lhs_ts := s.lookup_type(lhs) or { return none }
+		rhs_ts := s.lookup_type(rhs) or { return none }
+		if lhs_alias_info := lhs_ts.alias_info() {
+			if found := s.lookup_infix_op_function_strict(op, lhs_alias_info.target, rhs) {
+				return found
+			}
+		}
+		if rhs_alias_info := rhs_ts.alias_info() {
+			if found := s.lookup_infix_op_function_strict(op, lhs, rhs_alias_info.target) {
+				return found
+			}
+		}
+
+		lhs_target := (lhs_ts.alias_info() or {
+			AliasTypeInfo{
+				target: lhs
+			}
+		}).target
+		rhs_target := (rhs_ts.alias_info() or {
+			AliasTypeInfo{
+				target: lhs
+			}
+		}).target
+
+		if lhs_target == lhs && rhs_target == rhs {
+			return none
+		}
+
+		return s.lookup_infix_op_function(op, lhs_target, rhs_target)
 	}
 }
 

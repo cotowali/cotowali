@@ -26,7 +26,43 @@ fn test_infix_for_alias_type() {
 }
 test_infix_for_alias_type()
 
-fn test_inherits() {
+
+fn test_inherits_infix_op() {
+  type Num = int
+  type NumNum = Num
+  type Num1 = Num
+  type Num1_ = Num
+  type Num2 = Num
+  type Num_2 = Num
+  type Num3 = Num
+
+  var (nn, n1, n2, n3): (NumNum, Num1, Num2, Num3)
+
+  fn (lhs: Num) + (rhs: Num): Num {
+    return lhs + rhs
+  }
+  assert(typeof(nn + nn) == 'Num')
+
+  fn (lhs: Num1) + (rhs: Num): Num1_ {
+    return lhs + rhs
+  }
+  assert(typeof(n1 + n1) == 'Num1_')
+
+  fn (lhs: Num) + (rhs: Num2): Num_2 {
+    return lhs + rhs
+  }
+  assert(typeof(n2 + n2) == 'Num_2')
+
+  fn (lhs: Num3) + (rhs: Num3): Num3 {
+    return lhs + rhs
+  }
+  assert(typeof(n3 + n3) == 'Num3')
+
+  assert(typeof(n3 + n1) == 'Num')
+}
+test_inherits_infix_op()
+
+fn test_inherits_methods() {
   type Num = float
   fn (n: Num) inc(): Num {
     return n + 1
@@ -50,7 +86,7 @@ fn test_inherits() {
   assert(n2.inc2() == 2)
   assert(typeof(n2.inc2()) == 'Num2')
 }
-test_inherits()
+test_inherits_methods()
 
 // --
 
