@@ -26,6 +26,32 @@ fn test_infix_for_alias_type() {
 }
 test_infix_for_alias_type()
 
+fn test_inherits() {
+  type Num = float
+  fn (n: Num) inc(): Num {
+    return n + 1
+  }
+  fn (n: Num) inc2(): Num {
+    return n + 1
+  }
+
+  type Num2 = Num
+  fn (n: Num2) inc2(): Num2 {
+    return (n as Num).inc2()
+  }
+
+  var (n, n2): (Num, Num2) = (1, 1)
+  assert(n.inc() == 2)
+  assert(typeof(n.inc()) == 'Num')
+  assert(n2.inc() == 2)
+  assert(typeof(n2.inc()) == 'Num')
+  assert(n.inc2() == 2)
+  assert(typeof(n.inc2()) == 'Num')
+  assert(n2.inc2() == 2)
+  assert(typeof(n2.inc2()) == 'Num2')
+}
+test_inherits()
+
 // --
 
 type vec2 = (int, int)
