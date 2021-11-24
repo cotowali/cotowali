@@ -18,6 +18,7 @@ pub:
 	global_scope &Scope
 pub mut:
 	builtin_source   &Source = 0
+	testing_source   &Source = 0
 	sources          map[string]&Source
 	errors           ErrorManager
 	compiler_symbols CompilerSymbolTable
@@ -38,4 +39,9 @@ pub fn new_default_context() &Context {
 [inline]
 pub fn (ctx &Context) builtin_loaded() bool {
 	return !isnil(ctx.builtin_source)
+}
+
+[inline]
+pub fn (ctx &Context) testing_loaded() bool {
+	return !isnil(ctx.testing_source)
 }

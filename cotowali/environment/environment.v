@@ -56,8 +56,12 @@ pub fn cotowali_std() string {
 	return os.join_path(cotowali_home(), 'std')
 }
 
-pub fn cotowali_builtin() string {
+pub fn cotowali_builtin_path() string {
 	return os.join_path(cotowali_std(), 'builtin.li')
+}
+
+pub fn cotowali_testing_path() string {
+	return os.join_path(cotowali_std(), 'testing.li')
 }
 
 [params]
