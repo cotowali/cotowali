@@ -1,0 +1,9 @@
+fn test_default_cast() {
+  assert(('1' as int) == 1)
+  assert(typeof('1' as int) == 'int')
+  assert(('1.0' as float) == 1.0)
+  assert(typeof('1.0' as float) == 'float')
+  assert(1 as string == '1')
+  assert(typeof(1 as string) == 'string')
+}
+test_default_cast()
