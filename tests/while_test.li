@@ -20,3 +20,17 @@ fn test_continue() {
   assert(n == 16)
 }
 test_continue()
+
+fn test_break() {
+  var i = 0
+  var n = 1
+  while i < 10 {
+    i = i + 1
+    if i > 5 {
+      break
+    }
+    n = n * 2
+  }
+  assert(n == 32)
+}
+test_break()

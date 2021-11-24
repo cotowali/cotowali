@@ -10,3 +10,16 @@ fn test_continue() {
   assert(n == 6)
 }
 test_continue()
+
+fn test_break() {
+  var arr = [1, 2, 3, 4]
+  var n = 0
+  for v in arr {
+    if v == 3 {
+      break
+    }
+    n += v
+  }
+  assert(n == 3)
+}
+test_break()
