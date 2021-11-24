@@ -8,6 +8,7 @@ module sh
 import cotowali.ast { Expr, StringLiteral }
 import cotowali.token { Token }
 import cotowali.messages { unreachable }
+import cotowali.symbols { builtin_type }
 
 const invalid_string_literal = unreachable('invalid string literal')
 
@@ -56,7 +57,9 @@ fn (mut e Emitter) double_quote_string_literal_value(expr StringLiteral) {
 					}
 				}
 			} else if v is Expr {
-				e.expr(v, quote: false)
+				e.as_expr(v.@as(builtin_type(.string)),
+					quote: false
+				)
 			}
 		}
 	}

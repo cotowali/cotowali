@@ -280,6 +280,13 @@ pub fn (e Expr) is_glob_literal() bool {
 	return if e is StringLiteral { e.is_glob() } else { false }
 }
 
+pub fn (e &Expr) @as(typ Type) AsExpr {
+	return AsExpr{
+		expr: e
+		typ: typ
+	}
+}
+
 pub struct AsExpr {
 pub:
 	pos  Pos
