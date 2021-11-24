@@ -30,6 +30,14 @@ b
 '
 )
 
+type Second = int
+fn (s: Second) as(): string {
+  return "${(s as int)} seconds"
+}
+
+var sec = 10 as Second
+assert("${sec}" == "10 seconds")
+
 fn test_string_index() {
   fn twice(n: int): int {
     return n * 2

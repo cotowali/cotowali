@@ -1,5 +1,14 @@
+type Second = int
+fn (s: Second) as(): string {
+  return "${s as int} seconds"
+}
+
+var two_sec: Second = 2
+
 print('print: a b c;')
 println('println: a b c;')
+println("$two_sec")
 
 eprint('eprint: a b c;')
 eprintln('eprintln: a b c;')
+eprintln("$two_sec")

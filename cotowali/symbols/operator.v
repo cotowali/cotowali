@@ -8,6 +8,25 @@ module symbols
 import cotowali.token { Token, TokenKindClass }
 import cotowali.messages { already_defined, unreachable }
 
+fn check_no_variadic(subject string, fn_info FunctionTypeInfo) ? {
+	if fn_info.variadic {
+		return error('$subject cannot be variadic')
+	}
+}
+
+fn check_no_pipe_in(subject string, fn_info FunctionTypeInfo) ? {
+	if fn_info.pipe_in != builtin_type(.void) {
+		return error('$subject cannot have pipe in')
+	}
+}
+
+fn check_number_of_parameters(subject string, expected int, actual int) ? {
+	if actual != expected {
+		expected_params := if expected == 1 { '1 parameter' } else { '$expected parameters' }
+		return error('$subject must have $expected_params')
+	}
+}
+
 fn verify_op_signature(expected TokenKindClass, op Token, fn_info FunctionTypeInfo) ? {
 	expected_s := match expected {
 		.infix_op { 'infix' }
@@ -21,19 +40,9 @@ fn verify_op_signature(expected TokenKindClass, op Token, fn_info FunctionTypeIn
 	}
 
 	subject := '$expected_s function'
-	params_n := if expected == .infix_op { 2 } else { 1 }
-	if fn_info.params.len != params_n {
-		expected_params := if params_n == 1 { '1 parameter' } else { '$params_n parameters' }
-		return error('$subject must have $expected_params')
-	}
-
-	if fn_info.variadic {
-		return error('$subject cannot be variadic')
-	}
-
-	if fn_info.pipe_in != builtin_type(.void) {
-		return error('$subject cannot have pipe in')
-	}
+	check_number_of_parameters(subject, if expected == .infix_op { 2 } else { 1 }, fn_info.params.len) ?
+	check_no_variadic(subject, fn_info) ?
+	check_no_pipe_in(subject, fn_info) ?
 }
 
 pub fn (mut s Scope) register_infix_op_function(op Token, f RegisterFnArgs) ?&Var {
@@ -143,6 +152,62 @@ pub fn (s &Scope) lookup_prefix_op_function(op Token, operand Type) ?&Var {
 		operand_ts := s.lookup_type(operand) or { return none }
 		if alias_info := operand_ts.alias_info() {
 			return s.lookup_prefix_op_function(op, alias_info.target)
+		}
+		return none
+	}
+}
+
+[params]
+pub struct CastFunctionParams {
+	from Type = builtin_type(.placeholder)
+	to   Type = builtin_type(.placeholder)
+}
+
+pub fn (mut s Scope) register_cast_function(f RegisterFnArgs, params CastFunctionParams) ?&Var {
+	fn_info := f.FunctionTypeInfo
+
+	subject := 'cast function'
+	check_number_of_parameters(subject, 0, fn_info.params.len - 1) ?
+	check_no_variadic(subject, fn_info) ?
+	check_no_pipe_in(subject, fn_info) ?
+
+	$if !prod {
+		if params.from != builtin_type(.placeholder) && params.from != fn_info.params[0] {
+			panic(unreachable('mismatch from.typ and params[0]'))
+		}
+		if params.to != builtin_type(.placeholder) && params.to != fn_info.ret {
+			panic(unreachable('mismatch to.typ and ret'))
+		}
+	}
+
+	from, to := s.must_lookup_type(fn_info.params[0]), s.must_lookup_type(fn_info.ret)
+
+	if to.typ == builtin_type(.void) {
+		return error('$subject must have return values')
+	}
+
+	fn_typ := s.lookup_or_register_function_type(fn_info).typ
+
+	v := &Var{
+		...f.Var
+		id: if f.Var.id == 0 { auto_id() } else { f.Var.id }
+		name: from.name + '_as_' + to.name
+		typ: fn_typ
+		scope: s
+	}
+
+	if to.typ in s.cast_functions[from.typ] {
+		return error(already_defined(.operator, '$from.name as $to.name'))
+	}
+	s.cast_functions[from.typ][to.typ] = v
+
+	return v
+}
+
+pub fn (s &Scope) lookup_cast_function(params CastFunctionParams) ?&Var {
+	return s.cast_functions[params.from][params.to] or {
+		if p := s.parent() {
+			return p.lookup_cast_function(params)
 		}
 		return none
 	}

@@ -280,11 +280,42 @@ pub fn (e Expr) is_glob_literal() bool {
 	return if e is StringLiteral { e.is_glob() } else { false }
 }
 
+pub fn (e &Expr) @as(typ Type) AsExpr {
+	return AsExpr{
+		expr: e
+		typ: typ
+	}
+}
+
 pub struct AsExpr {
 pub:
 	pos  Pos
 	expr Expr
 	typ  Type
+}
+
+pub fn (expr &AsExpr) overloaded_function() ?&symbols.Var {
+	f := Expr(expr).scope().lookup_cast_function(from: expr.expr.typ(), to: expr.typ) ?
+	if !f.is_function() {
+		panic(unreachable('not a function'))
+	}
+	return f
+}
+
+pub fn (expr &AsExpr) overloaded_function_call_expr() ?CallExpr {
+	sym := expr.overloaded_function() ?
+	scope := Expr(expr).scope()
+	return CallExpr{
+		scope: scope
+		func: Var{
+			sym: sym
+			ident: Ident{
+				scope: scope
+				text: sym.name
+			}
+		}
+		args: [expr.expr]
+	}
 }
 
 pub fn (expr &AsExpr) children() []Node {

@@ -57,7 +57,7 @@ fn (mut e Emitter) expr_or_string(expr ExprOrString, opt ExprOpt) {
 
 fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 	match expr {
-		ast.AsExpr { e.expr(expr.expr, opt) }
+		ast.AsExpr { e.as_expr(expr, opt) }
 		ast.BoolLiteral { e.bool_literal(expr, opt) }
 		ast.CallCommandExpr { e.call_command_expr(expr, opt) }
 		ast.CallExpr { e.call_expr(expr, opt) }
@@ -122,6 +122,14 @@ fn (mut e Emitter) int_literal(expr ast.IntLiteral, opt ExprOpt) {
 
 fn (mut e Emitter) null_literal(expr ast.NullLiteral, opt ExprOpt) {
 	e.write_echo_if_command_then_write('/dev/null', opt)
+}
+
+fn (mut e Emitter) as_expr(expr ast.AsExpr, opt ExprOpt) {
+	if call_expr := expr.overloaded_function_call_expr() {
+		e.call_expr(call_expr, opt)
+		return
+	}
+	e.expr(expr.expr, opt)
 }
 
 fn (mut e Emitter) decompose_expr(expr ast.DecomposeExpr, opt ExprOpt) {
