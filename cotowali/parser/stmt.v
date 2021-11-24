@@ -105,6 +105,16 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_if {
 			return ast.Stmt(p.parse_if_stmt() ?)
 		}
+		.key_break {
+			return ast.Break{
+				token: p.consume()
+			}
+		}
+		.key_continue {
+			return ast.Continue{
+				token: p.consume()
+			}
+		}
 		.key_for {
 			return ast.Stmt(p.parse_for_in_stmt() ?)
 		}

@@ -13,6 +13,8 @@ import cotowali.util.checksum
 pub type Stmt = AssertStmt
 	| AssignStmt
 	| Block
+	| Break
+	| Continue
 	| DocComment
 	| EmptyStmt
 	| Expr
@@ -28,7 +30,7 @@ pub type Stmt = AssertStmt
 
 pub fn (stmt Stmt) children() []Node {
 	return match stmt {
-		DocComment, EmptyStmt, InlineShell {
+		Break, Continue, DocComment, EmptyStmt, InlineShell {
 			[]Node{}
 		}
 		AssertStmt, AssignStmt, Block, Expr, FnDecl, ForInStmt, IfStmt, NamespaceDecl, RequireStmt,
@@ -49,6 +51,8 @@ fn (mut r Resolver) stmt(stmt Stmt) {
 		AssertStmt { r.assert_stmt(stmt) }
 		AssignStmt { r.assign_stmt(mut stmt) }
 		Block { r.block(stmt) }
+		Break {}
+		Continue {}
 		DocComment { r.doc_comment(stmt) }
 		EmptyStmt { r.empty_stmt(stmt) }
 		Expr { r.expr(stmt) }
@@ -202,6 +206,16 @@ fn (mut r Resolver) block(stmt Block) {
 	}
 
 	r.stmts(stmt.stmts)
+}
+
+pub struct Break {
+pub:
+	token Token
+}
+
+pub struct Continue {
+pub:
+	token Token
 }
 
 pub struct DocComment {

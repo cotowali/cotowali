@@ -8,6 +8,7 @@ module checker
 import cotowali.ast
 import cotowali.symbols { builtin_type }
 import cotowali.messages { unreachable }
+import cotowali.source { Pos }
 
 fn (mut c Checker) attrs(attrs []ast.Attr) {
 	for attr in attrs {
@@ -46,6 +47,8 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 		ast.AssignStmt { c.assign_stmt(mut stmt) }
 		ast.AssertStmt { c.assert_stmt(stmt) }
 		ast.Block { c.block(stmt) }
+		ast.Break { c.break_(stmt) }
+		ast.Continue { c.continue_(stmt) }
 		ast.Expr { c.expr(stmt) }
 		ast.DocComment, ast.EmptyStmt {}
 		ast.FnDecl { c.fn_decl(stmt) }
@@ -157,6 +160,20 @@ fn (mut c Checker) block(block ast.Block) {
 	c.stmts(block.stmts)
 }
 
+fn (mut c Checker) expect_inside_loop(stmt_name string, pos Pos) ? {
+	if !c.inside_loop {
+		return c.error('`$stmt_name` is not in a loop', pos)
+	}
+}
+
+fn (mut c Checker) break_(stmt ast.Break) {
+	c.expect_inside_loop('break', stmt.token.pos) or {}
+}
+
+fn (mut c Checker) continue_(stmt ast.Continue) {
+	c.expect_inside_loop('continue', stmt.token.pos) or {}
+}
+
 fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 	$if trace_checker ? {
 		c.trace_begin(@FN, stmt.sym.name, stmt.signature())
@@ -212,6 +229,13 @@ fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {
 	if !ts.is_iterable() {
 		c.error('`$ts.name` is not iterable', stmt.expr.pos())
 	}
+
+	inside_loop_save := c.inside_loop
+	c.inside_loop = true
+	defer {
+		c.inside_loop = inside_loop_save
+	}
+
 	c.block(stmt.body)
 }
 
@@ -282,6 +306,13 @@ fn (mut c Checker) while_stmt(stmt ast.WhileStmt) {
 
 	c.expr(stmt.cond)
 	c.expect_bool_expr(stmt.cond, 'while condition') or {}
+
+	inside_loop_save := c.inside_loop
+	c.inside_loop = true
+	defer {
+		c.inside_loop = inside_loop_save
+	}
+
 	c.block(stmt.body)
 }
 
