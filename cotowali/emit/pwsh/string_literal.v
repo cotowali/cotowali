@@ -8,6 +8,7 @@ module pwsh
 import cotowali.ast { Expr, StringLiteral }
 import cotowali.token { Token }
 import cotowali.messages { unreachable }
+import cotowali.symbols { builtin_type }
 
 const invalid_string_literal = unreachable('invalid string literal')
 
@@ -70,7 +71,7 @@ fn (mut e Emitter) double_quote_string_literal(expr StringLiteral) {
 			}
 		} else if v is Expr {
 			e.write(r'$(')
-			e.expr(v)
+			e.expr(v.@as(builtin_type(.string)))
 			e.write(r')')
 		} else {
 			panic(pwsh.invalid_string_literal)

@@ -22,7 +22,7 @@ fn (mut e Emitter) expr(expr Expr, opt ExprOpt) {
 		}
 	}
 	match expr {
-		ast.AsExpr { e.expr(expr.expr, opt) }
+		ast.AsExpr { e.as_expr(expr, opt) }
 		ast.BoolLiteral { e.bool_literal(expr, opt) }
 		ast.CallCommandExpr { e.call_command_expr(expr, opt) }
 		ast.CallExpr { e.call_expr(expr, opt) }
@@ -43,6 +43,17 @@ fn (mut e Emitter) expr(expr Expr, opt ExprOpt) {
 		ast.StringLiteral { e.string_literal(expr, opt) }
 		ast.Var { e.var_(expr, opt) }
 	}
+}
+
+fn (mut e Emitter) as_expr(expr ast.AsExpr, opt ExprOpt) {
+	if call_expr := expr.overloaded_function_call_expr() {
+		e.call_expr(call_expr, opt)
+		return
+	}
+	e.write('[')
+	e.write(Expr(expr).type_symbol().resolved().name)
+	e.write(']')
+	e.expr(expr.expr, paren: true)
 }
 
 fn (mut e Emitter) decompose_expr(expr ast.DecomposeExpr, opt ExprOpt) {
