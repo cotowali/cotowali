@@ -10,6 +10,7 @@ import cotowali.messages { checksum_mismatch, duplicated_key, invalid_key, unrea
 import cotowali.token { Token, TokenKind }
 import cotowali.source { none_pos }
 import cotowali.symbols { builtin_type }
+import cotowali.util { is_relative_path }
 import net.urllib
 
 fn (mut p Parser) parse_attr() ?ast.Attr {
@@ -103,6 +104,16 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		}
 		.key_if {
 			return ast.Stmt(p.parse_if_stmt() ?)
+		}
+		.key_break {
+			return ast.Break{
+				token: p.consume()
+			}
+		}
+		.key_continue {
+			return ast.Continue{
+				token: p.consume()
+			}
 		}
 		.key_for {
 			return ast.Stmt(p.parse_for_in_stmt() ?)
@@ -409,8 +420,16 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 			props: props
 			file: f
 		}
-	} else {
+	} else if is_relative_path(path) {
 		f := parse_file_relative(p.source(), path, p.ctx) or {
+			return if err is none { none } else { p.error(err.msg, pos) }
+		}
+		ast.RequireStmt{
+			props: props
+			file: f
+		}
+	} else {
+		f := parse_file_in_cotowali_path(path, p.ctx) or {
 			return if err is none { none } else { p.error(err.msg, pos) }
 		}
 		ast.RequireStmt{

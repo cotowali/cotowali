@@ -20,9 +20,15 @@ fn (shell &Shell) welcome() {
 
 fn (mut shell Shell) execute_compiled_code(code string) {
 	shell.stdin_write(code)
+	if !shell.is_alive() {
+		return
+	}
 	mut stdout := shell.stdout_read()
 	if stdout.len > 0 {
 		print(stdout)
+	}
+	if !shell.is_alive() {
+		return
 	}
 	mut stderr := shell.stderr_read()
 	if stderr.len > 0 {

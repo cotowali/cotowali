@@ -49,6 +49,7 @@ fn execute(cmd Command) ? {
 		exit(1)
 	}
 	lish.run()
+	exit(lish.exit_code())
 }
 
 fn main() {

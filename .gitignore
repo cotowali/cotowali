@@ -5,6 +5,9 @@
 /tests/tester
 /vim-lsp.log
 /tmp
+/bin
+/dist
+/tests/lic
 
 profile.txt
 

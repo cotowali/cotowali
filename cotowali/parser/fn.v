@@ -7,17 +7,16 @@ module parser
 
 import cotowali.ast
 import cotowali.source { Pos }
-import cotowali.token { Token }
+import cotowali.token { Token, TokenKind }
 import cotowali.symbols {
 	Scope,
-	Type,
 	TypeSymbol,
 	Var,
 	builtin_type,
 	new_placeholder_var,
 }
 import cotowali.messages { unreachable }
-import cotowali.util { struct_name }
+import cotowali.util { nil_to_none, struct_name }
 
 struct FnParamParsingInfo {
 mut:
@@ -46,6 +45,7 @@ enum FnSignatureKind {
 	method
 	infix_op
 	prefix_op
+	cast_op
 }
 
 struct FnSignatureParsingInfo {
@@ -55,10 +55,11 @@ mut:
 	pipe_in_param FnParamParsingInfo
 	params        []FnParamParsingInfo
 	variadic      bool
-	ret_typ       Type = builtin_type(.void)
+	ret_ts        &TypeSymbol = 0
 }
 
 fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
+	ret_typ := if isnil(info.ret_ts) { builtin_type(.void) } else { info.ret_ts.typ }
 	return match info.kind {
 		.default {
 			scope.register_function(
@@ -67,7 +68,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 				params: info.params.map(it.ts.typ)
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
-				ret: info.ret_typ
+				ret: ret_typ
 			) ?
 		}
 		.method {
@@ -78,7 +79,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 				params: info.params[1..].map(it.ts.typ)
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
-				ret: info.ret_typ
+				ret: ret_typ
 			) ?
 		}
 		.infix_op {
@@ -87,7 +88,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 				params: info.params.map(it.ts.typ)
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
-				ret: info.ret_typ
+				ret: ret_typ
 			) ?
 		}
 		.prefix_op {
@@ -96,7 +97,16 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 				params: info.params.map(it.ts.typ)
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
-				ret: info.ret_typ
+				ret: ret_typ
+			) ?
+		}
+		.cast_op {
+			scope.register_cast_function(
+				pos: info.name.pos
+				params: info.params.map(it.ts.typ)
+				variadic: info.variadic
+				pipe_in: info.pipe_in_param.ts.typ
+				ret: ret_typ
 			) ?
 		}
 	}
@@ -171,6 +181,10 @@ fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
 	mut info := FnSignatureParsingInfo{}
 	info.pipe_in_param.ts = p.scope.must_lookup_type(builtin_type(.void))
 
+	is_name_kind := fn (kind TokenKind) bool {
+		return kind in [.ident, .key_as] || kind.@is(.op)
+	}
+
 	// fn ( x : Type ) (int, int) |> f()
 	mut has_receiver := false
 	if p.next_is_receiver_syntax() {
@@ -193,7 +207,7 @@ fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
 		if _ := p.consume_with_check(.pipe) {
 			info.pipe_in_param = pipe_in
 		}
-	} else if !((p.kind(0) == .ident || p.kind(0).@is(.op)) && p.kind(1) == .l_paren) {
+	} else if !(is_name_kind(p.kind(0)) && p.kind(1) == .l_paren) {
 		//    v kind(0) == .ident
 		// fn f ( )
 		//      ^ kind(1) == .l_paren
@@ -223,7 +237,10 @@ fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
 		p.consume_with_check(.pipe) ?
 	}
 
-	if name := p.consume_if_kind_is(.op) {
+	if name := p.consume_if_kind_eq(.key_as) {
+		info.name = name
+		info.kind = .cast_op
+	} else if name := p.consume_if_kind_is(.op) {
 		info.name = name
 		if has_receiver {
 			info.kind = .infix_op
@@ -248,7 +265,7 @@ fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
 	// fn f(): int
 	//       ^
 	p.consume_with_check(.colon, .pipe) ?
-	info.ret_typ = (p.parse_type() ?).typ
+	info.ret_ts = p.parse_type() ?
 
 	return info
 }
@@ -267,6 +284,14 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	mut sym_name := if info.name.kind == .ident {
 		info.name.text
+	} else if info.kind == .cast_op {
+		param_name := if info.params.len == 1 {
+			info.params[0].ts.name
+		} else {
+			util.rand<u64>().str()
+		}
+		ret_name := if ret := nil_to_none(info.ret_ts) { ret.name } else { util.rand<u64>().str() }
+		'as_${param_name}_$ret_name'
 	} else {
 		op_ident := info.name.kind.str_for_ident()
 		type_names := info.params.map(it.ts.name).join('_')

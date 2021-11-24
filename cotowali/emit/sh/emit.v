@@ -29,19 +29,3 @@ fn (mut e Emitter) file(f &ast.File) {
 	e.writeln('# file: $f.source.path')
 	e.stmts(f.stmts)
 }
-
-fn (mut e Emitter) builtin() {
-	builtins := [
-		$embed_file('../../../builtin/builtin.sh'),
-		$embed_file('../../../builtin/array.sh'),
-		$embed_file('../../../builtin/map.sh'),
-	]
-	old_kind := e.cur_kind
-	defer {
-		e.cur_kind = old_kind
-	}
-	e.cur_kind = .builtin
-	for f in builtins {
-		e.writeln(f.to_string())
-	}
-}

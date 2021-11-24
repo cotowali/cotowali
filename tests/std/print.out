@@ -1,2 +1,4 @@
 print: a b c;println: a b c;
+2 seconds
 eprint: a b c;eprintln: a b c;
+2 seconds

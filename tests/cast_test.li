@@ -1,0 +1,36 @@
+fn test_default_cast() {
+  assert(('1' as int) == 1)
+  assert(typeof('1' as int) == 'int')
+  assert(('1.0' as float) == 1.0)
+  assert(typeof('1.0' as float) == 'float')
+  assert(1 as string == '1')
+  assert(typeof(1 as string) == 'string')
+}
+test_default_cast()
+
+fn test_overload() {
+  type Second = int
+  type Minute = int
+  type Hour = int
+  type Day = int
+
+  fn (m: Minute) as(): Second {
+    return m * 60
+  }
+  fn (h: Hour) as(): Minute {
+    return h * 60
+  }
+  fn (h: Hour) as(): Second {
+    return (h as Minute) * 60
+  }
+
+  var (min, hour) = (1 as Minute, 1 as Hour)
+  assert((min as int) == 1)
+  assert((min as Second) == (60 as Second))
+  assert(typeof(min as Second) == 'Seconds')
+  assert((hour as int) == 1)
+  assert((hour as Second) == (3600 as Second))
+  assert((hour as Minute) == (60 as Minute))
+  assert(typeof(hour as Second) == 'Seconds')
+  assert(typeof(hour as Minute) == 'Minute')
+}

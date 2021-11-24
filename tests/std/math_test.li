@@ -1,3 +1,5 @@
+require 'math'
+
 var sqrt2 = math::sqrt(2)
 assert(1.41 <= sqrt2 && sqrt2 <= 1.42)
 assert(2.0 == math::sqrt(4))

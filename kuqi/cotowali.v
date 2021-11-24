@@ -24,13 +24,13 @@ fn pos_to_range(p Pos) lsp.Range {
 
 [params]
 struct ContextOpts {
-	no_std bool
+	no_builtin bool
 }
 
 fn new_context(opts ContextOpts) &Context {
 	return context.new_context(
 		no_emit: true
-		no_std: opts.no_std
+		no_builtin: opts.no_builtin
 		feature: .warn_all
 	)
 }

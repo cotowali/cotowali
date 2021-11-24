@@ -223,5 +223,15 @@ pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) ?&Var {
 }
 
 pub fn (ts &TypeSymbol) lookup_method(name string) ?&Var {
-	return ts.methods[name] or { (ts.base() or { return none }).lookup_method(name) ? }
+	return ts.methods[name] or {
+		if base := ts.base() {
+			if found := base.lookup_method(name) {
+				return found
+			}
+		}
+		if alias_info := ts.alias_info() {
+			return ts.scope.must_lookup_type(alias_info.target).lookup_method(name)
+		}
+		return none
+	}
 }
