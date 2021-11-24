@@ -102,7 +102,13 @@ pub enum TokenKind {
 }
 
 pub fn (k TokenKind) str_for_ident() string {
-	return '__${k}__'
+	return if k.@is(.op) {
+		'__${k}__'
+	} else if k == .key_as {
+		'as'
+	} else {
+		k.str()
+	}
 }
 
 pub fn token_kinds(class TokenKindClass) []TokenKind {

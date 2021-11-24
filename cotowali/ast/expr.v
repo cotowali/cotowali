@@ -287,6 +287,30 @@ pub:
 	typ  Type
 }
 
+pub fn (expr &AsExpr) overloaded_function() ?&symbols.Var {
+	f := Expr(expr).scope().lookup_cast_function(from: expr.expr.typ(), to: expr.typ) ?
+	if !f.is_function() {
+		panic(unreachable('not a function'))
+	}
+	return f
+}
+
+pub fn (expr &AsExpr) overloaded_function_call_expr() ?CallExpr {
+	sym := expr.overloaded_function() ?
+	scope := Expr(expr).scope()
+	return CallExpr{
+		scope: scope
+		func: Var{
+			sym: sym
+			ident: Ident{
+				scope: scope
+				text: sym.name
+			}
+		}
+		args: [expr.expr]
+	}
+}
+
 pub fn (expr &AsExpr) children() []Node {
 	return [Node(expr.expr)]
 }

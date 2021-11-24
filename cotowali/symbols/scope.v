@@ -28,6 +28,7 @@ mut:
 	name_to_type        map[string]Type
 	infix_op_functions  map[TokenKind]map[u64]map[u64]&Var // map[op TokenKind]map[lhs Type]map[rhs Type]&Var
 	prefix_op_functions map[TokenKind]map[u64]&Var // map[op TokenKind]map[operand Type]
+	cast_functions      map[u64]map[u64]&Var       // map[from Type]map[to Type]
 }
 
 pub fn (s &Scope) owner() ?&Var {
