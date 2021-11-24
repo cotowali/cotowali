@@ -6,3 +6,17 @@ while i < 10 {
 }
 
 assert(n == 1024)
+
+fn test_continue() {
+  var i = 0
+  var n = 1
+  while i < 8 {
+    i = i + 1
+    if i % 2 == 0 {
+      continue
+    }
+    n = n * 2
+  }
+  assert(n == 16)
+}
+test_continue()

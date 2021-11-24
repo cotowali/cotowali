@@ -26,6 +26,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 		ast.AssertStmt { e.assert_stmt(stmt) }
 		ast.FnDecl { e.fn_decl(stmt) }
 		ast.Block { e.block(stmt) }
+		ast.Continue { e.continue_(stmt) }
 		ast.Expr { e.expr_stmt(stmt) }
 		ast.AssignStmt { e.assign_stmt(stmt) }
 		ast.DocComment { e.doc_comment(stmt) }
@@ -102,6 +103,10 @@ fn (mut e Emitter) block(block ast.Block, opt BlockOpt) {
 	if blank && !opt.allow_blank {
 		e.writeln(':')
 	}
+}
+
+fn (mut e Emitter) continue_(stmt ast.Continue) {
+	e.writeln('continue')
 }
 
 fn (mut e Emitter) doc_comment(comment ast.DocComment) {

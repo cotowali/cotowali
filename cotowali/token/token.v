@@ -12,6 +12,7 @@ pub enum TokenKind {
 	ident
 	key_as
 	key_assert
+	key_continue
 	key_else
 	key_export
 	key_fn

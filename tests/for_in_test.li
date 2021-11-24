@@ -1,0 +1,12 @@
+fn test_continue() {
+  var arr = [1, 2, 3, 4]
+  var n = 0
+  for v in arr {
+    if v % 2 != 0 {
+      continue
+    }
+    n += v
+  }
+  assert(n == 6)
+}
+test_continue()

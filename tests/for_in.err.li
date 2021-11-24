@@ -1,2 +1,6 @@
 for i in 10 {
 }
+
+if true {
+  continue
+}

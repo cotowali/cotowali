@@ -59,6 +59,7 @@ const (
 	table_for_keywords = {
 		'as':        tk(.key_as)
 		'assert':    tk(.key_assert)
+		'continue':  tk(.key_continue)
 		'else':      tk(.key_else)
 		'export':    tk(.key_export)
 		'fn':        tk(.key_fn)
