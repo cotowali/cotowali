@@ -187,7 +187,6 @@ fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {
 		panic(unreachable('unresolved namespace item'))
 	}
 	e.expr(expr.item, opt)
-	panic('unimplemented')
 }
 
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {

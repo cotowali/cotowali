@@ -161,7 +161,7 @@ fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
 }
 
 fn (mut e Emitter) namespace_decl(ns ast.NamespaceDecl) {
-	panic('unimplemented')
+	e.block(ns.block)
 }
 
 fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {

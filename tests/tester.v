@@ -28,6 +28,7 @@ const (
 		'float_test.li',
 		'tuple_test.li',
 		'typeof_test.li',
+		'namespace_test.li',
 		'expr/call_command_test.li',
 		'expr/operator_overload_test.li',
 		'expr/array_test.li',
