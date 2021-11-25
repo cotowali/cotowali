@@ -29,6 +29,7 @@ const (
 		'tuple_test.li',
 		'typeof_test.li',
 		'expr/call_command_test.li',
+		'expr/operator_overload_test.li',
 		'expr/array_test.li',
 		'expr/string_test.li',
 		'expr/string_expr_substitution.li',

@@ -101,6 +101,11 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 		panic(unreachable('not a infix op'))
 	}
 
+	if call_expr := expr.overloaded_function_call_expr() {
+		e.call_expr(call_expr, opt)
+		return
+	}
+
 	ts := Expr(expr).type_symbol()
 	ts_resolved := ts.resolved()
 	is_int := ts_resolved.typ == builtin_type(.int)
@@ -208,7 +213,7 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 		if i > 0 {
 			e.write(', ')
 		}
-		e.expr(subexpr, opt)
+		e.expr(subexpr, paren: true)
 	}
 	if expr.exprs.len > 0 && expr.exprs.last() !is ast.DecomposeExpr {
 		e.write(')')
@@ -219,6 +224,11 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 	op := expr.op
 	if !op.kind.@is(.prefix_op) {
 		panic(unreachable('not a prefix op'))
+	}
+
+	if call_expr := expr.overloaded_function_call_expr() {
+		e.call_expr(call_expr, opt)
+		return
 	}
 
 	if op.kind == .amp {
