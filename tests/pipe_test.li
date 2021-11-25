@@ -14,14 +14,12 @@ fn test_normal() {
     return n
   }
 
-#if !pwsh
   fn ...int |> twice() |> ...int {
     var v: int
     while read(&v) {
       yield v * 2
     }
   }
-#endif
 
   assert((10 |> inc()) == 11)
   assert((10 |> sum()) == 10)
