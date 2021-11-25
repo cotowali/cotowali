@@ -191,6 +191,10 @@ fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {
 }
 
 fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
+	if expr.exprs.len == 0 {
+		e.write('@()')
+		return
+	}
 	if expr.exprs.len > 0 && expr.exprs[0] !is ast.DecomposeExpr {
 		e.write('(')
 	}
