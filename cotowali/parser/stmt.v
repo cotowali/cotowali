@@ -127,9 +127,6 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_require {
 			return ast.Stmt(p.parse_require_stmt() ?)
 		}
-		.key_sh, .key_inline {
-			return ast.Stmt(p.parse_inline_shell() ?)
-		}
 		.key_type {
 			return p.parse_type_decl()
 		}
@@ -145,6 +142,15 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 			return ast.Stmt(p.parse_yield_stmt() ?)
 		}
 		else {}
+	}
+
+	match p.token(0).keyword_ident() {
+		.sh, .inline {
+			if p.kind(1) == .l_brace {
+				return ast.Stmt(p.parse_inline_shell() ?)
+			}
+		}
+		.not_a_keyword_ident {}
 	}
 	expr := p.parse_expr(.toplevel) ?
 	if p.kind(0).@is(.assign_op) {

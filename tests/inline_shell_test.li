@@ -35,3 +35,18 @@ fn test_inline_shell_escape() {
   assert(text == "% $msg %")
 }
 test_inline_shell_escape()
+
+fn test_inline_shell_keyword_var() {
+  var sh = ''
+  var inline = ''
+
+  inline {
+    %inline="inline"
+  }
+  sh {
+    %sh="sh"
+  }
+  assert(inline == 'inline')
+  assert(sh == 'sh')
+}
+test_inline_shell_keyword_var()
