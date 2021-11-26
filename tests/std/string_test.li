@@ -5,9 +5,24 @@ fn test_len() {
 test_len()
 
 fn test_index() {
-  assert('00112'.index('01') == 1)
-  assert('00112'.index('x') == -1)
-  assert('ab"cd"ef'.index('"') == 2)
+  assert('010101'.index('0') == 0)
+  assert('010101'.last_index('0') == 4)
+  assert('010101'.index('1') == 1)
+  assert('010101'.last_index('1') == 5)
+  assert('010101'.index('01') == 0)
+  assert('010101'.last_index('01') == 4)
+  assert('010101'.index('10') == 1)
+  assert('010101'.last_index('10') == 3)
+
+  assert('0'.index('1') == -1)
+  assert('0'.last_index('1') == -1)
+  assert('0'.index('1') == -1)
+  assert('0'.last_index('1') == -1)
+  assert('0'.index('') == 0)
+  assert('0'.last_index('') == 1)
+
+  assert(''.index('') == 0)
+  assert(''.last_index('') == 0)
 }
 test_index()
 

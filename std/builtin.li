@@ -90,6 +90,27 @@ fn (s: string) index(t: string): int {
   return (s|> @awk('-v', "t=$t", '{print index($1, t) - 1}')) as int
 }
 
+fn (s: string) last_index(t: string): int {
+  var s_len = s.len()
+  if t.len() == 0 {
+    return s_len
+  }
+
+  // TODO: this implementation is inefficient
+
+  var last_i = -1
+  var rest = s
+  while true {
+    var i = rest.index(t)
+    if i < 0 {
+      break
+    }
+    last_i = i + (s_len - rest.len())
+    rest = rest.substr(i + t.len(), rest.len())
+  }
+  return last_i
+}
+
 fn (s: string) len(): int {
   var n: int
   sh { %n=${#%s} }
