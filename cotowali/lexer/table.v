@@ -67,6 +67,7 @@ const (
 		'for':       tk(.key_for)
 		'if':        tk(.key_if)
 		'in':        tk(.key_in)
+		'inline':    tk(.key_inline)
 		'map':       tk(.key_map)
 		'namespace': tk(.key_namespace)
 		'null':      tk(.key_null)
