@@ -20,6 +20,7 @@ pub enum TokenKind {
 	key_for
 	key_if
 	key_in
+	key_inline
 	key_map
 	key_namespace
 	key_null
@@ -203,6 +204,7 @@ pub fn token_kinds(class TokenKindClass) []TokenKind {
 				.key_for,
 				.key_if,
 				.key_in,
+				.key_inline,
 				.key_map,
 				.key_require,
 				.key_return,

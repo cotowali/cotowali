@@ -1,3 +1,13 @@
+fn test_shared_inline_block() {
+  var n = 42
+  var text: string
+  inline {
+    %text="%% n = $%n %%"
+  }
+  assert(text == '% n = 42 %')
+}
+test_shared_inline_block()
+
 fn test_inline_shell_number() {
   var (n, a, b) = (1, 2, 3)
   assert(a != b)
