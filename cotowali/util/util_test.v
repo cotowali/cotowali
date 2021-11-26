@@ -22,6 +22,18 @@ fn test_in() {
 	assert !in2('z', '0', '2', 'a', 'c')
 }
 
+fn test_at() ? {
+	arr := [0, 2]
+	assert (at(arr, 0) ?) == 0
+	assert (at(arr, 1) ?) == 2
+	if _ := at(arr, 2) {
+		assert false
+	}
+	if _ := at(arr, -1) {
+		assert false
+	}
+}
+
 struct Ref {
 mut:
 	ref &string = 0

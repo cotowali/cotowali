@@ -33,3 +33,7 @@ pub fn struct_name<T>(v T) string {
 
 	return s.split('.').last()
 }
+
+pub fn at<T>(arr []T, i int) ?T {
+	return if 0 <= i && i < arr.len { arr[i] } else { none }
+}
