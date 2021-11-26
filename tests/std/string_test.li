@@ -47,6 +47,23 @@ fn test_starts_ends() {
 }
 test_starts_ends()
 
+fn test_trim() {
+  assert('abc'.trim_prefix('') == 'abc')
+  assert('abc'.trim_prefix('a') == 'bc')
+  assert('abc'.trim_prefix('ab') == 'c')
+  assert('abc'.trim_prefix('abc') == '')
+  assert('abc'.trim_prefix('x') == 'abc')
+  assert('abc'.trim_prefix('abcd') == 'abc')
+
+  assert('abc'.trim_suffix('') == 'abc')
+  assert('abc'.trim_suffix('c') == 'ab')
+  assert('abc'.trim_suffix('bc') == 'a')
+  assert('abc'.trim_suffix('abc') == '')
+  assert('abc'.trim_suffix('x') == 'abc')
+  assert('abc'.trim_suffix('abcd') == 'abc')
+}
+test_trim()
+
 fn test_substr() {
   assert(''.substr(0, 0) == '')
   assert(''.substr(0, 1) == '')

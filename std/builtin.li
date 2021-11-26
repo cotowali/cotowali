@@ -143,6 +143,20 @@ fn (s: string) ends_with(ss: string): bool {
   return s.last_index(ss) == s.len() - ss.len()
 }
 
+fn (s: string) trim_prefix(prefix: string): string {
+  if !s.starts_with(prefix){
+    return s
+  }
+  return s.substr(prefix.len(), s.len())
+}
+
+fn (s: string) trim_suffix(suffix: string): string {
+  if !s.ends_with(suffix) {
+    return s
+  }
+  return s.substr(0, s.len() - suffix.len())
+}
+
 // --- array methods ---
 // All array inherits []any
 
