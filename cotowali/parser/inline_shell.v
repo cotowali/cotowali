@@ -16,7 +16,7 @@ fn (mut p Parser) parse_inline_shell() ?ast.InlineShell {
 		}
 	}
 
-	sh_tok := p.consume_with_assert(.key_sh)
+	key_tok := p.consume_with_assert(.key_sh)
 	p.consume_with_check(.l_brace) ?
 	mut parts := []ast.InlineShellPart{}
 
@@ -43,7 +43,8 @@ fn (mut p Parser) parse_inline_shell() ?ast.InlineShell {
 
 	end_tok := p.consume_with_assert(.r_brace, .eof)
 	return ast.InlineShell{
-		pos: sh_tok.pos.merge(end_tok.pos)
+		key: key_tok
+		pos: key_tok.pos.merge(end_tok.pos)
 		parts: parts
 	}
 }

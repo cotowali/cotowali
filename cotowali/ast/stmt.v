@@ -329,9 +329,14 @@ pub type InlineShellPart = Token | Var
 
 pub struct InlineShell {
 pub:
+	key Token
 	pos Pos
 pub mut:
 	parts []InlineShellPart
+}
+
+pub fn (sh &InlineShell) is_sh() bool {
+	return sh.key.kind == .key_sh
 }
 
 fn (mut r Resolver) inline_shell(mut stmt InlineShell) {
