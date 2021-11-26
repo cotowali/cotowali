@@ -152,7 +152,7 @@ fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
 }
 
 fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
-	if !stmt.is_sh() {
+	if !stmt.use_for_sh() {
 		return
 	}
 	for part in stmt.parts {

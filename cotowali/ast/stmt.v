@@ -335,8 +335,8 @@ pub mut:
 	parts []InlineShellPart
 }
 
-pub fn (sh &InlineShell) is_sh() bool {
-	return sh.key.kind == .key_sh
+pub fn (sh &InlineShell) use_for_sh() bool {
+	return sh.key.kind in [.key_sh, .key_inline]
 }
 
 fn (mut r Resolver) inline_shell(mut stmt InlineShell) {
