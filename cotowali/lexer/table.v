@@ -71,6 +71,7 @@ const (
 		'map':       tk(.key_map)
 		'namespace': tk(.key_namespace)
 		'null':      tk(.key_null)
+		'pwsh':      tk(.key_pwsh)
 		'require':   tk(.key_require)
 		'return':    tk(.key_return)
 		'sh':        tk(.key_sh)

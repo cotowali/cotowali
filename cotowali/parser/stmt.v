@@ -127,7 +127,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_require {
 			return ast.Stmt(p.parse_require_stmt() ?)
 		}
-		.key_sh, .key_inline {
+		.key_sh, .key_pwsh, .key_inline {
 			return ast.Stmt(p.parse_inline_shell() ?)
 		}
 		.key_type {

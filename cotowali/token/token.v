@@ -24,6 +24,7 @@ pub enum TokenKind {
 	key_map
 	key_namespace
 	key_null
+	key_pwsh
 	key_require
 	key_return
 	key_sh
@@ -206,6 +207,7 @@ pub fn token_kinds(class TokenKindClass) []TokenKind {
 				.key_in,
 				.key_inline,
 				.key_map,
+				.key_pwsh,
 				.key_require,
 				.key_return,
 				.key_sh,

@@ -7,6 +7,9 @@ module pwsh
 
 import cotowali.ast { Stmt }
 import cotowali.symbols { builtin_type }
+import cotowali.token { Token }
+import cotowali.messages { unreachable }
+import cotowali.util { at }
 
 fn (mut e Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {
@@ -157,7 +160,33 @@ fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
 }
 
 fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
-	panic('unimplemented')
+	if !stmt.use_for_pwsh() {
+		return
+	}
+	for i, part in stmt.parts {
+		match part {
+			Token {
+				if part.kind != .inline_shell_content_text {
+					panic(unreachable('want inline_shell_content_text. got $part.kind'))
+				}
+
+				mut text := part.text
+				// treat $%n as %n (%n will be $n in pwsh)
+				if text.len > 0 && text[text.len - 1] == `$` {
+					if next := at(stmt.parts, i + 1) {
+						if next is ast.Var {
+							text = text[..text.len - 1]
+						}
+					}
+				}
+				e.write(text)
+			}
+			ast.Var {
+				// TODO: explicit `as` cast is workaround for avoid V's bug
+				e.write(e.pwsh_var(part as ast.Var))
+			}
+		}
+	}
 }
 
 fn (mut e Emitter) namespace_decl(ns ast.NamespaceDecl) {

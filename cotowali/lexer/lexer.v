@@ -113,7 +113,7 @@ pub fn (mut lex Lexer) do_read() ?Token {
 		kind = table_for_one_char_symbols[c.byte()] or { tk(.unknown) }
 		if kind != .unknown {
 			if kind == .l_brace {
-				if lex.prev_tok.kind in [.key_sh, .key_inline] {
+				if lex.prev_tok.kind in [.key_sh, .key_pwsh, .key_inline] {
 					lex.lex_ctx.push(kind: .inside_inline_shell, inline_shell_brace_depth: 1)
 				} else {
 					lex.lex_ctx.current.brace_depth += 1
