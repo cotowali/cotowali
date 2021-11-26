@@ -64,6 +64,22 @@ fn test_trim() {
 }
 test_trim()
 
+fn test_contains() {
+  assert('abc'.contains(''))
+  assert('abc'.contains('a'))
+  assert('abc'.contains('b'))
+  assert('abc'.contains('c'))
+  assert('abc'.contains('ab'))
+  assert('abc'.contains('bc'))
+  assert('abc'.contains('abc'))
+
+  assert(!'abc'.contains('x'))
+  assert(!'abc'.contains(' '))
+  assert(!'abc'.contains('abcd'))
+  assert(!'abc'.contains('ac'))
+}
+test_contains()
+
 fn test_substr() {
   assert(''.substr(0, 0) == '')
   assert(''.substr(0, 1) == '')

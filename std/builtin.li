@@ -157,6 +157,10 @@ fn (s: string) trim_suffix(suffix: string): string {
   return s.substr(0, s.len() - suffix.len())
 }
 
+fn (s: string) contains(substr: string): bool {
+  return s.index(substr) >= 0
+}
+
 // --- array methods ---
 // All array inherits []any
 
