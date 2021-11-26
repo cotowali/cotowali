@@ -15,6 +15,10 @@ pub enum Backend {
 	pwsh
 }
 
+pub fn (b Backend) is_sh_like() bool {
+	return b in [.sh, .dash, .bash, .zsh]
+}
+
 pub fn (b Backend) shebang() string {
 	return match b {
 		.sh { '#!/bin/sh' }
