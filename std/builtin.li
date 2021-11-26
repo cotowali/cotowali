@@ -117,6 +117,32 @@ fn (s: string) len(): int {
   return n
 }
 
+fn (s: string) starts_with(ss: string): bool {
+  if ss.len() == 0 {
+    return true
+  }
+  if ss.len() > s.len() {
+    return false
+  }
+  if ss == s {
+    return true
+  }
+  return s.index(ss) == 0
+}
+
+fn (s: string) ends_with(ss: string): bool {
+  if ss.len() == 0 {
+    return true
+  }
+  if ss.len() > s.len() {
+    return false
+  }
+  if ss == s {
+    return true
+  }
+  return s.last_index(ss) == s.len() - ss.len()
+}
+
 // --- array methods ---
 // All array inherits []any
 

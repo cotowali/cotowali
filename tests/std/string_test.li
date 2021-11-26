@@ -26,6 +26,27 @@ fn test_index() {
 }
 test_index()
 
+fn test_starts_ends() {
+  assert('abc'.starts_with(''))
+  assert('abc'.starts_with('a'))
+  assert('abc'.starts_with('ab'))
+  assert('abc'.starts_with('abc'))
+  assert(!'abc'.starts_with('x'))
+  assert(!'abc'.starts_with('c'))
+  assert(!'abc'.starts_with('bc'))
+  assert(!'abc'.starts_with('abcd'))
+
+  assert('abc'.ends_with(''))
+  assert('abc'.ends_with('c'))
+  assert('abc'.ends_with('bc'))
+  assert('abc'.ends_with('abc'))
+  assert(!'abc'.ends_with('x'))
+  assert(!'abc'.ends_with('a'))
+  assert(!'abc'.ends_with('ab'))
+  assert(!'abc'.ends_with('abcd'))
+}
+test_starts_ends()
+
 fn test_substr() {
   assert(''.substr(0, 0) == '')
   assert(''.substr(0, 1) == '')
