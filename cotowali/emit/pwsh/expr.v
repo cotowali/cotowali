@@ -254,6 +254,12 @@ fn (mut e Emitter) pipeline(pipeline ast.Pipeline, opt ExprOpt) {
 	for i, expr in pipeline.exprs {
 		if i > 0 && i == pipeline.exprs.len - 1 && pipeline.has_redirect() {
 			e.write(if pipeline.is_append { ' >> ' } else { ' > ' })
+			if expr is ast.CallExpr {
+				e.write(r'"$(')
+				defer {
+					e.write(')"')
+				}
+			}
 			e.expr(expr)
 			return
 		}

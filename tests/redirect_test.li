@@ -8,14 +8,12 @@ fn test_redirect_with_literal() {
 test_redirect_with_literal()
 
 fn test_redirect_with_var_and_func() {
-#if !pwsh
   fn hello(msg: string): string {
     return "hello $msg"
   }
-#endif
 
   fn tmp_file(): string {
-    return "/tmp/cotowali_redirect_tmp.txt"
+    return "cotowali_redirect_tmp.txt"
   }
 
   var f = "tmp.txt"
@@ -24,11 +22,9 @@ fn test_redirect_with_var_and_func() {
   assert((cat(f) |> join('')) == msg)
   @rm(f)
 
-#if !pwsh
   hello(msg) |> tmp_file()
   assert((cat(tmp_file()) |> join('')) == hello(msg))
   @rm(tmp_file())
-#endif
 }
 test_redirect_with_var_and_func()
 
