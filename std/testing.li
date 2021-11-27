@@ -5,9 +5,18 @@
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 namespace testing {
+#if pwsh
+  pwsh {
+    $script:total_count = 0
+    $script:passed_count = 0
+    $script:failed_count = 0
+  }
+#endif
+
   var total_count = 0
   var passed_count = 0
   var failed_count = 0
+
   fn run_test(label: string, command: string) {
     print("testing $label ... ")
     sh {
@@ -26,8 +35,34 @@ namespace testing {
         printf '\nOutput:\n%%s\n\n' "$out"
       fi
     }
+    pwsh {
+      $script:total_count++
+      $out = invoke-expression %command
+      if ($script:assert_failed) {
+        echo 'FAILED'
+        $script:failed_count++
+        $script:assert_failed = $false
+      } else {
+        echo OK
+        $script:passed_count++
+      }
+      if ($out.length -gt 0) {
+        echo ''
+        echo 'Output:'
+        echo $out
+        echo ''
+      }
+    }
   }
   fn finish() {
+#if pwsh
+    pwsh {
+      %total_count = $script:total_count
+      %passed_count = $script:passed_count
+      %failed_count = $script:failed_count
+    }
+#endif
+
     var exit_code = 0
     print('test result: ')
     if failed_count == 0 {

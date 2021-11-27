@@ -56,8 +56,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			return
 		}
 		defer {
-			panic('unimplemented')
-			// e.stmt(ast.Expr(node.get_run_test_call_expr()))
+			e.stmt(ast.Expr(node.get_run_test_call_expr()))
 		}
 	}
 

@@ -69,7 +69,8 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 	{
 		e.indent()
 
-		e.write('[Console]::Error.WriteLine(')
+		is_test := if f := e.current_fn() { f.is_test() } else { false }
+		e.write(if is_test { 'echo (' } else { '[Console]::Error.WriteLine(' })
 		{
 			e.write("'LINE $stmt.pos.line: Assertion Failed'")
 			if msg_expr := stmt.message_expr() {
@@ -85,7 +86,13 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 		}
 		e.writeln(')')
 
-		e.writeln('exit 1')
+		if is_test {
+			// use in test runner. see std/testing.li
+			e.writeln(r'$script:assert_failed = $true')
+			e.writeln('return')
+		} else {
+			e.writeln('exit 1')
+		}
 
 		e.unindent()
 	}

@@ -49,9 +49,9 @@ fn range(begin: int, end: int) |> ...int {
 
 // -- posix --
 
+#endif
 fn exit(code: int)
 
-#endif
 fn string |> cat(files: ...string) |> ...string
 #if !pwsh
 
