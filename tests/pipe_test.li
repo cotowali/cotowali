@@ -23,10 +23,8 @@ fn test_normal() {
 
   assert((10 |> inc()) == 11)
   assert((10 |> sum()) == 10)
-#if !pwsh
   assert((seq(3) |> sum()) == 6)
   assert((seq(3) |> twice() |> sum()) == 12)
-#endif
 }
 test_normal()
 

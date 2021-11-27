@@ -112,7 +112,6 @@ fn test_decompose() {
 }
 test_decompose()
 
-#if !pwsh
 fn test_tuple_index() {
   assert((0, 1)[0] == 0)
   assert((0, "10")[1] == "10")
@@ -122,4 +121,3 @@ fn test_tuple_index() {
   assert(int_str[0] == 1 && int_str[1] == "s")
 }
 test_tuple_index()
-#endif

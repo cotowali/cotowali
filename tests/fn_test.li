@@ -45,7 +45,6 @@ fn f(): int {
   return 0
 }
 
-#if !pwsh
 fn test_nested_func() {
   fn f(x: string): string {
     fn f(v: int): int {
@@ -61,6 +60,7 @@ fn test_nested_func() {
 }
 test_nested_func()
 
+#if !pwsh
 fn test_varargs_array_method() {
   fn varargs_join(sep: string, vals: ...string): string {
     return vals.join(sep)

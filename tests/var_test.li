@@ -18,7 +18,6 @@ var tuple_a_2: int
 assert(tuple_a == (tuple_a_1, tuple_a_2))
 assert(tuple_a_1 == 2 && tuple_a_2 == 3)
 
-#if !pwsh
 var tuple_b: (int, int)
 var tuple_b_1 = -1
 var tuple_b_2 = -1
@@ -27,4 +26,3 @@ assert(tuple_b_1 == 0 && tuple_b_2 == 0)
 
 var arr: []string
 assert(arr == []string{})
-#endif
