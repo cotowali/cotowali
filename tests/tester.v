@@ -37,6 +37,7 @@ const (
 		'expr/string_test.li',
 		'expr/string_expr_substitution.li',
 		'expr/tuple_test.li',
+		'std/print.li',
 		'var_test.li',
 	]
 )

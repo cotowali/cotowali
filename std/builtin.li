@@ -4,25 +4,27 @@
 /// License, v. 2.0. If a copy of the MPL was not distributed with this
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-#if !pwsh
 // if powershell, skip most parts of std for now
 
 fn print(s: string) {
   sh { printf '%%s' "$%s" }
+  pwsh { [Console]::Write(%s) }
 }
 
 fn println(s: string) {
   sh { printf '%%s\n' "$%s" }
+  pwsh { [Console]::WriteLine(%s) }
 }
 
 fn eprint(s: string) {
   sh { printf '%%s' "$%s" >&2 }
+  pwsh { [Console]::Error.Write(%s) }
 }
 
 fn eprintln(s: string) {
   sh { printf '%%s\n' "$%s" >&2 }
+  pwsh { [Console]::Error.WriteLine(%s) }
 }
-#endif
 
 fn ...string |> join(sep: string) |> string {
   var ret = ''
