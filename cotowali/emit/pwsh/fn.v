@@ -34,6 +34,12 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 	} else {
 		e.write('${e.ident_for(expr.func)}')
 	}
+
+	if receiver := expr.receiver() {
+		e.write(' ')
+		e.expr(receiver, paren: true)
+	}
+
 	for arg in expr.args {
 		e.write(' ')
 		e.expr(arg, paren: true)
