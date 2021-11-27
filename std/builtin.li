@@ -157,6 +157,18 @@ fn (s: string) trim_suffix(suffix: string): string {
   return s.substr(0, s.len() - suffix.len())
 }
 
+fn (s: string) trim_start(): string {
+  return s |> @sed('s/^[[:space:]]\+//')
+}
+
+fn (s: string) trim_end(): string {
+  return s |> @sed('s/[[:space:]]\+$//')
+}
+
+fn (s: string) trim(): string {
+  return s.trim_start().trim_end()
+}
+
 fn (s: string) contains(substr: string): bool {
   return s.index(substr) >= 0
 }

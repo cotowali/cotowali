@@ -61,6 +61,13 @@ fn test_trim() {
   assert('abc'.trim_suffix('abc') == '')
   assert('abc'.trim_suffix('x') == 'abc')
   assert('abc'.trim_suffix('abcd') == 'abc')
+
+  assert('abc'.trim_start() == 'abc')
+  assert('abc'.trim_end() == 'abc')
+  assert('abc'.trim() == 'abc')
+  assert('  abc  '.trim_start() == 'abc  ')
+  assert('  abc  '.trim_end() == '  abc')
+  assert('  abc  '.trim() == 'abc')
 }
 test_trim()
 
