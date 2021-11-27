@@ -353,11 +353,11 @@ pub mut:
 }
 
 pub fn (sh &InlineShell) use_for_sh() bool {
-	return sh.key.kind in [.key_sh, .key_inline]
+	return sh.key.keyword_ident() in [.sh, .inline]
 }
 
 pub fn (sh &InlineShell) use_for_pwsh() bool {
-	return sh.key.kind in [.key_pwsh, .key_inline]
+	return sh.key.keyword_ident() in [.pwsh, .inline]
 }
 
 fn (mut r Resolver) inline_shell(mut stmt InlineShell) {

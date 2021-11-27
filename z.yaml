@@ -32,7 +32,7 @@ tasks:
   dist:
     - mkdir -p {{dist}}
     - cp -r {{bin}} {{dist}}/
-    - cp -r builtin {{dist}}/
+    - cp -r std {{dist}}/
     - cp CREDITS {{dist}}/
     - cp LICENSE {{dist}}/
 

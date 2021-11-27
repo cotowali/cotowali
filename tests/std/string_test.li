@@ -5,11 +5,102 @@ fn test_len() {
 test_len()
 
 fn test_index() {
-  assert('00112'.index('01') == 1)
-  assert('00112'.index('x') == -1)
-  assert('ab"cd"ef'.index('"') == 2)
+  assert('010101'.index('0') == 0)
+  assert('010101'.last_index('0') == 4)
+  assert('010101'.index('1') == 1)
+  assert('010101'.last_index('1') == 5)
+  assert('010101'.index('01') == 0)
+  assert('010101'.last_index('01') == 4)
+  assert('010101'.index('10') == 1)
+  assert('010101'.last_index('10') == 3)
+
+  assert('0'.index('1') == -1)
+  assert('0'.last_index('1') == -1)
+  assert('0'.index('1') == -1)
+  assert('0'.last_index('1') == -1)
+  assert('0'.index('') == 0)
+  assert('0'.last_index('') == 1)
+
+  assert(''.index('') == 0)
+  assert(''.last_index('') == 0)
 }
 test_index()
+
+fn test_starts_ends() {
+  assert('abc'.starts_with(''))
+  assert('abc'.starts_with('a'))
+  assert('abc'.starts_with('ab'))
+  assert('abc'.starts_with('abc'))
+  assert(!'abc'.starts_with('x'))
+  assert(!'abc'.starts_with('c'))
+  assert(!'abc'.starts_with('bc'))
+  assert(!'abc'.starts_with('abcd'))
+
+  assert('abc'.ends_with(''))
+  assert('abc'.ends_with('c'))
+  assert('abc'.ends_with('bc'))
+  assert('abc'.ends_with('abc'))
+  assert(!'abc'.ends_with('x'))
+  assert(!'abc'.ends_with('a'))
+  assert(!'abc'.ends_with('ab'))
+  assert(!'abc'.ends_with('abcd'))
+}
+test_starts_ends()
+
+fn test_trim() {
+  assert('abc'.trim_prefix('') == 'abc')
+  assert('abc'.trim_prefix('a') == 'bc')
+  assert('abc'.trim_prefix('ab') == 'c')
+  assert('abc'.trim_prefix('abc') == '')
+  assert('abc'.trim_prefix('x') == 'abc')
+  assert('abc'.trim_prefix('abcd') == 'abc')
+
+  assert('abc'.trim_suffix('') == 'abc')
+  assert('abc'.trim_suffix('c') == 'ab')
+  assert('abc'.trim_suffix('bc') == 'a')
+  assert('abc'.trim_suffix('abc') == '')
+  assert('abc'.trim_suffix('x') == 'abc')
+  assert('abc'.trim_suffix('abcd') == 'abc')
+
+  assert('abc'.trim_start() == 'abc')
+  assert('abc'.trim_end() == 'abc')
+  assert('abc'.trim() == 'abc')
+  assert('  abc  '.trim_start() == 'abc  ')
+  assert('  abc  '.trim_end() == '  abc')
+  assert('  abc  '.trim() == 'abc')
+}
+test_trim()
+
+fn test_contains() {
+  assert('abc'.contains(''))
+  assert('abc'.contains('a'))
+  assert('abc'.contains('b'))
+  assert('abc'.contains('c'))
+  assert('abc'.contains('ab'))
+  assert('abc'.contains('bc'))
+  assert('abc'.contains('abc'))
+
+  assert(!'abc'.contains('x'))
+  assert(!'abc'.contains(' '))
+  assert(!'abc'.contains('abcd'))
+  assert(!'abc'.contains('ac'))
+}
+test_contains()
+
+fn test_substr() {
+  assert(''.substr(0, 0) == '')
+  assert(''.substr(0, 1) == '')
+  assert('abc'.substr(0, 0) == '')
+  assert('abc'.substr(0, -1) == '')
+  assert('abc'.substr(0, 1) == 'a')
+  assert('abc'.substr(1, 1) == 'b')
+  assert('abc'.substr(2, 1) == 'c')
+  assert('abc'.substr(0, 2) == 'ab')
+  assert('abc'.substr(1, 2) == 'bc')
+  assert('abc'.substr(2, 2) == 'c')
+  assert('abc'.substr(0, 10) == 'abc')
+}
+test_substr()
 
 fn test_replace() {
   assert('ababc'.replace('ab', 'x') == 'xxc')

@@ -89,14 +89,98 @@ fn (s: string) replace(a: string, b: string): string {
   return s |> @sed("s/$a/$b/g")
 }
 
+fn (s: string) substr(i: int, n: int): string {
+  return (s |> @awk('-v', 'RS=""', '-v', "m=${i + 1}", '-v', "n=$n", '{print substr($0, m, n)}'))
+}
+
 fn (s: string) index(t: string): int {
-  return (s|> @awk('-v', "t=$t", '{print index($1, t) - 1}')) as int
+  if t.len() == 0 {
+    return 0
+  }
+  return (s |> @awk('-v', "t=$t", '{print index($1, t) - 1}')) as int
+}
+
+fn (s: string) last_index(t: string): int {
+  var s_len = s.len()
+  if t.len() == 0 {
+    return s_len
+  }
+
+  // TODO: this implementation is inefficient
+
+  var last_i = -1
+  var rest = s
+  while true {
+    var i = rest.index(t)
+    if i < 0 {
+      break
+    }
+    last_i = i + (s_len - rest.len())
+    rest = rest.substr(i + t.len(), rest.len())
+  }
+  return last_i
 }
 
 fn (s: string) len(): int {
   var n: int
   sh { %n=${#%s} }
   return n
+}
+
+fn (s: string) starts_with(ss: string): bool {
+  if ss.len() == 0 {
+    return true
+  }
+  if ss.len() > s.len() {
+    return false
+  }
+  if ss == s {
+    return true
+  }
+  return s.index(ss) == 0
+}
+
+fn (s: string) ends_with(ss: string): bool {
+  if ss.len() == 0 {
+    return true
+  }
+  if ss.len() > s.len() {
+    return false
+  }
+  if ss == s {
+    return true
+  }
+  return s.last_index(ss) == s.len() - ss.len()
+}
+
+fn (s: string) trim_prefix(prefix: string): string {
+  if !s.starts_with(prefix){
+    return s
+  }
+  return s.substr(prefix.len(), s.len())
+}
+
+fn (s: string) trim_suffix(suffix: string): string {
+  if !s.ends_with(suffix) {
+    return s
+  }
+  return s.substr(0, s.len() - suffix.len())
+}
+
+fn (s: string) trim_start(): string {
+  return s |> @sed('s/^[[:space:]]*//')
+}
+
+fn (s: string) trim_end(): string {
+  return s |> @sed('s/[[:space:]]*$//')
+}
+
+fn (s: string) trim(): string {
+  return s.trim_start().trim_end()
+}
+
+fn (s: string) contains(substr: string): bool {
+  return s.index(substr) >= 0
 }
 
 // --- array methods ---

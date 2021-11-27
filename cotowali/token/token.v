@@ -20,14 +20,11 @@ pub enum TokenKind {
 	key_for
 	key_if
 	key_in
-	key_inline
 	key_map
 	key_namespace
 	key_null
-	key_pwsh
 	key_require
 	key_return
-	key_sh
 	key_struct
 	key_type
 	key_use
@@ -205,12 +202,9 @@ pub fn token_kinds(class TokenKindClass) []TokenKind {
 				.key_for,
 				.key_if,
 				.key_in,
-				.key_inline,
 				.key_map,
-				.key_pwsh,
 				.key_require,
 				.key_return,
-				.key_sh,
 				.key_struct,
 				.key_type,
 				.key_use,
@@ -244,6 +238,25 @@ pub enum TokenKindClass {
 [inline]
 pub fn (k TokenKind) @is(class TokenKindClass) bool {
 	return k in token_kinds(class)
+}
+
+pub enum KeywordIdent {
+	not_a_keyword_ident
+	sh
+	pwsh
+	inline
+}
+
+pub fn (t Token) keyword_ident() KeywordIdent {
+	if t.kind == .ident {
+		match t.text {
+			'sh' { return .sh }
+			'pwsh' { return .pwsh }
+			'inline' { return .inline }
+			else { return .not_a_keyword_ident }
+		}
+	}
+	return .not_a_keyword_ident
 }
 
 pub struct Token {

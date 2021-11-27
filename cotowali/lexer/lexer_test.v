@@ -366,7 +366,7 @@ fn test_string_expr_substitution() {
 
 fn test_inline_shell() {
 	test(@FN, @LINE, code('sh {} x'), [
-		t(.key_sh, 'sh'),
+		t(.ident, 'sh'),
 		t(.l_brace, '{'),
 		t(.inline_shell_content_text, ''),
 		t(.r_brace, '}'),
@@ -374,14 +374,14 @@ fn test_inline_shell() {
 	])
 
 	test(@FN, @LINE, code(r'sh { echo 1 } x'), [
-		t(.key_sh, 'sh'),
+		t(.ident, 'sh'),
 		t(.l_brace, '{'),
 		t(.inline_shell_content_text, ' echo 1 '),
 		t(.r_brace, '}'),
 		t(.ident, 'x'),
 	])
 	test(@FN, @LINE, code(r'sh { echo ${n} } x'), [
-		t(.key_sh, 'sh'),
+		t(.ident, 'sh'),
 		t(.l_brace, '{'),
 		t(.inline_shell_content_text, r' echo ${n} '),
 		t(.r_brace, '}'),
@@ -389,7 +389,7 @@ fn test_inline_shell() {
 	])
 
 	test(@FN, @LINE, code(r'sh { echo $%n } x'), [
-		t(.key_sh, 'sh'),
+		t(.ident, 'sh'),
 		t(.l_brace, '{'),
 		t(.inline_shell_content_text, r' echo $'),
 		t(.inline_shell_content_var, '%n'),
@@ -409,7 +409,7 @@ fn test_inline_shell() {
 	])
 
 	test(@FN, @LINE, code(r'inline { echo $%n } x'), [
-		t(.key_inline, 'inline'),
+		t(.ident, 'inline'),
 		t(.l_brace, '{'),
 		t(.inline_shell_content_text, r' echo $'),
 		t(.inline_shell_content_var, '%n'),
@@ -424,7 +424,7 @@ fn test_inline_shell() {
 		r'  echo $%n',
 		r'}',
 	]), [
-		t(.key_sh, 'sh'),
+		t(.ident, 'sh'),
 		t(.l_brace, '{'),
 		t(.inline_shell_content_text, ' \n  '),
 		t(.inline_shell_content_var, '%n'),
@@ -437,7 +437,7 @@ fn test_inline_shell() {
 
 	// escaped %
 	test(@FN, @LINE, code(r"sh { printf '%%s' $%str }"), [
-		t(.key_sh, 'sh'),
+		t(.ident, 'sh'),
 		t(.l_brace, '{'),
 		t(.inline_shell_content_text, r" printf '%s' $"),
 		t(.inline_shell_content_var, '%str'),
@@ -460,7 +460,7 @@ fn test_mix_inline_shell_and_string() {
 	//             v       v      v      v       v       v v v  v    v
 	s := code(r'sh { echo %{ "$a ${ b sh { echo %{ r"$a" } } }" } %n }')
 	test(@FN, @LINE, s, [
-		t(.key_sh, 'sh'),
+		t(.ident, 'sh'),
 		t(.l_brace, '{'), // ------------------------------------------------------+ 0
 		t(.inline_shell_content_text, r' echo '), //                               |
 		t(.inline_shell_content_expr_substitution_open, r'%{'), //-------------+ 1 |
@@ -469,7 +469,7 @@ fn test_mix_inline_shell_and_string() {
 		t(.string_literal_content_text, r' '), //                              |   |
 		t(.string_literal_content_expr_open, r'${'), //--------------------+ 2 |   |
 		t(.ident, 'b'), //                                                 |   |   |
-		t(.key_sh, 'sh'), //                                               |   |   |
+		t(.ident, 'sh'), //                                               |   |   |
 		t(.l_brace, '{'), // ------------------------------------------+ 3 |   |   |
 		t(.inline_shell_content_text, r' echo '), //                   |   |   |   |
 		t(.inline_shell_content_expr_substitution_open, r'%{'), //-+ 4 |   |   |   |
