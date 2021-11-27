@@ -87,7 +87,10 @@ fn (s: string) substr(i: int, n: int): string {
 }
 
 fn (s: string) index(t: string): int {
-  return (s|> @awk('-v', "t=$t", '{print index($1, t) - 1}')) as int
+  if t.len() == 0 {
+    return 0
+  }
+  return (s |> @awk('-v', "t=$t", '{print index($1, t) - 1}')) as int
 }
 
 fn (s: string) last_index(t: string): int {
