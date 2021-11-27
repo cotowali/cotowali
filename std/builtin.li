@@ -110,10 +110,19 @@ fn (s: string) replace(a: string, b: string): string {
 }
 
 fn (s: string) substr(i: int, n: int): string {
+  if n <= 0 {
+    return ''
+  }
 #if pwsh
 
   var ss: string
-  pwsh { %ss = %s.Substring(%i, %n) }
+  pwsh {
+    if (%i + %n -lt %s.length) {
+      %ss = %s.Substring(%i, %n)
+    } else {
+      %ss = %s.Substring(%i)
+    }
+  }
   return ss
 
 #else
@@ -127,7 +136,7 @@ fn (s: string) index(t: string): int {
 #if pwsh
 
   var i: int
-  pwsh { %i = s.IndexOf(%t) }
+  pwsh { %i = %s.IndexOf(%t) }
   return i
 
 #else
@@ -144,7 +153,7 @@ fn (s: string) last_index(t: string): int {
 #if pwsh
 
   var i: int
-  pwsh { %i = s.LastIndexOf(%t) }
+  pwsh { %i = %s.LastIndexOf(%t) }
   return i
 
 #else
@@ -260,7 +269,7 @@ fn (s: string) contains(substr: string): bool {
 fn (arr: []any) len(): int {
   var n: int
   sh { %n=$(array_len %arr) }
-  pwsh { %n = arr.length }
+  pwsh { %n = %arr.length }
   return n
 }
 
