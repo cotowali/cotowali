@@ -39,24 +39,28 @@ fn ...string |> join(sep: string) |> string {
   return ret
 }
 
-#if !pwsh
 fn range(begin: int, end: int) |> ...int {
   // cannot use negative number on busybox
-  for i in @seq(0, end - begin - 1) as ...int {
-    yield (i as int) + begin
+  for i in seq(end - begin) {
+    yield (i as int) + begin - 1
   }
 }
 
 // -- posix --
 
-#endif
 fn exit(code: int)
 
 fn string |> cat(files: ...string) |> ...string
-#if !pwsh
 
+#if pwsh
+fn seq(n: int) |> ...int {
+  pwsh { 1..%n }
+}
+#else
 fn seq(n: int) |> ...int
+#endif
 
+#if !pwsh
 fn basename(path: string): string
 
 fn cd(path: string)
