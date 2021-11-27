@@ -187,6 +187,7 @@ fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
 			}
 		}
 	}
+	e.writeln('')
 }
 
 fn (mut e Emitter) namespace_decl(ns ast.NamespaceDecl) {
