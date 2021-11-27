@@ -89,24 +89,66 @@ fn rm_r(paths: ...string) {
 
 fn touch(files: ...string)
 
+#endif
+
 // --- string methods ---
 
 fn (s: string) replace(a: string, b: string): string {
+#if pwsh
+
+  var ret: string
+  pwsh {
+    %ret = %s -replace %a, %b
+  }
+  return ret
+
+#else
+
   return s |> @sed("s/$a/$b/g")
+
+#endif
 }
 
 fn (s: string) substr(i: int, n: int): string {
+#if pwsh
+
+  var ss: string
+  pwsh { %ss = %s.Substring(%i, %n) }
+  return ss
+
+#else
+
   return (s |> @awk('-v', 'RS=""', '-v', "m=${i + 1}", '-v', "n=$n", '{print substr($0, m, n)}'))
+
+#endif
 }
 
 fn (s: string) index(t: string): int {
+#if pwsh
+
+  var i: int
+  pwsh { %i = s.IndexOf(%t) }
+  return i
+
+#else
+
   if t.len() == 0 {
     return 0
   }
   return (s |> @awk('-v', "t=$t", '{print index($1, t) - 1}')) as int
+
+#endif
 }
 
 fn (s: string) last_index(t: string): int {
+#if pwsh
+
+  var i: int
+  pwsh { %i = s.LastIndexOf(%t) }
+  return i
+
+#else
+
   var s_len = s.len()
   if t.len() == 0 {
     return s_len
@@ -125,11 +167,14 @@ fn (s: string) last_index(t: string): int {
     rest = rest.substr(i + t.len(), rest.len())
   }
   return last_i
+
+#endif
 }
 
 fn (s: string) len(): int {
   var n: int
   sh { %n=${#%s} }
+  pwsh { %n=%s.length }
   return n
 }
 
@@ -174,11 +219,31 @@ fn (s: string) trim_suffix(suffix: string): string {
 }
 
 fn (s: string) trim_start(): string {
+#if pwsh
+
+  var ret: string
+  pwsh { %ret = %s.TrimStart() }
+  return ret
+
+#else
+
   return s |> @sed('s/^[[:space:]]*//')
+
+#endif
 }
 
 fn (s: string) trim_end(): string {
+#if pwsh
+
+  var ret: string
+  pwsh { %ret = %s.TrimEnd() }
+  return ret
+
+#else
+
   return s |> @sed('s/[[:space:]]*$//')
+
+#endif
 }
 
 fn (s: string) trim(): string {
@@ -195,6 +260,7 @@ fn (s: string) contains(substr: string): bool {
 fn (arr: []any) len(): int {
   var n: int
   sh { %n=$(array_len %arr) }
+  pwsh { %n = arr.length }
   return n
 }
 
@@ -211,4 +277,3 @@ fn (ss: []string) join(sep: string): string {
   }
   return ret
 }
-#endif
