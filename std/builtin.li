@@ -161,11 +161,11 @@ fn (s: string) trim_suffix(suffix: string): string {
 }
 
 fn (s: string) trim_start(): string {
-  return s |> @sed('s/^[[:space:]]\+//')
+  return s |> @sed('s/^[[:space:]]*//')
 }
 
 fn (s: string) trim_end(): string {
-  return s |> @sed('s/[[:space:]]\+$//')
+  return s |> @sed('s/[[:space:]]*$//')
 }
 
 fn (s: string) trim(): string {
