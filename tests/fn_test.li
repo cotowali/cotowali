@@ -12,7 +12,6 @@ fn div(a: float, b: float): float {
   return a / b
 }
 
-#if !pwsh
 fn sum(vals: ...int): int {
   var res = 0
   for v in vals {
@@ -20,13 +19,10 @@ fn sum(vals: ...int): int {
   }
   return res
 }
-#endif
 
 assert(add(1, 2) == 3)
 assert(div(1, 2) == 0.5)
-#if !pwsh
 assert(sum(1, 2, 3) == 6)
-#endif
 assert(add(
   1
 
@@ -60,7 +56,6 @@ fn test_nested_func() {
 }
 test_nested_func()
 
-#if !pwsh
 fn test_varargs_array_method() {
   fn varargs_join(sep: string, vals: ...string): string {
     return vals.join(sep)
@@ -68,4 +63,3 @@ fn test_varargs_array_method() {
   assert(varargs_join(':', 'a', 'b', 'c') == 'a:b:c')
 }
 test_varargs_array_method()
-#endif

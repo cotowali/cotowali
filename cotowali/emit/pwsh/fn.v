@@ -72,7 +72,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 	{
 		for i, param in node.params {
 			if i == node.params.len - 1 && fn_info.variadic {
-				panic('variadic function is unimplemented')
+				break
 			}
 			if i > 0 {
 				e.write(', ')
@@ -84,6 +84,9 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 	e.writeln('{')
 	{
 		e.indent()
+		if fn_info.variadic {
+			e.writeln('${e.pwsh_var(node.params.last())} = \$args')
+		}
 		e.block(node.body)
 		e.unindent()
 	}
