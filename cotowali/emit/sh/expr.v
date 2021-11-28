@@ -268,10 +268,6 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 		panic(unreachable('not a bool operand'))
 	}
 
-	if opt.mode == .command {
-		panic('unimplemented')
-	}
-
 	if expr.op.kind in [.eq, .ne] {
 		e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
 			op := if expr.op.kind == .eq { ' = ' } else { ' != ' }
@@ -286,6 +282,13 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 		else { panic(unreachable('invalid op')) }
 	}
 
+	if opt.mode == .command {
+		e.write('( ')
+		defer {
+			e.write(' )')
+			e.sh_result_to_bool()
+		}
+	}
 	e.expr(expr.left, mode: .condition)
 	e.write(' $op ')
 	e.expr(expr.right, mode: .condition)
