@@ -76,6 +76,19 @@ fn rm_r(paths: ...string) {
 
 fn touch(files: ...string)
 
+#[mangle]
+fn which(name: string): string {
+  var res: string
+  sh {
+    %res=$(which $%name)
+    if [ $? -ne 0 ]
+    then
+      %res=''
+    fi
+  }
+  return res
+}
+
 // --- string methods ---
 
 fn (s: string) replace(a: string, b: string): string {
