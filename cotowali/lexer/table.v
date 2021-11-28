@@ -32,8 +32,8 @@ const (
 	}
 
 	table_for_two_chars_symbols = {
-		'++': tk(.plus_plus)
-		'--': tk(.minus_minus)
+		'++': tk(.plusplus)
+		'--': tk(.minusminus)
 		'&&': tk(.logical_and)
 		'||': tk(.logical_or)
 		'**': tk(.pow)

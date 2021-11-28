@@ -126,9 +126,9 @@ fn test_lexer() {
 	ktest(@FN, @LINE, 'a < b || c > d', [.ident, .lt, .ident, .logical_or, .ident, .gt, .ident])
 	ktest(@FN, @LINE, 'a <= b || c >= d', [.ident, .le, .ident, .logical_or, .ident, .ge, .ident])
 	ktest(@FN, @LINE, '!cond', [.not, .ident])
-	ktest(@FN, @LINE, 'a+++++', [.ident, .plus_plus, .plus_plus, .plus])
+	ktest(@FN, @LINE, 'a+++++', [.ident, .plusplus, .plusplus, .plus])
 	ktest(@FN, @LINE, 'a-----', [.ident]) // TODO
-	ktest(@FN, @LINE, 'a -----', [.ident, .minus_minus, .minus_minus, .minus])
+	ktest(@FN, @LINE, 'a -----', [.ident, .minusminus, .minusminus, .minus])
 	ktest(@FN, @LINE, 'a*****', [.ident, .pow, .pow, .mul])
 	ktest(@FN, @LINE, 'struct f { }', [.key_struct, .ident, .l_brace, .r_brace])
 	ktest(@FN, @LINE, '{ 0: 0 }', [.l_brace, .int_literal, .colon, .int_literal, .r_brace])

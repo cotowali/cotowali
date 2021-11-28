@@ -94,8 +94,8 @@ pub enum TokenKind {
 	ge
 	lt
 	le
-	plus_plus
-	minus_minus
+	plusplus
+	minusminus
 	eol
 	eof
 }
@@ -161,8 +161,8 @@ pub fn token_kinds(class TokenKindClass) []TokenKind {
 		}
 		.postfix_op {
 			kinds([
-				.plus_plus,
-				.minus_minus,
+				.plusplus,
+				.minusminus,
 			])
 		}
 		.infix_op {
