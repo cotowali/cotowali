@@ -232,8 +232,10 @@ fn (mut e Emitter) index_expr_for_string(expr ast.IndexExpr, opt ExprOpt) {
 
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op := expr.op
-	if !op.kind.@is(.infix_op) {
-		panic(unreachable('not a infix op'))
+	$if !prod {
+		if !op.kind.@is(.infix_op) {
+			panic(unreachable('not a infix op'))
+		}
 	}
 
 	if call_expr := expr.overloaded_function_call_expr() {
@@ -257,15 +259,17 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 			match ts.kind() {
 				.array { e.infix_expr_for_array(expr, opt) }
 				.tuple { e.infix_expr_for_tuple(expr, opt) }
-				else { panic('infix_expr for `$ts.name` is unimplemented') }
+				else { panic(unreachable('invarid operand of infix expr (`$ts.name`)')) }
 			}
 		}
 	}
 }
 
 fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.resolved_typ() != builtin_type(.bool) {
-		panic(unreachable('not a bool operand'))
+	$if !prod {
+		if expr.left.resolved_typ() != builtin_type(.bool) {
+			panic(unreachable('not a bool operand'))
+		}
 	}
 
 	if expr.op.kind in [.eq, .ne] {
@@ -295,8 +299,10 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) infix_expr_for_number(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.resolved_typ() !in [builtin_type(.int), builtin_type(.float)] {
-		panic(unreachable('invalid operand'))
+	$if !prod {
+		if expr.left.resolved_typ() !in [builtin_type(.int), builtin_type(.float)] {
+			panic(unreachable('invalid operand'))
+		}
 	}
 
 	if builtin_type(.float) in [expr.left.resolved_typ(), expr.right.resolved_typ()] {
@@ -307,8 +313,11 @@ fn (mut e Emitter) infix_expr_for_number(expr ast.InfixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.resolved_typ() !in [builtin_type(.float), builtin_type(.int)] {
-		panic(unreachable('invalid operand'))
+	$if !prod {
+		if expr.left.resolved_typ() !in [builtin_type(.float),
+			builtin_type(.int)] {
+			panic(unreachable('invalid operand'))
+		}
 	}
 	e.write_echo_if_command(opt)
 
@@ -323,9 +332,12 @@ fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.resolved_typ() != builtin_type(.int) {
-		panic(unreachable('invalid operand'))
+	$if !prod {
+		if expr.left.resolved_typ() != builtin_type(.int) {
+			panic(unreachable('invalid operand'))
+		}
 	}
+
 	e.write_echo_if_command(opt)
 
 	if expr.op.kind.@is(.comparsion_op) {
@@ -358,14 +370,16 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 			e.sh_awk_infix_expr(expr)
 		}
 		else {
-			panic('unimplemented')
+			panic(unreachable('invalid op `$expr.op.text`'))
 		}
 	}
 }
 
 fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.resolved_typ() != builtin_type(.string) {
-		panic(unreachable('not a string operand'))
+	$if !prod {
+		if expr.left.resolved_typ() != builtin_type(.string) {
+			panic(unreachable('not a string operand'))
+		}
 	}
 
 	e.write_echo_if_command(opt)
@@ -382,14 +396,16 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 			e.expr(expr.right)
 		}
 		else {
-			panic('unimplemented')
+			panic(unreachable('invalid op `$expr.op.text`'))
 		}
 	}
 }
 
 fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.type_symbol().resolved().kind() != .tuple {
-		panic(unreachable('not a string operand'))
+	$if !prod {
+		if expr.left.type_symbol().resolved().kind() != .tuple {
+			panic(unreachable('not a string operand'))
+		}
 	}
 
 	e.write_echo_if_command(opt)
@@ -407,14 +423,16 @@ fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
 			e.expr(expr.right)
 		}
 		else {
-			panic(unreachable('invalid operation'))
+			panic(unreachable('invalid op `$expr.op.text`'))
 		}
 	}
 }
 
 fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {
-	if !expr.is_resolved() {
-		panic(unreachable('unresolved namespace item'))
+	$if !prod {
+		if !expr.is_resolved() {
+			panic(unreachable('unresolved namespace item'))
+		}
 	}
 	e.expr(expr.item, opt)
 }
@@ -450,8 +468,10 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 
 fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 	op := expr.op
-	if !op.kind.@is(.prefix_op) {
-		panic(unreachable('not a prefix op'))
+	$if !prod {
+		if !op.kind.@is(.prefix_op) {
+			panic(unreachable('not a prefix op'))
+		}
 	}
 
 	if call_expr := expr.overloaded_function_call_expr() {
@@ -486,7 +506,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 			e.write(' ; }')
 		}
 		else {
-			panic('unimplemented')
+			panic(unreachable('invalid op `$expr.op.text`'))
 		}
 	}
 }

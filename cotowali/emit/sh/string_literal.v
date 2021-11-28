@@ -103,9 +103,11 @@ fn (mut e Emitter) string_literal(expr StringLiteral, opt ExprOpt) {
 		return
 	}
 
-	if expr.is_raw() {
-		if expr.contents.len > 1 {
-			panic(unreachable('invalid raw string'))
+	$if !prod {
+		if expr.is_raw() {
+			if expr.contents.len > 1 {
+				panic(unreachable('invalid raw string'))
+			}
 		}
 	}
 

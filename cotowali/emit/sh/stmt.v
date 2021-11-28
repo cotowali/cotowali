@@ -158,8 +158,10 @@ fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
 	for part in stmt.parts {
 		match part {
 			Token {
-				if part.kind != .inline_shell_content_text {
-					panic(unreachable('want inline_shell_content_text. got $part.kind'))
+				$if !prod {
+					if part.kind != .inline_shell_content_text {
+						panic(unreachable('want inline_shell_content_text. got $part.kind'))
+					}
 				}
 				e.write(part.text)
 			}
