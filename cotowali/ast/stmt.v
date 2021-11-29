@@ -56,7 +56,7 @@ fn (mut r Resolver) stmt(stmt Stmt) {
 		DocComment { r.doc_comment(stmt) }
 		EmptyStmt { r.empty_stmt(stmt) }
 		Expr { r.expr(stmt) }
-		FnDecl { r.fn_decl(stmt) }
+		FnDecl { r.fn_decl(mut stmt) }
 		ForInStmt { r.for_in_stmt(mut stmt) }
 		IfStmt { r.if_stmt(stmt) }
 		InlineShell { r.inline_shell(mut stmt) }

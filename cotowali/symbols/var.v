@@ -17,6 +17,7 @@ pub:
 	pos            Pos = none_pos()
 	is_placeholder bool
 pub mut:
+	mangle       bool
 	typ          Type = builtin_type(.placeholder)
 	receiver_typ Type = builtin_type(.placeholder)
 }
