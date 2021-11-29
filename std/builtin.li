@@ -23,7 +23,7 @@ fn eprintln(s: string) {
 fn has(command: string): bool {
   var code: int
   sh {
-    type $%command > /dev/null
+    type $%command > /dev/null 2>&1
     %code=$?
   }
   return code == 0
