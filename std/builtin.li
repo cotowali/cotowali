@@ -20,6 +20,15 @@ fn eprintln(s: string) {
   sh { printf '%%s\n' "$%s" >&2 }
 }
 
+fn has(command: string): bool {
+  var code: int
+  sh {
+    type $%command > /dev/null 2>&1
+    %code=$?
+  }
+  return code == 0
+}
+
 fn ...string |> join(sep: string) |> string {
   var ret = ''
   var (i, s): (int, string)
@@ -75,6 +84,19 @@ fn rm_r(paths: ...string) {
 }
 
 fn touch(files: ...string)
+
+#[mangle]
+fn which(name: string): string {
+  var res: string
+  sh {
+    %res=$(which $%name)
+    if [ $? -ne 0 ]
+    then
+      %res=''
+    fi
+  }
+  return res
+}
 
 // --- string methods ---
 

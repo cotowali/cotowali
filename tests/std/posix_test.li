@@ -9,3 +9,9 @@ fn test_wd() {
   rm_r('abc')
 }
 test_wd()
+
+fn test_which() {
+  assert(which('xxxxxxx') == '')
+  assert(which('ls') != '')
+}
+test_which()

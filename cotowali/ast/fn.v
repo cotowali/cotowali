@@ -20,12 +20,12 @@ import cotowali.messages { undefined, unreachable }
 pub struct FnDecl {
 pub:
 	parent_scope &Scope
-	sym          &symbols.Var
 	has_body     bool
 	is_method    bool
 pub mut:
 	attrs         []Attr
 	pipe_in_param Var
+	sym           &symbols.Var
 	params        []Var
 	body          Block
 }
@@ -109,7 +109,7 @@ pub fn (f FnDecl) children() []Node {
 	return children
 }
 
-fn (mut r Resolver) fn_decl(decl FnDecl) {
+fn (mut r Resolver) fn_decl(mut decl FnDecl) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -117,6 +117,9 @@ fn (mut r Resolver) fn_decl(decl FnDecl) {
 		}
 	}
 
+	if decl.attrs.any(it.kind() == .mangle) {
+		decl.sym.mangle = true
+	}
 	r.block(decl.body)
 }
 
