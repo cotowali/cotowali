@@ -20,6 +20,15 @@ fn eprintln(s: string) {
   sh { printf '%%s\n' "$%s" >&2 }
 }
 
+fn has(command: string): bool {
+  var code: int
+  sh {
+    type $%command > /dev/null
+    %code=$?
+  }
+  return code == 0
+}
+
 fn ...string |> join(sep: string) |> string {
   var ret = ''
   var (i, s): (int, string)
