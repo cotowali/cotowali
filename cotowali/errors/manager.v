@@ -38,6 +38,13 @@ pub fn (mut e ErrorManager) push_warn(warn Warn) Warn {
 	return warn
 }
 
+pub fn (mut e ErrorManager) push_many(errs []ErrOrWarn) []ErrOrWarn {
+	for err in errs {
+		e.push(err)
+	}
+	return errs
+}
+
 [inline]
 pub fn (e ErrorManager) has_syntax_error() bool {
 	return e.has_syntax_error

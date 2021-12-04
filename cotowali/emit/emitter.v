@@ -10,6 +10,7 @@ import cotowali.ast { File }
 import cotowali.context { Context }
 import cotowali.emit.sh
 import cotowali.emit.pwsh
+import cotowali.messages { unreachable }
 
 pub interface Emitter {
 mut:
@@ -26,6 +27,9 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 		.pwsh {
 			mut e := pwsh.new_emitter(out, ctx)
 			return e
+		}
+		.ush {
+			panic(unreachable('emitter.new_emitter cannot use for ush'))
 		}
 	}
 }

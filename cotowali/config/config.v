@@ -13,6 +13,7 @@ pub enum Backend {
 	bash
 	zsh
 	pwsh
+	ush
 }
 
 pub fn (b Backend) is_sh_like() bool {
@@ -26,16 +27,27 @@ pub fn (b Backend) shebang() string {
 		.bash { '#!/usr/bin/env dash' }
 		.zsh { '#!/usr/bin/env dash' }
 		.pwsh { '#!/usr/bin/env pwsh' }
+		.ush { '' }
 	}
 }
 
 pub fn (backend Backend) find_executable_path() ?string {
+	if backend == .ush {
+		return Backend.sh.find_executable_path() or {
+			if pwsh := Backend.pwsh.find_executable_path() {
+				return pwsh
+			}
+			return err
+		}
+	}
+
 	cmds := match backend {
 		.pwsh { ['pwsh', 'pwsh.exe', 'powershell.exe'] }
 		.sh { ['sh'] }
 		.dash { ['dash'] }
 		.bash { ['bash', 'bash.exe'] }
 		.zsh { ['zsh'] }
+		.ush { panic('') }
 	}
 	for cmd in cmds {
 		if found := os.find_abs_path_of_executable(cmd) {
@@ -51,6 +63,7 @@ pub fn (backend Backend) script_ext() string {
 		.bash { '.bash' }
 		.zsh { '.zsh' }
 		.pwsh { '.ps1' }
+		.ush { '.ush' }
 	}
 }
 
@@ -91,6 +104,7 @@ pub fn backend_from_str(s string) ?Backend {
 		'bash' { return .bash }
 		'zsh' { return .zsh }
 		'pwsh', 'powershell' { return .pwsh }
+		'ush', 'universal' { return .ush }
 		else { return error('unknown backend `$s`') }
 	}
 }

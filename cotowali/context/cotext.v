@@ -14,9 +14,9 @@ import cotowali.compiler_directives { CompilerSymbolTable, new_compiler_symbol_t
 [heap]
 pub struct Context {
 pub:
-	config       Config
 	global_scope &Scope
 pub mut:
+	config           Config
 	builtin_source   &Source = 0
 	testing_source   &Source = 0
 	sources          map[string]&Source
