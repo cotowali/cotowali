@@ -6,7 +6,6 @@
 module ush
 
 import io
-import encoding.base64
 import cotowali.util { must_write }
 
 pub struct Emitter {
@@ -27,18 +26,29 @@ pub struct Codes {
 }
 
 pub fn (mut e Emitter) emit(codes Codes) {
-	code := "
-get-process > \${null:-/dev/null} 2>&1 && (invoke-expression @'
-  # Powershell
-  \$code_b64=\"${base64.encode_str(codes.pwsh)}\"
-  \$code_bytes=[System.Convert]::FromBase64String(\$code_b64)
-  \$code=[System.Text.Encoding]::Default.GetString(\$code_bytes)
-  invoke-expression \$code
-  exit 0
-'@)
+	// see https://github.com/cotowali/cotowali/issues/56#issuecomment-986142569
 
-# posix sh
+	sh_heredoc_tag := '__END_SH_HEREDOC_${util.rand<u64>()}'
+	code := '
+# polyglot (sh pwsh powershell.exe)
+
+echo " \\`" > /dev/null # " @\'
+
+# --- sh ---
 $codes.sh
-"
+# ----------
+
+: <<\'$sh_heredoc_tag\'
+\'@ > \$null
+
+# -- pwsh --
+$codes.pwsh
+# ----------
+
+function ${sh_heredoc_tag}() {}
+
+$sh_heredoc_tag
+
+'
 	must_write(mut &e.out, code)
 }
