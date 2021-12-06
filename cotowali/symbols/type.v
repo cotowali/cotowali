@@ -128,7 +128,7 @@ pub fn (mut s Scope) register_type(ts TypeSymbol) ?&TypeSymbol {
 		typ: typ
 		scope: s
 	}
-	s.type_symbols[typ] = new_ts
+	s.root().type_symbols[typ] = new_ts
 	if new_ts.name.len > 0 {
 		s.name_to_type[new_ts.name] = new_ts.typ
 	}
@@ -146,7 +146,7 @@ fn (mut s Scope) must_register_builtin_type(ts TypeSymbol) &TypeSymbol {
 		...ts
 		scope: s
 	}
-	s.type_symbols[ts.typ] = new_ts
+	s.root().type_symbols[ts.typ] = new_ts
 	if ts.name.len > 0 && ts.kind() != .placeholder {
 		s.name_to_type[new_ts.name] = new_ts.typ
 	}
@@ -173,14 +173,9 @@ pub fn (s &Scope) lookup_type(key TypeOrName) ?&TypeSymbol {
 		Type { typ = key }
 	}
 
-	if typ in s.type_symbols {
-		return s.type_symbols[typ]
-	}
+	root := s.root()
 
-	if p := s.parent() {
-		return p.lookup_type(key)
-	}
-	return none
+	return root.type_symbols[typ] or { return none }
 }
 
 pub fn (s &Scope) must_lookup_type(key TypeOrName) &TypeSymbol {
