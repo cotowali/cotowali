@@ -8,6 +8,9 @@ assert("a\nb" == 'a
 b')
 assert("\"\\" == r'"\')
 
+assert("\x41" == 'A')
+assert('\x41' == "\\x41")
+
 var n = 10
 assert("n=$n" == 'n=10')
 assert('$n' == r'$n')

@@ -9,6 +9,7 @@ import cotowali.ast { Expr, StringLiteral }
 import cotowali.token { Token }
 import cotowali.messages { unreachable }
 import cotowali.symbols { builtin_type }
+import cotowali.util { to_octal }
 
 const invalid_string_literal = unreachable('invalid string literal')
 
@@ -51,6 +52,11 @@ fn (mut e Emitter) double_quote_string_literal_value(expr StringLiteral) {
 					}
 					.string_literal_content_glob {
 						e.write('"$v.text"') // close quote, write glob, open quote. "a*b" -> "a"*"b"
+					}
+					.string_literal_content_hex {
+						hex := '0' + v.text[1..] // tirm \xff -> 0xff
+						octal := to_octal(hex.int())
+						e.write("\$(printf '\\$octal')") // printf '\0ddd' is octal (0xXX is not posix compliant)
 					}
 					else {
 						e.write(v.text)
