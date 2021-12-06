@@ -1,7 +1,21 @@
 Before first release
 ====================
 
+monthly.2021.12
+---------------
+
+- glob literal `@'*.txt'`
 - pipe input as parameter `fn (pipe_in: int) |> f()`
+- operator overload
+    - prefix `fn -(v: Type): Type`
+    - infix `fn (lhs: Type) + (rhs: Type): Type`
+    - cast `fn (v: Type) as(): ToType`
+- compiler directive (coditinoal compilation)
+- break / continue
+- require now search file in COTOWALI_PATH
+- builtin test runner
+    - `lic test` command
+    - `#[test]` attribute
 
 monthly.2021.11
 ---------------
