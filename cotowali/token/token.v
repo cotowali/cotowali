@@ -54,6 +54,7 @@ pub enum TokenKind {
 	inline_shell_content_expr_substitution_open
 	inline_shell_content_expr_substitution_close
 	string_literal_content_text
+	string_literal_content_hex
 	string_literal_content_glob
 	string_literal_content_var
 	string_literal_content_expr_open

@@ -39,7 +39,7 @@ pub fn executable() string {
 fn cotowali_home_from_executable() string {
 	exec := os.real_path(executable())
 	$if !prod {
-		if os.dir(exec).ends_with(os.join_path('cmd', 'lic')) {
+		if os.dir(os.dir(exec)).ends_with(os.join_path('cotowali', 'cmd')) {
 			// v run
 			return os.real_path(os.dir(@VMOD_FILE))
 		}

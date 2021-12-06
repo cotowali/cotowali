@@ -111,8 +111,9 @@ fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
 			continue
 		}
 		match p.kind(0) {
-			.string_literal_content_text, .string_literal_content_glob,
-			.string_literal_content_escaped_dollar, .string_literal_content_escaped_back_slash,
+			.string_literal_content_text, .string_literal_content_hex,
+			.string_literal_content_glob, .string_literal_content_escaped_dollar,
+			.string_literal_content_escaped_back_slash,
 			.string_literal_content_escaped_double_quote, .string_literal_content_escaped_newline {
 				contents << p.consume()
 			}
