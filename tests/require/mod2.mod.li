@@ -1,0 +1,5 @@
+module mod2 {
+  fn hello(): string {
+    return 'hello mod2'
+  }
+}

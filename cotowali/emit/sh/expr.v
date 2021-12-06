@@ -70,7 +70,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.InfixExpr { e.infix_expr(expr, opt) }
 		ast.IndexExpr { e.index_expr(expr, opt) }
 		ast.MapLiteral { e.map_literal(expr, opt) }
-		ast.NamespaceItem { e.namespace_item(expr, opt) }
+		ast.ModuleItem { e.module_item(expr, opt) }
 		ast.NullLiteral { e.null_literal(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
 		ast.SelectorExpr { e.selector_expr(expr, opt) }
@@ -428,10 +428,10 @@ fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
 	}
 }
 
-fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {
+fn (mut e Emitter) module_item(expr ast.ModuleItem, opt ExprOpt) {
 	$if !prod {
 		if !expr.is_resolved() {
-			panic(unreachable('unresolved namespace item'))
+			panic(unreachable('unresolved module item'))
 		}
 	}
 	e.expr(expr.item, opt)

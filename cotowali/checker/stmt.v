@@ -55,7 +55,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 		ast.ForInStmt { c.for_in_stmt(mut stmt) }
 		ast.IfStmt { c.if_stmt(stmt) }
 		ast.InlineShell {}
-		ast.NamespaceDecl { c.namespace_decl(stmt) }
+		ast.ModuleDecl { c.module_decl(stmt) }
 		ast.ReturnStmt { c.return_stmt(stmt) }
 		ast.RequireStmt { c.require_stmt(mut stmt) }
 		ast.WhileStmt { c.while_stmt(stmt) }
@@ -258,15 +258,15 @@ fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 	}
 }
 
-fn (mut c Checker) namespace_decl(ns ast.NamespaceDecl) {
+fn (mut c Checker) module_decl(mod ast.ModuleDecl) {
 	$if trace_checker ? {
-		c.trace_begin(@FN, ns.block.scope.name)
+		c.trace_begin(@FN, mod.block.scope.name)
 		defer {
 			c.trace_end()
 		}
 	}
 
-	c.block(ns.block)
+	c.block(mod.block)
 }
 
 fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {

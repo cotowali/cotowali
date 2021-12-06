@@ -7,7 +7,7 @@ module parser
 
 import cotowali.ast
 
-fn (mut p Parser) parse_namespace() ?ast.NamespaceDecl {
+fn (mut p Parser) parse_module() ?ast.ModuleDecl {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
@@ -15,7 +15,9 @@ fn (mut p Parser) parse_namespace() ?ast.NamespaceDecl {
 		}
 	}
 
-	p.consume_with_assert(.key_namespace)
+	p.consume_with_assert(.key_module)
+
+	mut ident := p.consume_with_check(.ident) ?
 
 	mut depth := 1
 	defer {
@@ -24,8 +26,7 @@ fn (mut p Parser) parse_namespace() ?ast.NamespaceDecl {
 		}
 	}
 
-	mut ident := p.consume_with_check(.ident) ?
-	mut ns := ast.NamespaceDecl{
+	mut mod := ast.ModuleDecl{
 		block: ast.Block{
 			scope: p.open_scope(ident.text)
 		}
@@ -35,13 +36,13 @@ fn (mut p Parser) parse_namespace() ?ast.NamespaceDecl {
 
 		depth += 1
 		ident = p.consume_with_check(.ident) ?
-		ns = ast.NamespaceDecl{
+		mod = ast.ModuleDecl{
 			block: ast.Block{
 				scope: p.open_scope(ident.text)
 			}
 		}
 	}
 
-	ns.block = p.parse_block_without_new_scope() ?
-	return ns
+	mod.block = p.parse_block_without_new_scope() ?
+	return mod
 }

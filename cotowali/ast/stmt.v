@@ -22,7 +22,7 @@ pub type Stmt = AssertStmt
 	| ForInStmt
 	| IfStmt
 	| InlineShell
-	| NamespaceDecl
+	| ModuleDecl
 	| RequireStmt
 	| ReturnStmt
 	| WhileStmt
@@ -33,7 +33,7 @@ pub fn (stmt Stmt) children() []Node {
 		Break, Continue, DocComment, EmptyStmt, InlineShell {
 			[]Node{}
 		}
-		AssertStmt, AssignStmt, Block, Expr, FnDecl, ForInStmt, IfStmt, NamespaceDecl, RequireStmt,
+		AssertStmt, AssignStmt, Block, Expr, FnDecl, ForInStmt, IfStmt, ModuleDecl, RequireStmt,
 		ReturnStmt, WhileStmt, YieldStmt {
 			stmt.children()
 		}
@@ -60,7 +60,7 @@ fn (mut r Resolver) stmt(stmt Stmt) {
 		ForInStmt { r.for_in_stmt(mut stmt) }
 		IfStmt { r.if_stmt(stmt) }
 		InlineShell { r.inline_shell(mut stmt) }
-		NamespaceDecl { r.namespace_decl(stmt) }
+		ModuleDecl { r.module_decl(stmt) }
 		RequireStmt { r.require_stmt(stmt) }
 		ReturnStmt { r.return_stmt(stmt) }
 		WhileStmt { r.while_stmt(stmt) }
@@ -354,17 +354,17 @@ fn (mut r Resolver) inline_shell(mut stmt InlineShell) {
 	}
 }
 
-pub struct NamespaceDecl {
+pub struct ModuleDecl {
 pub mut:
 	block Block
 }
 
 [inline]
-pub fn (ns &NamespaceDecl) children() []Node {
-	return [Node(Stmt(ns.block))]
+pub fn (mod &ModuleDecl) children() []Node {
+	return [Node(Stmt(mod.block))]
 }
 
-fn (mut r Resolver) namespace_decl(ns NamespaceDecl) {
+fn (mut r Resolver) module_decl(mod ModuleDecl) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -372,7 +372,7 @@ fn (mut r Resolver) namespace_decl(ns NamespaceDecl) {
 		}
 	}
 
-	r.block(ns.block)
+	r.block(mod.block)
 }
 
 pub struct RequireStmtProps {

@@ -41,7 +41,7 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 				ArrayLiteral, MapLiteral {
 					e.new_tmp_ident()
 				}
-				ast.NamespaceItem {
+				ast.ModuleItem {
 					e.ident_for(v.item)
 				}
 				ast.SelectorExpr {

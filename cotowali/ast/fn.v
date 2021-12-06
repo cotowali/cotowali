@@ -248,8 +248,8 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr, mut func Expr) {
 		Var {
 			r.call_expr_func_var(mut e, mut func)
 		}
-		NamespaceItem {
-			r.namespace_item(mut func)
+		ModuleItem {
+			r.module_item(mut func)
 			if func.is_resolved {
 				r.call_expr_func(mut e, mut &func.item)
 			}

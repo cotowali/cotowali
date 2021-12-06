@@ -4,34 +4,34 @@ fn f(): int {
   return 0
 }
 
-namespace ns1 {
+module mod1 {
   var n = 1
 
-  namespace child {
+  module child {
     var n = 2
   }
 }
-namespace ns1 {
-  // namespace will be merged
+module mod1 {
+  // module will be merged
   assert(n == 1)
 
-  namespace child {
+  module child {
     assert(n == 2)
   }
 }
-namespace ns1::child {
+module mod1::child {
   assert(n == 2)
 
-  namespace deep {
+  module deep {
     n = 3
   }
 }
-namespace ns1::child::deep {
+module mod1::child::deep {
   assert(n == 3)
 }
-assert(ns1::child::deep::n == 3)
+assert(mod1::child::deep::n == 3)
 
-namespace ns2 {
+module mod2 {
   var n = 1
   assert(n == 1)
 
@@ -44,11 +44,11 @@ namespace ns2 {
   global = 1
   assert(global == 1)
 
-  namespace ns2_1 {
+  module mod2_1 {
     fn f(): string {
-      return 'ns2_1'
+      return 'mod2_1'
     }
-    assert(f() == 'ns2_1')
+    assert(f() == 'mod2_1')
 
     assert(global == 1)
     global = 2
@@ -59,6 +59,6 @@ namespace ns2 {
 assert(global == 2)
 
 assert(n == 0)
-assert(ns2::n == 1)
+assert(mod2::n == 1)
 assert(f() == 0)
-assert(ns2::f() == '10')
+assert(mod2::f() == '10')

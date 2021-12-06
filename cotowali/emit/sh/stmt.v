@@ -35,7 +35,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 		ast.ForInStmt { e.for_in_stmt(stmt) }
 		ast.IfStmt { e.if_stmt(stmt) }
 		ast.InlineShell { e.inline_shell(stmt) }
-		ast.NamespaceDecl { e.namespace_decl(stmt) }
+		ast.ModuleDecl { e.module_decl(stmt) }
 		ast.ReturnStmt { e.return_stmt(stmt) }
 		ast.RequireStmt { e.require_stmt(stmt) }
 		ast.WhileStmt { e.while_stmt(stmt) }
@@ -174,8 +174,8 @@ fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
 	e.writeln('')
 }
 
-fn (mut e Emitter) namespace_decl(ns ast.NamespaceDecl) {
-	e.block(ns.block, allow_blank: true)
+fn (mut e Emitter) module_decl(mod ast.ModuleDecl) {
+	e.block(mod.block, allow_blank: true)
 }
 
 fn (mut e Emitter) return_stmt(stmt ast.ReturnStmt) {

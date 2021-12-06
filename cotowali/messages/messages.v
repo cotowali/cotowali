@@ -23,7 +23,7 @@ pub enum SymbolKind {
 	variable
 	function
 	method
-	namespace
+	mod
 	operator
 }
 
@@ -33,7 +33,7 @@ pub fn (k SymbolKind) str() string {
 		.variable { 'variable' }
 		.function { 'function' }
 		.method { 'method' }
-		.namespace { 'namespace' }
+		.mod { 'module' }
 		.operator { 'operator' }
 	}
 }

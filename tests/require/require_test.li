@@ -1,6 +1,6 @@
-require './ns.mod.li'
-require './ns.mod.li' {}
+require './mod.mod.li'
+require './mod.mod.li' {}
 
-assert(ns::one == 1)
-assert(ns::hello() == 'hello ns')
-assert(ns2::hello() == 'hello ns2')
+assert(mod::one == 1)
+assert(mod::hello() == 'hello mod')
+assert(mod2::hello() == 'hello mod2')

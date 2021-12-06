@@ -29,7 +29,7 @@ pub type Expr = ArrayLiteral
 	| InfixExpr
 	| IntLiteral
 	| MapLiteral
-	| NamespaceItem
+	| ModuleItem
 	| NullLiteral
 	| ParenExpr
 	| Pipeline
@@ -44,7 +44,7 @@ pub fn (expr Expr) children() []Node {
 			[]Node{}
 		}
 		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DecomposeExpr, IndexExpr, InfixExpr,
-		MapLiteral, NamespaceItem, ParenExpr, Pipeline, PrefixExpr, SelectorExpr {
+		MapLiteral, ModuleItem, ParenExpr, Pipeline, PrefixExpr, SelectorExpr {
 			expr.children()
 		}
 		StringLiteral {
@@ -79,7 +79,7 @@ fn (mut r Resolver) expr(expr Expr, opt ResolveExprOpt) {
 		InfixExpr { r.infix_expr(expr, opt) }
 		IntLiteral { r.int_literal(expr, opt) }
 		MapLiteral { r.map_literal(mut expr, opt) }
-		NamespaceItem { r.namespace_item(mut expr, opt) }
+		ModuleItem { r.module_item(mut expr, opt) }
 		NullLiteral { r.null_literal(expr, opt) }
 		ParenExpr { r.paren_expr(expr, opt) }
 		Pipeline { r.pipeline(expr, opt) }
@@ -106,7 +106,7 @@ pub fn (expr Expr) pos() Pos {
 		Var {
 			expr.pos()
 		}
-		NamespaceItem {
+		ModuleItem {
 			expr.pos()
 		}
 		SelectorExpr {
@@ -231,7 +231,7 @@ pub fn (e Expr) typ() Type {
 		StringLiteral { e.typ() }
 		IntLiteral { builtin_type(.int) }
 		NullLiteral { builtin_type(.null) }
-		NamespaceItem { e.typ() }
+		ModuleItem { e.typ() }
 		ParenExpr { e.typ() }
 		Pipeline { e.exprs.last().typ() }
 		PrefixExpr { e.typ() }
@@ -262,7 +262,7 @@ pub fn (e Expr) scope() &Scope {
 		Var {
 			e.scope()
 		}
-		NamespaceItem {
+		ModuleItem {
 			e.scope()
 		}
 		SelectorExpr {
@@ -445,37 +445,37 @@ fn (mut r Resolver) index_expr(expr IndexExpr, opt ResolveExprOpt) {
 	r.expr(expr.index, opt)
 }
 
-pub struct NamespaceItem {
+pub struct ModuleItem {
 mut:
 	is_resolved bool
 pub mut:
-	namespace Ident
-	item      Expr
+	mod  Ident
+	item Expr
 }
 
 [inline]
-pub fn (expr &NamespaceItem) is_resolved() bool {
+pub fn (expr &ModuleItem) is_resolved() bool {
 	return expr.is_resolved
 }
 
-pub fn (expr &NamespaceItem) typ() Type {
+pub fn (expr &ModuleItem) typ() Type {
 	return expr.item.typ()
 }
 
-pub fn (expr &NamespaceItem) scope() &Scope {
+pub fn (expr &ModuleItem) scope() &Scope {
 	return expr.item.scope()
 }
 
-pub fn (expr &NamespaceItem) pos() Pos {
-	return expr.namespace.pos.merge(expr.item.pos())
+pub fn (expr &ModuleItem) pos() Pos {
+	return expr.mod.pos.merge(expr.item.pos())
 }
 
 [inline]
-pub fn (expr &NamespaceItem) children() []Node {
-	return [Node(expr.namespace), Node(expr.item)]
+pub fn (expr &ModuleItem) children() []Node {
+	return [Node(expr.mod), Node(expr.item)]
 }
 
-fn (mut r Resolver) namespace_item(mut expr NamespaceItem, opt ResolveExprOpt) {
+fn (mut r Resolver) module_item(mut expr ModuleItem, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -483,16 +483,16 @@ fn (mut r Resolver) namespace_item(mut expr NamespaceItem, opt ResolveExprOpt) {
 		}
 	}
 
-	if child := expr.namespace.scope.get_child(expr.namespace.text) {
+	if child := expr.mod.scope.get_child(expr.mod.text) {
 		match mut expr.item {
-			NamespaceItem { expr.item.namespace.scope = child }
+			ModuleItem { expr.item.mod.scope = child }
 			Var { expr.item.ident.scope = child }
-			else { panic(unreachable('invalid item of namespace')) }
+			else { panic(unreachable('invalid item of module')) }
 		}
 		expr.is_resolved = true
 		r.expr(expr.item, opt)
 	} else {
-		r.error(undefined(.namespace, expr.namespace.text), expr.namespace.pos)
+		r.error(undefined(.mod, expr.mod.text), expr.mod.pos)
 	}
 }
 

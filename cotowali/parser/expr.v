@@ -211,8 +211,8 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	}
 
 	if _ := p.consume_if_kind_eq(.coloncolon) {
-		return ast.NamespaceItem{
-			namespace: ident
+		return ast.ModuleItem{
+			mod: ident
 			item: p.parse_ident() ?
 		}
 	}
