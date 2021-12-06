@@ -56,3 +56,9 @@ fn test_struct_name() {
 	assert struct_name(Bar{}) == 'Bar'
 	assert struct_name(FooBar(Foo{})) == 'Foo'
 }
+
+fn test_to_octal() {
+	assert to_octal(1) == '1'
+	assert to_octal(8) == '10'
+	assert to_octal('0x10'.int()) == '20'
+}

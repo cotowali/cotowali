@@ -33,3 +33,12 @@ pub fn struct_name<T>(v T) string {
 
 	return s.split('.').last()
 }
+
+pub fn to_octal(num int) string {
+	buf_len := num / 8 + 2 // ceil(num / 8) + '\0'
+	unsafe {
+		buf := malloc_noscan(buf_len)
+		count := C.snprintf(&char(buf), buf_len, c'%o', num)
+		return tos(buf, count)
+	}
+}
