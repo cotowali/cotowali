@@ -90,7 +90,8 @@ pub fn (s &Scope) is_global() bool {
 }
 
 pub fn (s &Scope) root() &Scope {
-	return s.parent() or { s }
+	p := s.parent() or { return s }
+	return p.root()
 }
 
 [inline]
