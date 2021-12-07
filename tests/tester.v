@@ -61,7 +61,7 @@ fn out_path(f string) string {
 	return f.trim_suffix(suffix(.li)) + suffix(.out)
 }
 
-const skip_list = ['raytracing.li']
+const skip_list = ['raytracing.li', 'welcome.li']
 
 fn is_target_file(s string) bool {
 	for skip in skip_list {
