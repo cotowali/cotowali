@@ -20,6 +20,18 @@ fn eprintln(s: string) {
   sh { printf '%%s\n' "$%s" >&2 }
 }
 
+fn isatty(): bool {
+  var true_ = true
+  var res = false
+  sh {
+    if [ -t 0 ]
+    then
+      %res=$%true_
+    fi
+  }
+  return res
+}
+
 fn has(command: string): bool {
   var code: int
   sh {
