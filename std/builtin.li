@@ -43,6 +43,19 @@ fn input(prompt: string): string {
   return res
 }
 
+fn input_tty(prompt: string): string {
+  if prompt != '' {
+    print(prompt) |> '/dev/tty'
+  }
+  var res: string
+  sh {
+    read -r %res < '/dev/tty'
+  }
+  return res
+}
+
+
+
 fn has(command: string): bool {
   var code: int
   sh {
