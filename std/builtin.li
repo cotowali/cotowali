@@ -20,11 +20,11 @@ fn eprintln(s: string) {
   sh { printf '%%s\n' "$%s" >&2 }
 }
 
-fn isatty(): bool {
+fn isatty(fd: int): bool {
   var true_ = true
   var res = false
   sh {
-    if [ -t 0 ]
+    if [ -t $%fd ]
     then
       %res=$%true_
     fi
@@ -33,7 +33,7 @@ fn isatty(): bool {
 }
 
 fn input(prompt: string): string {
-  if isatty() && prompt != '' {
+  if isatty(0) && prompt != '' {
     print(prompt) |> '/dev/tty'
   }
   var res: string
