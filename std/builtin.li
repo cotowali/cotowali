@@ -32,9 +32,11 @@ fn isatty(fd: int): bool {
   return res
 }
 
+var tty = '/dev/tty'
+
 fn input(prompt: string): string {
   if isatty(0) && prompt != '' {
-    print(prompt) |> '/dev/tty'
+    print(prompt) |> tty
   }
   var res: string
   sh {
@@ -45,16 +47,14 @@ fn input(prompt: string): string {
 
 fn input_tty(prompt: string): string {
   if prompt != '' {
-    print(prompt) |> '/dev/tty'
+    print(prompt) |> tty
   }
   var res: string
   sh {
-    read -r %res < '/dev/tty'
+    read -r %res < $%tty
   }
   return res
 }
-
-
 
 fn has(command: string): bool {
   var code: int
