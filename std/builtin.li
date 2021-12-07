@@ -32,6 +32,17 @@ fn isatty(): bool {
   return res
 }
 
+fn input(prompt: string): string {
+  if isatty() && prompt != '' {
+    print(prompt) |> '/dev/tty'
+  }
+  var res: string
+  sh {
+    read -r %res
+  }
+  return res
+}
+
 fn has(command: string): bool {
   var code: int
   sh {
