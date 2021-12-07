@@ -203,21 +203,33 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 		}
 	}
 
-	tok := p.consume_with_check(.ident) ?
-	ident := ast.Ident{
-		scope: p.scope
-		pos: tok.pos
-		text: tok.text
+	mut modules := []ast.Ident{}
+	for p.kind(1) == .coloncolon {
+		tok := p.consume_with_check(.ident) ?
+		modules << ast.Ident{
+			scope: p.scope
+			pos: tok.pos
+			text: tok.text
+		}
+		p.consume_with_assert(.coloncolon)
 	}
 
-	if _ := p.consume_if_kind_eq(.coloncolon) {
-		return ast.ModuleItem{
-			mod: ident
-			item: p.parse_ident() ?
+	tok := p.consume_with_check(.ident) ?
+	v := ast.Var{
+		ident: ast.Ident{
+			scope: p.scope
+			pos: tok.pos
+			text: tok.text
 		}
 	}
-	return ast.Var{
-		ident: ident
+
+	if modules.len == 0 {
+		return v
+	}
+
+	return ast.ModuleItem{
+		modules: modules
+		item: v
 	}
 }
 
