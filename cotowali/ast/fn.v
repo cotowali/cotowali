@@ -14,6 +14,7 @@ import cotowali.symbols {
 	Type,
 	TypeSymbol,
 	builtin_function_id,
+	builtin_type,
 }
 import cotowali.messages { undefined, unreachable }
 
@@ -317,4 +318,53 @@ fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 			}
 		}
 	}
+}
+
+pub struct Nameof {
+	scope &Scope
+pub:
+	args []Expr
+	pos  Pos
+}
+
+pub fn (expr &Nameof) typ() Type {
+	return builtin_type(.string)
+}
+
+pub fn (expr &Nameof) pos() Pos {
+	return expr.pos
+}
+
+pub fn (expr &Nameof) scope() &Scope {
+	return expr.scope
+}
+
+pub fn (expr &Nameof) children() []Node {
+	return expr.args.map(Node(it))
+}
+
+pub fn (expr &Nameof) value() string {
+	msg := 'cannot take name'
+	if expr.args.len != 1 {
+		panic(unreachable(msg))
+	}
+
+	arg := expr.args[0]
+	match arg {
+		Var {
+			return (arg.sym() or { panic(unreachable(msg)) }).name
+		}
+		ModuleItem {
+			return (arg.item.sym() or { panic(unreachable(msg)) }).display_name()
+		}
+		else {}
+	}
+	panic(unreachable(msg))
+}
+
+fn (mut r Resolver) nameof(expr Nameof, opt ResolveExprOpt) {
+	if expr.args.len != 1 {
+		return
+	}
+	r.expr(expr.args[0], opt)
 }

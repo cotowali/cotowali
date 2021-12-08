@@ -144,6 +144,7 @@ fn test_lexer() {
 	ktest(@FN, @LINE, 'while true { }', [.key_while, .bool_literal, .l_brace, .r_brace])
 	ktest(@FN, @LINE, 'use PATH', [.key_use, .ident])
 	ktest(@FN, @LINE, 'export PATH', [.key_export, .ident])
+	ktest(@FN, @LINE, 'nameof(v)', [.key_nameof, .l_paren, .ident, .r_paren])
 
 	ktest(@FN, @LINE, 'n += 2', [.ident, .plus_assign, .int_literal])
 	ktest(@FN, @LINE, 'n -= 2', [.ident, .minus_assign, .int_literal])

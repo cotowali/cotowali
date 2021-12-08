@@ -1,0 +1,4 @@
+nameof('10')
+nameof(1 + 1)
+var a: int
+nameof(a + a)

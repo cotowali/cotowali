@@ -9,6 +9,25 @@ import cotowali.ast { Expr }
 import cotowali.symbols { ArrayTypeInfo, TypeSymbol, builtin_type }
 import cotowali.messages { args_count_mismatch }
 
+fn (mut c Checker) nameof(expr ast.Nameof) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
+	if expr.args.len != 1 {
+		c.error(args_count_mismatch(expected: 1, actual: expr.args.len), expr.pos())
+		return
+	}
+	arg := expr.args[0]
+	match arg {
+		ast.Var, ast.ModuleItem {}
+		else { c.error('expression does not have a name', arg.pos()) }
+	}
+}
+
 fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 	$if trace_checker ? {
 		c.trace_begin(@FN, stmt.sym.name, stmt.signature())

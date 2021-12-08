@@ -23,6 +23,7 @@ pub enum TokenKind {
 	key_map
 	key_module
 	key_null
+	key_nameof
 	key_require
 	key_return
 	key_struct
@@ -205,6 +206,7 @@ pub fn token_kinds(class TokenKindClass) []TokenKind {
 				.key_in,
 				.key_map,
 				.key_module,
+				.key_nameof,
 				.key_require,
 				.key_return,
 				.key_struct,
