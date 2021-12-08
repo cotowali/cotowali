@@ -44,10 +44,12 @@ jobs:
     runs-on: macos-latest
     env:
       VFLAGS: "-cc clang"
+      # https://github.com/vlang/v/blob/525791fa3a4643ae9b04570f4b18056816bfda96/.github/workflows/ci.yml#L263
+      PKG_CONFIG_PATH: /usr/local/opt/openssl@3/lib/pkgconfig
     steps:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
-      # https://github.com/vlang/v/blob/a84a6d1fb1b2b4025db88a883a4682c978212562/.github/workflows/ci.yml#L272-L273
+      # https://github.com/vlang/v/blob/525791fa3a4643ae9b04570f4b18056816bfda96/.github/workflows/ci.yml#L273-L274
       - run: |
           brew install openssl
           export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/opt/openssl/lib/"
