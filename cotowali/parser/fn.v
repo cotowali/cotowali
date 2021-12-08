@@ -400,3 +400,23 @@ fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
 		args: args
 	}
 }
+
+fn (mut p Parser) parse_nameof() ?ast.Nameof {
+	$if trace_parser ? {
+		p.trace_begin()
+		defer {
+			p.trace_end()
+		}
+	}
+
+	key := p.consume_with_assert(.key_nameof)
+	p.consume_with_assert(.l_paren)
+	args := p.parse_call_args() ?
+	r_paren := p.consume_with_check(.r_paren) ?
+
+	return ast.Nameof{
+		scope: p.scope
+		args: args
+		pos: key.pos.merge(r_paren.pos)
+	}
+}

@@ -1,0 +1,31 @@
+module mod {
+  fn mod_f() {}
+  var mod_v: int
+
+  module submod {
+    fn f() {}
+    var v :int
+  }
+
+  fn test_nameof_in_mod() {
+    fn local_f() {}
+    var local_v: int
+    assert(nameof(local_f) == 'local_f')
+    assert(nameof(local_v) == 'local_v')
+
+    assert(nameof(mod::mod_f) == 'mod::mod_f')
+    assert(nameof(mod::mod_v) == 'mod::mod_v')
+
+    assert(nameof(submod::f) == 'mod::submod::f')
+    assert(nameof(submod::v) == 'mod::submod::v')
+  }
+  test_nameof_in_mod()
+}
+
+fn test_nameof() {
+  fn f() {}
+  var v: int
+  assert(nameof(v) == 'v')
+  assert(nameof(f) == 'f')
+}
+test_nameof()

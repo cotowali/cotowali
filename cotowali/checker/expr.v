@@ -6,7 +6,7 @@
 module checker
 
 import cotowali.ast { Expr }
-import cotowali.symbols { Type, TypeSymbol, builtin_type }
+import cotowali.symbols { TypeSymbol, builtin_type }
 import cotowali.source { Pos }
 
 fn (mut c Checker) exprs(exprs []Expr) {
@@ -37,6 +37,7 @@ fn (mut c Checker) expr(expr Expr) {
 		ast.IntLiteral {}
 		ast.MapLiteral { c.map_literal(expr) }
 		ast.ModuleItem { c.module_item(expr) }
+		ast.Nameof { c.nameof(expr) }
 		ast.NullLiteral {}
 		ast.ParenExpr { c.paren_expr(expr) }
 		ast.Pipeline { c.pipeline(expr) }

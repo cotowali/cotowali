@@ -146,3 +146,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 		e.block(node.body)
 	}, node)
 }
+
+fn (mut e Emitter) nameof(expr ast.Nameof, opt ExprOpt) {
+	e.write_echo_if_command_then_write("'$expr.value()'", opt)
+}

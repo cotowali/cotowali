@@ -1,0 +1,9 @@
+error: nameof.err.li 1,8: expression does not have a name
+    1 | nameof('10')
+      |        ^^^^
+error: nameof.err.li 2,8: expression does not have a name
+    2 | nameof(1 + 1)
+      |        ^^^^^
+error: nameof.err.li 4,8: expression does not have a name
+    4 | nameof(a + a)
+      |        ^^^^^
