@@ -6,7 +6,7 @@
 module checker
 
 import cotowali.ast { Expr }
-import cotowali.symbols { ArrayTypeInfo, TypeSymbol, TypeSymbol, builtin_type }
+import cotowali.symbols { Type, TypeSymbol, builtin_type }
 import cotowali.source { Pos }
 
 fn (mut c Checker) exprs(exprs []Expr) {
@@ -75,85 +75,6 @@ fn (mut c Checker) as_expr(expr ast.AsExpr) {
 	}
 
 	c.expr(expr.expr)
-}
-
-fn (mut c Checker) call_command_expr(expr ast.CallCommandExpr) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
-	c.exprs(expr.args)
-}
-
-fn (mut c Checker) call_expr(expr ast.CallExpr) {
-	if Expr(expr).typ() == builtin_type(.placeholder) {
-		return
-	}
-
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
-	pos := Expr(expr).pos()
-	scope := expr.scope
-	function_info := expr.function_info()
-	params := function_info.params
-	param_syms := params.map(scope.must_lookup_type(it))
-	args := expr.args
-
-	if function_info.is_test {
-		c.error('cannot explicitly call test function', pos)
-	}
-
-	if function_info.variadic {
-		min_len := params.len - 1
-		if args.len < min_len {
-			c.error('expected $min_len or more arguments, but got $args.len', pos)
-			return
-		}
-	} else if args.len != params.len {
-		c.error('expected $params.len arguments, but got $args.len', pos)
-		return
-	}
-
-	c.exprs(args)
-
-	mut call_args_types_ok := true
-	varargs_elem_ts := if function_info.variadic {
-		scope.must_lookup_type((param_syms.last().info as ArrayTypeInfo).elem)
-	} else {
-		// ?TypeSymbol(none)
-		&TypeSymbol{}
-	}
-	for i, arg in args {
-		arg_ts := arg.type_symbol()
-		param_ts := if function_info.variadic && i >= params.len - 1 {
-			if arg.is_glob_literal() && varargs_elem_ts.typ == builtin_type(.string) {
-				// allow glob literal as string varargs
-				continue
-			}
-
-			varargs_elem_ts
-		} else {
-			scope.must_lookup_type(params[i])
-		}
-
-		if param_ts.kind() == .placeholder || arg_ts.kind() == .placeholder {
-			call_args_types_ok = false
-			continue
-		}
-
-		c.check_types(want: param_ts, got: arg_ts, pos: arg.pos()) or { call_args_types_ok = false }
-	}
-	if !call_args_types_ok {
-		return
-	}
 }
 
 fn (mut c Checker) decompose_expr(expr ast.DecomposeExpr) {

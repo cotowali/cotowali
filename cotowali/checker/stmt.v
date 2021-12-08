@@ -7,7 +7,7 @@ module checker
 
 import cotowali.ast
 import cotowali.symbols { builtin_type }
-import cotowali.messages { unreachable }
+import cotowali.messages { args_count_mismatch, unreachable }
 import cotowali.source { Pos }
 
 fn (mut c Checker) attrs(attrs []ast.Attr) {
@@ -135,7 +135,7 @@ fn (mut c Checker) assert_stmt(stmt ast.AssertStmt) {
 
 	args_count := stmt.args.len
 	if args_count !in [1, 2] {
-		c.error('expect 1 or 2 arguments, but got $args_count', stmt.pos)
+		c.error(args_count_mismatch(expected: '1 or 2', actual: args_count), stmt.pos)
 		return
 	}
 	c.expect_bool_expr(stmt.args[0], 'assert condition') or {}
@@ -172,48 +172,6 @@ fn (mut c Checker) break_(stmt ast.Break) {
 
 fn (mut c Checker) continue_(stmt ast.Continue) {
 	c.expect_inside_loop('continue', stmt.token.pos) or {}
-}
-
-fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
-	$if trace_checker ? {
-		c.trace_begin(@FN, stmt.sym.name, stmt.signature())
-		defer {
-			c.trace_end()
-		}
-	}
-
-	old_fn := c.current_fn
-	c.current_fn = &stmt
-	defer {
-		c.current_fn = old_fn
-	}
-
-	fn_info := stmt.function_info()
-
-	if stmt.is_test() {
-		if fn_info.has_pipe_in() {
-			c.error('test function cannot have pipe-in', stmt.sym.pos)
-		}
-		if stmt.params.len != 0 {
-			pos := stmt.params[0].pos().merge(stmt.params.last().pos())
-			c.error('test function cannot have parameters', pos)
-		}
-		if fn_info.ret != builtin_type(.void) {
-			c.error('test function cannot have return values', stmt.sym.pos)
-		}
-	}
-
-	if pipe_in_param := stmt.pipe_in_param() {
-		pipe_in_param_ts := ast.Expr(pipe_in_param).type_symbol()
-		if _ := pipe_in_param_ts.sequence_info() {
-			pos := pipe_in_param.pos().merge(pipe_in_param_ts.pos)
-			c.error('sequence type cannot be used for pipe-in parameter', pos)
-		}
-	}
-
-	c.attrs(stmt.attrs)
-	c.exprs(stmt.params.map(ast.Expr(it)))
-	c.block(stmt.body)
 }
 
 fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {

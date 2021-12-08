@@ -6,6 +6,7 @@
 module messages
 
 import cotowali.util.checksum
+import cotowali.util { Either }
 
 [params]
 pub struct Expects<T> {
@@ -74,6 +75,10 @@ pub fn invalid_key(key string, v Expects<string>) string {
 [inline]
 pub fn duplicated_key(key string) string {
 	return 'duplicated key `$key`'
+}
+
+pub fn args_count_mismatch(v ExpectedActual<Either<string, int>, int>) string {
+	return 'expected $v.expected.str() arguments, but got $v.actual'
 }
 
 [inline]
