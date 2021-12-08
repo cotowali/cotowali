@@ -492,10 +492,21 @@ fn (mut r Resolver) module_item(mut expr ModuleItem, opt ResolveExprOpt) {
 	}
 
 	first_mod := expr.modules[0]
-	mut scope := first_mod.scope.get_child(first_mod.text) or {
-		r.error(undefined(.mod, first_mod.text), first_mod.pos)
-		return
+	mut scope := expr.scope
+
+	// lookup first mod.
+	for {
+		if found := scope.get_child(first_mod.text) {
+			scope = found
+			break
+		}
+		scope = scope.parent() or {
+			r.error(undefined(.mod, first_mod.text), first_mod.pos)
+			return
+		}
 	}
+
+	// get submod
 	expr.is_resolved = true
 	for mod in expr.modules[1..] {
 		scope = scope.get_child(mod.text) or {
@@ -504,6 +515,7 @@ fn (mut r Resolver) module_item(mut expr ModuleItem, opt ResolveExprOpt) {
 			break
 		}
 	}
+
 	if expr.is_resolved {
 		expr.item.ident.scope = scope
 		r.var_(mut expr.item, opt)
