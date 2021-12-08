@@ -69,6 +69,7 @@ const (
 		'in':       tk(.key_in)
 		'map':      tk(.key_map)
 		'module':   tk(.key_module)
+		'nameof':   tk(.key_nameof)
 		'null':     tk(.key_null)
 		'require':  tk(.key_require)
 		'return':   tk(.key_return)
