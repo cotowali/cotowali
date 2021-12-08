@@ -9,13 +9,6 @@ pub struct Unit {}
 
 pub type Either<T, U> = T | U
 
-pub fn (e Either<T, U>) str<T, U>() string {
-	return match e {
-		T { e.str() }
-		U { e.str() }
-	}
-}
-
 pub fn @in<T>(v T, low T, high T) bool {
 	return low <= v && v <= high
 }

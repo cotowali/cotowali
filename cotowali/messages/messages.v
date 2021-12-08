@@ -78,7 +78,11 @@ pub fn duplicated_key(key string) string {
 }
 
 pub fn args_count_mismatch(v ExpectedActual<Either<string, int>, int>) string {
-	return 'expected $v.expected.str() arguments, but got $v.actual'
+	expected := match v.expected {
+		string { v.expected }
+		int { v.expected.str() }
+	}
+	return 'expected $expected arguments, but got $v.actual'
 }
 
 [inline]
