@@ -446,11 +446,14 @@ fn (mut r Resolver) index_expr(expr IndexExpr, opt ResolveExprOpt) {
 }
 
 pub struct ModuleItem {
+	scope &Scope
 mut:
 	is_resolved bool
+pub:
+	is_global bool
 pub mut:
-	mod  Ident
-	item Expr
+	modules []Ident
+	item    Var
 }
 
 [inline]
@@ -463,16 +466,17 @@ pub fn (expr &ModuleItem) typ() Type {
 }
 
 pub fn (expr &ModuleItem) scope() &Scope {
-	return expr.item.scope()
+	return expr.scope
 }
 
 pub fn (expr &ModuleItem) pos() Pos {
-	return expr.mod.pos.merge(expr.item.pos())
+	return expr.modules.first().pos.merge(expr.item.pos())
 }
 
-[inline]
 pub fn (expr &ModuleItem) children() []Node {
-	return [Node(expr.mod), Node(expr.item)]
+	mut nodes := expr.modules.map(Node(it))
+	nodes << Expr(expr.item)
+	return nodes
 }
 
 fn (mut r Resolver) module_item(mut expr ModuleItem, opt ResolveExprOpt) {
@@ -483,16 +487,43 @@ fn (mut r Resolver) module_item(mut expr ModuleItem, opt ResolveExprOpt) {
 		}
 	}
 
-	if child := expr.mod.scope.get_child(expr.mod.text) {
-		match mut expr.item {
-			ModuleItem { expr.item.mod.scope = child }
-			Var { expr.item.ident.scope = child }
-			else { panic(unreachable('invalid item of module')) }
-		}
-		expr.is_resolved = true
-		r.expr(expr.item, opt)
+	mut scope := expr.scope
+
+	if expr.is_global {
+		scope = scope.root()
 	} else {
-		r.error(undefined(.mod, expr.mod.text), expr.mod.pos)
+		$if !prod {
+			if expr.modules.len == 0 {
+				panic(unreachable('module item: modules.len = 0'))
+			}
+		}
+
+		// lookup first mod.
+		first_mod := expr.modules[0]
+		for {
+			if _ := scope.get_child(first_mod.text) {
+				break
+			}
+			scope = scope.parent() or {
+				r.error(undefined(.mod, first_mod.text), first_mod.pos)
+				return
+			}
+		}
+	}
+
+	// get submod
+	expr.is_resolved = true
+	for mod in expr.modules {
+		scope = scope.get_child(mod.text) or {
+			r.error(undefined(.mod, mod.text), mod.pos)
+			expr.is_resolved = false
+			break
+		}
+	}
+
+	if expr.is_resolved {
+		expr.item.ident.scope = scope
+		r.var_(mut expr.item, opt)
 	}
 }
 
