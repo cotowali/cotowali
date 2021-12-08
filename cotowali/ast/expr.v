@@ -449,6 +449,8 @@ pub struct ModuleItem {
 	scope &Scope
 mut:
 	is_resolved bool
+pub:
+	is_global bool
 pub mut:
 	modules []Ident
 	item    Var
@@ -485,30 +487,33 @@ fn (mut r Resolver) module_item(mut expr ModuleItem, opt ResolveExprOpt) {
 		}
 	}
 
-	$if !prod {
-		if expr.modules.len == 0 {
-			panic(unreachable('module item: modules.len = 0'))
-		}
-	}
-
-	first_mod := expr.modules[0]
 	mut scope := expr.scope
 
-	// lookup first mod.
-	for {
-		if found := scope.get_child(first_mod.text) {
-			scope = found
-			break
+	if expr.is_global {
+		scope = scope.root()
+	} else {
+		$if !prod {
+			if expr.modules.len == 0 {
+				panic(unreachable('module item: modules.len = 0'))
+			}
 		}
-		scope = scope.parent() or {
-			r.error(undefined(.mod, first_mod.text), first_mod.pos)
-			return
+
+		// lookup first mod.
+		first_mod := expr.modules[0]
+		for {
+			if _ := scope.get_child(first_mod.text) {
+				break
+			}
+			scope = scope.parent() or {
+				r.error(undefined(.mod, first_mod.text), first_mod.pos)
+				return
+			}
 		}
 	}
 
 	// get submod
 	expr.is_resolved = true
-	for mod in expr.modules[1..] {
+	for mod in expr.modules {
 		scope = scope.get_child(mod.text) or {
 			r.error(undefined(.mod, mod.text), mod.pos)
 			expr.is_resolved = false

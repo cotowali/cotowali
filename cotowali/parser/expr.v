@@ -204,6 +204,8 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	}
 
 	mut modules := []ast.Ident{}
+	is_global := if _ := p.consume_if_kind_eq(.coloncolon) { true } else { false }
+
 	for p.kind(1) == .coloncolon {
 		tok := p.consume_with_check(.ident) ?
 		modules << ast.Ident{
@@ -223,11 +225,12 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 		}
 	}
 
-	if modules.len == 0 {
+	if !is_global && modules.len == 0 {
 		return v
 	}
 
 	return ast.ModuleItem{
+		is_global: is_global
 		scope: p.scope
 		modules: modules
 		item: v
@@ -489,6 +492,12 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 		.ident {
 			return p.parse_ident()
 		}
+		.coloncolon {
+			// ::globa_mod
+			if p.kind(1) == .ident {
+				return p.parse_ident()
+			}
+		}
 		.key_null {
 			p.consume()
 			return ast.NullLiteral{
@@ -530,11 +539,10 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 		.l_paren {
 			return p.parse_paren_expr()
 		}
-		else {
-			found := p.consume()
-			return p.unexpected_token_error(found)
-		}
+		else {}
 	}
+	found := p.consume()
+	return p.unexpected_token_error(found)
 }
 
 fn (mut p Parser) parse_value() ?ast.Expr {

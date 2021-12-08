@@ -82,11 +82,13 @@ module mod_x2 {
     }
 
     fn test() {
+      assert(::mod_x::text == '::mod_x')
       assert(mod_x::text == 'mod_x2::mod_x::mod_x')
       assert(mod_x2::mod_x::text == 'mod_x2::mod_x')
     }
     test()
   }
 
+  assert(::mod_x::text == '::mod_x')
   assert(mod_x::text == 'mod_x2::mod_x')
 }
