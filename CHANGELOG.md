@@ -2,6 +2,8 @@ Before first release
 ====================
 
 - namespace -> mod
+- fix module lookup
+- global module access `::mod`
 
 monthly.2021.12
 ---------------
