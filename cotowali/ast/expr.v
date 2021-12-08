@@ -446,6 +446,7 @@ fn (mut r Resolver) index_expr(expr IndexExpr, opt ResolveExprOpt) {
 }
 
 pub struct ModuleItem {
+	scope &Scope
 mut:
 	is_resolved bool
 pub mut:
@@ -463,7 +464,7 @@ pub fn (expr &ModuleItem) typ() Type {
 }
 
 pub fn (expr &ModuleItem) scope() &Scope {
-	return expr.item.scope()
+	return expr.scope
 }
 
 pub fn (expr &ModuleItem) pos() Pos {

@@ -228,6 +228,7 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 	}
 
 	return ast.ModuleItem{
+		scope: p.scope
 		modules: modules
 		item: v
 	}
