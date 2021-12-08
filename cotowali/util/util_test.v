@@ -9,6 +9,13 @@ fn test_unit() {
 	assert sizeof(Unit) == 0
 }
 
+fn test_either() {
+	mut v := Either<int, string>(0)
+	assert v.str() == '0'
+	v = 'x'
+	assert v.str() == 'x'
+}
+
 fn test_in() {
 	assert @in(0, 0, 1)
 	assert @in(1, 0, 1)
