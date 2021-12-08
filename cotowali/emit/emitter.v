@@ -28,8 +28,8 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 			mut e := pwsh.new_emitter(out, ctx)
 			return e
 		}
-		.ush {
-			panic(unreachable('emitter.new_emitter cannot use for ush'))
+		.hoshikudzu {
+			panic(unreachable('emitter.new_emitter cannot use for $ctx.config.backend'))
 		}
 	}
 }

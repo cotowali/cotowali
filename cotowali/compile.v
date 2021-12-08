@@ -48,11 +48,6 @@ pub fn run(s Source, ctx &Context) ?int {
 		exit(1)
 	}
 
-	exit_code := if ctx.config.backend == .ush {
-		// 'pwsh file.ush' doesn't work
-		os.system('cat "$temp_file" | $executable')
-	} else {
-		os.system('$executable "$temp_file"')
-	}
+	exit_code := os.system('cat "$temp_file" | $executable')
 	return exit_code
 }

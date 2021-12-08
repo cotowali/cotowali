@@ -14,7 +14,7 @@ import cotowali.parser
 import cotowali.checker
 import cotowali.ast
 import cotowali.emit
-import cotowali.emit.ush
+import cotowali.emit.hoshikudzu
 
 pub struct Compiler {
 pub mut:
@@ -37,7 +37,7 @@ pub fn (c &Compiler) compile() ?string {
 	return sb.str()
 }
 
-fn (c &Compiler) ush_compile_to(w io.Writer) ? {
+fn (c &Compiler) hoshikudzu_compile_to(w io.Writer) ? {
 	mut ctx := c.ctx
 	config := ctx.config
 
@@ -60,7 +60,7 @@ fn (c &Compiler) ush_compile_to(w io.Writer) ? {
 		return
 	}
 
-	mut e := ush.new_emitter(w)
+	mut e := hoshikudzu.new_emitter(w)
 	e.emit(sh: sh_code, pwsh: pwsh_code)
 }
 
@@ -68,8 +68,8 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	ctx := c.ctx
 	config := ctx.config
 
-	if config.backend == .ush {
-		c.ush_compile_to(w) ?
+	if config.backend == .hoshikudzu {
+		c.hoshikudzu_compile_to(w) ?
 		return
 	}
 
