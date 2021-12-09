@@ -28,9 +28,11 @@ fn test_join() {
   assert((abc() |> join('')) == 'abc')
   assert((abc() |> join(' ')) == 'a b c')
 }
+test_join()
 
 fn test_has() {
   assert(has('ls'))
-  assert(has('xxx'))
+  assert(!has('xxx'))
   assert(has('test_has'))
 }
+test_has()
