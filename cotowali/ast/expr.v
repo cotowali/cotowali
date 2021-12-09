@@ -38,6 +38,7 @@ pub type Expr = ArrayLiteral
 	| PrefixExpr
 	| SelectorExpr
 	| StringLiteral
+	| Typeof
 	| Var
 
 pub fn (expr Expr) children() []Node {
@@ -46,7 +47,7 @@ pub fn (expr Expr) children() []Node {
 			[]Node{}
 		}
 		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DecomposeExpr, IndexExpr, InfixExpr,
-		MapLiteral, ModuleItem, Nameof, ParenExpr, Pipeline, PrefixExpr, SelectorExpr {
+		MapLiteral, ModuleItem, Nameof, ParenExpr, Pipeline, PrefixExpr, SelectorExpr, Typeof {
 			expr.children()
 		}
 		StringLiteral {
@@ -90,6 +91,7 @@ fn (mut r Resolver) expr(expr Expr, opt ResolveExprOpt) {
 		PrefixExpr { r.prefix_expr(mut expr, opt) }
 		SelectorExpr { r.selector_expr(expr, opt) }
 		StringLiteral { r.string_literal(expr, opt) }
+		Typeof { r.typeof_(expr, opt) }
 		Var { r.var_(mut expr, opt) }
 	}
 }
@@ -117,6 +119,9 @@ pub fn (expr Expr) pos() Pos {
 			expr.pos()
 		}
 		SelectorExpr {
+			expr.pos()
+		}
+		Typeof {
 			expr.pos()
 		}
 		Pipeline {
@@ -239,6 +244,7 @@ pub fn (e Expr) typ() Type {
 		StringLiteral { e.typ() }
 		IntLiteral { builtin_type(.int) }
 		Nameof { e.typ() }
+		Typeof { e.typ() }
 		NullLiteral { builtin_type(.null) }
 		ModuleItem { e.typ() }
 		ParenExpr { e.typ() }
@@ -278,6 +284,9 @@ pub fn (e Expr) scope() &Scope {
 			e.scope()
 		}
 		SelectorExpr {
+			e.scope()
+		}
+		Typeof {
 			e.scope()
 		}
 		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, Empty, FloatLiteral,

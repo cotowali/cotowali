@@ -78,6 +78,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.SelectorExpr { e.selector_expr(expr, opt) }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
 		ast.StringLiteral { e.string_literal(expr, opt) }
+		ast.Typeof { e.typeof_(expr, opt) }
 		ast.Var { e.var_(expr, opt) }
 	}
 	e.write_if(opt.mode == .command && opt.discard_stdout, ' > /dev/null')
