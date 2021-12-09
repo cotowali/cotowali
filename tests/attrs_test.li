@@ -3,5 +3,5 @@ fn func_mangle() {}
 
 fn func() {}
 
-assert(has('func'))
-assert(!has('func_mangle'))
+assert(has_command('func'))
+assert(!has_command('func_mangle'))

@@ -30,9 +30,9 @@ fn test_join() {
 }
 test_join()
 
-fn test_has() {
-  assert(has('ls'))
-  assert(!has('xxx'))
-  assert(has('test_has'))
+fn test_has_command() {
+  assert(has_command('ls'))
+  assert(!has_command('xxx'))
+  assert(has_command('test_has_command'))
 }
-test_has()
+test_has_command()
