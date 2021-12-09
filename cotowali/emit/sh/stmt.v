@@ -31,7 +31,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 		ast.Expr { e.expr_stmt(stmt) }
 		ast.AssignStmt { e.assign_stmt(stmt) }
 		ast.DocComment { e.doc_comment(stmt) }
-		ast.EmptyStmt { e.writeln('') }
+		ast.Empty {}
 		ast.ForInStmt { e.for_in_stmt(stmt) }
 		ast.IfStmt { e.if_stmt(stmt) }
 		ast.InlineShell { e.inline_shell(stmt) }
@@ -96,7 +96,7 @@ fn (mut e Emitter) block(block ast.Block, opt BlockOpt) {
 	for stmt in block.stmts {
 		e.stmt(stmt)
 		match stmt {
-			ast.EmptyStmt, ast.DocComment {}
+			ast.Empty, ast.DocComment {}
 			else { blank = false }
 		}
 	}

@@ -61,13 +61,13 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 
 	p.process_compiler_directives()
 	if p.kind(0) == .eof {
-		return ast.EmptyStmt{}
+		return ast.Empty{}
 	}
 
 	attrs := p.parse_attrs()
 	mut stmt := p.try_parse_stmt() or {
 		p.skip_until_eol()
-		ast.EmptyStmt{}
+		ast.Empty{}
 	}
 	p.skip_eol()
 
@@ -399,8 +399,17 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 	}
 
 	p.consume_with_assert(.key_return)
+	p.skip_eol()
+
+	mut expr := ast.Expr(ast.Empty{
+		scope: p.scope
+		pos: p.pos(-1)
+	})
+	if p.kind(0) !in [.r_brace, .r_paren, .r_bracket] {
+		expr = p.parse_expr(.toplevel) ?
+	}
 	return ast.ReturnStmt{
-		expr: p.parse_expr(.toplevel) ?
+		expr: expr
 	}
 }
 

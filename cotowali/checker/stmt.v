@@ -50,7 +50,7 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 		ast.Break { c.break_(stmt) }
 		ast.Continue { c.continue_(stmt) }
 		ast.Expr { c.expr(stmt) }
-		ast.DocComment, ast.EmptyStmt {}
+		ast.DocComment, ast.Empty {}
 		ast.FnDecl { c.fn_decl(stmt) }
 		ast.ForInStmt { c.for_in_stmt(mut stmt) }
 		ast.IfStmt { c.if_stmt(stmt) }

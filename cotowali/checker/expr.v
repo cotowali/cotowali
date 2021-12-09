@@ -31,6 +31,7 @@ fn (mut c Checker) expr(expr Expr) {
 		ast.CallExpr { c.call_expr(expr) }
 		ast.DecomposeExpr { c.decompose_expr(expr) }
 		ast.DefaultValue {}
+		ast.Empty {}
 		ast.FloatLiteral {}
 		ast.IndexExpr { c.index_expr(expr) }
 		ast.InfixExpr { c.infix_expr(expr) }

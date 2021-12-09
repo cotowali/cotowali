@@ -16,7 +16,7 @@ pub type Stmt = AssertStmt
 	| Break
 	| Continue
 	| DocComment
-	| EmptyStmt
+	| Empty
 	| Expr
 	| FnDecl
 	| ForInStmt
@@ -30,7 +30,7 @@ pub type Stmt = AssertStmt
 
 pub fn (stmt Stmt) children() []Node {
 	return match stmt {
-		Break, Continue, DocComment, EmptyStmt, InlineShell {
+		Break, Continue, DocComment, Empty, InlineShell {
 			[]Node{}
 		}
 		AssertStmt, AssignStmt, Block, Expr, FnDecl, ForInStmt, IfStmt, ModuleDecl, RequireStmt,
@@ -54,7 +54,7 @@ fn (mut r Resolver) stmt(stmt Stmt) {
 		Break {}
 		Continue {}
 		DocComment { r.doc_comment(stmt) }
-		EmptyStmt { r.empty_stmt(stmt) }
+		Empty {}
 		Expr { r.expr(stmt) }
 		FnDecl { r.fn_decl(mut stmt) }
 		ForInStmt { r.for_in_stmt(mut stmt) }
@@ -232,17 +232,6 @@ pub fn (doc DocComment) lines() []string {
 }
 
 fn (mut r Resolver) doc_comment(stmt DocComment) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-}
-
-pub struct EmptyStmt {}
-
-fn (mut r Resolver) empty_stmt(stmt EmptyStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {

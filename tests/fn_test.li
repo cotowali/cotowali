@@ -56,3 +56,11 @@ fn test_varargs_array_method() {
   assert(varargs_join(':', 'a', 'b', 'c') == 'a:b:c')
 }
 test_varargs_array_method()
+
+fn test_return_void() {
+  if true {
+    return
+  }
+  assert(false)
+}
+test_return_void()

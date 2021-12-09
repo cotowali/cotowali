@@ -63,6 +63,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.CallExpr { e.call_expr(expr, opt) }
 		ast.DefaultValue { e.default_value(expr, opt) }
 		ast.DecomposeExpr { e.decompose_expr(expr, opt) }
+		ast.Empty {}
 		ast.FloatLiteral { e.float_literal(expr, opt) }
 		ast.IntLiteral { e.int_literal(expr, opt) }
 		ast.ParenExpr { e.paren_expr(expr, opt) }

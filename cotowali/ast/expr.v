@@ -24,6 +24,7 @@ pub type Expr = ArrayLiteral
 	| CallExpr
 	| DecomposeExpr
 	| DefaultValue
+	| Empty
 	| FloatLiteral
 	| IndexExpr
 	| InfixExpr
@@ -41,7 +42,7 @@ pub type Expr = ArrayLiteral
 
 pub fn (expr Expr) children() []Node {
 	return match expr {
-		DefaultValue, BoolLiteral, FloatLiteral, IntLiteral, NullLiteral, Var {
+		DefaultValue, Empty, BoolLiteral, FloatLiteral, IntLiteral, NullLiteral, Var {
 			[]Node{}
 		}
 		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DecomposeExpr, IndexExpr, InfixExpr,
@@ -75,6 +76,7 @@ fn (mut r Resolver) expr(expr Expr, opt ResolveExprOpt) {
 		CallExpr { r.call_expr(mut expr, opt) }
 		DecomposeExpr { r.decompose_expr(expr, opt) }
 		DefaultValue { r.default_value(expr, opt) }
+		Empty {}
 		FloatLiteral { r.float_literal(expr, opt) }
 		IndexExpr { r.index_expr(expr, opt) }
 		InfixExpr { r.infix_expr(expr, opt) }
@@ -99,7 +101,7 @@ pub fn (e InfixExpr) pos() Pos {
 pub fn (expr Expr) pos() Pos {
 	return match expr {
 		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DecomposeExpr, DefaultValue, ParenExpr,
-		IndexExpr, MapLiteral {
+		IndexExpr, MapLiteral, Empty {
 			expr.pos
 		}
 		InfixExpr {
@@ -232,6 +234,7 @@ pub fn (e Expr) typ() Type {
 		CallExpr { e.typ }
 		DecomposeExpr { e.expr.typ() }
 		DefaultValue { e.typ }
+		Empty { e.typ() }
 		FloatLiteral { builtin_type(.float) }
 		StringLiteral { e.typ() }
 		IntLiteral { builtin_type(.int) }
@@ -277,7 +280,7 @@ pub fn (e Expr) scope() &Scope {
 		SelectorExpr {
 			e.scope()
 		}
-		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, FloatLiteral,
+		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, Empty, FloatLiteral,
 		InfixExpr, IntLiteral, MapLiteral, NullLiteral, ParenExpr, Pipeline, PrefixExpr,
 		StringLiteral {
 			e.scope
@@ -377,6 +380,16 @@ fn (mut r Resolver) default_value(expr DefaultValue, opt ResolveExprOpt) {
 			r.trace_end()
 		}
 	}
+}
+
+pub struct Empty {
+pub:
+	scope &Scope = 0
+	pos   Pos
+}
+
+pub fn (e &Empty) typ() Type {
+	return builtin_type(.void)
 }
 
 pub struct InfixExpr {
