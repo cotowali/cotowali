@@ -35,6 +35,7 @@ pub enum TokenKind {
 	compiler_directive
 	colon
 	coloncolon
+	semicolon
 	comma
 	hash
 	dot

@@ -28,7 +28,7 @@ const (
 		`,`: tk(.comma)
 		`.`: tk(.dot)
 		`:`: tk(.colon)
-		`;`: tk(.eol)
+		`;`: tk(.semicolon)
 	}
 
 	table_for_two_chars_symbols = {

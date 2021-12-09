@@ -164,6 +164,18 @@ fn (mut p Parser) skip_eol() {
 	})
 }
 
+fn (mut p Parser) skip_until_eol_or_semicolon() {
+	p.consume_for(fn (t Token) bool {
+		return t.kind !in [.eol, .semicolon, .eof]
+	})
+}
+
+fn (mut p Parser) skip_eol_and_semicolon() {
+	p.consume_for(fn (t Token) bool {
+		return t.kind in [.eol, .semicolon]
+	})
+}
+
 fn (mut p Parser) check(kinds ...TokenKind) ?Token {
 	found := p.token(0)
 	return if found.kind !in kinds { p.unexpected_token_error(found, ...kinds) } else { found }

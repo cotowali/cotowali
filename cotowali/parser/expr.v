@@ -20,8 +20,8 @@ fn (mut p Parser) parse_expr_stmt(expr ast.Expr) ?ast.Stmt {
 	}
 
 	// eol or close blace
-	if !(p.brace_depth > 0 && p.kind(0) == .r_brace) {
-		p.consume_with_check(.eol, .eof) ?
+	if !(p.brace_depth > 0 && p.kind(0) == .r_brace) && p.kind(0) != .eof {
+		p.consume_with_check(.eol, .semicolon) ?
 	}
 
 	return expr

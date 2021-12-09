@@ -66,10 +66,10 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 
 	attrs := p.parse_attrs()
 	mut stmt := p.try_parse_stmt() or {
-		p.skip_until_eol()
+		p.skip_until_eol_or_semicolon()
 		ast.Empty{}
 	}
-	p.skip_eol()
+	p.skip_eol_and_semicolon()
 
 	if attrs.len > 0 {
 		if mut stmt is ast.FnDecl {
@@ -405,7 +405,7 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 		scope: p.scope
 		pos: p.pos(-1)
 	})
-	if p.kind(0) !in [.r_brace, .r_paren, .r_bracket] {
+	if p.kind(0) !in [.r_brace, .r_paren, .r_bracket, .semicolon] {
 		expr = p.parse_expr(.toplevel) ?
 	}
 	return ast.ReturnStmt{

@@ -53,8 +53,8 @@ fn (mut p Parser) restore_from_syntax_error() {
 	match p.restore_strategy {
 		.@none {}
 		.eol {
-			p.skip_until_eol()
-			p.skip_eol()
+			p.skip_until_eol_or_semicolon()
+			p.skip_eol_and_semicolon()
 		}
 	}
 }
