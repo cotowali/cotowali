@@ -1,0 +1,20 @@
+/// http.li
+///
+/// Copyright (c) 2021 zakuro <z@kuro.red>. All rights reserved.
+///
+/// This Source Code Form is subject to the terms of the Mozilla Public
+/// License, v. 2.0. If a copy of the MPL was not distributed with this
+/// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+module http {
+  fn get(url: string): string {
+    if has_command('curl') {
+      return @curl('-sSL', url)
+    } else if has_command('wget') {
+      return @wget('-O', '-', '--header', 'Accept: */*', '-q', url)
+    }
+
+    // report error
+    require_command('curl')
+  }
+}
