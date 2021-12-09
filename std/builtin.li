@@ -65,6 +65,15 @@ fn has_command(command: string): bool {
   return code == 0
 }
 
+fn require_command(command: string) {
+  if has_command(command) {
+    return
+  }
+
+  eprintln("$command: command not found")
+  exit(127)
+}
+
 fn ...string |> join(sep: string) |> string {
   var ret = ''
   var (i, s): (int, string)
