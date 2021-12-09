@@ -63,11 +63,6 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 		}
 	}
 
-	if expr.is_builtin_function_call(.@typeof) {
-		e.write("echo '${expr.args[0].type_symbol().name}'")
-		return
-	}
-
 	fn_info := expr.function_info()
 
 	e.write(e.ident_for(expr.func))
@@ -148,5 +143,9 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 }
 
 fn (mut e Emitter) nameof(expr ast.Nameof, opt ExprOpt) {
+	e.write_echo_if_command_then_write("'$expr.value()'", opt)
+}
+
+fn (mut e Emitter) typeof_(expr ast.Typeof, opt ExprOpt) {
 	e.write_echo_if_command_then_write("'$expr.value()'", opt)
 }

@@ -34,7 +34,6 @@ pub fn (t Type) is_number() bool {
 
 pub enum BuiltinFunctionKey {
 	echo = 1
-	@typeof
 	read
 }
 
@@ -89,7 +88,6 @@ pub fn (mut s Scope) register_builtin() {
 	fns := [
 		f_(.echo, params: [t_(.any)], ret: t_(.string)),
 		f_(.read, params: [t_(.any)], ret: t_(.bool)),
-		f_(.@typeof, params: [t_(.any)], ret: t_(.string)),
 	]
 	for f in fns {
 		typ := s.lookup_or_register_function_type(f.function_info).typ

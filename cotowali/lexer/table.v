@@ -75,6 +75,7 @@ const (
 		'return':   tk(.key_return)
 		'struct':   tk(.key_struct)
 		'type':     tk(.key_type)
+		'typeof':   tk(.key_typeof)
 		'use':      tk(.key_use)
 		'var':      tk(.key_var)
 		'while':    tk(.key_while)

@@ -401,7 +401,7 @@ fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
 	}
 }
 
-fn (mut p Parser) parse_nameof() ?ast.Nameof {
+fn (mut p Parser) parse_nameof_or_typeof() ?ast.Expr {
 	$if trace_parser ? {
 		p.trace_begin()
 		defer {
@@ -409,14 +409,28 @@ fn (mut p Parser) parse_nameof() ?ast.Nameof {
 		}
 	}
 
-	key := p.consume_with_assert(.key_nameof)
+	key := p.consume_with_assert(.key_nameof, .key_typeof)
 	p.consume_with_assert(.l_paren)
 	args := p.parse_call_args() ?
 	r_paren := p.consume_with_check(.r_paren) ?
 
-	return ast.Nameof{
-		scope: p.scope
-		args: args
-		pos: key.pos.merge(r_paren.pos)
+	match key.kind {
+		.key_nameof {
+			return ast.Nameof{
+				scope: p.scope
+				args: args
+				pos: key.pos.merge(r_paren.pos)
+			}
+		}
+		.key_typeof {
+			return ast.Typeof{
+				scope: p.scope
+				args: args
+				pos: key.pos.merge(r_paren.pos)
+			}
+		}
+		else {
+			panic(unreachable('invalid key'))
+		}
 	}
 }

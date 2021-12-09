@@ -28,6 +28,22 @@ fn (mut c Checker) nameof(expr ast.Nameof) {
 	}
 }
 
+fn (mut c Checker) typeof_(expr ast.Typeof) {
+	$if trace_checker ? {
+		c.trace_begin(@FN)
+		defer {
+			c.trace_end()
+		}
+	}
+
+	if expr.args.len != 1 {
+		c.error(args_count_mismatch(expected: 1, actual: expr.args.len), expr.pos())
+		return
+	}
+
+	c.expr(expr.args[0])
+}
+
 fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 	$if trace_checker ? {
 		c.trace_begin(@FN, stmt.sym.name, stmt.signature())

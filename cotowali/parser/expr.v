@@ -498,8 +498,8 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 				return p.parse_ident()
 			}
 		}
-		.key_nameof {
-			return ast.Expr(p.parse_nameof() ?)
+		.key_nameof, .key_typeof {
+			return p.parse_nameof_or_typeof()
 		}
 		.key_null {
 			p.consume()

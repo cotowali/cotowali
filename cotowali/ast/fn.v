@@ -368,3 +368,40 @@ fn (mut r Resolver) nameof(expr Nameof, opt ResolveExprOpt) {
 	}
 	r.expr(expr.args[0], opt)
 }
+
+pub struct Typeof {
+	scope &Scope
+pub:
+	args []Expr
+	pos  Pos
+}
+
+pub fn (expr &Typeof) typ() Type {
+	return builtin_type(.string)
+}
+
+pub fn (expr &Typeof) pos() Pos {
+	return expr.pos
+}
+
+pub fn (expr &Typeof) scope() &Scope {
+	return expr.scope
+}
+
+pub fn (expr &Typeof) children() []Node {
+	return expr.args.map(Node(it))
+}
+
+pub fn (expr &Typeof) value() string {
+	if expr.args.len != 1 {
+		panic(unreachable('Typeof.value: expr.args.len = $expr.args.len'))
+	}
+	return expr.args[0].type_symbol().name
+}
+
+fn (mut r Resolver) typeof_(expr Typeof, opt ResolveExprOpt) {
+	if expr.args.len != 1 {
+		return
+	}
+	r.expr(expr.args[0], opt)
+}

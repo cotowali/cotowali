@@ -45,6 +45,7 @@ fn (mut c Checker) expr(expr Expr) {
 		ast.PrefixExpr { c.prefix_expr(expr) }
 		ast.SelectorExpr { c.selector_expr(expr) }
 		ast.StringLiteral { c.string_literal(expr) }
+		ast.Typeof { c.typeof_(expr) }
 		ast.Var { c.var_(expr) }
 	}
 }
