@@ -1,0 +1,6 @@
+require 'http'
+
+fn test_request() {
+  assert (http::get('https://httpstat.us/200') == '200 OK')
+}
+test_request()
