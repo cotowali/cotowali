@@ -7,7 +7,7 @@ module errors
 
 import cotowali.source { Pos, Source }
 import cotowali.token { Token }
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 pub type ErrOrWarn = Err | Warn
 
@@ -19,7 +19,7 @@ pub fn (e ErrOrWarn) label() string {
 }
 
 pub fn (e ErrOrWarn) source() &Source {
-	return e.pos.source() or { panic(unreachable('source is nil')) }
+	return e.pos.source() or { li_panic(@FILE, @LINE, 'source is nil') }
 }
 
 // Err represents cotowali compile error

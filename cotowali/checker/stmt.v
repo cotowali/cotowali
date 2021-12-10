@@ -7,7 +7,8 @@ module checker
 
 import cotowali.ast
 import cotowali.symbols { builtin_type }
-import cotowali.messages { args_count_mismatch, unreachable }
+import cotowali.messages { args_count_mismatch }
+import cotowali.util { li_panic }
 import cotowali.source { Pos }
 
 fn (mut c Checker) attrs(attrs []ast.Attr) {
@@ -76,7 +77,7 @@ fn is_assignment_to_outside_of_fn(current_fn &ast.FnDecl, left ast.Expr) bool {
 			!isnil(current_fn)
 		}
 	}
-	panic(unreachable('invalid left'))
+	li_panic(@FILE, @LINE, 'invalid left')
 }
 
 fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {

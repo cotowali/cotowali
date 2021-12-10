@@ -7,6 +7,7 @@ module lexer
 
 import cotowali.token { Token }
 import cotowali.source { Char }
+import cotowali.util { li_panic }
 
 const (
 	sq = `'`
@@ -114,7 +115,7 @@ fn (mut lex Lexer) read_double_quote_string_literal_content(params StringLiteral
 				}
 			}
 			else {
-				panic('')
+				li_panic(@FN, @LINE, '')
 			}
 		}
 	}

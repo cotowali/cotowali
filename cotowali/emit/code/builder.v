@@ -7,6 +7,7 @@ module code
 
 import strings
 import cotowali.context { Context }
+import cotowali.util { li_panic }
 
 // magic number to represen tail of file
 pub const tail = -0xffff
@@ -144,7 +145,7 @@ pub fn (mut b Builder) write(data []byte) ?int {
 	if b.flags.has(.lock_cursor) {
 		pos := b.pos()
 		defer {
-			b.seek(pos) or { panic(err) }
+			b.seek(pos) or { li_panic(@FILE, @LINE, err) }
 		}
 	}
 	n += b.buf.write(data) ?

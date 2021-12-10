@@ -8,9 +8,8 @@ module lexer
 import cotowali.source { Char, CharClass, CharCond, Pos, Source }
 import cotowali.token { Token, TokenKind }
 import cotowali.context { Context }
-import cotowali.util { Unit, min }
+import cotowali.util { Unit, li_panic, min }
 import cotowali.errors { LexerErr, LexerWarn }
-import cotowali.messages { unreachable }
 import cotowali.debug { Tracer }
 
 enum LexicalContextKind {
@@ -242,7 +241,7 @@ fn (lex Lexer) @assert(cond CharCond) {
 	$if debug {
 		if !cond(lex.char(0)) {
 			dump(lex.char(0))
-			panic(unreachable(''))
+			li_panic(@FILE, @LINE, '')
 		}
 	}
 }

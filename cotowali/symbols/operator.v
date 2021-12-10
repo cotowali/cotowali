@@ -6,7 +6,8 @@
 module symbols
 
 import cotowali.token { Token, TokenKindClass }
-import cotowali.messages { already_defined, unreachable }
+import cotowali.messages { already_defined }
+import cotowali.util { li_panic }
 
 fn check_no_variadic(subject string, fn_info FunctionTypeInfo) ? {
 	if fn_info.variadic {
@@ -32,7 +33,7 @@ fn verify_op_signature(expected TokenKindClass, op Token, fn_info FunctionTypeIn
 		.infix_op { 'infix' }
 		.prefix_op { 'prefix' }
 		.postfix_op { 'postfix' }
-		else { panic(unreachable('not op kind')) }
+		else { li_panic(@FILE, @LINE, 'not op kind') }
 	} + ' operator'
 
 	if !op.kind.@is(expected) {
@@ -173,10 +174,10 @@ pub fn (mut s Scope) register_cast_function(f RegisterFnArgs, params CastFunctio
 
 	$if !prod {
 		if params.from != builtin_type(.placeholder) && params.from != fn_info.params[0] {
-			panic(unreachable('mismatch from.typ and params[0]'))
+			li_panic(@FILE, @LINE, 'mismatch from.typ and params[0]')
 		}
 		if params.to != builtin_type(.placeholder) && params.to != fn_info.ret {
-			panic(unreachable('mismatch to.typ and ret'))
+			li_panic(@FILE, @LINE, 'mismatch to.typ and ret')
 		}
 	}
 

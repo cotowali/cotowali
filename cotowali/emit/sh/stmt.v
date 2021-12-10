@@ -8,7 +8,7 @@ module sh
 import cotowali.ast { Stmt }
 import cotowali.symbols { TypeSymbol, builtin_type }
 import cotowali.token { Token }
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 fn (mut e Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {
@@ -160,7 +160,7 @@ fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
 			Token {
 				$if !prod {
 					if part.kind != .inline_shell_content_text {
-						panic(unreachable('want inline_shell_content_text. got $part.kind'))
+						li_panic(@FILE, @LINE, 'want inline_shell_content_text. got $part.kind')
 					}
 				}
 				e.write(part.text)

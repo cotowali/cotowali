@@ -8,7 +8,7 @@ module lexer
 import cotowali.token { Token }
 import cotowali.source { Char }
 import cotowali.errors { LexerErr, LexerWarn }
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 pub fn (mut lex Lexer) next() ?Token {
 	if lex.closed {
@@ -18,7 +18,7 @@ pub fn (mut lex Lexer) next() ?Token {
 		if err is LexerErr {
 			return err.token
 		}
-		panic(unreachable(err))
+		li_panic(@FILE, @LINE, err)
 	}
 }
 
@@ -159,7 +159,7 @@ pub fn (mut lex Lexer) do_read() ?Token {
 			else { lex.read_unknown() }
 		}
 	}
-	panic(unreachable(''))
+	li_panic(@FILE, @LINE, '')
 }
 
 fn (lex Lexer) is_eol() bool {

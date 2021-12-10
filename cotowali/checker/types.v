@@ -8,7 +8,7 @@ module checker
 import cotowali.ast { Expr }
 import cotowali.symbols { Type, TypeSymbol, builtin_type }
 import cotowali.source { Pos }
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 struct TypeCheckingConfig {
 	want       TypeSymbol [required]
@@ -53,8 +53,8 @@ fn can_promote(want TypeSymbol, got TypeSymbol) bool {
 }
 
 fn can_promote_tuple(want TypeSymbol, got TypeSymbol) bool {
-	want_tuple := want.tuple_info() or { panic(unreachable('not a tuple')) }
-	got_tuple := got.tuple_info() or { panic(unreachable('not a tuple')) }
+	want_tuple := want.tuple_info() or { li_panic(@FILE, @LINE, 'not a tuple') }
+	got_tuple := got.tuple_info() or { li_panic(@FILE, @LINE, 'not a tuple') }
 	if want_tuple.elements.len != got_tuple.elements.len {
 		return false
 	}
