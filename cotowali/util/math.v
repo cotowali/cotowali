@@ -17,7 +17,7 @@ pub fn const_max<T>() T {
 	} $else $if T is i64 {
 		return i64(math.max_i64)
 	}
-	panic('Invalid type')
+	li_panic(@FILE, @LINE, 'Invalid type')
 }
 
 pub fn const_min<T>() T {
@@ -30,7 +30,7 @@ pub fn const_min<T>() T {
 	} $else $if T is i64 {
 		return i64(math.min_i64)
 	}
-	panic('Invalid type')
+	li_panic(@FILE, @LINE, 'Invalid type')
 }
 
 pub fn abs<T>(v T) T {

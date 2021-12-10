@@ -15,8 +15,7 @@ import cotowali.symbols {
 	builtin_type,
 	new_placeholder_var,
 }
-import cotowali.messages { unreachable }
-import cotowali.util { nil_to_none, struct_name }
+import cotowali.util { li_panic, nil_to_none, struct_name }
 
 struct FnParamParsingInfo {
 mut:
@@ -142,7 +141,7 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 		match tail_tok.kind {
 			.comma {}
 			.r_paren { break }
-			else { panic(unreachable('')) }
+			else { li_panic(@FILE, @LINE, '') }
 		}
 	}
 }
@@ -430,7 +429,7 @@ fn (mut p Parser) parse_nameof_or_typeof() ?ast.Expr {
 			}
 		}
 		else {
-			panic(unreachable('invalid key'))
+			li_panic(@FILE, @LINE, 'invalid key')
 		}
 	}
 }

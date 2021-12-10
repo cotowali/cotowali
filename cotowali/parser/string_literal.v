@@ -7,7 +7,7 @@ module parser
 
 import cotowali.ast
 import cotowali.token { TokenKind }
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 fn (mut p Parser) parse_string_literal() ?ast.StringLiteral {
 	tok := p.check(.single_quote, .double_quote, .single_quote_with_r_prefix, .double_quote_with_r_prefix,
@@ -19,9 +19,9 @@ fn (mut p Parser) parse_string_literal() ?ast.StringLiteral {
 		.double_quote_with_at_prefix { return p.parse_double_quote_string_literal() }
 		.single_quote_with_r_prefix { return p.parse_raw_string_literal(.single_quote) }
 		.double_quote_with_r_prefix { return p.parse_raw_string_literal(.double_quote) }
-		else { panic(unreachable('expected quote')) }
+		else { li_panic(@FILE, @LINE, 'expected quote') }
 	}
-	panic(unreachable('expected quote'))
+	li_panic(@FILE, @LINE, 'expected quote')
 }
 
 fn (mut p Parser) parse_raw_string_literal(quote TokenKind) ?ast.StringLiteral {

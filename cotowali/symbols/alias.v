@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 pub struct AliasTypeInfo {
 pub:
@@ -26,7 +26,7 @@ pub fn (s Scope) lookup_alias_type(info AliasTypeInfo) ?&TypeSymbol {
 }
 
 pub fn (s Scope) must_lookup_alias_type(info AliasTypeInfo) &TypeSymbol {
-	return s.lookup_alias_type(info) or { panic(unreachable(err)) }
+	return s.lookup_alias_type(info) or { li_panic(@FILE, @LINE, err) }
 }
 
 pub fn (ts &TypeSymbol) resolved() &TypeSymbol {

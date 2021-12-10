@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 pub struct ArrayTypeInfo {
 pub:
@@ -37,5 +37,5 @@ pub fn (s Scope) lookup_array_type(info ArrayTypeInfo) ?&TypeSymbol {
 }
 
 pub fn (s Scope) must_lookup_array_type(info ArrayTypeInfo) &TypeSymbol {
-	return s.lookup_array_type(info) or { panic(unreachable(err)) }
+	return s.lookup_array_type(info) or { li_panic(@FILE, @LINE, err) }
 }

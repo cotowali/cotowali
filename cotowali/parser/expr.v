@@ -8,8 +8,8 @@ module parser
 import cotowali.token { TokenKind }
 import cotowali.ast
 import cotowali.symbols { builtin_type }
-import cotowali.messages { duplicated_key, invalid_key, unreachable }
-import cotowali.util { struct_name }
+import cotowali.messages { duplicated_key, invalid_key }
+import cotowali.util { li_panic, struct_name }
 
 fn (mut p Parser) parse_expr_stmt(expr ast.Expr) ?ast.Stmt {
 	$if trace_parser ? {
@@ -60,7 +60,7 @@ const expr_kind_to_op_table = (fn () map[ExprKind][]TokenKind {
 }())
 
 fn (e ExprKind) op_kinds() []TokenKind {
-	return parser.expr_kind_to_op_table[e] or { panic(unreachable('')) }
+	return parser.expr_kind_to_op_table[e] or { li_panic(@FILE, @LINE, '') }
 }
 
 fn (k ExprKind) outer() ExprKind {

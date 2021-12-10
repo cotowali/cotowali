@@ -6,7 +6,7 @@
 module sh
 
 import cotowali.ast { CallCommandExpr, CallExpr, FnDecl }
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
 	if opt.mode != .command {
@@ -133,7 +133,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			tmp_to_read := e.new_tmp_ident()
 			pipe_in_param_ident := e.ident_for(pipe_in_param)
 			if _ := pipe_in_param_ts.sequence_info() {
-				panic(unreachable('pipe in param cannot be sequence'))
+				li_panic(@FILE, @LINE, 'pipe in param cannot be sequence')
 			}
 			e.writeln('read $tmp_to_read')
 			e.assign(pipe_in_param_ident, '\$$tmp_to_read', pipe_in_param_ts)

@@ -6,7 +6,7 @@
 module sh
 
 import cotowali.ast
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 	ident := e.ident_for(expr)
@@ -50,7 +50,7 @@ fn (mut e Emitter) array_elements(name string) {
 
 fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
 	if expr.left.type_symbol().resolved().kind() != .array {
-		panic(unreachable('not a array operand'))
+		li_panic(@FILE, @LINE, 'not a array operand')
 	}
 
 	match expr.op.kind {
@@ -62,7 +62,7 @@ fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
 			}, expr, opt)
 		}
 		else {
-			panic(unreachable('invalid operator'))
+			li_panic(@FILE, @LINE, 'invalid operator')
 		}
 	}
 }

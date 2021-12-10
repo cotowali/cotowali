@@ -9,6 +9,7 @@ import io
 import cotowali.context { Context }
 import cotowali.emit.code
 import cotowali.ast { File, FnDecl }
+import cotowali.util { li_panic }
 
 enum CodeKind {
 	builtin
@@ -91,10 +92,10 @@ fn (mut e Emitter) seek(pos int) ? {
 
 fn (mut e Emitter) insert_at<T>(pos int, f fn (mut Emitter, T), v T) {
 	pos_save := e.code().pos()
-	e.seek(pos) or { panic(err) }
+	e.seek(pos) or { li_panic(@FILE, @LINE, err) }
 	f(mut e, v)
 	n := e.code().pos() - pos
-	e.seek(pos_save + n) or { panic(err) }
+	e.seek(pos_save + n) or { li_panic(@FILE, @LINE, err) }
 }
 
 fn (mut e Emitter) lock_cursor() {
@@ -111,7 +112,7 @@ fn (mut e Emitter) unlock_cursor() {
 fn (mut e Emitter) with_lock_cursor<T>(f fn (mut Emitter, T), v T) {
 	distance_from_tail := e.code().len() - e.code().pos()
 	defer {
-		e.seek(e.code().len() - distance_from_tail) or { panic(err) }
+		e.seek(e.code().len() - distance_from_tail) or { li_panic(@FILE, @LINE, err) }
 	}
 
 	e.lock_cursor()
@@ -124,13 +125,13 @@ fn (mut e Emitter) with_lock_cursor<T>(f fn (mut Emitter, T), v T) {
 [inline]
 fn (mut e Emitter) writeln(s string) {
 	mut code := e.code()
-	code.writeln(s) or { panic(err) }
+	code.writeln(s) or { li_panic(@FILE, @LINE, err) }
 }
 
 [inline]
 fn (mut e Emitter) write(s string) {
 	mut code := e.code()
-	code.write_string(s) or { panic(err) }
+	code.write_string(s) or { li_panic(@FILE, @LINE, err) }
 }
 
 fn (mut e Emitter) write_if(cond bool, s string) {

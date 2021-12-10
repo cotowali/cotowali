@@ -6,8 +6,8 @@
 module symbols
 
 import cotowali.source { Pos }
-import cotowali.messages { already_defined, unreachable }
-import cotowali.util { nil_to_none }
+import cotowali.messages { already_defined }
+import cotowali.util { li_panic, nil_to_none }
 
 pub type Type = u64
 
@@ -47,7 +47,7 @@ pub fn (v TypeSymbol) scope() ?&Scope {
 }
 
 fn (v TypeSymbol) must_scope() &Scope {
-	return v.scope() or { panic(unreachable('socpe not set')) }
+	return v.scope() or { li_panic(@FILE, @LINE, 'socpe not set') }
 }
 
 fn (v TypeSymbol) scope_str() string {
@@ -113,7 +113,7 @@ pub fn (v TypeSymbol) str() string {
 
 fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
 	if ts.typ != 0 && ts.typ in s.type_symbols {
-		panic(unreachable('$ts.typ is exists'))
+		li_panic(@FILE, @LINE, '$ts.typ is exists')
 	}
 	if ts.name.len > 0 && ts.name in s.name_to_type {
 		return error(already_defined(.typ, ts.name))
@@ -137,11 +137,11 @@ pub fn (mut s Scope) register_type(ts TypeSymbol) ?&TypeSymbol {
 
 [inline]
 fn (mut s Scope) must_register_type(ts TypeSymbol) &TypeSymbol {
-	return s.register_type(ts) or { panic(unreachable(err)) }
+	return s.register_type(ts) or { li_panic(@FILE, @LINE, err) }
 }
 
 fn (mut s Scope) must_register_builtin_type(ts TypeSymbol) &TypeSymbol {
-	s.check_before_register_type(ts) or { panic(err.msg) }
+	s.check_before_register_type(ts) or { li_panic(@FILE, @LINE, err) }
 	new_ts := &TypeSymbol{
 		...ts
 		scope: s
@@ -179,7 +179,7 @@ pub fn (s &Scope) lookup_type(key TypeOrName) ?&TypeSymbol {
 }
 
 pub fn (s &Scope) must_lookup_type(key TypeOrName) &TypeSymbol {
-	return s.lookup_type(key) or { panic(unreachable(err)) }
+	return s.lookup_type(key) or { li_panic(@FILE, @LINE, err) }
 }
 
 pub fn (mut s Scope) lookup_or_register_type(ts TypeSymbol) &TypeSymbol {
@@ -207,7 +207,7 @@ pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) ?&Var {
 		scope: ts.must_scope()
 	}
 	if name == '' {
-		panic(unreachable('method name is empty'))
+		li_panic(@FILE, @LINE, 'method name is empty')
 	}
 	if name in ts.methods {
 		return error(already_defined(.method, '$v.name'))

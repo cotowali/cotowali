@@ -9,6 +9,9 @@ on:
   schedule:
     - cron: '0 0 * * *'
 
+env:
+  COTOWALI_HASH: "${{ github.sha }}"
+
 jobs:
   format:
     runs-on: ubuntu-latest
