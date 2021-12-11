@@ -8,18 +8,34 @@
 
 module math {
   fn pi(): float {
+#if pwsh
+    pwsh { return [math]::pi }
+#else
     return @awk('BEGIN{ printf "%g", 4 * atan2(1, 1) }') as float
+#endif
   }
 
   fn sin(v: float): float {
+#if pwsh
+    pwsh { return [math]::sin(%v) }
+#else
     return (v |> @awk('{printf "%g", sin($1)}')) as float
+#endif
   }
 
   fn cos(v: float): float {
+#if pwsh
+    pwsh { return [math]::cos(%v) }
+#else
     return (v |> @awk('{printf "%g", cos($1)}')) as float
+#endif
   }
 
   fn sqrt(v: float): float {
+#if pwsh
+    pwsh { return [math]::sqrt(%v) }
+#else
     return (v |> @awk('{printf "%g", sqrt($1)}')) as float
+#endif
   }
 }
