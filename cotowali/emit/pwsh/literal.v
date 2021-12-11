@@ -44,5 +44,14 @@ fn (mut e Emitter) null_literal(expr ast.NullLiteral, opt ExprOpt) {
 }
 
 fn (mut e Emitter) map_literal(expr ast.MapLiteral, opt ExprOpt) {
-	panic('unimplemented')
+	e.writeln('@{')
+	e.indent()
+	for entry in expr.entries {
+		e.expr(entry.key)
+		e.write(' = ')
+		e.expr(entry.value)
+		e.writeln(';')
+	}
+	e.unindent()
+	e.write('}')
 }
