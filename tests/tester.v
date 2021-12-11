@@ -13,42 +13,15 @@ import runtime
 // -- config --
 
 const (
-	skip_list       = ['raytracing.li', 'welcome.li']
-	pwsh_test_files = [
-		'assert.li',
-		'assign_test.li',
-		'attrs_test.li',
-		'bool_test.li',
-		'cast_test.li',
-		'comments.li',
-		'comments_only.li',
-		'complex.li',
-		'empty.li',
-		'float_test.li',
-		'fn_test.li',
-		'hello.li',
-		'if_test.li',
-		'inline_shell_test.li',
-		'int_test.li',
-		'namespace_test.li',
-		'pipe_test.li',
-		'redirect_test.li',
-		'semicolon_test.li',
-		'test_runner_test.li',
-		'tuple_test.li',
-		'typeof_test.li',
-		'nameof_test.li',
-		'var_test.li',
-		'while_test.li',
-		'std/print.li',
-		'std/string_test.li',
-		'std_test.li',
-		'expr/array_test.li',
-		'expr/call_command_test.li',
-		'expr/operator_overload_test.li',
-		'expr/string_expr_substitution.li',
-		'expr/string_test.li',
-		'expr/tuple_test.li',
+	skip_list      = ['raytracing.li', 'welcome.li']
+	pwsh_skip_list = [
+		'readme_example.li',
+		'posix_test.li',
+		'math_test.li',
+		'inline_shell.err.li',
+		'map_test.li',
+		'method_test.li',
+		'glob_test.li',
 	]
 )
 
@@ -106,12 +79,10 @@ fn out_path(f string) string {
 }
 
 fn is_target_file(s string, opt TestOption) bool {
-	for skip in skip_list {
-		if s.ends_with(skip) {
-			return false
-		}
+	if skip_list.any(s.ends_with(it)) {
+		return false
 	}
-	if opt.pwsh && pwsh_test_files.all(!s.ends_with(it)) {
+	if opt.pwsh && pwsh_skip_list.any(s.ends_with(it)) {
 		return false
 	}
 	return s.ends_with(suffix(.li)) && !is_mod_file(s)
