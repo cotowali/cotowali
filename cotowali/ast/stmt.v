@@ -17,13 +17,13 @@ pub type Stmt = AssertStmt
 	| Break
 	| Continue
 	| DocComment
-	| EmptyStmt
+	| Empty
 	| Expr
 	| FnDecl
 	| ForInStmt
 	| IfStmt
 	| InlineShell
-	| NamespaceDecl
+	| ModuleDecl
 	| RequireStmt
 	| ReturnStmt
 	| WhileStmt
@@ -31,10 +31,10 @@ pub type Stmt = AssertStmt
 
 pub fn (stmt Stmt) children() []Node {
 	return match stmt {
-		Break, Continue, DocComment, EmptyStmt, InlineShell {
+		Break, Continue, DocComment, Empty, InlineShell {
 			[]Node{}
 		}
-		AssertStmt, AssignStmt, Block, Expr, FnDecl, ForInStmt, IfStmt, NamespaceDecl, RequireStmt,
+		AssertStmt, AssignStmt, Block, Expr, FnDecl, ForInStmt, IfStmt, ModuleDecl, RequireStmt,
 		ReturnStmt, WhileStmt, YieldStmt {
 			stmt.children()
 		}
@@ -55,13 +55,13 @@ fn (mut r Resolver) stmt(stmt Stmt) {
 		Break {}
 		Continue {}
 		DocComment { r.doc_comment(stmt) }
-		EmptyStmt { r.empty_stmt(stmt) }
+		Empty {}
 		Expr { r.expr(stmt) }
-		FnDecl { r.fn_decl(stmt) }
+		FnDecl { r.fn_decl(mut stmt) }
 		ForInStmt { r.for_in_stmt(mut stmt) }
 		IfStmt { r.if_stmt(stmt) }
 		InlineShell { r.inline_shell(mut stmt) }
-		NamespaceDecl { r.namespace_decl(stmt) }
+		ModuleDecl { r.module_decl(stmt) }
 		RequireStmt { r.require_stmt(stmt) }
 		ReturnStmt { r.return_stmt(stmt) }
 		WhileStmt { r.while_stmt(stmt) }
@@ -257,17 +257,6 @@ fn (mut r Resolver) doc_comment(stmt DocComment) {
 	}
 }
 
-pub struct EmptyStmt {}
-
-fn (mut r Resolver) empty_stmt(stmt EmptyStmt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-}
-
 pub struct ForInStmt {
 pub mut:
 	// for var in expr
@@ -375,17 +364,17 @@ fn (mut r Resolver) inline_shell(mut stmt InlineShell) {
 	}
 }
 
-pub struct NamespaceDecl {
+pub struct ModuleDecl {
 pub mut:
 	block Block
 }
 
 [inline]
-pub fn (ns &NamespaceDecl) children() []Node {
-	return [Node(Stmt(ns.block))]
+pub fn (mod &ModuleDecl) children() []Node {
+	return [Node(Stmt(mod.block))]
 }
 
-fn (mut r Resolver) namespace_decl(ns NamespaceDecl) {
+fn (mut r Resolver) module_decl(mod ModuleDecl) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -393,7 +382,7 @@ fn (mut r Resolver) namespace_decl(ns NamespaceDecl) {
 		}
 	}
 
-	r.block(ns.block)
+	r.block(mod.block)
 }
 
 pub struct RequireStmtProps {

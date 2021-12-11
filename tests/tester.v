@@ -13,7 +13,7 @@ import runtime
 // -- config --
 
 const (
-	skip_list       = ['raytracing.li']
+	skip_list       = ['raytracing.li', 'welcome.li']
 	pwsh_test_files = [
 		'assert.li',
 		'assign_test.li',

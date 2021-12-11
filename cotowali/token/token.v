@@ -21,12 +21,14 @@ pub enum TokenKind {
 	key_if
 	key_in
 	key_map
-	key_namespace
+	key_module
 	key_null
+	key_nameof
 	key_require
 	key_return
 	key_struct
 	key_type
+	key_typeof
 	key_use
 	key_var
 	key_while
@@ -34,6 +36,7 @@ pub enum TokenKind {
 	compiler_directive
 	colon
 	coloncolon
+	semicolon
 	comma
 	hash
 	dot
@@ -54,6 +57,7 @@ pub enum TokenKind {
 	inline_shell_content_expr_substitution_open
 	inline_shell_content_expr_substitution_close
 	string_literal_content_text
+	string_literal_content_hex
 	string_literal_content_glob
 	string_literal_content_var
 	string_literal_content_expr_open
@@ -94,8 +98,8 @@ pub enum TokenKind {
 	ge
 	lt
 	le
-	plus_plus
-	minus_minus
+	plusplus
+	minusminus
 	eol
 	eof
 }
@@ -161,8 +165,8 @@ pub fn token_kinds(class TokenKindClass) []TokenKind {
 		}
 		.postfix_op {
 			kinds([
-				.plus_plus,
-				.minus_minus,
+				.plusplus,
+				.minusminus,
 			])
 		}
 		.infix_op {
@@ -203,10 +207,13 @@ pub fn token_kinds(class TokenKindClass) []TokenKind {
 				.key_if,
 				.key_in,
 				.key_map,
+				.key_module,
+				.key_nameof,
 				.key_require,
 				.key_return,
 				.key_struct,
 				.key_type,
+				.key_typeof,
 				.key_use,
 				.key_var,
 				.key_while,

@@ -7,8 +7,8 @@ module source
 
 import os
 import net.urllib { URL }
-import cotowali.messages { unreachable }
 import cotowali.util.checksum
+import cotowali.util { li_panic }
 
 pub enum SourceScheme {
 	local
@@ -51,10 +51,10 @@ pub fn (s &Source) checksum(algo checksum.Algorithm) string {
 pub fn (s &Source) url() ?URL {
 	match s.scheme {
 		.http {
-			return urllib.parse('http://$s.path') or { panic(unreachable(err.msg)) }
+			return urllib.parse('http://$s.path') or { li_panic(@FILE, @LINE, err.msg) }
 		}
 		.https {
-			return urllib.parse('https://$s.path') or { panic(unreachable(err.msg)) }
+			return urllib.parse('https://$s.path') or { li_panic(@FILE, @LINE, err.msg) }
 		}
 		.github {
 			return URL{

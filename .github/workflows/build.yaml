@@ -4,6 +4,9 @@ on:
   push:
     branches: [ main ]
 
+env:
+  COTOWALI_HASH: "${{ github.sha }}"
+
 jobs:
   build-linux:
     runs-on: ubuntu-latest
@@ -24,9 +27,15 @@ jobs:
     runs-on: macos-latest
     env:
       VFLAGS: "-cc clang -prod"
+      # https://github.com/vlang/v/blob/525791fa3a4643ae9b04570f4b18056816bfda96/.github/workflows/ci.yml#L263
+      PKG_CONFIG_PATH: /usr/local/opt/openssl@3/lib/pkgconfig
     steps:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
+      # https://github.com/vlang/v/blob/525791fa3a4643ae9b04570f4b18056816bfda96/.github/workflows/ci.yml#L273-L274
+      - run: |
+          brew install openssl
+          export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/opt/openssl/lib/"
       - run: z ci setup-v
       - run: z build
       - run: z dist

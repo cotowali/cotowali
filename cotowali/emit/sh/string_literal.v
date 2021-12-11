@@ -7,10 +7,10 @@ module sh
 
 import cotowali.ast { Expr, StringLiteral }
 import cotowali.token { Token }
-import cotowali.messages { unreachable }
 import cotowali.symbols { builtin_type }
+import cotowali.util { li_panic, to_octal }
 
-const invalid_string_literal = unreachable('invalid string literal')
+const invalid_string_literal = 'invalid string literal'
 
 fn (mut e Emitter) single_quote_string_literal_value(expr StringLiteral) {
 	for v in expr.contents {
@@ -29,11 +29,11 @@ fn (mut e Emitter) single_quote_string_literal_value(expr StringLiteral) {
 					e.write(v.text) // @'a*b' -> 'a'*'b'
 				}
 				else {
-					panic(sh.invalid_string_literal)
+					li_panic(@LINE, @FN, sh.invalid_string_literal)
 				}
 			}
 		} else {
-			panic(sh.invalid_string_literal)
+			li_panic(@LINE, @FN, sh.invalid_string_literal)
 		}
 	}
 }
@@ -51,6 +51,11 @@ fn (mut e Emitter) double_quote_string_literal_value(expr StringLiteral) {
 					}
 					.string_literal_content_glob {
 						e.write('"$v.text"') // close quote, write glob, open quote. "a*b" -> "a"*"b"
+					}
+					.string_literal_content_hex {
+						hex := '0' + v.text[1..] // tirm \xff -> 0xff
+						octal := to_octal(hex.int())
+						e.write("\$(printf '\\$octal')") // printf '\0ddd' is octal (0xXX is not posix compliant)
 					}
 					else {
 						e.write(v.text)
@@ -71,7 +76,7 @@ fn (mut e Emitter) single_quote_raw_string_literal_value(expr StringLiteral) {
 	if content is Token {
 		e.write("'$content.text'")
 	} else {
-		panic(sh.invalid_string_literal)
+		li_panic(@LINE, @FN, sh.invalid_string_literal)
 	}
 }
 
@@ -81,7 +86,7 @@ fn (mut e Emitter) double_quote_raw_string_literal_value(expr StringLiteral) {
 		text := content.text.replace("'", r"'\''") // r"a'b" -> 'a'\''b'
 		e.write("'$text'")
 	} else {
-		panic(sh.invalid_string_literal)
+		li_panic(@LINE, @FN, sh.invalid_string_literal)
 	}
 }
 
@@ -91,7 +96,7 @@ fn (mut e Emitter) string_literal_value(expr StringLiteral) {
 		.double_quote, .double_quote_with_at_prefix { e.double_quote_string_literal_value(expr) }
 		.single_quote_with_r_prefix { e.single_quote_raw_string_literal_value(expr) }
 		.double_quote_with_r_prefix { e.double_quote_raw_string_literal_value(expr) }
-		else { panic(unreachable('not a string')) }
+		else { li_panic(@FILE, @LINE, 'not a string') }
 	}
 }
 
@@ -103,9 +108,11 @@ fn (mut e Emitter) string_literal(expr StringLiteral, opt ExprOpt) {
 		return
 	}
 
-	if expr.is_raw() {
-		if expr.contents.len > 1 {
-			panic(unreachable('invalid raw string'))
+	$if !prod {
+		if expr.is_raw() {
+			if expr.contents.len > 1 {
+				li_panic(@FILE, @LINE, 'invalid raw string')
+			}
 		}
 	}
 

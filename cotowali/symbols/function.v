@@ -5,8 +5,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-import cotowali.messages { unreachable }
 import strings
+import cotowali.util { li_panic }
 
 pub struct RegisterFnArgs {
 	Var
@@ -55,7 +55,7 @@ fn (f &FunctionTypeInfo) signature(s &Scope) string {
 		if i < f.params.len - 1 {
 			sb.write_string('$ts.name, ')
 		} else if f.variadic {
-			array := ts.array_info() or { panic(unreachable('')) }
+			array := ts.array_info() or { li_panic(@FILE, @LINE, '') }
 			sb.write_string('...${s.must_lookup_type(array.elem).name}')
 		} else {
 			sb.write_string('$ts.name')
@@ -71,11 +71,8 @@ fn (f &FunctionTypeInfo) signature(s &Scope) string {
 }
 
 pub fn (t TypeSymbol) signature() ?string {
-	return if t.info is FunctionTypeInfo {
-		t.info.signature(t.scope() or { panic(unreachable(err)) })
-	} else {
-		none
-	}
+	return if t.info is FunctionTypeInfo { t.info.signature(t.scope() or {
+			li_panic(@FILE, @LINE, err)}) } else { none }
 }
 
 pub fn (mut s Scope) lookup_or_register_function_type(info FunctionTypeInfo) &TypeSymbol {
@@ -99,5 +96,5 @@ pub fn (mut s Scope) register_function(f RegisterFnArgs) ?&Var {
 }
 
 fn (mut s Scope) must_register_function(f RegisterFnArgs) &Var {
-	return s.register_function(f) or { panic(unreachable(err)) }
+	return s.register_function(f) or { li_panic(@FILE, @LINE, err) }
 }

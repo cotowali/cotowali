@@ -10,8 +10,8 @@ import cli { Command, Flag }
 import v.vmod
 import cotowali.config { backend_from_str, default_feature }
 import cotowali.context { Context, new_context }
-import cotowali.messages { unreachable }
 import cotowali.shell { new_shell }
+import cotowali.util { li_panic }
 
 const (
 	backend_flag = Flag{
@@ -31,7 +31,7 @@ const (
 )
 
 fn new_ctx_from_cmd(cmd Command) &Context {
-	backend_str := cmd.flags.get_string(backend_flag.name) or { panic(unreachable('')) }
+	backend_str := cmd.flags.get_string(backend_flag.name) or { li_panic(@FILE, @LINE, '') }
 	backend := backend_from_str(backend_str) or {
 		eprintln(err)
 		exit(1)
@@ -43,7 +43,7 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 }
 
 fn execute(cmd Command) ? {
-	sh := cmd.flags.get_string(sh_flag.name) or { panic(unreachable('')) }
+	sh := cmd.flags.get_string(sh_flag.name) or { li_panic(@FILE, @LINE, '') }
 	mut lish := new_shell(sh, new_ctx_from_cmd(cmd)) or {
 		eprintln(err.msg)
 		exit(1)

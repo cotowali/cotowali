@@ -7,6 +7,8 @@ assert((1 == 1) != (1 == 0))
 assert(!false)
 assert(!!true)
 assert(!(1 == 0))
+assert(true && true || false)
+assert(true && false || true)
 
 assert(
   1

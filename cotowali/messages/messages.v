@@ -6,6 +6,7 @@
 module messages
 
 import cotowali.util.checksum
+import cotowali.util { Either }
 
 [params]
 pub struct Expects<T> {
@@ -23,7 +24,7 @@ pub enum SymbolKind {
 	variable
 	function
 	method
-	namespace
+	mod
 	operator
 }
 
@@ -33,14 +34,9 @@ pub fn (k SymbolKind) str() string {
 		.variable { 'variable' }
 		.function { 'function' }
 		.method { 'method' }
-		.namespace { 'namespace' }
+		.mod { 'module' }
 		.operator { 'operator' }
 	}
-}
-
-[inline]
-pub fn unreachable<T>(err T) string {
-	return 'unreachable - This is a compiler bug (err: $err).'
 }
 
 [inline]
@@ -74,6 +70,14 @@ pub fn invalid_key(key string, v Expects<string>) string {
 [inline]
 pub fn duplicated_key(key string) string {
 	return 'duplicated key `$key`'
+}
+
+pub fn args_count_mismatch(v ExpectedActual<Either<string, int>, int>) string {
+	expected := match v.expected {
+		string { v.expected }
+		int { v.expected.str() }
+	}
+	return 'expected $expected arguments, but got $v.actual'
 }
 
 [inline]

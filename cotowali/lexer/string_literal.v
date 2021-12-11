@@ -7,6 +7,7 @@ module lexer
 
 import cotowali.token { Token }
 import cotowali.source { Char }
+import cotowali.util { li_panic }
 
 const (
 	sq = `'`
@@ -94,15 +95,28 @@ fn (mut lex Lexer) read_double_quote_string_literal_content(params StringLiteral
 	}
 
 	if lex.byte() == lexer.bs {
-		next := lex.char(1).byte()
-		if next == lexer.bs {
-			return lex.new_token_with_consume_n(2, .string_literal_content_escaped_back_slash)
-		} else if next == `$` {
-			return lex.new_token_with_consume_n(2, .string_literal_content_escaped_dollar)
-		} else if next == lexer.dq {
-			return lex.new_token_with_consume_n(2, .string_literal_content_escaped_double_quote)
-		} else if next == `n` {
-			return lex.new_token_with_consume_n(2, .string_literal_content_escaped_newline)
+		match lex.char(1).byte() {
+			lexer.bs {
+				return lex.new_token_with_consume_n(2, .string_literal_content_escaped_back_slash)
+			}
+			`$` {
+				return lex.new_token_with_consume_n(2, .string_literal_content_escaped_dollar)
+			}
+			lexer.dq {
+				return lex.new_token_with_consume_n(2, .string_literal_content_escaped_double_quote)
+			}
+			`n` {
+				return lex.new_token_with_consume_n(2, .string_literal_content_escaped_newline)
+			}
+			`x` {
+				lex.consume_n(2)
+				if lex.char(0).@is(.hex_digit) && lex.char(1).@is(.hex_digit) {
+					return lex.new_token_with_consume_n(2, .string_literal_content_hex)
+				}
+			}
+			else {
+				li_panic(@FN, @LINE, '')
+			}
 		}
 	}
 

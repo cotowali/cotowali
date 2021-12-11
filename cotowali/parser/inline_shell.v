@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module parser
 
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 import cotowali.ast
 
 fn (mut p Parser) parse_inline_shell() ?ast.InlineShell {
@@ -36,7 +36,7 @@ fn (mut p Parser) parse_inline_shell() ?ast.InlineShell {
 				}
 			}
 			else {
-				unreachable('invalid token `$tok.kind` in inline shell')
+				li_panic(@FILE, @LINE, 'invalid token `$tok.kind` in inline shell')
 			}
 		}
 	}

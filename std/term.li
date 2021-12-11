@@ -1,0 +1,311 @@
+/// term.li
+///
+/// Copyright (c) 2021 zakuro <z@kuro.red>. All rights reserved.
+///
+/// This Source Code Form is subject to the terms of the Mozilla Public
+/// License, v. 2.0. If a copy of the MPL was not distributed with this
+/// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+module term {
+  type Text = string
+
+  fn text(s: string): Text {
+    return s
+  }
+
+  fn format(text: string, open: string, close: string): Text {
+    return "\x1b[${open}m${text}\x1b[${close}m"
+  }
+  fn (text: Text) format(open: string, close: string): Text {
+    return format(text, open, close)
+  }
+
+  fn reset(msg: string): Text {
+    return format(msg, '0', '0')
+  }
+  fn (text: Text) reset(): Text {
+    return reset(text)
+  }
+
+  fn bold(msg: string): Text {
+    return format(msg, '1', '22')
+  }
+  fn (text: Text) bold(): Text {
+    return bold(text)
+  }
+
+  fn dim(msg: string): Text {
+    return format(msg, '2', '22')
+  }
+  fn (text: Text) dim(): Text {
+    return dim(text)
+  }
+
+  fn italic(msg: string): Text {
+    return format(msg, '3', '23')
+  }
+  fn (text: Text) italic(): Text {
+    return italic(text)
+  }
+
+  fn underline(msg: string): Text {
+    return format(msg, '4', '24')
+  }
+  fn (text: Text) underline(): Text {
+    return underline(text)
+  }
+
+  fn inverse(msg: string): Text {
+    return format(msg, '7', '27')
+  }
+  fn (text: Text) inverse(): Text {
+    return inverse(text)
+  }
+
+  fn hidden(msg: string): Text {
+    return format(msg, '8', '28')
+  }
+  fn (text: Text) hidden(): Text {
+    return hidden(text)
+  }
+
+  fn strikethrough(msg: string): Text {
+    return format(msg, '9', '29')
+  }
+
+  fn (text: Text) strikethrough(): Text {
+    return strikethrough(text)
+  }
+
+  fn black(msg: string): Text {
+    return format(msg, '30', '39')
+  }
+  fn (text: Text) black(): Text {
+    return black(text)
+  }
+
+  fn red(msg: string): Text {
+    return format(msg, '31', '39')
+  }
+  fn (text: Text) red(): Text {
+    return red(text)
+  }
+
+  fn green(msg: string): Text {
+    return format(msg, '32', '39')
+  }
+  fn (text: Text) green(): Text {
+    return green(text)
+  }
+
+  fn yellow(msg: string): Text {
+    return format(msg, '33', '39')
+  }
+  fn (text: Text) yellow(): Text {
+    return yellow(text)
+  }
+
+  fn blue(msg: string): Text {
+    return format(msg, '34', '39')
+  }
+  fn (text: Text) blue(): Text {
+    return blue(text)
+  }
+
+  fn magenta(msg: string): Text {
+    return format(msg, '35', '39')
+  }
+  fn (text: Text) magenta(): Text {
+    return magenta(text)
+  }
+
+  fn cyan(msg: string): Text {
+    return format(msg, '36', '39')
+  }
+  fn (text: Text) cyan(): Text {
+    return cyan(text)
+  }
+
+  fn white(msg: string): Text {
+    return format(msg, '37', '39')
+  }
+  fn (text: Text) white(): Text {
+    return white(text)
+  }
+
+  fn bg_black(msg: string): Text {
+    return format(msg, '40', '49')
+  }
+  fn (text: Text) bg_black(): Text {
+    return bg_black(text)
+  }
+
+  fn bg_red(msg: string): Text {
+    return format(msg, '41', '49')
+  }
+  fn (text: Text) bg_red(): Text {
+    return bg_red(text)
+  }
+
+  fn bg_green(msg: string): Text {
+    return format(msg, '42', '49')
+  }
+  fn (text: Text) bg_green(): Text {
+    return bg_green(text)
+  }
+
+  fn bg_yellow(msg: string): Text {
+    return format(msg, '43', '49')
+  }
+  fn (text: Text) bg_yellow(): Text {
+    return bg_yellow(text)
+  }
+
+  fn bg_blue(msg: string): Text {
+    return format(msg, '44', '49')
+  }
+  fn (text: Text) bg_blue(): Text {
+    return bg_blue(text)
+  }
+
+  fn bg_magenta(msg: string): Text {
+    return format(msg, '45', '49')
+  }
+  fn (text: Text) bg_magenta(): Text {
+    return bg_magenta(text)
+  }
+
+  fn bg_cyan(msg: string): Text {
+    return format(msg, '46', '49')
+  }
+  fn (text: Text) bg_cyan(): Text {
+    return bg_cyan(text)
+  }
+
+  fn bg_white(msg: string): Text {
+    return format(msg, '47', '49')
+  }
+  fn (text: Text) bg_white(): Text {
+    return bg_white(text)
+  }
+
+  fn gray(msg: string): Text {
+    return bright_black(msg)
+  }
+  fn (text: Text) gray(): Text {
+    return gray(text)
+  }
+
+  fn bright_black(msg: string): Text {
+    return format(msg, '90', '39')
+  }
+
+  fn (text: Text) bright_black(): Text {
+    return bright_black(text)
+  }
+
+  fn bright_red(msg: string): Text {
+    return format(msg, '91', '39')
+  }
+  fn (text: Text) bright_red(): Text {
+    return bright_red(text)
+  }
+
+  fn bright_green(msg: string): Text {
+    return format(msg, '92', '39')
+  }
+  fn (text: Text) bright_green(): Text {
+    return bright_green(text)
+  }
+
+  fn bright_yellow(msg: string): Text {
+    return format(msg, '93', '39')
+  }
+  fn (text: Text) bright_yellow(): Text {
+    return bright_yellow(text)
+  }
+
+  fn bright_blue(msg: string): Text {
+    return format(msg, '94', '39')
+  }
+  fn (text: Text) bright_blue(): Text {
+    return bright_blue(text)
+  }
+
+  fn bright_magenta(msg: string): Text {
+    return format(msg, '95', '39')
+  }
+  fn (text: Text) bright_magenta(): Text {
+    return bright_magenta(text)
+  }
+
+  fn bright_cyan(msg: string): Text {
+    return format(msg, '96', '39')
+  }
+  fn (text: Text) bright_cyan(): Text {
+    return bright_cyan(text)
+  }
+
+  fn bright_white(msg: string): Text {
+    return format(msg, '97', '39')
+  }
+  fn (text: Text) bright_white(): Text {
+    return bright_white(text)
+  }
+
+  fn bright_bg_black(msg: string): Text {
+    return format(msg, '100', '49')
+  }
+  fn (text: Text) bright_bg_black(): Text {
+    return bright_bg_black(text)
+  }
+
+  fn bright_bg_red(msg: string): Text {
+    return format(msg, '101', '49')
+  }
+  fn (text: Text) bright_bg_red(): Text {
+    return bright_bg_red(text)
+  }
+
+  fn bright_bg_green(msg: string): Text {
+    return format(msg, '102', '49')
+  }
+  fn (text: Text) bright_bg_green(): Text {
+    return bright_bg_green(text)
+  }
+
+  fn bright_bg_yellow(msg: string): Text {
+    return format(msg, '103', '49')
+  }
+  fn (text: Text) bright_bg_yellow(): Text {
+    return bright_bg_yellow(text)
+  }
+
+  fn bright_bg_blue(msg: string): Text {
+    return format(msg, '104', '49')
+  }
+  fn (text: Text) bright_bg_blue(): Text {
+    return bright_bg_blue(text)
+  }
+
+  fn bright_bg_magenta(msg: string): Text {
+    return format(msg, '105', '49')
+  }
+  fn (text: Text) bright_bg_magenta(): Text {
+    return bright_bg_magenta(text)
+  }
+
+  fn bright_bg_cyan(msg: string): Text {
+    return format(msg, '106', '49')
+  }
+  fn (text: Text) bright_bg_cyan(): Text {
+    return bright_bg_cyan(text)
+  }
+
+  fn bright_bg_white(msg: string): Text {
+    return format(msg, '107', '49')
+  }
+  fn (text: Text) bright_bg_white(): Text {
+    return bright_bg_white(text)
+  }
+}

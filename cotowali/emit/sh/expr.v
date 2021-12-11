@@ -8,8 +8,7 @@ module sh
 import cotowali.ast
 import cotowali.token
 import cotowali.symbols { builtin_type }
-import cotowali.util { Tuple2, tuple2 }
-import cotowali.messages { unreachable }
+import cotowali.util { Tuple2, li_panic, tuple2 }
 
 type ExprOrString = ast.Expr | string
 
@@ -63,6 +62,7 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.CallExpr { e.call_expr(expr, opt) }
 		ast.DefaultValue { e.default_value(expr, opt) }
 		ast.DecomposeExpr { e.decompose_expr(expr, opt) }
+		ast.Empty {}
 		ast.FloatLiteral { e.float_literal(expr, opt) }
 		ast.IntLiteral { e.int_literal(expr, opt) }
 		ast.ParenExpr { e.paren_expr(expr, opt) }
@@ -70,12 +70,14 @@ fn (mut e Emitter) expr(expr ast.Expr, opt ExprOpt) {
 		ast.InfixExpr { e.infix_expr(expr, opt) }
 		ast.IndexExpr { e.index_expr(expr, opt) }
 		ast.MapLiteral { e.map_literal(expr, opt) }
-		ast.NamespaceItem { e.namespace_item(expr, opt) }
+		ast.ModuleItem { e.module_item(expr, opt) }
+		ast.Nameof { e.nameof(expr, opt) }
 		ast.NullLiteral { e.null_literal(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
 		ast.SelectorExpr { e.selector_expr(expr, opt) }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
 		ast.StringLiteral { e.string_literal(expr, opt) }
+		ast.Typeof { e.typeof_(expr, opt) }
 		ast.Var { e.var_(expr, opt) }
 	}
 	e.write_if(opt.mode == .command && opt.discard_stdout, ' > /dev/null')
@@ -207,7 +209,7 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 		e.write(match left_ts.kind() {
 			.array { 'array_get ' }
 			.map { 'map_get ' }
-			else { panic(unreachable('invalid index left')) }
+			else { li_panic(@FILE, @LINE, 'invalid index left') }
 		})
 
 		e.expr(v.expr.left)
@@ -232,8 +234,10 @@ fn (mut e Emitter) index_expr_for_string(expr ast.IndexExpr, opt ExprOpt) {
 
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op := expr.op
-	if !op.kind.@is(.infix_op) {
-		panic(unreachable('not a infix op'))
+	$if !prod {
+		if !op.kind.@is(.infix_op) {
+			li_panic(@FILE, @LINE, 'not a infix op')
+		}
 	}
 
 	if call_expr := expr.overloaded_function_call_expr() {
@@ -257,19 +261,17 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 			match ts.kind() {
 				.array { e.infix_expr_for_array(expr, opt) }
 				.tuple { e.infix_expr_for_tuple(expr, opt) }
-				else { panic('infix_expr for `$ts.name` is unimplemented') }
+				else { li_panic(@FILE, @LINE, 'invarid operand of infix expr (`$ts.name`)') }
 			}
 		}
 	}
 }
 
 fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.resolved_typ() != builtin_type(.bool) {
-		panic(unreachable('not a bool operand'))
-	}
-
-	if opt.mode == .command {
-		panic('unimplemented')
+	$if !prod {
+		if expr.left.resolved_typ() != builtin_type(.bool) {
+			li_panic(@FILE, @LINE, 'not a bool operand')
+		}
 	}
 
 	if expr.op.kind in [.eq, .ne] {
@@ -283,17 +285,26 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 	op := match expr.op.kind {
 		.logical_and { '&&' }
 		.logical_or { '||' }
-		else { panic(unreachable('invalid op')) }
+		else { li_panic(@FILE, @LINE, 'invalid op') }
 	}
 
+	if opt.mode == .command {
+		e.write('( ')
+		defer {
+			e.write(' )')
+			e.sh_result_to_bool()
+		}
+	}
 	e.expr(expr.left, mode: .condition)
 	e.write(' $op ')
 	e.expr(expr.right, mode: .condition)
 }
 
 fn (mut e Emitter) infix_expr_for_number(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.resolved_typ() !in [builtin_type(.int), builtin_type(.float)] {
-		panic(unreachable('invalid operand'))
+	$if !prod {
+		if expr.left.resolved_typ() !in [builtin_type(.int), builtin_type(.float)] {
+			li_panic(@FILE, @LINE, 'invalid operand')
+		}
 	}
 
 	if builtin_type(.float) in [expr.left.resolved_typ(), expr.right.resolved_typ()] {
@@ -304,8 +315,11 @@ fn (mut e Emitter) infix_expr_for_number(expr ast.InfixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.resolved_typ() !in [builtin_type(.float), builtin_type(.int)] {
-		panic(unreachable('invalid operand'))
+	$if !prod {
+		if expr.left.resolved_typ() !in [builtin_type(.float),
+			builtin_type(.int)] {
+			li_panic(@FILE, @LINE, 'invalid operand')
+		}
 	}
 	e.write_echo_if_command(opt)
 
@@ -320,9 +334,12 @@ fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.resolved_typ() != builtin_type(.int) {
-		panic(unreachable('invalid operand'))
+	$if !prod {
+		if expr.left.resolved_typ() != builtin_type(.int) {
+			li_panic(@FILE, @LINE, 'invalid operand')
+		}
 	}
+
 	e.write_echo_if_command(opt)
 
 	if expr.op.kind.@is(.comparsion_op) {
@@ -334,7 +351,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 				.ge { '-ge' }
 				.lt { '-lt' }
 				.le { '-le' }
-				else { panic(unreachable('invalid op')) }
+				else { li_panic(@FILE, @LINE, 'invalid op') }
 			}
 			e.sh_test_cond_infix(expr.left, op, expr.right)
 		}, expr, opt)
@@ -355,14 +372,16 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 			e.sh_awk_infix_expr(expr)
 		}
 		else {
-			panic('unimplemented')
+			li_panic(@FILE, @LINE, 'invalid op `$expr.op.text`')
 		}
 	}
 }
 
 fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.resolved_typ() != builtin_type(.string) {
-		panic(unreachable('not a string operand'))
+	$if !prod {
+		if expr.left.resolved_typ() != builtin_type(.string) {
+			li_panic(@FILE, @LINE, 'not a string operand')
+		}
 	}
 
 	e.write_echo_if_command(opt)
@@ -379,14 +398,16 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 			e.expr(expr.right)
 		}
 		else {
-			panic('unimplemented')
+			li_panic(@FILE, @LINE, 'invalid op `$expr.op.text`')
 		}
 	}
 }
 
 fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
-	if expr.left.type_symbol().resolved().kind() != .tuple {
-		panic(unreachable('not a string operand'))
+	$if !prod {
+		if expr.left.type_symbol().resolved().kind() != .tuple {
+			li_panic(@FILE, @LINE, 'not a string operand')
+		}
 	}
 
 	e.write_echo_if_command(opt)
@@ -404,14 +425,16 @@ fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
 			e.expr(expr.right)
 		}
 		else {
-			panic(unreachable('invalid operation'))
+			li_panic(@FILE, @LINE, 'invalid op `$expr.op.text`')
 		}
 	}
 }
 
-fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {
-	if !expr.is_resolved() {
-		panic(unreachable('unresolved namespace item'))
+fn (mut e Emitter) module_item(expr ast.ModuleItem, opt ExprOpt) {
+	$if !prod {
+		if !expr.is_resolved() {
+			li_panic(@FILE, @LINE, 'unresolved module item')
+		}
 	}
 	e.expr(expr.item, opt)
 }
@@ -447,8 +470,10 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 
 fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 	op := expr.op
-	if !op.kind.@is(.prefix_op) {
-		panic(unreachable('not a prefix op'))
+	$if !prod {
+		if !op.kind.@is(.prefix_op) {
+			li_panic(@FILE, @LINE, 'not a prefix op')
+		}
 	}
 
 	if call_expr := expr.overloaded_function_call_expr() {
@@ -470,7 +495,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		}
 		.minus {
 			infix_expr := expr.convert_to_infix_expr() or {
-				panic(unreachable('faild to convert to infix expr'))
+				li_panic(@FILE, @LINE, 'faild to convert to infix expr')
 			}
 			e.infix_expr(infix_expr, subexpr_opt)
 		}
@@ -483,7 +508,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 			e.write(' ; }')
 		}
 		else {
-			panic('unimplemented')
+			li_panic(@FILE, @LINE, 'invalid op `$expr.op.text`')
 		}
 	}
 }

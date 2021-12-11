@@ -7,7 +7,7 @@ module sh
 
 import cotowali.ast
 import cotowali.symbols { TypeSymbol }
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 	// v bug: `match value` occurs c error at `e.ident_for`
@@ -39,15 +39,17 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 				e.writeln('array_init "$name" 0')
 			}
 			ast.StringLiteral {
-				if !expr.is_glob() {
-					panic(unreachable('not a array value'))
+				$if !prod {
+					if !expr.is_glob() {
+						li_panic(@FILE, @LINE, 'not a array value')
+					}
 				}
 				e.write('array_copy "$name" ')
 				e.string_literal(expr)
 				e.writeln('')
 			}
 			else {
-				panic(unreachable('not a array value'))
+				li_panic(@FILE, @LINE, 'not a array value')
 			}
 		}
 	}
@@ -103,7 +105,7 @@ fn (mut e Emitter) assign(name string, value ExprOrString, ts TypeSymbol) {
 
 fn (mut e Emitter) destructuring_assign(names []string, expr ast.Expr) {
 	tuple_info := expr.type_symbol().tuple_info() or {
-		panic(unreachable('destrucuturing not tuple value'))
+		li_panic(@FILE, @LINE, 'destrucuturing not tuple value')
 	}
 	e.write('set -- ')
 	e.expr(expr, writeln: true, quote: false)
@@ -118,7 +120,7 @@ fn (mut e Emitter) index_assign(left ast.Expr, index ast.Expr, right ast.Expr) {
 	e.write(match left.type_symbol().resolved().kind() {
 		.array { 'array_set $name ' }
 		.map { 'map_set $name ' }
-		else { panic(unreachable('invalid index left')) }
+		else { li_panic(@FILE, @LINE, 'invalid index left') }
 	})
 	e.expr(index)
 	e.write(' ')

@@ -1,0 +1,11 @@
+require 'term'
+var ans = input_tty('Would yout tell me name? (Y/n): ')
+var name = ''
+if ans == 'n' || ans == 'N' {
+  name = 'Somebody'
+} else {
+  name = input_tty('Type your name: ')
+}
+
+var cotowali = term::bold('Cotowali').bright_red()
+println("$name, Welcome to $cotowali. Enjoy coding!")

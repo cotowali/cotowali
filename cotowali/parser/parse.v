@@ -10,8 +10,8 @@ import cotowali.environment { cotowali_builtin_path, cotowali_testing_path, find
 import cotowali.source { Source, SourceScheme, get_cotowali_source_path, source_scheme_from_str }
 import cotowali.symbols { Scope }
 import cotowali.ast
-import cotowali.messages { unreachable }
 import cotowali.compiler_directives { missing_endif_directive }
+import cotowali.util { li_panic }
 import net.urllib { URL }
 import net.http
 import os
@@ -24,14 +24,18 @@ pub fn (mut p Parser) parse(scope &Scope) &ast.File {
 
 	mut ctx := p.ctx
 	if !(ctx.builtin_loaded() || ctx.config.no_builtin) {
-		ctx.builtin_source = source.read_file(cotowali_builtin_path()) or { panic(err) }
+		ctx.builtin_source = source.read_file(cotowali_builtin_path()) or {
+			li_panic(@FILE, @LINE, err)
+		}
 		mut builtin_parser := new_parser(ctx.builtin_source, ctx)
 		file.stmts << ast.RequireStmt{
 			file: builtin_parser.parse(ctx.global_scope)
 		}
 	}
 	if ctx.config.is_test && !ctx.testing_loaded() {
-		ctx.testing_source = source.read_file(cotowali_testing_path()) or { panic(err) }
+		ctx.testing_source = source.read_file(cotowali_testing_path()) or {
+			li_panic(@FILE, @LINE, err)
+		}
 		mut testing_parser := new_parser(ctx.testing_source, ctx)
 		file.stmts << ast.RequireStmt{
 			file: testing_parser.parse(ctx.global_scope)
@@ -67,7 +71,7 @@ pub fn parse_file_relative(base_source &Source, path string, ctx &Context) ?&ast
 	source_path := get_cotowali_source_path(path)
 	if source_url := base_source.url() {
 		url := source_url.resolve_reference(&URL{ user: 0, path: source_path }) or {
-			panic(unreachable('faild to resolve url'))
+			li_panic(@FILE, @LINE, 'faild to resolve url')
 		}
 		return parse_remote_file(url, ctx)
 	}

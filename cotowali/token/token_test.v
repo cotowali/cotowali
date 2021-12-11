@@ -58,8 +58,8 @@ fn test_is() {
 	assert TokenKind.not.@is(.op)
 	assert !TokenKind.ident.@is(.prefix_op)
 
-	assert TokenKind.plus_plus.@is(.postfix_op)
-	assert TokenKind.plus_plus.@is(.op)
+	assert TokenKind.plusplus.@is(.postfix_op)
+	assert TokenKind.plusplus.@is(.op)
 	assert !TokenKind.ident.@is(.postfix_op)
 
 	assert TokenKind.bool_literal.@is(.literal)

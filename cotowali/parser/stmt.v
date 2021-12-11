@@ -6,11 +6,11 @@
 module parser
 
 import cotowali.ast
-import cotowali.messages { checksum_mismatch, duplicated_key, invalid_key, unreachable }
+import cotowali.messages { checksum_mismatch, duplicated_key, invalid_key }
 import cotowali.token { Token, TokenKind }
 import cotowali.source { none_pos }
 import cotowali.symbols { builtin_type }
-import cotowali.util { is_relative_path }
+import cotowali.util { is_relative_path, li_panic }
 import net.urllib
 
 fn (mut p Parser) parse_attr() ?ast.Attr {
@@ -61,15 +61,15 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 
 	p.process_compiler_directives()
 	if p.kind(0) == .eof {
-		return ast.EmptyStmt{}
+		return ast.Empty{}
 	}
 
 	attrs := p.parse_attrs()
 	mut stmt := p.try_parse_stmt() or {
-		p.skip_until_eol()
-		ast.EmptyStmt{}
+		p.skip_until_eol_or_semicolon()
+		ast.Empty{}
 	}
-	p.skip_eol()
+	p.skip_eol_and_semicolon()
 
 	if attrs.len > 0 {
 		if mut stmt is ast.FnDecl {
@@ -118,8 +118,8 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_for {
 			return ast.Stmt(p.parse_for_in_stmt() ?)
 		}
-		.key_namespace {
-			return ast.Stmt(p.parse_namespace() ?)
+		.key_module {
+			return ast.Stmt(p.parse_module() ?)
 		}
 		.key_return {
 			return ast.Stmt(p.parse_return_stmt() ?)
@@ -169,7 +169,7 @@ fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
 
 	p.open_scope(name)
 	for local in locals {
-		p.scope.register_var(name: local) or { panic(err) }
+		p.scope.register_var(name: local) or { li_panic(@FILE, @LINE, err) }
 	}
 	defer {
 		p.close_scope()
@@ -195,7 +195,7 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 		}
 		node.stmts << p.parse_stmt()
 	}
-	panic(unreachable(''))
+	li_panic(@FILE, @LINE, '')
 }
 
 fn (mut p Parser) parse_var_stmt() ?ast.AssignStmt {
@@ -278,7 +278,7 @@ fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
 		.mul_assign { TokenKind.mul }
 		.div_assign { TokenKind.div }
 		.mod_assign { TokenKind.mod }
-		else { panic(unreachable('')) }
+		else { li_panic(@FILE, @LINE, '') }
 	}
 	match infix_op_kind {
 		.plus, .minus, .mul, .div, .mod {
@@ -293,7 +293,7 @@ fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
 			}
 		}
 		else {
-			panic(unreachable(''))
+			li_panic(@FILE, @LINE, '')
 		}
 	}
 	return ast.AssignStmt{
@@ -399,8 +399,17 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 	}
 
 	p.consume_with_assert(.key_return)
+	p.skip_eol()
+
+	mut expr := ast.Expr(ast.Empty{
+		scope: p.scope
+		pos: p.pos(-1)
+	})
+	if p.kind(0) !in [.r_brace, .r_paren, .r_bracket, .semicolon] {
+		expr = p.parse_expr(.toplevel) ?
+	}
 	return ast.ReturnStmt{
-		expr: p.parse_expr(.toplevel) ?
+		expr: expr
 	}
 }
 

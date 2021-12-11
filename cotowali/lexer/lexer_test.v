@@ -114,21 +114,21 @@ fn test_lexer() {
 		Token{.ident, 'a', Pos{s1, 10, 1, 9, 1, 1, 9}},
 		Token{.eof, '', Pos{s1, 12, 1, 11, 1, 1, 11}},
 	])
-	ktest(@FN, @LINE, 'namespace x::y', [.key_namespace, .ident, .coloncolon, .ident])
+	ktest(@FN, @LINE, 'module x::y', [.key_module, .ident, .coloncolon, .ident])
 	ktest(@FN, @LINE, 'fn f(a, b){}', [.key_fn, .ident, .l_paren, .ident, .comma, .ident, .r_paren,
 		.l_brace, .r_brace, .eof])
 	ktest(@FN, @LINE, 'var i = 0', [.key_var, .ident, .assign, .int_literal, .eof])
 	ktest(@FN, @LINE, '&a.b |> c', [.amp, .ident, .dot, .ident, .pipe, .ident, .eof])
 	ktest(@FN, @LINE, 'a && b || c &', [.ident, .logical_and, .ident, .logical_or, .ident, .amp,
 		.eof])
-	ktest(@FN, @LINE, 'return 0', [.key_return, .int_literal])
+	ktest(@FN, @LINE, 'return 0;', [.key_return, .int_literal, .semicolon])
 	ktest(@FN, @LINE, 'assert a == b', [.key_assert, .ident, .eq, .ident])
 	ktest(@FN, @LINE, 'a < b || c > d', [.ident, .lt, .ident, .logical_or, .ident, .gt, .ident])
 	ktest(@FN, @LINE, 'a <= b || c >= d', [.ident, .le, .ident, .logical_or, .ident, .ge, .ident])
 	ktest(@FN, @LINE, '!cond', [.not, .ident])
-	ktest(@FN, @LINE, 'a+++++', [.ident, .plus_plus, .plus_plus, .plus])
+	ktest(@FN, @LINE, 'a+++++', [.ident, .plusplus, .plusplus, .plus])
 	ktest(@FN, @LINE, 'a-----', [.ident]) // TODO
-	ktest(@FN, @LINE, 'a -----', [.ident, .minus_minus, .minus_minus, .minus])
+	ktest(@FN, @LINE, 'a -----', [.ident, .minusminus, .minusminus, .minus])
 	ktest(@FN, @LINE, 'a*****', [.ident, .pow, .pow, .mul])
 	ktest(@FN, @LINE, 'struct f { }', [.key_struct, .ident, .l_brace, .r_brace])
 	ktest(@FN, @LINE, '{ 0: 0 }', [.l_brace, .int_literal, .colon, .int_literal, .r_brace])
@@ -144,6 +144,8 @@ fn test_lexer() {
 	ktest(@FN, @LINE, 'while true { }', [.key_while, .bool_literal, .l_brace, .r_brace])
 	ktest(@FN, @LINE, 'use PATH', [.key_use, .ident])
 	ktest(@FN, @LINE, 'export PATH', [.key_export, .ident])
+	ktest(@FN, @LINE, 'nameof(v)', [.key_nameof, .l_paren, .ident, .r_paren])
+	ktest(@FN, @LINE, 'typeof(v)', [.key_typeof, .l_paren, .ident, .r_paren])
 
 	ktest(@FN, @LINE, 'n += 2', [.ident, .plus_assign, .int_literal])
 	ktest(@FN, @LINE, 'n -= 2', [.ident, .minus_assign, .int_literal])

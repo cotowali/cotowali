@@ -22,13 +22,13 @@ fn do_visit(visitor Visitor, node Node) ? {
 }
 
 fn test_visit() {
-	if _ := do_visit(EmptyVisitor{}, Stmt(EmptyStmt{})) {
+	if _ := do_visit(EmptyVisitor{}, Stmt(Empty{})) {
 		assert true
 	} else {
 		assert false
 	}
 
-	if _ := do_visit(FailVisitor{}, Stmt(EmptyStmt{})) {
+	if _ := do_visit(FailVisitor{}, Stmt(Empty{})) {
 		assert false
 	} else {
 		assert true

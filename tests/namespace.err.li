@@ -1,9 +1,0 @@
-namespace ns {
-  var n = 0
-  fn f() {}
-}
-
-echo(n)
-f()
-undefined_ns::f()
-echo(undefined_ns::n)

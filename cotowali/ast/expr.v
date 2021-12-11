@@ -14,8 +14,8 @@ import cotowali.symbols {
 	TypeSymbol,
 	builtin_type,
 }
-import cotowali.messages { undefined, unreachable }
-import cotowali.util { nil_to_none }
+import cotowali.messages { undefined }
+import cotowali.util { li_panic, nil_to_none }
 
 pub type Expr = ArrayLiteral
 	| AsExpr
@@ -24,27 +24,30 @@ pub type Expr = ArrayLiteral
 	| CallExpr
 	| DecomposeExpr
 	| DefaultValue
+	| Empty
 	| FloatLiteral
 	| IndexExpr
 	| InfixExpr
 	| IntLiteral
 	| MapLiteral
-	| NamespaceItem
+	| ModuleItem
+	| Nameof
 	| NullLiteral
 	| ParenExpr
 	| Pipeline
 	| PrefixExpr
 	| SelectorExpr
 	| StringLiteral
+	| Typeof
 	| Var
 
 pub fn (expr Expr) children() []Node {
 	return match expr {
-		DefaultValue, BoolLiteral, FloatLiteral, IntLiteral, NullLiteral, Var {
+		DefaultValue, Empty, BoolLiteral, FloatLiteral, IntLiteral, NullLiteral, Var {
 			[]Node{}
 		}
 		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DecomposeExpr, IndexExpr, InfixExpr,
-		MapLiteral, NamespaceItem, ParenExpr, Pipeline, PrefixExpr, SelectorExpr {
+		MapLiteral, ModuleItem, Nameof, ParenExpr, Pipeline, PrefixExpr, SelectorExpr, Typeof {
 			expr.children()
 		}
 		StringLiteral {
@@ -74,18 +77,21 @@ fn (mut r Resolver) expr(expr Expr, opt ResolveExprOpt) {
 		CallExpr { r.call_expr(mut expr, opt) }
 		DecomposeExpr { r.decompose_expr(expr, opt) }
 		DefaultValue { r.default_value(expr, opt) }
+		Empty {}
 		FloatLiteral { r.float_literal(expr, opt) }
 		IndexExpr { r.index_expr(expr, opt) }
 		InfixExpr { r.infix_expr(expr, opt) }
 		IntLiteral { r.int_literal(expr, opt) }
 		MapLiteral { r.map_literal(mut expr, opt) }
-		NamespaceItem { r.namespace_item(mut expr, opt) }
+		ModuleItem { r.module_item(mut expr, opt) }
 		NullLiteral { r.null_literal(expr, opt) }
+		Nameof { r.nameof(expr, opt) }
 		ParenExpr { r.paren_expr(expr, opt) }
 		Pipeline { r.pipeline(expr, opt) }
 		PrefixExpr { r.prefix_expr(mut expr, opt) }
 		SelectorExpr { r.selector_expr(expr, opt) }
 		StringLiteral { r.string_literal(expr, opt) }
+		Typeof { r.typeof_(expr, opt) }
 		Var { r.var_(mut expr, opt) }
 	}
 }
@@ -97,7 +103,7 @@ pub fn (e InfixExpr) pos() Pos {
 pub fn (expr Expr) pos() Pos {
 	return match expr {
 		ArrayLiteral, AsExpr, CallCommandExpr, CallExpr, DecomposeExpr, DefaultValue, ParenExpr,
-		IndexExpr, MapLiteral {
+		IndexExpr, MapLiteral, Empty {
 			expr.pos
 		}
 		InfixExpr {
@@ -106,10 +112,16 @@ pub fn (expr Expr) pos() Pos {
 		Var {
 			expr.pos()
 		}
-		NamespaceItem {
+		ModuleItem {
+			expr.pos()
+		}
+		Nameof {
 			expr.pos()
 		}
 		SelectorExpr {
+			expr.pos()
+		}
+		Typeof {
 			expr.pos()
 		}
 		Pipeline {
@@ -129,7 +141,7 @@ pub fn (expr Expr) pos() Pos {
 
 pub fn (mut e InfixExpr) typ() Type {
 	if f := e.overloaded_function() {
-		return (f.type_symbol().function_info() or { panic(unreachable('not a function')) }).ret
+		return (f.type_symbol().function_info() or { li_panic(@FILE, @LINE, 'not a function') }).ret
 	}
 
 	if e.op.kind.@is(.comparsion_op) || e.op.kind.@is(.logical_infix_op) {
@@ -142,8 +154,8 @@ pub fn (mut e InfixExpr) typ() Type {
 	right_ts_resolved := e.right.type_symbol().resolved()
 
 	if left_ts_resolved.kind() == .tuple && right_ts_resolved.kind() == .tuple && e.op.kind == .plus {
-		left_elements := (left_ts_resolved.tuple_info() or { panic(unreachable('')) }).elements
-		right_elements := (right_ts_resolved.tuple_info() or { panic(unreachable('')) }).elements
+		left_elements := (left_ts_resolved.tuple_info() or { li_panic(@FILE, @LINE, '') }).elements
+		right_elements := (right_ts_resolved.tuple_info() or { li_panic(@FILE, @LINE, '') }).elements
 		mut elements := []TupleElement{cap: left_elements.len + right_elements.len}
 		elements << left_elements
 		elements << right_elements
@@ -201,7 +213,7 @@ pub fn (mut e ParenExpr) typ() Type {
 
 pub fn (e PrefixExpr) typ() Type {
 	if f := e.overloaded_function() {
-		return (f.type_symbol().function_info() or { panic(unreachable('not a function')) }).ret
+		return (f.type_symbol().function_info() or { li_panic(@FILE, @LINE, 'not a function') }).ret
 	}
 
 	match e.op.kind {
@@ -227,11 +239,14 @@ pub fn (e Expr) typ() Type {
 		CallExpr { e.typ }
 		DecomposeExpr { e.expr.typ() }
 		DefaultValue { e.typ }
+		Empty { e.typ() }
 		FloatLiteral { builtin_type(.float) }
 		StringLiteral { e.typ() }
 		IntLiteral { builtin_type(.int) }
+		Nameof { e.typ() }
+		Typeof { e.typ() }
 		NullLiteral { builtin_type(.null) }
-		NamespaceItem { e.typ() }
+		ModuleItem { e.typ() }
 		ParenExpr { e.typ() }
 		Pipeline { e.exprs.last().typ() }
 		PrefixExpr { e.typ() }
@@ -262,13 +277,19 @@ pub fn (e Expr) scope() &Scope {
 		Var {
 			e.scope()
 		}
-		NamespaceItem {
+		ModuleItem {
+			e.scope()
+		}
+		Nameof {
 			e.scope()
 		}
 		SelectorExpr {
 			e.scope()
 		}
-		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, FloatLiteral,
+		Typeof {
+			e.scope()
+		}
+		ArrayLiteral, BoolLiteral, CallCommandExpr, CallExpr, DefaultValue, Empty, FloatLiteral,
 		InfixExpr, IntLiteral, MapLiteral, NullLiteral, ParenExpr, Pipeline, PrefixExpr,
 		StringLiteral {
 			e.scope
@@ -297,7 +318,7 @@ pub:
 pub fn (expr &AsExpr) overloaded_function() ?&symbols.Var {
 	f := Expr(expr).scope().lookup_cast_function(from: expr.expr.typ(), to: expr.typ) ?
 	if !f.is_function() {
-		panic(unreachable('not a function'))
+		li_panic(@FILE, @LINE, 'not a function')
 	}
 	return f
 }
@@ -371,6 +392,16 @@ fn (mut r Resolver) default_value(expr DefaultValue, opt ResolveExprOpt) {
 	}
 }
 
+pub struct Empty {
+pub:
+	scope &Scope = 0
+	pos   Pos
+}
+
+pub fn (e &Empty) typ() Type {
+	return builtin_type(.void)
+}
+
 pub struct InfixExpr {
 pub:
 	op Token
@@ -385,7 +416,7 @@ pub fn (expr &InfixExpr) overloaded_function() ?&symbols.Var {
 	right_ts := expr.right.type_symbol()
 	fn_var := expr.scope.lookup_infix_op_function(expr.op, left_ts.typ, right_ts.typ) ?
 	if !fn_var.is_function() {
-		panic(unreachable('not a function'))
+		li_panic(@FILE, @LINE, 'not a function')
 	}
 	return fn_var
 }
@@ -446,37 +477,41 @@ fn (mut r Resolver) index_expr(expr IndexExpr, opt ResolveExprOpt) {
 	r.expr(expr.index, opt)
 }
 
-pub struct NamespaceItem {
+pub struct ModuleItem {
+	scope &Scope
 mut:
 	is_resolved bool
+pub:
+	is_global bool
 pub mut:
-	namespace Ident
-	item      Expr
+	modules []Ident
+	item    Var
 }
 
 [inline]
-pub fn (expr &NamespaceItem) is_resolved() bool {
+pub fn (expr &ModuleItem) is_resolved() bool {
 	return expr.is_resolved
 }
 
-pub fn (expr &NamespaceItem) typ() Type {
+pub fn (expr &ModuleItem) typ() Type {
 	return expr.item.typ()
 }
 
-pub fn (expr &NamespaceItem) scope() &Scope {
-	return expr.item.scope()
+pub fn (expr &ModuleItem) scope() &Scope {
+	return expr.scope
 }
 
-pub fn (expr &NamespaceItem) pos() Pos {
-	return expr.namespace.pos.merge(expr.item.pos())
+pub fn (expr &ModuleItem) pos() Pos {
+	return expr.modules.first().pos.merge(expr.item.pos())
 }
 
-[inline]
-pub fn (expr &NamespaceItem) children() []Node {
-	return [Node(expr.namespace), Node(expr.item)]
+pub fn (expr &ModuleItem) children() []Node {
+	mut nodes := expr.modules.map(Node(it))
+	nodes << Expr(expr.item)
+	return nodes
 }
 
-fn (mut r Resolver) namespace_item(mut expr NamespaceItem, opt ResolveExprOpt) {
+fn (mut r Resolver) module_item(mut expr ModuleItem, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -484,16 +519,43 @@ fn (mut r Resolver) namespace_item(mut expr NamespaceItem, opt ResolveExprOpt) {
 		}
 	}
 
-	if child := expr.namespace.scope.get_child(expr.namespace.text) {
-		match mut expr.item {
-			NamespaceItem { expr.item.namespace.scope = child }
-			Var { expr.item.ident.scope = child }
-			else { panic(unreachable('invalid item of namespace')) }
-		}
-		expr.is_resolved = true
-		r.expr(expr.item, opt)
+	mut scope := expr.scope
+
+	if expr.is_global {
+		scope = scope.root()
 	} else {
-		r.error(undefined(.namespace, expr.namespace.text), expr.namespace.pos)
+		$if !prod {
+			if expr.modules.len == 0 {
+				li_panic(@FILE, @LINE, 'module item: modules.len = 0')
+			}
+		}
+
+		// lookup first mod.
+		first_mod := expr.modules[0]
+		for {
+			if _ := scope.get_child(first_mod.text) {
+				break
+			}
+			scope = scope.parent() or {
+				r.error(undefined(.mod, first_mod.text), first_mod.pos)
+				return
+			}
+		}
+	}
+
+	// get submod
+	expr.is_resolved = true
+	for mod in expr.modules {
+		scope = scope.get_child(mod.text) or {
+			r.error(undefined(.mod, mod.text), mod.pos)
+			expr.is_resolved = false
+			break
+		}
+	}
+
+	if expr.is_resolved {
+		expr.item.ident.scope = scope
+		r.var_(mut expr.item, opt)
 	}
 }
 
@@ -595,7 +657,7 @@ pub fn (expr &PrefixExpr) overloaded_function() ?&symbols.Var {
 	operand_typ := expr.expr.typ()
 	fn_var := expr.scope.lookup_prefix_op_function(expr.op, operand_typ) ?
 	if !fn_var.is_function() {
-		panic(unreachable('not a function'))
+		li_panic(@FILE, @LINE, 'not a function')
 	}
 	return fn_var
 }
@@ -734,7 +796,7 @@ fn (mut r Resolver) var_(mut v Var, opt ResolveExprOpt) {
 
 	$if !prod {
 		if !isnil(v.sym) && v.sym.name != v.ident.text {
-			panic(unreachable('mismatched name: sym.name = $v.sym.name, ident.text = $v.ident.text'))
+			li_panic(@FILE, @LINE, 'mismatched name: sym.name = $v.sym.name, ident.text = $v.ident.text')
 		}
 	}
 

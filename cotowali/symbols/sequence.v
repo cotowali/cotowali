@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 pub struct SequenceTypeInfo {
 pub:
@@ -31,5 +31,5 @@ pub fn (s Scope) lookup_sequence_type(info SequenceTypeInfo) ?&TypeSymbol {
 }
 
 pub fn (s Scope) must_lookup_sequence_type(info SequenceTypeInfo) &TypeSymbol {
-	return s.lookup_sequence_type(info) or { panic(unreachable(err)) }
+	return s.lookup_sequence_type(info) or { li_panic(@FILE, @LINE, err) }
 }

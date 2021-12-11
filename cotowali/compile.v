@@ -11,6 +11,7 @@ import rand { ulid }
 import cotowali.context { Context }
 import cotowali.source { Source }
 import cotowali.compiler { new_compiler }
+import cotowali.util { li_panic }
 
 pub fn compile(s Source, ctx &Context) ?string {
 	c := new_compiler(s, ctx)
@@ -29,7 +30,7 @@ fn compile_to_temp_file(s Source, ctx &Context) ?string {
 	ext := ctx.config.backend.script_ext()
 	temp_path := os.join_path(os.temp_dir(), '$base$ext')
 
-	mut f := os.create(temp_path) or { panic(err) }
+	mut f := os.create(temp_path) or { li_panic(@FILE, @LINE, err) }
 	c.compile_to(f) ?
 	defer {
 		f.close()
@@ -40,7 +41,7 @@ fn compile_to_temp_file(s Source, ctx &Context) ?string {
 pub fn run(s Source, ctx &Context) ?int {
 	temp_file := compile_to_temp_file(s, ctx) ?
 	defer {
-		os.rm(temp_file) or { panic(err) }
+		os.rm(temp_file) or { li_panic(@FILE, @LINE, err) }
 	}
 	executable := ctx.config.backend.find_executable_path() or {
 		eprintln(err.msg)

@@ -5,8 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-import cotowali.util { nil_to_none }
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic, nil_to_none }
 import cotowali.source { Pos }
 import cotowali.token { TokenKind }
 
@@ -90,7 +89,8 @@ pub fn (s &Scope) is_global() bool {
 }
 
 pub fn (s &Scope) root() &Scope {
-	return s.parent() or { s }
+	p := s.parent() or { return s }
+	return p.root()
 }
 
 [inline]
@@ -125,7 +125,7 @@ pub fn (s &Scope) get_child(key NameOrID) ?&Scope {
 }
 
 pub fn (s &Scope) must_get_child(key NameOrID) &Scope {
-	return s.get_child(key) or { panic(unreachable('child scope `$key` not found')) }
+	return s.get_child(key) or { li_panic(@FILE, @LINE, 'child scope `$key` not found') }
 }
 
 pub fn (mut s Scope) create_child(name string) ?&Scope {
@@ -148,7 +148,7 @@ pub fn (mut s Scope) get_or_create_child(name string) &Scope {
 }
 
 pub fn (mut s Scope) must_create_child(name string) &Scope {
-	return s.create_child(name) or { panic(unreachable(err.msg)) }
+	return s.create_child(name) or { li_panic(@FILE, @LINE, err.msg) }
 }
 
 pub fn (s &Scope) ident_for(v Var) string {

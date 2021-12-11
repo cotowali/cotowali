@@ -1,0 +1,6 @@
+require 'term'
+
+print(term::bold(' Coke ').bg_red().white())
+print(" ${term::underline(term::italic('vs'))} ")
+print(term::bold(' Pepsi ').bg_white().blue())
+println('')

@@ -175,5 +175,5 @@ fn (mut p Parser) parse_type_decl() ?ast.Stmt {
 		return p.error(err.msg, pos)
 	}
 
-	return ast.EmptyStmt{}
+	return ast.Empty{}
 }

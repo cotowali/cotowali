@@ -28,3 +28,11 @@ fn test_join() {
   assert((abc() |> join('')) == 'abc')
   assert((abc() |> join(' ')) == 'a b c')
 }
+test_join()
+
+fn test_has_command() {
+  assert(has_command('ls'))
+  assert(!has_command('xxx'))
+  assert(has_command('test_has_command'))
+}
+test_has_command()

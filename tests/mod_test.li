@@ -1,0 +1,94 @@
+var global = 0
+var n = 0
+fn f(): int {
+  return 0
+}
+
+module mod1 {
+  var n = 1
+
+  module child {
+    var n = 2
+  }
+}
+module mod1 {
+  // module will be merged
+  assert(n == 1)
+
+  module child {
+    assert(n == 2)
+  }
+}
+module mod1::child {
+  assert(n == 2)
+
+  module deep {
+    n = 3
+  }
+}
+module mod1::child::deep {
+  assert(n == 3)
+}
+assert(mod1::child::deep::n == 3)
+
+module mod2 {
+  var n = 1
+  assert(n == 1)
+
+  fn f(): string {
+    return '10'
+  }
+  assert(f() == '10')
+
+  assert(global == 0)
+  global = 1
+  assert(global == 1)
+
+  module mod2_1 {
+    fn f(): string {
+      return 'mod2_1'
+    }
+    assert(f() == 'mod2_1')
+
+    assert(global == 1)
+    global = 2
+    assert(global == 2)
+  }
+  assert(global == 2)
+}
+assert(global == 2)
+
+assert(n == 0)
+assert(mod2::n == 1)
+assert(f() == 0)
+assert(mod2::f() == '10')
+
+// ---
+
+module mod_x {
+  var text = '::mod_x'
+}
+
+module mod_x1 {
+  assert(mod_x::text == '::mod_x')
+}
+
+module mod_x2 {
+  module mod_x {
+    var text = 'mod_x2::mod_x'
+
+    module mod_x {
+      var text = 'mod_x2::mod_x::mod_x'
+    }
+
+    fn test() {
+      assert(::mod_x::text == '::mod_x')
+      assert(mod_x::text == 'mod_x2::mod_x::mod_x')
+      assert(mod_x2::mod_x::text == 'mod_x2::mod_x')
+    }
+    test()
+  }
+
+  assert(::mod_x::text == '::mod_x')
+  assert(mod_x::text == 'mod_x2::mod_x')
+}

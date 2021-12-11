@@ -10,9 +10,9 @@ import cotowali.token { Token, TokenCond, TokenKind, TokenKindClass }
 import cotowali.context { Context }
 import cotowali.symbols { Scope }
 import cotowali.debug { Tracer }
-import cotowali.messages { unreachable }
 import cotowali.errors { LexerErr, LexerWarn }
 import cotowali.source { Pos, Source }
+import cotowali.util { li_panic }
 
 pub struct Parser {
 pub mut:
@@ -63,13 +63,13 @@ fn (mut p Parser) trace_end() {
 
 pub fn (p &Parser) token(i int) Token {
 	if i >= p.buf.len {
-		panic('cannot take token($i) (p.buf.len = $p.buf.len)')
+		li_panic(@FILE, @LINE, 'cannot take token($i) (p.buf.len = $p.buf.len)')
 	}
 	if i < 0 {
 		if i == -1 {
 			return p.prev_tok
 		}
-		panic('cannot take negative token($i)')
+		li_panic(@FILE, @LINE, 'cannot take negative token($i)')
 	}
 	return p.buf[(p.token_idx + i) % p.buf.len]
 }
@@ -97,7 +97,7 @@ fn (mut p Parser) read_token() Token {
 			}
 			else {}
 		}
-		panic(unreachable(err))
+		li_panic(@FILE, @LINE, err)
 	}
 	return tok
 }
@@ -164,6 +164,18 @@ fn (mut p Parser) skip_eol() {
 	})
 }
 
+fn (mut p Parser) skip_until_eol_or_semicolon() {
+	p.consume_for(fn (t Token) bool {
+		return t.kind !in [.eol, .semicolon, .eof]
+	})
+}
+
+fn (mut p Parser) skip_eol_and_semicolon() {
+	p.consume_for(fn (t Token) bool {
+		return t.kind in [.eol, .semicolon]
+	})
+}
+
 fn (mut p Parser) check(kinds ...TokenKind) ?Token {
 	found := p.token(0)
 	return if found.kind !in kinds { p.unexpected_token_error(found, ...kinds) } else { found }
@@ -203,6 +215,6 @@ fn (mut p Parser) open_scope(name string) &Scope {
 
 fn (mut p Parser) close_scope() &Scope {
 	p.scope.pos = p.scope.pos.merge(p.pos(0))
-	p.scope = p.scope.parent() or { panic(err) }
+	p.scope = p.scope.parent() or { li_panic(@FILE, @LINE, err) }
 	return p.scope
 }

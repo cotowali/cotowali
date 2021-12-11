@@ -26,7 +26,12 @@ pub fn (s &Scope) name_for_ident() string {
 }
 
 pub fn (v Symbol) name_for_ident() string {
-	name := replace_name_for_ident(if v.name.len > 0 { v.name } else { 'sym$v.id()' })
+	mut name := replace_name_for_ident(if v.name.len > 0 { v.name } else { 'sym$v.id()' })
+	if v is Var {
+		if v.mangle {
+			name += v.id.str()
+		}
+	}
 	if s := v.scope() {
 		if s.is_global() {
 			return name

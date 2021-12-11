@@ -1,5 +1,0 @@
-namespace ns2 {
-  fn hello(): string {
-    return 'hello ns2'
-  }
-}

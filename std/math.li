@@ -6,7 +6,7 @@
 /// License, v. 2.0. If a copy of the MPL was not distributed with this
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-namespace math {
+module math {
   fn pi(): float {
     return @awk('BEGIN{ printf "%g", 4 * atan2(1, 1) }') as float
   }

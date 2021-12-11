@@ -15,8 +15,7 @@ import cotowali.symbols {
 	builtin_type,
 	new_placeholder_var,
 }
-import cotowali.messages { unreachable }
-import cotowali.util { nil_to_none, struct_name }
+import cotowali.util { li_panic, nil_to_none, struct_name }
 
 struct FnParamParsingInfo {
 mut:
@@ -142,7 +141,7 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 		match tail_tok.kind {
 			.comma {}
 			.r_paren { break }
-			else { panic(unreachable('')) }
+			else { li_panic(@FILE, @LINE, '') }
 		}
 	}
 }
@@ -398,5 +397,39 @@ fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
 		pos: left.pos().merge(r_paren.pos)
 		func: left
 		args: args
+	}
+}
+
+fn (mut p Parser) parse_nameof_or_typeof() ?ast.Expr {
+	$if trace_parser ? {
+		p.trace_begin()
+		defer {
+			p.trace_end()
+		}
+	}
+
+	key := p.consume_with_assert(.key_nameof, .key_typeof)
+	p.consume_with_assert(.l_paren)
+	args := p.parse_call_args() ?
+	r_paren := p.consume_with_check(.r_paren) ?
+
+	match key.kind {
+		.key_nameof {
+			return ast.Nameof{
+				scope: p.scope
+				args: args
+				pos: key.pos.merge(r_paren.pos)
+			}
+		}
+		.key_typeof {
+			return ast.Typeof{
+				scope: p.scope
+				args: args
+				pos: key.pos.merge(r_paren.pos)
+			}
+		}
+		else {
+			li_panic(@FILE, @LINE, 'invalid key')
+		}
 	}
 }

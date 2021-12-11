@@ -1,0 +1,9 @@
+module ns {
+  var n = 0
+  fn f() {}
+}
+
+echo(n)
+f()
+undefined_mod::f()
+echo(undefined_mod::n)

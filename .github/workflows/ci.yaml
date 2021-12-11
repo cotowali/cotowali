@@ -9,6 +9,9 @@ on:
   schedule:
     - cron: '0 0 * * *'
 
+env:
+  COTOWALI_HASH: "${{ github.sha }}"
+
 jobs:
   format:
     runs-on: ubuntu-latest
@@ -30,7 +33,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: z ci setup-v
       - run: z ci test ${{ matrix.test_arg }}
-  test-alpine:
+  test-busybox:
     runs-on: ubuntu-latest
     env:
       VFLAGS: "-cc clang"
@@ -39,15 +42,17 @@ jobs:
       - uses: actions/checkout@v2
       - run: z ci setup-v
       - run: z test compile
-      - run: docker run -v $(pwd)/tests:/app/tests -w /app alpine ./tests/run.sh
+      - run: docker run -v $(pwd)/tests:/app/tests -w /app busybox ./tests/run.sh
   test-macos:
     runs-on: macos-latest
     env:
       VFLAGS: "-cc clang"
+      # https://github.com/vlang/v/blob/525791fa3a4643ae9b04570f4b18056816bfda96/.github/workflows/ci.yml#L263
+      PKG_CONFIG_PATH: /usr/local/opt/openssl@3/lib/pkgconfig
     steps:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
-      # https://github.com/vlang/v/blob/a84a6d1fb1b2b4025db88a883a4682c978212562/.github/workflows/ci.yml#L272-L273
+      # https://github.com/vlang/v/blob/525791fa3a4643ae9b04570f4b18056816bfda96/.github/workflows/ci.yml#L273-L274
       - run: |
           brew install openssl
           export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/opt/openssl/lib/"
@@ -90,7 +95,7 @@ jobs:
 #      - run: z ci run-on-all-conditions
   slack-notify:
     if: failure()
-    needs: [format, test, test-alpine, test-macos, sanitize, run-on-all-conditions]
+    needs: [format, test, test-busybox, test-macos, sanitize, run-on-all-conditions]
     runs-on: ubuntu-latest
     steps:
       - uses: Gamesight/slack-workflow-status@master

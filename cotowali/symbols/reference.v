@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 pub struct ReferenceTypeInfo {
 pub:
@@ -25,5 +25,5 @@ pub fn (s Scope) lookup_reference_type(info ReferenceTypeInfo) ?&TypeSymbol {
 }
 
 pub fn (s Scope) must_lookup_reference_type(info ReferenceTypeInfo) &TypeSymbol {
-	return s.lookup_reference_type(info) or { panic(unreachable(err)) }
+	return s.lookup_reference_type(info) or { li_panic(@FILE, @LINE, err) }
 }

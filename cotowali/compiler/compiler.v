@@ -47,23 +47,6 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 		if config.is_test {
 			f.stmts << parser.parse(new_source('finish_test', 'testing::finish()'), ctx).stmts
 		}
-		/*
-		f.stmts << ast.Expr(ast.CallExpr(
-				func: ast.NamespaceItem{
-					scope: ctx.global_scope
-					namespace: ast.Ident{
-						scope: ctx.global_scope
-						text: 'testing'
-					}
-					func: ast.Var{
-						ident: ast.Ident{
-							scope: ctx.global_scope
-							text: 'finish'
-						}
-					}
-				}
-			})
-		*/
 
 		ast.resolve(mut f, ctx)
 		checker.check(mut f, ctx)

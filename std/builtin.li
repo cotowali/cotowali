@@ -26,6 +26,60 @@ fn eprintln(s: string) {
   pwsh { [Console]::Error.WriteLine(%s) }
 }
 
+fn isatty(fd: int): bool {
+  var true_ = true
+  var res = false
+  sh {
+    if [ -t $%fd ]
+    then
+      %res=$%true_
+    fi
+  }
+  return res
+}
+
+var tty = '/dev/tty'
+
+fn input(prompt: string): string {
+  if isatty(0) && prompt != '' {
+    print(prompt) |> tty
+  }
+  var res: string
+  sh {
+    read -r %res
+  }
+  return res
+}
+
+fn input_tty(prompt: string): string {
+  if prompt != '' {
+    print(prompt) |> tty
+  }
+  var res: string
+  sh {
+    read -r %res < $%tty
+  }
+  return res
+}
+
+fn has_command(command: string): bool {
+  var code: int
+  sh {
+    type $%command > /dev/null 2>&1
+    %code=$?
+  }
+  return code == 0
+}
+
+fn require_command(command: string) {
+  if has_command(command) {
+    return
+  }
+
+  eprintln("$command: command not found")
+  exit(127)
+}
+
 fn ...string |> join(sep: string) |> string {
   var ret = ''
   var (i, s): (int, string)
@@ -89,6 +143,18 @@ fn rm_r(paths: ...string) {
 
 fn touch(files: ...string)
 
+#[mangle]
+fn which(name: string): string {
+  var res: string
+  sh {
+    %res=$(which $%name)
+    if [ $? -ne 0 ]
+    then
+      %res=''
+    fi
+  }
+  return res
+}
 #endif
 
 // --- string methods ---

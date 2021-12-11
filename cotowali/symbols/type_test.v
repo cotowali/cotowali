@@ -71,9 +71,6 @@ fn test_lookup_type_and_register_type() ? {
 	assert found.typ == parent_t.typ
 
 	child_t := child.register_type(name: 't') ?
-	if _ := parent.lookup_type(child_t.typ) {
-		assert false
-	}
 	found = child.must_lookup_type(child_t.typ)
 	assert found.typ != parent_t.typ
 	assert found.typ == child_t.typ

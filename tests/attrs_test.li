@@ -1,4 +1,7 @@
 #[mangle]
+fn func_mangle() {}
+
 fn func() {}
 
-// @which('func')? != 0
+assert(has_command('func'))
+assert(!has_command('func_mangle'))

@@ -8,8 +8,8 @@ module parser
 import cotowali.token { TokenKind }
 import cotowali.ast
 import cotowali.symbols { builtin_type }
-import cotowali.messages { duplicated_key, invalid_key, unreachable }
-import cotowali.util { struct_name }
+import cotowali.messages { duplicated_key, invalid_key }
+import cotowali.util { li_panic, struct_name }
 
 fn (mut p Parser) parse_expr_stmt(expr ast.Expr) ?ast.Stmt {
 	$if trace_parser ? {
@@ -20,8 +20,8 @@ fn (mut p Parser) parse_expr_stmt(expr ast.Expr) ?ast.Stmt {
 	}
 
 	// eol or close blace
-	if !(p.brace_depth > 0 && p.kind(0) == .r_brace) {
-		p.consume_with_check(.eol, .eof) ?
+	if !(p.brace_depth > 0 && p.kind(0) == .r_brace) && p.kind(0) != .eof {
+		p.consume_with_check(.eol, .semicolon) ?
 	}
 
 	return expr
@@ -60,7 +60,7 @@ const expr_kind_to_op_table = (fn () map[ExprKind][]TokenKind {
 }())
 
 fn (e ExprKind) op_kinds() []TokenKind {
-	return parser.expr_kind_to_op_table[e] or { panic(unreachable('')) }
+	return parser.expr_kind_to_op_table[e] or { li_panic(@FILE, @LINE, '') }
 }
 
 fn (k ExprKind) outer() ExprKind {
@@ -203,21 +203,37 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 		}
 	}
 
-	tok := p.consume_with_check(.ident) ?
-	ident := ast.Ident{
-		scope: p.scope
-		pos: tok.pos
-		text: tok.text
+	mut modules := []ast.Ident{}
+	is_global := if _ := p.consume_if_kind_eq(.coloncolon) { true } else { false }
+
+	for p.kind(1) == .coloncolon {
+		tok := p.consume_with_check(.ident) ?
+		modules << ast.Ident{
+			scope: p.scope
+			pos: tok.pos
+			text: tok.text
+		}
+		p.consume_with_assert(.coloncolon)
 	}
 
-	if _ := p.consume_if_kind_eq(.coloncolon) {
-		return ast.NamespaceItem{
-			namespace: ident
-			item: p.parse_ident() ?
+	tok := p.consume_with_check(.ident) ?
+	v := ast.Var{
+		ident: ast.Ident{
+			scope: p.scope
+			pos: tok.pos
+			text: tok.text
 		}
 	}
-	return ast.Var{
-		ident: ident
+
+	if !is_global && modules.len == 0 {
+		return v
+	}
+
+	return ast.ModuleItem{
+		is_global: is_global
+		scope: p.scope
+		modules: modules
+		item: v
 	}
 }
 
@@ -476,6 +492,15 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 		.ident {
 			return p.parse_ident()
 		}
+		.coloncolon {
+			// ::globa_mod
+			if p.kind(1) == .ident {
+				return p.parse_ident()
+			}
+		}
+		.key_nameof, .key_typeof {
+			return p.parse_nameof_or_typeof()
+		}
 		.key_null {
 			p.consume()
 			return ast.NullLiteral{
@@ -517,11 +542,10 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 		.l_paren {
 			return p.parse_paren_expr()
 		}
-		else {
-			found := p.consume()
-			return p.unexpected_token_error(found)
-		}
+		else {}
 	}
+	found := p.consume()
+	return p.unexpected_token_error(found)
 }
 
 fn (mut p Parser) parse_value() ?ast.Expr {

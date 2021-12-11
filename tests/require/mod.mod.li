@@ -1,0 +1,11 @@
+require './mod2.mod'
+assert(mod2::hello() == 'hello mod2')
+
+module mod {
+  fn hello(): string {
+    return 'hello mod'
+  }
+
+  var one = 1
+}
+
