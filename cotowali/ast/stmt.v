@@ -8,8 +8,8 @@ module ast
 import cotowali.token { Token }
 import cotowali.source { Pos }
 import cotowali.symbols { Scope, Type, builtin_type }
-import cotowali.messages { unreachable }
 import cotowali.util.checksum
+import cotowali.util { li_panic }
 
 pub type Stmt = AssertStmt
 	| AssignStmt
@@ -175,7 +175,7 @@ pub mut:
 pub fn (s &AssertStmt) cond() Expr {
 	$if !prod {
 		if s.args.len == 0 {
-			panic(unreachable('assert cond is not set'))
+			li_panic(@FILE, @LINE, 'assert cond is not set')
 		}
 	}
 	return s.args[0]

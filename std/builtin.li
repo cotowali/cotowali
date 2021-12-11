@@ -26,6 +26,7 @@ fn eprintln(s: string) {
   pwsh { [Console]::Error.WriteLine(%s) }
 }
 
+#if !pwsh
 fn isatty(fd: int): bool {
   var true_ = true
   var res = false
@@ -79,6 +80,7 @@ fn require_command(command: string) {
   eprintln("$command: command not found")
   exit(127)
 }
+#endif
 
 fn ...string |> join(sep: string) |> string {
   var ret = ''

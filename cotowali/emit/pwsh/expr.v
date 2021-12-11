@@ -6,8 +6,8 @@
 module pwsh
 
 import cotowali.ast { Expr }
-import cotowali.messages { unreachable }
 import cotowali.symbols { builtin_type }
+import cotowali.util { li_panic }
 
 [params]
 struct ExprOpt {
@@ -28,6 +28,7 @@ fn (mut e Emitter) expr(expr Expr, opt ExprOpt) {
 		ast.CallExpr { e.call_expr(expr, opt) }
 		ast.DefaultValue { e.default_value(expr, opt) }
 		ast.DecomposeExpr { e.decompose_expr(expr, opt) }
+		ast.Empty {}
 		ast.FloatLiteral { e.float_literal(expr, opt) }
 		ast.IntLiteral { e.int_literal(expr, opt) }
 		ast.ParenExpr { e.paren_expr(expr, opt) }
@@ -35,10 +36,12 @@ fn (mut e Emitter) expr(expr Expr, opt ExprOpt) {
 		ast.InfixExpr { e.infix_expr(expr, opt) }
 		ast.IndexExpr { e.index_expr(expr, opt) }
 		ast.MapLiteral { e.map_literal(expr, opt) }
-		ast.NamespaceItem { e.namespace_item(expr, opt) }
+		ast.ModuleItem { e.module_item(expr, opt) }
 		ast.NullLiteral { e.null_literal(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
 		ast.SelectorExpr { e.selector_expr(expr, opt) }
+		ast.Nameof { panic('unimplemented') }
+		ast.Typeof { panic('unimplemented') }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
 		ast.StringLiteral { e.string_literal(expr, opt) }
 		ast.Var { e.var_(expr, opt) }
@@ -58,7 +61,7 @@ fn (mut e Emitter) as_expr(expr ast.AsExpr, opt ExprOpt) {
 
 fn (mut e Emitter) decompose_expr(expr ast.DecomposeExpr, opt ExprOpt) {
 	// any decompose expr handled in other places (e.g. paren_expr)
-	panic(unreachable('invalid decompose'))
+	li_panic(@FILE, @LINE, 'invalid decompose')
 }
 
 fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
@@ -98,7 +101,7 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op := expr.op
 	if !op.kind.@is(.infix_op) {
-		panic(unreachable('not a infix op'))
+		li_panic(@FILE, @LINE, 'not a infix op')
 	}
 
 	if call_expr := expr.overloaded_function_call_expr() {
@@ -170,7 +173,7 @@ fn (mut e Emitter) infix_expr_for_pwsh_array(expr ast.InfixExpr, opt ExprOpt) {
 		.eq { e.pwsh_array_eq(expr.left, expr.right) }
 		.ne { e.pwsh_array_ne(expr.left, expr.right) }
 		.plus { e.pwsh_array_concat(expr.left, expr.right) }
-		else { panic('wrong operation for array') }
+		else { li_panic(@FILE, @LINE, 'wrong op $expr.op.text for array') }
 	}
 }
 
@@ -182,9 +185,9 @@ fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
 	e.infix_expr_for_pwsh_array(expr, opt)
 }
 
-fn (mut e Emitter) namespace_item(expr ast.NamespaceItem, opt ExprOpt) {
+fn (mut e Emitter) module_item(expr ast.ModuleItem, opt ExprOpt) {
 	if !expr.is_resolved() {
-		panic(unreachable('unresolved namespace item'))
+		li_panic(@FILE, @LINE, 'unresolved module item')
 	}
 	e.expr(expr.item, opt)
 }
@@ -226,7 +229,7 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 	op := expr.op
 	if !op.kind.@is(.prefix_op) {
-		panic(unreachable('not a prefix op'))
+		li_panic(@FILE, @LINE, 'not a prefix op')
 	}
 
 	if call_expr := expr.overloaded_function_call_expr() {
@@ -245,7 +248,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		.not { '! ' }
 		.plus { '+' }
 		.minus { '-' }
-		else { panic('unimplemented') }
+		else { li_panic(@FILE, @LINE, 'invalid op $op.text') }
 	})
 	e.expr(expr.expr, paren: true)
 }

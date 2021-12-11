@@ -7,10 +7,10 @@ module pwsh
 
 import cotowali.ast { Expr, StringLiteral }
 import cotowali.token { Token }
-import cotowali.messages { unreachable }
 import cotowali.symbols { builtin_type }
+import cotowali.util { li_panic }
 
-const invalid_string_literal = unreachable('invalid string literal')
+const invalid_string_literal = 'invalid string literal'
 
 fn (mut e Emitter) single_quote_string_literal(expr StringLiteral) {
 	e.write("'")
@@ -30,14 +30,14 @@ fn (mut e Emitter) single_quote_string_literal(expr StringLiteral) {
 					e.write('$v.text')
 				}
 				.string_literal_content_glob {
-					panic('glob is unimplemented')
+					li_panic(@FILE, @LINE, 'glob is unimplemented')
 				}
 				else {
-					panic(pwsh.invalid_string_literal)
+					li_panic(@FILE, @LINE, pwsh.invalid_string_literal)
 				}
 			}
 		} else {
-			panic(pwsh.invalid_string_literal)
+			li_panic(@FILE, @LINE, pwsh.invalid_string_literal)
 		}
 	}
 }
@@ -63,7 +63,7 @@ fn (mut e Emitter) double_quote_string_literal(expr StringLiteral) {
 					e.write(r'`$')
 				}
 				.string_literal_content_glob {
-					panic('glob is unimplemented')
+					li_panic(@FILE, @LINE, 'glob is unimplemented')
 				}
 				else {
 					e.write(v.text.replace('`', '``')) // need to escape backquote in double-quoted literal
@@ -74,14 +74,14 @@ fn (mut e Emitter) double_quote_string_literal(expr StringLiteral) {
 			e.expr(v.@as(builtin_type(.string)))
 			e.write(r')')
 		} else {
-			panic(pwsh.invalid_string_literal)
+			li_panic(@FILE, @LINE, pwsh.invalid_string_literal)
 		}
 	}
 }
 
 fn (mut e Emitter) raw_string_literal(expr StringLiteral) {
 	if expr.contents.len != 1 {
-		panic(pwsh.invalid_string_literal)
+		li_panic(@FILE, @LINE, pwsh.invalid_string_literal)
 	}
 
 	content := expr.contents[0]
@@ -89,11 +89,11 @@ fn (mut e Emitter) raw_string_literal(expr StringLiteral) {
 		text := match expr.close.kind {
 			.single_quote { content.text }
 			.double_quote { content.text.replace("'", "''") }
-			else { panic(pwsh.invalid_string_literal) }
+			else { li_panic(@FILE, @LINE, pwsh.invalid_string_literal) }
 		}
 		e.write("'$text'")
 	} else {
-		panic(pwsh.invalid_string_literal)
+		li_panic(@FILE, @LINE, pwsh.invalid_string_literal)
 	}
 }
 
@@ -106,6 +106,6 @@ fn (mut e Emitter) string_literal(expr StringLiteral, opt ExprOpt) {
 		.single_quote, .single_quote_with_at_prefix { e.single_quote_string_literal(expr) }
 		.double_quote, .double_quote_with_at_prefix { e.double_quote_string_literal(expr) }
 		.single_quote_with_r_prefix, .double_quote_with_r_prefix { e.raw_string_literal(expr) }
-		else { panic(unreachable('not a string')) }
+		else { li_panic(@FILE, @LINE, 'not a string') }
 	}
 }

@@ -8,8 +8,7 @@ module pwsh
 import cotowali.ast { Stmt }
 import cotowali.symbols { builtin_type }
 import cotowali.token { Token }
-import cotowali.messages { unreachable }
-import cotowali.util { at }
+import cotowali.util { li_panic }
 
 fn (mut e Emitter) stmts(stmts []Stmt) {
 	for stmt in stmts {
@@ -27,11 +26,11 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 		ast.Expr { e.expr_stmt(stmt) }
 		ast.AssignStmt { e.assign_stmt(stmt) }
 		ast.DocComment { e.doc_comment(stmt) }
-		ast.EmptyStmt { e.writeln('') }
+		ast.Empty {}
 		ast.ForInStmt { e.for_in_stmt(stmt) }
 		ast.IfStmt { e.if_stmt(stmt) }
 		ast.InlineShell { e.inline_shell(stmt) }
-		ast.NamespaceDecl { e.namespace_decl(stmt) }
+		ast.ModuleDecl { e.module_decl(stmt) }
 		ast.ReturnStmt { e.return_stmt(stmt) }
 		ast.RequireStmt { e.require_stmt(stmt) }
 		ast.WhileStmt { e.while_stmt(stmt) }
@@ -174,16 +173,14 @@ fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
 		match part {
 			Token {
 				if part.kind != .inline_shell_content_text {
-					panic(unreachable('want inline_shell_content_text. got $part.kind'))
+					li_panic(@FILE, @LINE, 'want inline_shell_content_text. got $part.kind')
 				}
 
 				mut text := part.text
 				// treat $%n as %n (%n will be $n in pwsh)
-				if text.len > 0 && text[text.len - 1] == `$` {
-					if next := at(stmt.parts, i + 1) {
-						if next is ast.Var {
-							text = text[..text.len - 1]
-						}
+				if text.len > 0 && text[text.len - 1] == `$` && i + 1 < stmt.parts.len {
+					if stmt.parts[i + 1] is ast.Var {
+						text = text[..text.len - 1]
 					}
 				}
 				e.write(text)
@@ -197,7 +194,7 @@ fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
 	e.writeln('')
 }
 
-fn (mut e Emitter) namespace_decl(ns ast.NamespaceDecl) {
+fn (mut e Emitter) module_decl(ns ast.ModuleDecl) {
 	e.block(ns.block)
 }
 
