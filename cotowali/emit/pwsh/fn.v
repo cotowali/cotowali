@@ -76,14 +76,25 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 		}
 	}
 	e.writeln(')')
+
 	e.writeln('{')
+	e.indent()
 	{
-		e.indent()
 		if fn_info.variadic {
 			e.writeln('${e.pwsh_var(node.params.last())} = \$args')
 		}
+
+		if param := node.pipe_in_param() {
+			val := if ast.Expr(param).type_symbol().resolved().kind() in [.tuple, .array] {
+				r'@($input)'
+			} else {
+				r'@($input)[0]'
+			}
+			e.writeln('${e.pwsh_var(param)} = $val')
+		}
+
 		e.block(node.body)
-		e.unindent()
 	}
+	e.unindent()
 	e.writeln('}')
 }

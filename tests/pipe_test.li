@@ -28,7 +28,6 @@ fn test_normal() {
 }
 test_normal()
 
-#if !pwsh
 fn test_var() {
   fn (n: int) |> inc() |> int {
     return n + 1
@@ -48,4 +47,3 @@ fn test_var() {
   assert((1 |> (2 as Num).add()) == 3)
 }
 test_var()
-#endif

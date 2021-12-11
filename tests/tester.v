@@ -17,7 +17,6 @@ const (
 	pwsh_skip_list = [
 		'readme_example.li',
 		'posix_test.li',
-		'method_test.li',
 		'glob_test.li',
 	]
 )
