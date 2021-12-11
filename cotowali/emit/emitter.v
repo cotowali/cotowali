@@ -10,7 +10,7 @@ import cotowali.ast { File }
 import cotowali.context { Context }
 import cotowali.emit.sh
 import cotowali.emit.pwsh
-import cotowali.messages { unreachable }
+import cotowali.util { li_panic }
 
 pub interface Emitter {
 mut:
@@ -29,7 +29,7 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 			return e
 		}
 		.hoshikudzu {
-			panic(unreachable('emitter.new_emitter cannot use for $ctx.config.backend'))
+			li_panic(@FILE, @LINE, 'emitter.new_emitter cannot use for $ctx.config.backend')
 		}
 	}
 }
