@@ -401,7 +401,7 @@ fn test_inline_shell() {
 	])
 
 	test(@FN, @LINE, code(r'pwsh { echo $%n } x'), [
-		t(.key_inline, 'inline'),
+		t(.ident, 'pwsh'),
 		t(.l_brace, '{'),
 		t(.inline_shell_content_text, r' echo $'),
 		t(.inline_shell_content_var, '%n'),
