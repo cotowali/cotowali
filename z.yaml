@@ -112,6 +112,7 @@ tasks:
       compile: v run tests/tester.v --compile $@
       fix: z test integration --fix $@
       prod: z test integration --prod $@
+      pwsh: z test integration --pwsh $@
       hello: z run examples/hello.li
       watch: |
         watch=""
@@ -143,6 +144,7 @@ tasks:
       setup-v: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
       format: v fmt -verify {{format_sources}}
       test: z test
+      test.pwsh: z test pwsh
       test.prod: z test prod
       test.shellcheck: z test --shellcheck
       run-on-all-conditions:

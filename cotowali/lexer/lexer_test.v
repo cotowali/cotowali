@@ -400,6 +400,16 @@ fn test_inline_shell() {
 		t(.ident, 'x'),
 	])
 
+	test(@FN, @LINE, code(r'pwsh { echo $%n } x'), [
+		t(.ident, 'pwsh'),
+		t(.l_brace, '{'),
+		t(.inline_shell_content_text, r' echo $'),
+		t(.inline_shell_content_var, '%n'),
+		t(.inline_shell_content_text, ' '),
+		t(.r_brace, '}'),
+		t(.ident, 'x'),
+	])
+
 	test(@FN, @LINE, code(r'inline { echo $%n } x'), [
 		t(.ident, 'inline'),
 		t(.l_brace, '{'),

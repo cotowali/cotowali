@@ -1,5 +1,5 @@
 fn undefined_variable() {
-  sh {
+  inline {
     echo %n
   }
 }

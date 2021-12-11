@@ -250,6 +250,7 @@ pub fn (k TokenKind) @is(class TokenKindClass) bool {
 pub enum KeywordIdent {
 	not_a_keyword_ident
 	sh
+	pwsh
 	inline
 }
 
@@ -257,6 +258,7 @@ pub fn (t Token) keyword_ident() KeywordIdent {
 	if t.kind == .ident {
 		match t.text {
 			'sh' { return .sh }
+			'pwsh' { return .pwsh }
 			'inline' { return .inline }
 			else { return .not_a_keyword_ident }
 		}

@@ -25,7 +25,11 @@ pub fn compile_to(w io.Writer, s Source, ctx &Context) ? {
 
 fn compile_to_temp_file(s Source, ctx &Context) ?string {
 	c := new_compiler(s, ctx)
-	temp_path := os.join_path(os.temp_dir(), '${os.file_name(s.path)}_${ulid()}.sh')
+
+	base := '${os.file_name(s.path)}_$ulid()'
+	ext := ctx.config.backend.script_ext()
+	temp_path := os.join_path(os.temp_dir(), '$base$ext')
+
 	mut f := os.create(temp_path) or { li_panic(@FILE, @LINE, err) }
 	c.compile_to(f) ?
 	defer {
@@ -39,9 +43,11 @@ pub fn run(s Source, ctx &Context) ?int {
 	defer {
 		os.rm(temp_file) or { li_panic(@FILE, @LINE, err) }
 	}
-	code := match ctx.config.backend {
-		.powershell { os.system('powershell.exe $temp_file') }
-		else { os.system('sh "$temp_file"') }
+	executable := ctx.config.backend.find_executable_path() or {
+		eprintln(err.msg)
+		exit(1)
 	}
-	return code
+
+	exit_code := os.system('$executable "$temp_file"')
+	return exit_code
 }

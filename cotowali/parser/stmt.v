@@ -145,7 +145,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 	}
 
 	match p.token(0).keyword_ident() {
-		.sh, .inline {
+		.sh, .pwsh, .inline {
 			if p.kind(1) == .l_brace {
 				return ast.Stmt(p.parse_inline_shell() ?)
 			}

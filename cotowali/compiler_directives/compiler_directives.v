@@ -83,7 +83,7 @@ pub fn new_compiler_symbol_table(config Config) CompilerSymbolTable {
 			table.define('sh')
 			table.define('zsh')
 		}
-		.powershell {
+		.pwsh {
 			table.define('pwsh')
 			table.define('powershell')
 		}

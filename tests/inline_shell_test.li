@@ -9,18 +9,28 @@ fn test_shared_inline_block() {
 test_shared_inline_block()
 
 fn test_inline_shell_number() {
-  var (n, a, b) = (1, 2, 3)
-  assert(a != b)
+  var (n, v, a, b) = (1, 2, 3, 4)
+  assert(v != a && v != b)
   sh {
-    %a=$%b
+    %a=$%v
+    %b=$%v
     %n=42
   }
-  assert(a == b)
+  pwsh {
+    %a = $%v
+    %b = %v
+    %n = 42
+  }
+  assert(a == v)
+  assert(b == v)
   assert(n == 42)
 
   var n2 = 0
   sh {
     %n2=$(( %n * 2 ))
+  }
+  pwsh {
+    %n2=%n * 2
   }
   assert(n2 == n * 2)
 }
@@ -31,6 +41,9 @@ fn test_inline_shell_escape() {
   var msg = 'hello world'
   sh {
     %text="$(printf '%%%% %%s %%%%' "$%msg")"
+  }
+  pwsh {
+    %text="%% %msg %%"
   }
   assert(text == "% $msg %")
 }
@@ -44,6 +57,9 @@ fn test_inline_shell_keyword_var() {
     %inline="inline"
   }
   sh {
+    %sh="sh"
+  }
+  pwsh {
     %sh="sh"
   }
   assert(inline == 'inline')

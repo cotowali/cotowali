@@ -5,12 +5,18 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module config
 
+import os
+
 pub enum Backend {
 	sh
 	dash
 	bash
 	zsh
-	powershell
+	pwsh
+}
+
+pub fn (b Backend) is_sh_like() bool {
+	return b in [.sh, .dash, .bash, .zsh]
 }
 
 pub fn (b Backend) shebang() string {
@@ -19,7 +25,32 @@ pub fn (b Backend) shebang() string {
 		.dash { '#!/usr/bin/env dash' }
 		.bash { '#!/usr/bin/env dash' }
 		.zsh { '#!/usr/bin/env dash' }
-		.powershell { '#!/usr/bin/env pwsh' }
+		.pwsh { '#!/usr/bin/env pwsh' }
+	}
+}
+
+pub fn (backend Backend) find_executable_path() ?string {
+	cmds := match backend {
+		.pwsh { ['pwsh', 'pwsh.exe', 'powershell.exe'] }
+		.sh { ['sh'] }
+		.dash { ['dash'] }
+		.bash { ['bash', 'bash.exe'] }
+		.zsh { ['zsh'] }
+	}
+	for cmd in cmds {
+		if found := os.find_abs_path_of_executable(cmd) {
+			return found
+		}
+	}
+	return error('$backend not found')
+}
+
+pub fn (backend Backend) script_ext() string {
+	return match backend {
+		.sh, .dash { '.sh' }
+		.bash { '.bash' }
+		.zsh { '.zsh' }
+		.pwsh { '.ps1' }
 	}
 }
 
@@ -59,6 +90,7 @@ pub fn backend_from_str(s string) ?Backend {
 		'dash' { return .dash }
 		'bash' { return .bash }
 		'zsh' { return .zsh }
+		'pwsh', 'powershell' { return .pwsh }
 		else { return error('unknown backend `$s`') }
 	}
 }

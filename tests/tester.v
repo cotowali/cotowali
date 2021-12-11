@@ -10,6 +10,19 @@ import v.util { color_compare_strings, find_working_diff_command }
 import time
 import runtime
 
+// -- config --
+
+const (
+	skip_list      = ['raytracing.li', 'welcome.li']
+	pwsh_skip_list = [
+		'readme_example.li',
+		'posix_test.li',
+		'glob_test.li',
+	]
+)
+
+// --
+
 fn indent(n int) string {
 	return '  '.repeat(n)
 }
@@ -61,24 +74,23 @@ fn out_path(f string) string {
 	return f.trim_suffix(suffix(.li)) + suffix(.out)
 }
 
-const skip_list = ['raytracing.li', 'welcome.li']
-
-fn is_target_file(s string) bool {
-	for skip in skip_list {
-		if s.ends_with(skip) {
-			return false
-		}
+fn is_target_file(s string, opt TestOption) bool {
+	if skip_list.any(s.ends_with(it)) {
+		return false
+	}
+	if opt.pwsh && pwsh_skip_list.any(s.ends_with(it)) {
+		return false
 	}
 	return s.ends_with(suffix(.li)) && !is_mod_file(s)
 }
 
-fn get_sources(paths []string) []string {
+fn get_sources(paths []string, opt TestOption) []string {
 	mut res := []string{}
 	for path in paths {
 		if os.is_dir(path) {
 			sub_paths := os.ls(path) or { panic(err) }
-			res << get_sources(sub_paths.map(os.join_path(path, it)))
-		} else if is_target_file(path) {
+			res << get_sources(sub_paths.map(os.join_path(path, it)), opt)
+		} else if is_target_file(path, opt) {
 			res << path
 		}
 	}
@@ -88,6 +100,7 @@ fn get_sources(paths []string) []string {
 struct Lic {
 	source   string [required]
 	bin      string [required]
+	backend  string = 'sh'
 	prod     bool
 	autofree bool
 }
@@ -114,13 +127,14 @@ fn (lic Lic) compile() ? {
 }
 
 fn (lic Lic) execute(c LicCommand, file string) os.Result {
+	cmd := '$lic.bin -b $lic.backend'
 	return match c {
-		.shellcheck { os.execute('$lic.bin -test $file | shellcheck -') }
-		.compile { os.execute('$lic.bin -test $file') }
-		.compile_to_file { os.execute('$lic.bin -test $file > ${file.trim_suffix(suffix(.li))}${suffix(.sh)}') }
-		.noemit { os.execute('$lic.bin -no-emit $file') }
-		.run { os.execute('$lic.bin run $file') }
-		.test { os.execute('$lic.bin test $file') }
+		.shellcheck { os.execute('$cmd -test $file | shellcheck -') }
+		.compile { os.execute('$cmd -test $file') }
+		.compile_to_file { os.execute('$cmd -test $file > ${file.trim_suffix(suffix(.li))}${suffix(.sh)}') }
+		.noemit { os.execute('$cmd -no-emit $file') }
+		.run { os.execute('$cmd run $file') }
+		.test { os.execute('$cmd test $file') }
 	}
 }
 
@@ -142,6 +156,7 @@ struct TestOption {
 	shellcheck   bool
 	fix_mode     bool
 	compile_only bool
+	pwsh         bool
 	prod         bool
 	autofree     bool
 	parallel     bool = true
@@ -297,12 +312,13 @@ mut:
 fn new_test_suite(paths []string, opt TestOption) TestSuite {
 	dir := os.real_path(@VMODROOT)
 	lic_dir := os.join_path(dir, 'cmd', 'lic')
-	sources := get_sources(paths)
+	sources := get_sources(paths, opt)
 
 	lic := Lic{
 		prod: opt.prod
 		autofree: opt.autofree
 		source: lic_dir
+		backend: if opt.pwsh { 'pwsh' } else { 'sh' }
 		bin: os.join_path('tests', 'lic')
 	}
 
@@ -392,12 +408,15 @@ fn (t TestSuite) run() bool {
 }
 
 fn main() {
+	// TODO: Use cli module
+
 	if ['--help', '-h', 'help'].any(it in os.args) {
 		println('Usage: v run tests/tester.v flags... [test.li|tests]...')
 		println('Flags:')
 		println('  --shellcheck   use shellcheck')
 		println('  --fix-mode     auto fix failed tests')
 		println('  --compile      compile tests instead of run tests')
+		println('  --pwsh         use pwsh backend')
 		println("  --prod         enable V's -prod")
 		println('  --autofree     enable autofree')
 		println('  --no-parallel  disable parallel test')
@@ -407,6 +426,7 @@ fn main() {
 	shellcheck := '--shellcheck' in os.args
 	fix_mode := '--fix' in os.args
 	compile_only := '--compile' in os.args
+	pwsh := '--pwsh' in os.args
 	prod := '--prod' in os.args
 	autofree := '--autofree' in os.args
 	parallel := '--no-parallel' !in os.args
@@ -429,6 +449,7 @@ fn main() {
 		fix_mode: fix_mode
 		compile_only: compile_only
 		autofree: autofree
+		pwsh: pwsh
 		prod: prod
 		parallel: parallel
 	)

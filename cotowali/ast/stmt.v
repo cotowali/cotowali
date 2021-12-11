@@ -9,6 +9,7 @@ import cotowali.token { Token }
 import cotowali.source { Pos }
 import cotowali.symbols { Scope, Type, builtin_type }
 import cotowali.util.checksum
+import cotowali.util { li_panic }
 
 pub type Stmt = AssertStmt
 	| AssignStmt
@@ -171,6 +172,22 @@ pub mut:
 	args []Expr
 }
 
+pub fn (s &AssertStmt) cond() Expr {
+	$if !prod {
+		if s.args.len == 0 {
+			li_panic(@FILE, @LINE, 'assert cond is not set')
+		}
+	}
+	return s.args[0]
+}
+
+pub fn (s &AssertStmt) message_expr() ?Expr {
+	if s.args.len > 1 {
+		return s.args[1]
+	}
+	return none
+}
+
 pub fn (s &AssertStmt) children() []Node {
 	return s.args.map(Node(it))
 }
@@ -326,6 +343,10 @@ pub mut:
 
 pub fn (sh &InlineShell) use_for_sh() bool {
 	return sh.key.keyword_ident() in [.sh, .inline]
+}
+
+pub fn (sh &InlineShell) use_for_pwsh() bool {
+	return sh.key.keyword_ident() in [.pwsh, .inline]
 }
 
 fn (mut r Resolver) inline_shell(mut stmt InlineShell) {

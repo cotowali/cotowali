@@ -8,6 +8,11 @@
 
 module http {
   fn get(url: string): string {
+#if pwsh
+    pwsh {
+      return (invoke-webrequest %url -headers @{Accept = '*/*'}).Content
+    }
+#else
     if has_command('curl') {
       return @curl('-sSL', url)
     } else if has_command('wget') {
@@ -16,5 +21,6 @@ module http {
 
     // report error
     require_command('curl')
+#endif
   }
 }

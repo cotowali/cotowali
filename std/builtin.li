@@ -4,22 +4,29 @@
 /// License, v. 2.0. If a copy of the MPL was not distributed with this
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+// if powershell, skip most parts of std for now
+
 fn print(s: string) {
   sh { printf '%%s' "$%s" }
+  pwsh { [Console]::Write(%s) }
 }
 
 fn println(s: string) {
   sh { printf '%%s\n' "$%s" }
+  pwsh { [Console]::WriteLine(%s) }
 }
 
 fn eprint(s: string) {
   sh { printf '%%s' "$%s" >&2 }
+  pwsh { [Console]::Error.Write(%s) }
 }
 
 fn eprintln(s: string) {
   sh { printf '%%s\n' "$%s" >&2 }
+  pwsh { [Console]::Error.WriteLine(%s) }
 }
 
+#if !pwsh
 fn isatty(fd: int): bool {
   var true_ = true
   var res = false
@@ -55,12 +62,21 @@ fn input_tty(prompt: string): string {
   }
   return res
 }
+#endif
 
 fn has_command(command: string): bool {
   var code: int
   sh {
     type $%command > /dev/null 2>&1
     %code=$?
+  }
+  pwsh {
+    get-command $%command > /dev/null 2>&1
+    if ($?) {
+      %code = 0
+    } else {
+      %code = 1
+    }
   }
   return code == 0
 }
@@ -89,8 +105,8 @@ fn ...string |> join(sep: string) |> string {
 
 fn range(begin: int, end: int) |> ...int {
   // cannot use negative number on busybox
-  for i in @seq(0, end - begin - 1) as ...int {
-    yield (i as int) + begin
+  for i in seq(end - begin) {
+    yield (i as int) + begin - 1
   }
 }
 
@@ -100,8 +116,15 @@ fn exit(code: int)
 
 fn string |> cat(files: ...string) |> ...string
 
+#if pwsh
+fn seq(n: int) |> ...int {
+  pwsh { 1..%n }
+}
+#else
 fn seq(n: int) |> ...int
+#endif
 
+#if !pwsh
 fn basename(path: string): string
 
 fn cd(path: string)
@@ -117,11 +140,13 @@ fn mkdir_p(args: ...string) {
 }
 
 fn pwd(): string
+#endif
 
 fn ls(files: ...string) |> ...string
 
 fn rm(paths: ...string)
 
+#if !pwsh
 fn rm_r(paths: ...string) {
   sh {
     rm -r "$@"
@@ -142,25 +167,75 @@ fn which(name: string): string {
   }
   return res
 }
+#endif
 
 // --- string methods ---
 
 fn (s: string) replace(a: string, b: string): string {
+#if pwsh
+
+  var ret: string
+  pwsh {
+    %ret = %s -replace %a, %b
+  }
+  return ret
+
+#else
+
   return s |> @sed("s/$a/$b/g")
+
+#endif
 }
 
 fn (s: string) substr(i: int, n: int): string {
+  if n <= 0 {
+    return ''
+  }
+#if pwsh
+
+  var ss: string
+  pwsh {
+    if (%i + %n -lt %s.length) {
+      %ss = %s.Substring(%i, %n)
+    } else {
+      %ss = %s.Substring(%i)
+    }
+  }
+  return ss
+
+#else
+
   return (s |> @awk('-v', 'RS=""', '-v', "m=${i + 1}", '-v', "n=$n", '{print substr($0, m, n)}'))
+
+#endif
 }
 
 fn (s: string) index(t: string): int {
+#if pwsh
+
+  var i: int
+  pwsh { %i = %s.IndexOf(%t) }
+  return i
+
+#else
+
   if t.len() == 0 {
     return 0
   }
   return (s |> @awk('-v', "t=$t", '{print index($1, t) - 1}')) as int
+
+#endif
 }
 
 fn (s: string) last_index(t: string): int {
+#if pwsh
+
+  var i: int
+  pwsh { %i = %s.LastIndexOf(%t) }
+  return i
+
+#else
+
   var s_len = s.len()
   if t.len() == 0 {
     return s_len
@@ -179,11 +254,14 @@ fn (s: string) last_index(t: string): int {
     rest = rest.substr(i + t.len(), rest.len())
   }
   return last_i
+
+#endif
 }
 
 fn (s: string) len(): int {
   var n: int
   sh { %n=${#%s} }
+  pwsh { %n=%s.length }
   return n
 }
 
@@ -228,11 +306,31 @@ fn (s: string) trim_suffix(suffix: string): string {
 }
 
 fn (s: string) trim_start(): string {
+#if pwsh
+
+  var ret: string
+  pwsh { %ret = %s.TrimStart() }
+  return ret
+
+#else
+
   return s |> @sed('s/^[[:space:]]*//')
+
+#endif
 }
 
 fn (s: string) trim_end(): string {
+#if pwsh
+
+  var ret: string
+  pwsh { %ret = %s.TrimEnd() }
+  return ret
+
+#else
+
   return s |> @sed('s/[[:space:]]*$//')
+
+#endif
 }
 
 fn (s: string) trim(): string {
@@ -249,6 +347,7 @@ fn (s: string) contains(substr: string): bool {
 fn (arr: []any) len(): int {
   var n: int
   sh { %n=$(array_len %arr) }
+  pwsh { %n = %arr.length }
   return n
 }
 

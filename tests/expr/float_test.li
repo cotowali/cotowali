@@ -19,7 +19,6 @@ fn negative(v: float): float {
 }
 assert(negative(1.0) == -1)
 
-
 assert(0 < 1)
 assert(0.1 < 0.2)
 assert(0.5 < 1)

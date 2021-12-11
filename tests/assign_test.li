@@ -79,7 +79,7 @@ fn test_discard_value() {
   _ = 100
   (_, _) = ('a', 'b')
 
-  var tmp = '/tmp/cotowali_discrad_value_tmp.txt'
+  var tmp = 'cotowali_discrad_value_tmp.txt'
   var msg = 'hello'
   fn mktemp(): string {
     msg |> tmp
@@ -92,6 +92,7 @@ fn test_discard_value() {
 }
 test_discard_value()
 
+#if !pwsh
 fn test_assign_fn() {
   fn f(): int {
     return 42
@@ -100,3 +101,4 @@ fn test_assign_fn() {
   assert(aliased_f() == 42)
 }
 test_assign_fn()
+#endif

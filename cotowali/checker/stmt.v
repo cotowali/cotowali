@@ -7,6 +7,7 @@ module checker
 
 import cotowali.ast
 import cotowali.symbols { builtin_type }
+import cotowali.token { KeywordIdent }
 import cotowali.messages { args_count_mismatch }
 import cotowali.util { li_panic }
 import cotowali.source { Pos }
@@ -30,9 +31,32 @@ fn (mut c Checker) attr(attr ast.Attr) {
 	}
 }
 
+fn stmt_is_specific_inline_shell(sh KeywordIdent, stmt ast.Stmt) bool {
+	return if stmt is ast.InlineShell { stmt.key.keyword_ident() == sh } else { false }
+}
+
 fn (mut c Checker) stmts(stmts []ast.Stmt) {
-	for stmt in stmts {
+	for i, stmt in stmts {
 		c.stmt(stmt)
+		if stmt is ast.InlineShell {
+			if c.ctx.config.backend.is_sh_like() && stmt.key.keyword_ident() == .pwsh {
+				prev_is_sh := i > 0 && stmt_is_specific_inline_shell(.sh, stmts[i - 1])
+				next_is_sh := i < stmts.len - 1 && stmt_is_specific_inline_shell(.sh, stmts[i + 1])
+				if !(prev_is_sh || next_is_sh) {
+					c.warn('sh block is missing. pwsh block will be skipped in pwsh backend',
+						stmt.key.pos)
+				}
+			}
+			if c.ctx.config.backend == .pwsh && stmt.key.keyword_ident() == .sh {
+				prev_is_pwsh := i > 0 && stmt_is_specific_inline_shell(.pwsh, stmts[i - 1])
+				next_is_pwsh := i < stmts.len - 1
+					&& stmt_is_specific_inline_shell(.pwsh, stmts[i + 1])
+				if !(prev_is_pwsh || next_is_pwsh) {
+					c.warn('pwsh block is missing. sh block will be skipped in pwsh backend',
+						stmt.key.pos)
+				}
+			}
+		}
 	}
 }
 
