@@ -6,9 +6,7 @@ assert(1 / 2 == 0)
 assert(3 / 2 == 1)
 
 assert(2 ** 2 == 4)
-#if !pwsh
 assert(typeof(2 ** 2) == 'int')
-#endif
 
 var v = 1
 v = 10

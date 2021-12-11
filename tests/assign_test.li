@@ -79,7 +79,6 @@ fn test_discard_value() {
   _ = 100
   (_, _) = ('a', 'b')
 
-#if !pwsh
   var tmp = 'cotowali_discrad_value_tmp.txt'
   var msg = 'hello'
   fn mktemp(): string {
@@ -90,7 +89,6 @@ fn test_discard_value() {
   var tmp_content = cat(tmp) |> join('')
   rm(tmp)
   assert(tmp_content == msg)
-#endif
 }
 test_discard_value()
 

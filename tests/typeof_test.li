@@ -11,9 +11,7 @@ assert(typeof([
   ]
 ]) == '[][]map[string][]map[string]map[string][]int')
 
-#if !pwsh
 fn typeof_str_varargs(args: ...string): string {
   return typeof(args)
 }
 assert(typeof_str_varargs() == '[]string')
-#endif

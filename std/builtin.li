@@ -140,11 +140,13 @@ fn mkdir_p(args: ...string) {
 }
 
 fn pwd(): string
+#endif
 
 fn ls(files: ...string) |> ...string
 
 fn rm(paths: ...string)
 
+#if !pwsh
 fn rm_r(paths: ...string) {
   sh {
     rm -r "$@"
