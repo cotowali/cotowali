@@ -37,6 +37,7 @@ const (
 		'test_runner_test.li',
 		'tuple_test.li',
 		'typeof_test.li',
+		'nameof_test.li',
 		'var_test.li',
 		'while_test.li',
 		'std/print.li',

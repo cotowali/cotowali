@@ -40,7 +40,7 @@ fn (mut e Emitter) expr(expr Expr, opt ExprOpt) {
 		ast.NullLiteral { e.null_literal(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
 		ast.SelectorExpr { e.selector_expr(expr, opt) }
-		ast.Nameof { panic('unimplemented') }
+		ast.Nameof { e.write("'$expr.value()'") }
 		ast.Typeof { e.write("'$expr.value()'") }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
 		ast.StringLiteral { e.string_literal(expr, opt) }
