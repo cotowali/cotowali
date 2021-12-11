@@ -48,6 +48,6 @@ pub fn run(s Source, ctx &Context) ?int {
 		exit(1)
 	}
 
-	exit_code := os.system('cat "$temp_file" | $executable')
+	exit_code := os.system('$executable "$temp_file"')
 	return exit_code
 }
