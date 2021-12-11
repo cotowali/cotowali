@@ -87,6 +87,7 @@ pub fn new_compiler_symbol_table(config Config) CompilerSymbolTable {
 			table.define('pwsh')
 			table.define('powershell')
 		}
+		.hoshikudzu {}
 	}
 	if config.feature.has(.interactive) {
 		table.define('lish')

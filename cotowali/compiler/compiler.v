@@ -7,15 +7,17 @@ module compiler
 
 import io
 import strings
-import cotowali.context { Context }
+import cotowali.config { Config }
+import cotowali.context { Context, new_context }
 import cotowali.source { Source, new_source }
 import cotowali.parser
 import cotowali.checker
 import cotowali.ast
 import cotowali.emit
+import cotowali.emit.hoshikudzu
 
 pub struct Compiler {
-pub:
+pub mut:
 	ctx &Context
 mut:
 	source Source
@@ -35,9 +37,42 @@ pub fn (c &Compiler) compile() ?string {
 	return sb.str()
 }
 
+fn (c &Compiler) hoshikudzu_compile_to(w io.Writer) ? {
+	mut ctx := c.ctx
+	config := ctx.config
+
+	mut sh_ctx := new_context(Config{ ...config, backend: .sh })
+	mut pwsh_ctx := new_context(Config{ ...config, backend: .pwsh })
+
+	sh_compiler := new_compiler(c.source, sh_ctx)
+	pwsh_compiler := new_compiler(c.source, pwsh_ctx)
+
+	sh_code := sh_compiler.compile() or {
+		ctx.errors.push_many(sh_ctx.errors.all())
+		return err
+	}
+	pwsh_code := pwsh_compiler.compile() or {
+		ctx.errors.push_many(sh_ctx.errors.all())
+		return err
+	}
+
+	if config.no_emit {
+		return
+	}
+
+	mut e := hoshikudzu.new_emitter(w)
+	e.emit(sh: sh_code, pwsh: pwsh_code)
+}
+
 pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	ctx := c.ctx
 	config := ctx.config
+
+	if config.backend == .hoshikudzu {
+		c.hoshikudzu_compile_to(w) ?
+		return
+	}
+
 	if config.backend !in [.sh, .pwsh] {
 		return error('$config.backend backend is not yet implemented.')
 	}
