@@ -41,7 +41,7 @@ fn (mut e Emitter) expr(expr Expr, opt ExprOpt) {
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
 		ast.SelectorExpr { e.selector_expr(expr, opt) }
 		ast.Nameof { panic('unimplemented') }
-		ast.Typeof { panic('unimplemented') }
+		ast.Typeof { e.write("'$expr.value()'") }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
 		ast.StringLiteral { e.string_literal(expr, opt) }
 		ast.Var { e.var_(expr, opt) }
