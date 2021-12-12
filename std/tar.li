@@ -39,4 +39,24 @@ module tar {
       $input | tar -xf $%archive
     }
   }
+
+#if !pwsh
+  module gz {
+    fn create(file: string) |> string {
+      @tar('-zc', file)
+    }
+
+    fn create_to(archive: string, file: string) {
+      @tar('-zcf', archive, file)
+    }
+
+    fn string |> extract() {
+      @tar('-zx')
+    }
+
+    fn extract_from(archive: string) {
+      @tar('-zxf', archive)
+    }
+  }
+#endif
 }
