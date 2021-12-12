@@ -1,0 +1,49 @@
+/// platform.li
+///
+/// Copyright (c) 2021 zakuro <z@kuro.red>. All rights reserved.
+///
+/// This Source Code Form is subject to the terms of the Mozilla Public
+/// License, v. 2.0. If a copy of the MPL was not distributed with this
+/// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+module platform {
+  fn system(): string {
+    var res = ''
+    sh { %res="$(uname -s)" }
+    pwsh {
+      %res = 'Windows'
+      if ([Environment]::OsVersion.Platform.ToString -eq 'Unix') {
+        %res = uname -s
+      }
+    }
+    return res
+  }
+
+  fn uname(): string {
+    inline { uname -a }
+  }
+
+  fn is_windows(): bool {
+    return system() == 'Windows'
+  }
+
+  fn is_linux(): bool {
+    return system() == 'Linux'
+  }
+
+  fn is_darwin(): bool {
+    return system() == 'Darwin'
+  }
+
+  fn shell(): string {
+#if sh
+    return 'sh'
+#else
+#if pwsh
+    return 'pwsh'
+#else
+    return 'unknown'
+#endif
+#endif
+  }
+}

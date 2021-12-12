@@ -1,0 +1,10 @@
+require 'platform'
+
+fn test_shell() {
+#if sh
+  assert(platform::shell() == 'sh')
+#endif
+#if pwsh
+  assert(platform::shell() == 'pwsh')
+#endif
+}
