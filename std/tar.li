@@ -10,15 +10,15 @@ module tar {
     require_command('tar')
   }
 
-  fn create(item: string) |> string {
+  fn create(file: string) |> string {
     inline {
-      tar -cf '-' $%item
+      tar -cf '-' $%file
     }
   }
 
-  fn create_to(archive: string, item: string) {
+  fn create_to(archive: string, file: string) {
     inline {
-      tar -cf $%archive $%item
+      tar -cf $%archive $%file
     }
   }
 
@@ -31,12 +31,12 @@ module tar {
     }
   }
 
-  fn string |> extract_from(target: string) {
+  fn extract_from(archive: string) {
     sh {
-      tar -xf $%target
+      tar -xf $%archive
     }
     pwsh {
-      $input | tar -xf $%target
+      $input | tar -xf $%archive
     }
   }
 }
