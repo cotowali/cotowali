@@ -9,5 +9,12 @@ fn test_tar() {
   cat(hello_tar) |> tar::extract()
   assert((cat(hello_txt) |> join('')) == 'hello')
   rm(hello_tar, hello_txt)
+
+  'hello2' |> hello_txt
+  tar::create_to(hello_tar, hello_txt)
+  rm(hello_txt)
+  tar::extract_from(hello_tar)
+  assert((cat(hello_txt) |> join('')) == 'hello2')
+  rm(hello_tar, hello_txt)
 }
 test_tar()
