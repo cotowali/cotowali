@@ -1,2 +1,5 @@
 type Num = int
 fn (v: ...Num) |> f() {}
+
+'abc' |> 'efg' |> 0
+'abc' |> undefined() |> undefined_mod::f()

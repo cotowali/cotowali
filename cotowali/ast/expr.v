@@ -600,7 +600,7 @@ fn is_str_or_null(t Type) bool {
 pub fn (expr &Pipeline) has_redirect() bool {
 	last := expr.exprs.last()
 	return if last is CallExpr {
-		fn_info := last.function_info()
+		fn_info := last.func.type_symbol().function_info() or { return false }
 		fn_info.pipe_in == builtin_type(.void) && is_str_or_null(fn_info.ret)
 	} else {
 		last !is CallCommandExpr && is_str_or_null(last.resolved_typ())

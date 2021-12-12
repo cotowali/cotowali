@@ -1,3 +1,15 @@
 error: pipe.err.li 2,5: sequence type cannot be used for pipe-in parameter
     2 | fn (v: ...Num) |> f() {}
       |     ^^^^^^^^^
+error: pipe.err.li 4,10: expected function call, but found string
+    4 | 'abc' |> 'efg' |> 0
+      |          ^^^^^
+error: pipe.err.li 4,19: expected function call, but found int
+    4 | 'abc' |> 'efg' |> 0
+      |                   ^
+error: pipe.err.li 5,10: function `undefined` is not defined
+    5 | 'abc' |> undefined() |> undefined_mod::f()
+      |          ^^^^^^^^^^^
+error: pipe.err.li 5,25: module `undefined_mod` is not defined
+    5 | 'abc' |> undefined() |> undefined_mod::f()
+      |                         ^^^^^^^^^^^^^

@@ -280,7 +280,10 @@ fn (mut c Checker) pipeline(expr ast.Pipeline) {
 				left_ts = left.scope().must_lookup_type(left_sequence_info.elem)
 			}
 
-			fn_info := right.function_info()
+			fn_info := right.func.type_symbol().function_info() or {
+				// function is not resolved. error was repoted in resolver
+				continue
+			}
 			mut pipe_in := right.scope.must_lookup_type(fn_info.pipe_in)
 			if pipe_in_sequence_info := pipe_in.sequence_info() {
 				pipe_in = right.scope.must_lookup_type(pipe_in_sequence_info.elem)
