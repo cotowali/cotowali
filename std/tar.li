@@ -1,0 +1,64 @@
+/// tar.li
+///
+/// Copyright (c) 2021 zakuro <z@kuro.red>. All rights reserved.
+///
+/// This Source Code Form is subject to the terms of the Mozilla Public
+/// License, v. 2.0. If a copy of the MPL was not distributed with this
+/// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+
+module tar {
+  if !has_command('tar.exe') {
+    require_command('tar')
+  }
+
+  fn create(file: string) |> string {
+    inline {
+      tar -cf '-' $%file
+    }
+  }
+
+  fn create_to(archive: string, file: string) {
+    inline {
+      tar -cf $%archive $%file
+    }
+  }
+
+  fn string |> extract() {
+    sh {
+      tar -xf '-'
+    }
+    pwsh {
+      $input | tar -xf '-'
+    }
+  }
+
+  fn extract_from(archive: string) {
+    sh {
+      tar -xf $%archive
+    }
+    pwsh {
+      $input | tar -xf $%archive
+    }
+  }
+
+#if !pwsh
+  module gz {
+    fn create(file: string) |> string {
+      @tar('-zc', file)
+    }
+
+    fn create_to(archive: string, file: string) {
+      @tar('-zcf', archive, file)
+    }
+
+    fn string |> extract() {
+      @tar('-zx')
+    }
+
+    fn extract_from(archive: string) {
+      @tar('-zxf', archive)
+    }
+  }
+#endif
+}

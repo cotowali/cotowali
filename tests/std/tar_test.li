@@ -1,0 +1,51 @@
+require 'tar'
+
+fn test_tar() {
+  var hello_txt = 'hello.txt'
+  var hello_tar = 'hello.tar'
+  'hello' |> hello_txt
+  tar::create(hello_txt) |> hello_tar
+  rm(hello_txt)
+
+  cat(hello_tar) |> tar::extract()
+  assert((cat(hello_txt) |> join('')) == 'hello')
+  rm(hello_tar, hello_txt)
+
+
+  'hello2' |> hello_txt
+  tar::create_to(hello_tar, hello_txt)
+  rm(hello_txt)
+
+  tar::extract_from(hello_tar)
+  assert((cat(hello_txt) |> join('')) == 'hello2')
+  rm(hello_tar, hello_txt)
+}
+test_tar()
+
+#if !pwsh
+
+fn test_tgz() {
+  var hello_txt = 'hello.txt'
+  var hello_tgz = 'hello.tar.gz'
+  'hello' |> hello_txt
+  tar::gz::create(hello_txt) |> hello_tgz
+  assert(@file(hello_tgz).contains('gzip'))
+  rm(hello_txt)
+
+  cat(hello_tgz) |> tar::gz::extract()
+  assert((cat(hello_txt) |> join('')) == 'hello')
+  rm(hello_tgz, hello_txt)
+
+
+  'hello2' |> hello_txt
+  tar::gz::create_to(hello_tgz, hello_txt)
+  assert(@file(hello_tgz).contains('gzip'))
+  rm(hello_txt)
+
+  tar::gz::extract_from(hello_tgz)
+  assert((cat(hello_txt) |> join('')) == 'hello2')
+  rm(hello_tgz, hello_txt)
+}
+test_tar()
+
+#endif
