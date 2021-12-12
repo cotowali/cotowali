@@ -1,0 +1,13 @@
+require 'tar'
+
+fn test_tar() {
+  var hello_txt = 'hello.txt'
+  var hello_tar = 'hello.tar'
+  'hello' |> hello_txt
+  tar::create(hello_txt) |> hello_tar
+  rm(hello_txt)
+  cat(hello_tar) |> tar::extract()
+  assert((cat(hello_txt) |> join('')) == 'hello')
+  rm(hello_tar, hello_txt)
+}
+test_tar()
