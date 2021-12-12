@@ -6,13 +6,22 @@
 
 
 module tar {
-  require_command('tar')
+  if !has_command('tar.exe') {
+    require_command('tar')
+  }
 
   fn create(target: string) |> string {
-    return @tar('-c', target)
+    inline {
+      tar -cf '-' $%target
+    }
   }
 
   fn string |> extract() {
-    @tar('-x')
+    sh {
+      tar -xf '-'
+    }
+    pwsh {
+      $input | tar -xf '-'
+    }
   }
 }
