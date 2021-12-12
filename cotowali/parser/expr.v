@@ -557,21 +557,22 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 	}
 
 	t := p.token(0)
-	if t.kind == .ident && t.text.len > 0 && t.text[0] == `@` {
+	mut expr := if t.kind == .ident && t.text.len > 0 && t.text[0] == `@` {
 		ident := p.consume()
 		command := ident.text[1..] // '@command' -> 'command'
 		p.consume_with_check(.l_paren) ?
 		args := p.parse_call_args() ?
 		r_paren := p.consume_with_assert(.r_paren)
-		return ast.CallCommandExpr{
+
+		ast.Expr(ast.CallCommandExpr{
 			scope: p.scope
 			pos: ident.pos.merge(r_paren.pos)
 			command: command
 			args: args
-		}
+		})
+	} else {
+		p.parse_value_left() ?
 	}
-
-	mut expr := p.parse_value_left() ?
 	for {
 		match p.kind(0) {
 			.l_paren { expr = p.parse_call_expr_with_left(expr) ? }
