@@ -8,3 +8,20 @@ fn test_shell() {
   assert(platform::shell() == 'pwsh')
 #endif
 }
+test_shell()
+
+fn test_system() {
+#if compiler_windows
+  assert(platform::system() == 'Windows')
+  assert(platform::is_windows())
+#endif
+#if compiler_macos
+  assert(platform::system() == 'Darwin')
+  assert(platform::is_darwin())
+#endif
+#if compiler_linux
+  assert(platform::system() == 'Linux')
+  assert(platform::is_linux())
+#endif
+}
+test_system()

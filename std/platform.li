@@ -12,7 +12,7 @@ module platform {
     sh { %res="$(uname -s)" }
     pwsh {
       %res = 'Windows'
-      if ([Environment]::OsVersion.Platform.ToString -eq 'Unix') {
+      if ([Environment]::OsVersion.Platform.ToString() -eq 'Unix') {
         %res = uname -s
       }
     }
