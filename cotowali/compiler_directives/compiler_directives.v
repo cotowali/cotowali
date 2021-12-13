@@ -95,6 +95,24 @@ pub fn new_compiler_symbol_table(config Config) CompilerSymbolTable {
 	if config.is_test {
 		table.define('test')
 	}
+	$if debug {
+		table.define('compiler_debug')
+	}
+	$if windows {
+		table.define('compiler_windows')
+	}
+	$if linux {
+		table.define('compiler_linux')
+	}
+	$if macos {
+		table.define('compiler_macos')
+	}
+	$if darwin {
+		table.define('compiler_darwin')
+	}
+	$if solaris {
+		table.define('compiler_solaris')
+	}
 	return table
 }
 
