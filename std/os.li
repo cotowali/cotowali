@@ -14,4 +14,21 @@ module os {
   pwsh {
     %args = $args
   }
+
+  fn getenv(key: string): string {
+    var value = ''
+    sh { %value=$(printenv $%key) }
+    pwsh { %value=[string]([Environment]::GetEnvironmentVariable($%key)) }
+    return value
+  }
+
+  fn setenv(key: string, value: string) {
+    sh { export $%key=$%value }
+    pwsh { [Environment]::SetEnvironmentVariable($%key, $%value) }
+  }
+
+  fn unsetenv(key: string) {
+    sh { unset -v $%key }
+    pwsh { [Environment]::SetEnvironmentVariable($%key, $null) }
+  }
 }

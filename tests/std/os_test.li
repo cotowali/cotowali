@@ -1,0 +1,14 @@
+require 'os'
+
+fn test_env() {
+  var key = '__custom__env__key__'
+  assert(os::getenv(key) == '')
+  os::setenv(key, 'v1')
+  assert(os::getenv(key) == 'v1')
+  os::setenv(key, 'v2')
+  assert(os::getenv(key) == 'v2')
+  os::unsetenv(key)
+  assert(os::getenv(key) == '')
+  os::unsetenv(key)
+}
+test_env()
