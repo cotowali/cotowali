@@ -11,4 +11,7 @@ module os {
   sh {
     array_assign %args "$@"
   }
+  pwsh {
+    %args = $args
+  }
 }
