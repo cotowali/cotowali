@@ -29,13 +29,6 @@ tasks:
   symlink: z lic symlink && z lish symlink && z kuqi symlink
   install: z lic install && z lish install && z kuqi install
 
-  dist:
-    - mkdir -p {{dist}}
-    - cp -r {{bin}} {{dist}}/
-    - cp -r std {{dist}}/
-    - cp CREDITS {{dist}}/
-    - cp LICENSE {{dist}}/
-
   lic:
     run: z lic build
     tasks:

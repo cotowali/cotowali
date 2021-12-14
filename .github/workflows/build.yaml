@@ -17,12 +17,12 @@ jobs:
       - uses: actions/checkout@v2
       - run: z ci setup-v
       - run: z build
-      - run: z dist
+      - run: ./bin/lic run scripts/pack.li
       - name: Create artifact
         uses: actions/upload-artifact@v2
         with:
           name: linux
-          path: dist/*
+          path: dist/cotowali.tar.gz
   build-macos:
     runs-on: macos-latest
     env:
@@ -38,9 +38,9 @@ jobs:
           export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/opt/openssl/lib/"
       - run: z ci setup-v
       - run: z build
-      - run: z dist
+      - run: ./bin/lic run scripts/pack.li
       - name: Create artifact
         uses: actions/upload-artifact@v2
         with:
           name: macos
-          path: dist/*
+          path: dist/cotowali.tar.gz
