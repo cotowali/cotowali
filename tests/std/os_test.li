@@ -12,3 +12,13 @@ fn test_env() {
   os::unsetenv(key)
 }
 test_env()
+
+fn test_path() {
+  var res = os::path::join('a', 'b', 'c')
+#if compiler_windows
+  assert(res == r'a\b\c')
+#else
+  assert(res == 'a/b/c')
+#endif
+}
+test_path()

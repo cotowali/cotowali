@@ -6,6 +6,8 @@
 /// License, v. 2.0. If a copy of the MPL was not distributed with this
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+require 'platform'
+
 module os {
   var args: []string
   sh {
@@ -30,5 +32,18 @@ module os {
   fn unsetenv(key: string) {
     sh { unset -v $%key }
     pwsh { [Environment]::SetEnvironmentVariable($%key, $null) }
+  }
+
+  module path {
+    var separator = '/'
+    var list_separator = ':'
+    if platform::is_windows() {
+      separator = '\\'
+      list_separator = ';'
+    }
+
+    fn join(parts: ...string): string {
+      return parts.join(separator)
+    }
   }
 }
