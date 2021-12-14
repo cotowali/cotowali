@@ -131,6 +131,14 @@ fn cd(path: string)
 
 fn dirname(path: string): string
 
+fn cp(args: ...string)
+
+fn cp_r(args: ...string) {
+  sh {
+    cp -r "$@"
+  }
+}
+
 fn mkdir(args: ...string)
 
 fn mkdir_p(args: ...string) {
