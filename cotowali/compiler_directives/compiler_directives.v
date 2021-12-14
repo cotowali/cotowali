@@ -113,6 +113,20 @@ pub fn new_compiler_symbol_table(config Config) CompilerSymbolTable {
 	$if solaris {
 		table.define('compiler_solaris')
 	}
+
+	$if i386 {
+		table.define('compiler_i386')
+	}
+	$if amd64 {
+		table.define('compiler_x86_64')
+	}
+	$if arm32 {
+		table.define('compiler_arm32')
+	}
+	$if arm64 {
+		table.define('compiler_arm64')
+	}
+
 	return table
 }
 
