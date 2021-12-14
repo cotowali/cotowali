@@ -1,5 +1,0 @@
-require 'os'
-require 'tar'
-
-cd('dist')
-tar::gz::extract_from('cotowali.tar.gz')
