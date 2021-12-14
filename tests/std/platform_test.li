@@ -25,3 +25,13 @@ fn test_system() {
 #endif
 }
 test_system()
+
+fn test_machine() {
+#if compiler_x86_64
+  assert(platform::machine() == 'x86_64')
+#endif
+#if compiler_arm64
+  assert(platform::machine() == 'arm64')
+#endif
+}
+test_machine()
