@@ -1,0 +1,13 @@
+require 'os'
+require 'tar'
+
+var wd = './dist'
+mkdir_p(wd)
+cd(wd)
+
+mkdir_p('cotowali')
+for name in ['bin', 'std', 'CREDITS', 'LICENSE'] {
+  cp_r(os::path::join('../', name), 'cotowali/')
+}
+tar::gz::create_to('cotowali.tar.gz', 'cotowali')
+rm_r('cotowali')
