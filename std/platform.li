@@ -7,6 +7,10 @@
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 module platform {
+  fn uname(): string {
+    inline { uname -a }
+  }
+
   fn system(): string {
     var res = ''
     sh { %res="$(uname -s)" }
@@ -19,8 +23,8 @@ module platform {
     return res
   }
 
-  fn uname(): string {
-    inline { uname -a }
+  fn machine(): string {
+    inline { uname -m }
   }
 
   fn is_windows(): bool {
