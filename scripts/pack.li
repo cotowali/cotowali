@@ -9,5 +9,5 @@ mkdir_p('cotowali')
 for name in ['bin', 'std', 'CREDITS', 'LICENSE'] {
   cp_r(os::path::join('../', name), 'cotowali/')
 }
-tar::gz::create_to('cotowali.tar.gz', 'cotowali')
+tar::gz::create_to("cotowali_${platform::system()}_${platform::machine()}.tar.gz", 'cotowali')
 rm_r('cotowali')
