@@ -45,3 +45,13 @@ fn test_clean_path() {
   assert(os::path::clean(os::path::join("a", 'b', '..', 'c')) == os::path::join('a', 'c'))
 }
 test_clean_path()
+
+fn test_abs_path() {
+  assert(os::path::is_abs('/'))
+  assert(os::path::is_abs('/a/b'))
+  assert(!os::path::is_abs('./a/b'))
+  assert(!os::path::is_abs('../a/b'))
+  assert(!os::path::is_abs(''))
+  assert(!os::path::is_abs('.'))
+}
+test_abs_path()

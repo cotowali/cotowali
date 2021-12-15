@@ -46,6 +46,14 @@ module os {
       return parts.join(separator)
     }
 
+    fn is_abs(path: string): bool {
+      if platform::is_windows() {
+        eprintln('windows is not supported for now')
+        exit(1)
+      }
+      return path.len() > 0 && path[0] == separator
+    }
+
     fn clean(path: string): string {
       var sep = separator
       var prefix = ''
