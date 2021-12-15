@@ -63,6 +63,7 @@ module os {
         var new = res
           .replace("$sep(\\.$sep)+", sep) // /././././ -> /
           .replace("[^.$sep]+/\\.\\.$sep", sep) // abc/../ -> /
+          .replace("[^.$sep]+/\\.\\.\$", sep) // abc/.. -> /
           .replace("[^.]\\.$sep\\.\\.$sep", "..$sep") // ./../ -> ../
           .replace("${sep}+", sep) // // -> /
         var replaced = new.len() != res.len()
