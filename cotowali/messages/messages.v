@@ -20,6 +20,7 @@ pub struct ExpectedActual<T, J> {
 }
 
 pub enum SymbolKind {
+	compiler_variable
 	typ
 	variable
 	function
@@ -30,6 +31,7 @@ pub enum SymbolKind {
 
 pub fn (k SymbolKind) str() string {
 	return match k {
+		.compiler_variable { 'compiler variable' }
 		.typ { 'type' }
 		.variable { 'variable' }
 		.function { 'function' }

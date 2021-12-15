@@ -488,6 +488,10 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 		}
 	}
 
+	if p.is_compiler_variable_literal() {
+		return p.parse_compiler_variable_literal()
+	}
+
 	tok := p.token(0)
 	match tok.kind {
 		.ident {

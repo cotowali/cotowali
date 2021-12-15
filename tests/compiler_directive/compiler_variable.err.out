@@ -1,0 +1,3 @@
+error: compiler_variable.err.li 1,9: compiler variable `undefined` is not defined
+    1 | println(# undefined #)
+      |         ^^^^^^^^^^^^^
