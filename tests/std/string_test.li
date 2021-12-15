@@ -105,6 +105,7 @@ test_substr()
 fn test_replace() {
   assert('ababc'.replace('ab', 'x') == 'xxc')
   assert('ababc'.replace('ab', 'x').replace('xx', 'y') == 'yc')
+  assert('ababab'.replace('^ab', '>').replace('ab$', '<') == '>ab<')
 }
 test_replace()
 

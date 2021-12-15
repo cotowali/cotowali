@@ -22,3 +22,43 @@ fn test_path() {
 #endif
 }
 test_path()
+
+fn test_clean_path() {
+  var sep = os::path::separator
+  // a/b/c -> a/b/c
+  assert(os::path::clean(os::path::join('a', 'b', 'c')) == os::path::join('a', 'b', 'c'))
+  // /a/../../ -> /
+  assert(os::path::clean(os::path::join("${sep}a", '..', "..$sep")) == sep)
+  // a/../.. -> .
+  assert(os::path::clean(os::path::join('a', '..', '..')) == '.')
+  // ./././ -> .
+  assert(os::path::clean(os::path::join('.', '.', '.')) == '.')
+  // ../../.. -> ../../..
+  assert(os::path::clean(os::path::join('..', '..', '..')) == os::path::join('..', '..', '..'))
+  // /a/../b -> /b
+  assert(os::path::clean(os::path::join("${sep}a", '..', 'b')) == "${sep}b")
+  // /a/../b/../c -> /c
+  assert(os::path::clean(os::path::join("${sep}a", '..', 'b', '..', 'c')) == "${sep}c")
+  // /a/../b../ -> /b..
+  assert(os::path::clean(os::path::join("${sep}a", '..', 'b..')) == "${sep}b..")
+  // a/b/../c -> a/c
+  assert(os::path::clean(os::path::join("a", 'b', '..', 'c')) == os::path::join('a', 'c'))
+}
+test_clean_path()
+
+fn test_abs_path() {
+  var sep = os::path::separator
+  assert(os::path::is_abs(sep))
+  assert(os::path::is_abs(sep + os::path::join('a', 'b')))
+  assert(!os::path::is_abs(os::path::join('.', 'a', 'b')))
+  assert(!os::path::is_abs(os::path::join('..', 'a', 'b')))
+  assert(!os::path::is_abs(''))
+  assert(!os::path::is_abs('.'))
+
+  assert(os::path::abs('') == pwd())
+  assert(os::path::abs('.') == pwd())
+  assert(os::path::abs('a') == os::path::join(pwd(), 'a'))
+  assert(os::path::abs(sep) == sep)
+  assert(os::path::abs('..') == os::path::clean(os::path::join(pwd(), '../')))
+}
+test_abs_path()
