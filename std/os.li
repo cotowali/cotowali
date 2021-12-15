@@ -45,5 +45,38 @@ module os {
     fn join(parts: ...string): string {
       return parts.join(separator)
     }
+
+    fn clean(path: string): string {
+      var sep = separator
+      var prefix = ''
+      var is_root = path.starts_with(sep)
+      var res = path
+      while true {
+        var new = res
+          .replace("$sep(\\.$sep)+", sep) // /././././ -> /
+          .replace("[^.$sep]+/\\.\\.$sep", sep) // abc/../ -> /
+          .replace("[^.]\\.$sep\\.\\.$sep", "..$sep") // ./../ -> ../
+          .replace("${sep}+", sep) // // -> /
+        var replaced = new.len() != res.len()
+        res = new
+        if !replaced {
+          break
+        }
+      }
+      res = res.trim_suffix(sep)
+      if res == '/..' || res == './.' {
+        res = ''
+      }
+      if res == '' {
+        if is_root {
+          return '/'
+        }
+        return '.'
+      }
+      if !is_root {
+        res = res.trim_prefix('/')
+      }
+      return res
+    }
   }
 }
