@@ -177,7 +177,9 @@ fn (mut lex Lexer) read_eol() Token {
 	if lex.byte() == `\r` && lex.char(1).byte() == `\n` {
 		lex.consume()
 	}
-	return lex.new_token_with_consume(.eol)
+	tok := lex.new_token_with_consume(.eol)
+	lex.skip_for(is_eol)
+	return tok
 }
 
 fn (mut lex Lexer) read_unknown() Token {

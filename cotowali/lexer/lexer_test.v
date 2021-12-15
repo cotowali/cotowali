@@ -174,9 +174,11 @@ fn test_lexer() {
 		t(.eof, ''),
 	])
 
-	test(@FN, @LINE, code('\n\r\n\r'), [
+	test(@FN, @LINE, code('\na\r\na\r'), [
 		t(.eol, '\n'),
+		t(.ident, 'a'),
 		t(.eol, '\r\n'),
+		t(.ident, 'a'),
 		t(.eol, '\r'),
 		t(.eof, ''),
 		t(.eof, ''),
@@ -518,7 +520,6 @@ fn test_multiline() {
 		Token{.ident, 's3', Pos{s, 6, 2, 1, 2, 2, 2}},
 		Token{.ident, 's4', Pos{s, 10, 2, 5, 2, 2, 6}},
 		Token{.eol, '\n', Pos{s, 13, 2, lines[1].len + 1, 1, 2, lines[1].len + 1}},
-		Token{.eol, '\n', Pos{s, 14, 3, lines[2].len + 1, 1, 3, lines[2].len + 1}},
 		Token{.ident, 's5', Pos{s, 16, 4, 2, 2, 4, 3}},
 		Token{.eol, '\n', Pos{s, 19, 4, lines[3].len + 1, 1, 4, lines[3].len + 1}},
 		Token{.eof, '', Pos{s, s.code.len, 5, 1, 1, 5, 1}},

@@ -575,12 +575,27 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 		p.parse_value_left() ?
 	}
 	for {
-		p.skip_eol()
 		match p.kind(0) {
-			.l_paren { expr = p.parse_call_expr_with_left(expr) ? }
-			.l_bracket { expr = p.parse_index_expr_with_left(expr) ? }
-			.dot { expr = p.parse_selector_expr_with_left(expr) ? }
-			else { break }
+			.l_paren {
+				expr = p.parse_call_expr_with_left(expr) ?
+			}
+			.l_bracket {
+				expr = p.parse_index_expr_with_left(expr) ?
+			}
+			.dot {
+				expr = p.parse_selector_expr_with_left(expr) ?
+			}
+			.eol {
+				if p.kind(1) == .dot {
+					p.consume()
+					expr = p.parse_selector_expr_with_left(expr) ?
+				} else {
+					break
+				}
+			}
+			else {
+				break
+			}
 		}
 	}
 	return expr
