@@ -179,18 +179,18 @@ fn which(name: string): string {
 
 // --- string methods ---
 
-fn (s: string) replace(a: string, b: string): string {
+fn (s: string) replace(old: string, new: string): string {
 #if pwsh
 
   var ret: string
   pwsh {
-    %ret = %s -replace %a, %b
+    %ret = %s -replace %old, %new
   }
   return ret
 
 #else
-
-  return s |> @sed("s/$a/$b/g")
+  var pattern = old |> @sed(r's/\\/\\\\/g')
+  return s |> @awk('-v', 'RS=""', '-v', "old=$pattern", '-v', "new=$new", '{gsub(old, new); print $0}')
 
 #endif
 }
