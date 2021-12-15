@@ -190,7 +190,7 @@ fn (s: string) replace(old: string, new: string): string {
 
 #else
   var pattern = old |> @sed(r's/\\/\\\\/g')
-  return s |> @awk('-v', 'RS=""', '-v', "old=$pattern", '-v', "new=$new", '{gsub(old, new); print $0}')
+  return @print(s) |> @awk('-v', 'RS=""', '-v', "old=$pattern", '-v', "new=$new", '{gsub(old, new); print $0}')
 
 #endif
 }
