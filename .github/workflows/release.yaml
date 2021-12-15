@@ -1,17 +1,17 @@
-name: Build binaries
+name: Release
 
 on:
   push:
-    branches: [ main ]
+    tags:
+      - '*'
 
 env:
   COTOWALI_HASH: "${{ github.sha }}"
+  VFLAGS: "-cc clang"
 
 jobs:
   build-linux:
     runs-on: ubuntu-latest
-    env:
-      VFLAGS: "-cc clang -prod"
     steps:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
@@ -26,7 +26,6 @@ jobs:
   build-macos:
     runs-on: macos-latest
     env:
-      VFLAGS: "-cc clang -prod"
       # https://github.com/vlang/v/blob/525791fa3a4643ae9b04570f4b18056816bfda96/.github/workflows/ci.yml#L263
       PKG_CONFIG_PATH: /usr/local/opt/openssl@3/lib/pkgconfig
     steps:
@@ -39,8 +38,20 @@ jobs:
       - run: z ci setup-v
       - run: z build
       - run: ./bin/lic run scripts/pack.li
-      - name: Create artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: macos
           path: dist/*
+  release:
+    needs: [build-linux, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            linux/*.tar.gz
+            macos/*.tar.gz
