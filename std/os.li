@@ -71,18 +71,18 @@ module os {
           break
         }
       }
-      res = res.trim_suffix(sep)
-      if res == '/..' || res == './.' {
+      res = res.trim_suffix("$sep.").trim_suffix(sep)
+      if res == "$sep.." {
         res = ''
       }
       if res == '' {
         if is_root {
-          return '/'
+          return sep
         }
         return '.'
       }
       if !is_root {
-        res = res.trim_prefix('/')
+        res = res.trim_prefix(sep)
       }
       return res
     }
