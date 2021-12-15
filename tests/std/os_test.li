@@ -47,11 +47,18 @@ fn test_clean_path() {
 test_clean_path()
 
 fn test_abs_path() {
-  assert(os::path::is_abs('/'))
-  assert(os::path::is_abs('/a/b'))
-  assert(!os::path::is_abs('./a/b'))
-  assert(!os::path::is_abs('../a/b'))
+  var sep = os::path::separator
+  assert(os::path::is_abs(sep))
+  assert(os::path::is_abs(sep + os::path::join('a', 'b')))
+  assert(!os::path::is_abs(os::path::join('.', 'a', 'b')))
+  assert(!os::path::is_abs(os::path::join('..', 'a', 'b')))
   assert(!os::path::is_abs(''))
   assert(!os::path::is_abs('.'))
+
+  assert(os::path::abs('') == pwd())
+  assert(os::path::abs('.') == pwd())
+  assert(os::path::abs('a') == os::path::join(pwd(), 'a'))
+  assert(os::path::abs(sep) == sep)
+  assert(os::path::abs('..') == os::path::clean(os::path::join(pwd(), '../')))
 }
 test_abs_path()

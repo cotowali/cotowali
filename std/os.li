@@ -54,6 +54,13 @@ module os {
       return path.len() > 0 && path[0] == separator
     }
 
+    fn abs(path: string): string {
+      if is_abs(path) {
+        return clean(path)
+      }
+      return clean(join(pwd(), path))
+    }
+
     fn clean(path: string): string {
       var sep = separator
       var prefix = ''
