@@ -20,3 +20,8 @@ assert((two |> twice()).twice() == 8)
 assert(two.multiply(3) == 6)
 assert(two.multiply(two.multiply(3)) == 12)
 assert(@echo('abc').contains('a'))
+assert(
+  two
+    .twice().
+    twice()
+== 8)

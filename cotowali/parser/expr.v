@@ -468,6 +468,7 @@ fn (mut p Parser) parse_selector_expr_with_left(left ast.Expr) ?ast.Expr {
 	}
 
 	p.consume_with_assert(.dot)
+	p.skip_eol()
 	ident := p.parse_ident() ?
 	if ident is ast.Var {
 		return ast.SelectorExpr{
@@ -574,6 +575,7 @@ fn (mut p Parser) parse_value() ?ast.Expr {
 		p.parse_value_left() ?
 	}
 	for {
+		p.skip_eol()
 		match p.kind(0) {
 			.l_paren { expr = p.parse_call_expr_with_left(expr) ? }
 			.l_bracket { expr = p.parse_index_expr_with_left(expr) ? }
