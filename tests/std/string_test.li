@@ -102,12 +102,13 @@ fn test_substr() {
 }
 test_substr()
 
-fn test_replace() {
-  fn ss(ss: ...string): ...string {
-    for s in ss {
-      yield s
-    }
+fn ss(ss: ...string): ...string {
+  for s in ss {
+    yield s
   }
+}
+
+fn test_replace() {
   assert('ababc'.replace('ab', 'x') == 'xxc')
   assert(('ababc' |> replace('ab', 'x') |> join('')) == 'xxc')
   assert('ababc'.replace('ab', 'x').replace('xx', 'y') == 'yc')
@@ -118,6 +119,12 @@ fn test_replace() {
   assert((ss('01', '12', '23') |> replace('1', 'x') |> join('')) == '0xx223')
 }
 test_replace()
+
+fn test_filter() {
+  assert((ss('01', '12', '23') |> filter('1') |> join('')) == '0112')
+  assert((ss('ab', 'ac', 'ba') |> filter('^a') |> join('')) == 'abac')
+}
+test_filter()
 
 fn test_join() {
   assert([]string{}.join('') == '')

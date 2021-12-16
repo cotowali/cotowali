@@ -179,6 +179,11 @@ fn which(name: string): string {
 
 // --- string ---
 
+fn ...string |> filter(pat: string) |> ...string {
+  pwsh { $input | ? { $_ -match %pat } }
+  sh { grep '-E' "$%pat" }
+}
+
 fn ...string |> replace(old: string, new: string): ...string {
 #if pwsh
   pwsh {
