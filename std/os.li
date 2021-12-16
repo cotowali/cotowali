@@ -11,10 +11,10 @@ require 'platform'
 module os {
   var args: []string
   sh {
-    array_assign %args "$@"
+    array_assign %args "$0" "$@"
   }
   pwsh {
-    %args = $args
+    %args = @($MyInvoccation.MyCommand.Name) + $args
   }
 
   fn getenv(key: string): string {
