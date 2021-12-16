@@ -14,7 +14,7 @@ fn g(i: int) {
   }
 }
 
-fn sequence(n: int): ...string {
+fn str_seq(n: int): ...string {
   for v in seq(n) {
     yield v
   }
