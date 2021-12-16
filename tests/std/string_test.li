@@ -126,6 +126,12 @@ fn test_filter() {
 }
 test_filter()
 
+fn test_head() {
+  assert((ss('01', '12', '23') |> head(2) |> join('')) == '0112')
+  assert((ss('01', '12', '23') |> head(2) |> head(1) |> join('')) == '01')
+}
+test_head()
+
 fn test_join() {
   assert([]string{}.join('') == '')
   assert([]string{}.join(':') == '')

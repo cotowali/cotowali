@@ -90,6 +90,12 @@ fn require_command(command: string) {
   exit(127)
 }
 
+#[mangle]
+fn ...string |> head(n: int) |> ...string {
+  sh { head -n $%n }
+  pwsh { $input | select -first %n }
+}
+
 fn ...string |> join(sep: string) |> string {
   var ret = ''
   var (i, s): (int, string)
