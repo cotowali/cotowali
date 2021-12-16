@@ -6,12 +6,14 @@
 module parser
 
 import cotowali.token { Token }
+import cotowali.ast
 import cotowali.compiler_directives {
 	CompilerDirectiveKind,
 	compiler_directive_kind_from_name,
 	missing_endif_directive,
 	missing_if_directive,
 }
+import cotowali.messages { undefined }
 import cotowali.util { li_panic }
 
 fn (mut p Parser) process_compiler_directives() {
@@ -328,5 +330,62 @@ fn (mut p Parser) skip_if_else_directive_branch(kind CompilerDirectiveKind) {
 			}
 		}
 		p.skip_until_eol()
+	}
+}
+
+fn (p &Parser) is_compiler_variable_literal() bool {
+	return p.kind(0) == .hash && p.kind(2) == .hash
+}
+
+fn (mut p Parser) parse_compiler_variable_literal() ?ast.Expr {
+	open_hash := p.consume_with_assert(.hash)
+	name_tok := p.consume()
+	close_hash := p.consume_with_assert(.hash)
+
+	name := name_tok.text
+
+	open := Token{
+		...open_hash
+		kind: .single_quote
+		text: "'"
+	}
+	close := Token{
+		...close_hash
+		kind: .single_quote
+		text: "'"
+	}
+	mut contents := []ast.StringLiteralContent{}
+	text := p.ctx.compiler_symbols.get(name)
+	for i, part_by_bs in text.split(r'\') {
+		if i > 0 {
+			contents << Token{
+				kind: .string_literal_content_escaped_back_slash
+				text: r'\\'
+			}
+		}
+
+		for j, part in part_by_bs.split("'") {
+			if j > 0 {
+				contents << Token{
+					kind: .string_literal_content_escaped_single_quote
+					text: r"\'"
+				}
+			}
+			if part != '' {
+				contents << Token{
+					kind: .string_literal_content_text
+					text: part
+				}
+			}
+		}
+	}
+	if !p.ctx.compiler_symbols.has(name) {
+		p.error(undefined(.compiler_variable, name), open.pos.merge(close.pos))
+	}
+	return ast.StringLiteral{
+		scope: p.scope
+		open: open
+		contents: contents
+		close: close
 	}
 }

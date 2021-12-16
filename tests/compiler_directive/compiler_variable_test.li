@@ -1,0 +1,11 @@
+#define v1 10
+assert(#v1# == '10')
+
+#define v2 'abc'
+assert(#  v2  # == 'abc')
+
+#define v3 a b c
+assert(#v3# == 'a b c')
+
+#define v4 "'\\'"
+assert(#v4# == r"'\\'")
