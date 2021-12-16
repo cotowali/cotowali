@@ -14,6 +14,15 @@ fn test_normal() {
     return n
   }
 
+  fn ...float |> float_sum() |> float {
+    var n: float
+    var v: float
+    while read(&v) {
+      n = n + v
+    }
+    return n
+  }
+
   fn ...int |> twice() |> ...int {
     var v: int
     while read(&v) {
@@ -24,6 +33,7 @@ fn test_normal() {
   assert((10 |> inc()) == 11)
   assert((10 |> sum()) == 10)
   assert((seq(3) |> sum()) == 6)
+  assert((seq(3) |> float_sum()) == 6.0)
   assert((seq(3) |> twice() |> sum()) == 12)
 }
 test_normal()

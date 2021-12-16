@@ -10,13 +10,19 @@ import cotowali.symbols { Type, TypeSymbol, builtin_type }
 import cotowali.source { Pos }
 import cotowali.util { li_panic }
 
+enum TypeMismatchMessageFormat {
+	want_got
+	got_want
+}
+
 struct TypeCheckingConfig {
-	want       TypeSymbol [required]
-	want_label string = 'expected'
-	got        TypeSymbol [required]
-	got_label  string = 'found'
-	pos        Pos        [required]
-	synmetric  bool
+	want           TypeSymbol                [required]
+	want_label     string = 'expected'
+	got            TypeSymbol                [required]
+	got_label      string = 'found'
+	pos            Pos                       [required]
+	synmetric      bool
+	message_format TypeMismatchMessageFormat = .want_got
 }
 
 fn can_promote(want TypeSymbol, got TypeSymbol) bool {
@@ -41,9 +47,17 @@ fn can_promote(want TypeSymbol, got TypeSymbol) bool {
 	}
 
 	if want_tuple_info := want.tuple_info() {
-		unsafe {
-			elements := &want_tuple_info.elements
-			if elements.len == 1 && elements[0].typ == got.typ {
+		elements := want_tuple_info.elements
+		if elements.len == 1 && elements[0].typ == got.typ {
+			return true
+		}
+	}
+
+	scope_of_want := want.scope() or { li_panic(@FILE, @LINE, err) }
+
+	if want_sequence_info := want.sequence_info() {
+		if want_elem := scope_of_want.lookup_type(want_sequence_info.elem) {
+			if can_promote(want_elem, got) {
 				return true
 			}
 		}
@@ -113,8 +127,11 @@ fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
 		}
 	}
 
-	m1 := '`$v.want.name` ($v.want_label)'
-	m2 := '`$v.got.name` ($v.got_label)'
+	m_want, m_got := '`$v.want.name` ($v.want_label)', '`$v.got.name` ($v.got_label)'
+	m1, m2 := match v.message_format {
+		.want_got { m_want, m_got }
+		.got_want { m_got, m_want }
+	}
 	return c.error('mismatched types: $m1 and $m2', v.pos)
 }
 
