@@ -149,3 +149,14 @@ fn test_join() {
   assert(['a', 'b', 'c'].join(' < > ') == 'a < > b < > c')
 }
 test_join()
+
+fn test_lines() {
+  assert(("ab\nc\nde" |> lines() |> count()) == 3)
+  assert(("ab\nc\nde" |> lines() |> join('x')) == 'abxcxde')
+  assert(("ab\nc\nde".lines() |> count()) == 3)
+  assert(("ab\nc\nde".lines() |> join('x')) == 'abxcxde')
+  assert(('' |> lines() |> count()) == 0)
+  assert(('' |> lines() |> join('')) == '')
+  assert((''.lines() |> count()) == 0)
+  assert((''.lines() |> join('')) == '')
+}

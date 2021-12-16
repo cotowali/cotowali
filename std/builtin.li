@@ -315,6 +315,14 @@ fn (s: string) len(): int {
   return n
 }
 
+fn (s: string) |> lines() |> ...string {
+  return s |> cat()
+}
+
+fn (s: string) lines() |> ...string {
+  return s |> lines()
+}
+
 fn (s: string) starts_with(ss: string): bool {
   if ss.len() == 0 {
     return true
