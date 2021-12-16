@@ -10,13 +10,28 @@ module http {
   fn get(url: string): string {
 #if pwsh
     pwsh {
-      return (invoke-webrequest %url -headers @{Accept = '*/*'}).Content
+      try {
+        return (invoke-webrequest %url -headers @{Accept = '*/*'}).Content
+      } catch {
+        [Console]::Error.WriteLine('http error')
+        exit 1
+      }
     }
 #else
     if has_command('curl') {
-      return @curl('-sSL', url)
+      sh {
+        curl -sSL --fail "$%url" 2> '/dev/null' || {
+          echo 'http error' >&2
+          exit 1
+        }
+      }
     } else if has_command('wget') {
-      return @wget('-O', '-', '--header', 'Accept: */*', '-q', url)
+      sh {
+        wget -q -O - --header 'Accept: */*' "$%url" 2> '/dev/null' || {
+          echo 'http error' >&2
+          exit 1
+        }
+      }
     }
 
     // report error

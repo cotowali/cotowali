@@ -5,7 +5,8 @@ exit_code=0
 is_fail_test() {
   [ "$1" = "$basedir/assert.sh" ] \
     || [ "$1" = "$basedir/test_runner_test.sh" ] \
-    || [ "$1" = "$basedir/std/require_command.sh" ]
+    || [ "$1" = "$basedir/std/require_command.sh" ] \
+    || [ "$1" = "$basedir/std/http_404.sh" ]
 }
 
 success() {
