@@ -38,7 +38,7 @@ fn compile_to_temp_file(s Source, ctx &Context) ?string {
 	return temp_path
 }
 
-pub fn run(s Source, ctx &Context) ?int {
+pub fn run(s Source, args []string, ctx &Context) ?int {
 	temp_file := compile_to_temp_file(s, ctx) ?
 	defer {
 		os.rm(temp_file) or { li_panic(@FILE, @LINE, err) }
@@ -48,6 +48,10 @@ pub fn run(s Source, ctx &Context) ?int {
 		exit(1)
 	}
 
-	exit_code := os.system('$executable "$temp_file"')
-	return exit_code
+	mut p := os.new_process('$executable')
+	p.set_args([temp_file])
+	p.args << args
+	p.wait()
+
+	return p.code
 }

@@ -133,11 +133,17 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 
 fn execute_run_or_test(cmd Command) ? {
 	mut ctx := new_ctx_from_cmd(cmd)
-	s := new_source_from_args(cmd.args) or {
+	source_args, run_args := if cmd.args.len == 0 {
+		//
+		[]string{}, []string{}
+	} else {
+		[cmd.args[0]], cmd.args[1..]
+	}
+	s := new_source_from_args(source_args) or {
 		eprintln(err)
 		exit(1)
 	}
-	cotowali.run(s, ctx) or {
+	cotowali.run(s, run_args, ctx) or {
 		eprint(ctx.errors.format(PrettyFormatter{}))
 		exit(1)
 	}
