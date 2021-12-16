@@ -102,6 +102,12 @@ fn ...string |> tail(n: int) |> ...string {
   pwsh { $input | select -last %n }
 }
 
+fn sequence(elements: ...any) |> ...any {
+  for elem in elements {
+    yield elem
+  }
+}
+
 fn ...string |> join(sep: string) |> string {
   var ret = ''
   var (i, s): (int, string)
