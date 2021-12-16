@@ -290,12 +290,12 @@ fn (mut c Checker) pipeline(expr ast.Pipeline) {
 			}
 
 			c.check_types(
-				want: left_ts
-				want_label: 'left'
-				got: pipe_in
-				got_label: 'pipe in of right'
+				got: left_ts
+				got_label: 'left'
+				want: pipe_in
+				want_label: 'pipe in of right'
 				pos: left.pos().merge(right.pos)
-				synmetric: true
+				message_format: .got_want
 			) or {}
 		}
 	}
