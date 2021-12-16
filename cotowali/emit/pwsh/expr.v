@@ -54,7 +54,11 @@ fn (mut e Emitter) as_expr(expr ast.AsExpr, opt ExprOpt) {
 		return
 	}
 	e.write('[')
-	e.write(Expr(expr).type_symbol().resolved().name)
+	mut name := Expr(expr).type_symbol().resolved().name.replace('...', '[]')
+	for name.starts_with('[]') {
+		name = name.trim_prefix('[]') + '[]' // []type -> type[]
+	}
+	e.write(name)
 	e.write(']')
 	e.expr(expr.expr, paren: true)
 }

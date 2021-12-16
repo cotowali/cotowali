@@ -5,6 +5,7 @@ fn test_default_cast() {
   assert(typeof('1.0' as float) == 'float')
   assert(1 as string == '1')
   assert(typeof(1 as string) == 'string')
+  assert((range(0, 2) as ...string |> join(',')) == '0,1')
 }
 test_default_cast()
 
