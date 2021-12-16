@@ -96,6 +96,12 @@ fn ...string |> head(n: int) |> ...string {
   pwsh { $input | select -first %n }
 }
 
+#[mangle]
+fn ...string |> tail(n: int) |> ...string {
+  sh { tail -n $%n }
+  pwsh { $input | select -last %n }
+}
+
 fn ...string |> join(sep: string) |> string {
   var ret = ''
   var (i, s): (int, string)

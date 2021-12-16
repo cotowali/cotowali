@@ -126,11 +126,15 @@ fn test_filter() {
 }
 test_filter()
 
-fn test_head() {
+fn test_head_tail() {
   assert((ss('01', '12', '23') |> head(2) |> join('')) == '0112')
   assert((ss('01', '12', '23') |> head(2) |> head(1) |> join('')) == '01')
+  assert((ss('01', '12', '23') |> tail(2) |> join('')) == '1223')
+  assert((ss('01', '12', '23') |> tail(2) |> tail(1) |> join('')) == '23')
+
+  assert((ss('01', '12', '23') |> head(2) |> tail(1) |> join('')) == '12')
 }
-test_head()
+test_head_tail()
 
 fn test_join() {
   assert([]string{}.join('') == '')
