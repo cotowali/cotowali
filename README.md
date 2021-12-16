@@ -62,9 +62,9 @@ assert(((1, 2) |> @awk('{print $1 + $2}')) == '3')
 
 ## Installation
 
-### Use binary
+### Use [Konryu](https://github.com/cotowali/konryu) (official installer)
 
-TODO
+WIP
 
 ### Build from source
 
