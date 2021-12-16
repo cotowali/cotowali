@@ -19,6 +19,24 @@ fn test_range() {
 }
 test_range()
 
+fn test_sequence() {
+  var i = 0
+  var arr = [2, 4, 6]
+  for item in sequence(2, 4, 6) {
+    assert(typeof(item) == 'any')
+    assert(arr[i] == item as int)
+    i += 1
+  }
+}
+test_sequence()
+
+fn test_count() {
+  assert(('a' |> count()) == 1)
+  assert((sequence(1, 2, 3, 4) |> count()) == 4)
+  assert((sequence() |> count()) == 0)
+}
+test_count()
+
 fn test_join() {
   fn abc() |> ...string {
     yield 'a'
