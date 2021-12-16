@@ -90,6 +90,18 @@ fn require_command(command: string) {
   exit(127)
 }
 
+#[mangle]
+fn ...string |> head(n: int) |> ...string {
+  sh { head -n $%n }
+  pwsh { $input | select -first %n }
+}
+
+#[mangle]
+fn ...string |> tail(n: int) |> ...string {
+  sh { tail -n $%n }
+  pwsh { $input | select -last %n }
+}
+
 fn ...string |> join(sep: string) |> string {
   var ret = ''
   var (i, s): (int, string)
@@ -177,7 +189,26 @@ fn which(name: string): string {
 }
 #endif
 
-// --- string methods ---
+// --- string ---
+
+fn ...string |> filter(pat: string) |> ...string {
+  pwsh { $input | ? { $_ -match %pat } }
+  sh { grep '-E' "$%pat" }
+}
+
+fn ...string |> replace(old: string, new: string): ...string {
+#if pwsh
+  pwsh {
+    $input | %% { $_ -replace %old, %new }
+  }
+#else
+  var pattern = old |> @sed(r's/\\/\\\\/g')
+  sh {
+    awk -v old="$%pattern" -v "new=$%new" '{gsub(old, new); print $0}'
+  }
+#endif
+}
+
 
 fn (s: string) replace(old: string, new: string): string {
 #if pwsh
