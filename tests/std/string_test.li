@@ -103,9 +103,19 @@ fn test_substr() {
 test_substr()
 
 fn test_replace() {
+  fn ss(ss: ...string): ...string {
+    for s in ss {
+      yield s
+    }
+  }
   assert('ababc'.replace('ab', 'x') == 'xxc')
+  assert(('ababc' |> replace('ab', 'x') |> join('')) == 'xxc')
   assert('ababc'.replace('ab', 'x').replace('xx', 'y') == 'yc')
+  assert(('ababc' |> replace('ab', 'x') |> replace('xx', 'y') |> join('')) == 'yc')
   assert('ababab'.replace('^ab', '>').replace('ab$', '<') == '>ab<')
+  assert(('ababab' |> replace('^ab', '>') |> replace('ab$', '<') |> join('')) == '>ab<')
+
+  assert((ss('01', '12', '23') |> replace('1', 'x') |> join('')) == '0xx223')
 }
 test_replace()
 

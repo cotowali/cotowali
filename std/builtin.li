@@ -177,7 +177,21 @@ fn which(name: string): string {
 }
 #endif
 
-// --- string methods ---
+// --- string ---
+
+fn ...string |> replace(old: string, new: string): ...string {
+#if pwsh
+  pwsh {
+    $input | %% { $_ -replace %old, %new }
+  }
+#else
+  var pattern = old |> @sed(r's/\\/\\\\/g')
+  sh {
+    awk -v old="$%pattern" -v "new=$%new" '{gsub(old, new); print $0}'
+  }
+#endif
+}
+
 
 fn (s: string) replace(old: string, new: string): string {
 #if pwsh
