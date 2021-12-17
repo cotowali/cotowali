@@ -11,3 +11,8 @@ f(0)
 f("a")
 f()
 f(0, 1)
+
+fn f_opt(a: int, b: int, c: int = 0, d: int = 0)
+f_opt(0)
+f_opt(0, 0, 'c')
+f_opt(0, 0, 0, 0, 0)

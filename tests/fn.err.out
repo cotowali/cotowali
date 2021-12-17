@@ -4,27 +4,30 @@ error: fn.err.li 1,15: variable `i` is already defined
 error: fn.err.li 2,10: unknown type `foo`
     2 | fn f2(i: foo) {}
       |          ^^^
-error: fn.err.li 5,3: cannot use yield in function that return non-sequence type
-    5 |   yield '0'
+error: fn.err.li 3,27: expected default expr for `c`
+    3 | fn f3(a: int, b: int = 0, c: int) {}
+      |                           ^^^^^^
+error: fn.err.li 6,3: cannot use yield in function that return non-sequence type
+    6 |   yield '0'
       |   ^^^^^^^^^
-error: fn.err.li 6,10: mismatched types: `string` (expected) and `int` (found)
-    6 |   return i
+error: fn.err.li 7,10: mismatched types: `string` (expected) and `int` (found)
+    7 |   return i
       |          ^
-error: fn.err.li 8,4: function `g` is already defined
-    8 | fn g(i: int) {
+error: fn.err.li 9,4: function `g` is already defined
+    9 | fn g(i: int) {
       |    ^
-error: fn.err.li 13,6: function `g` is already defined
-   13 |   fn g(i: int, i: int) {
+error: fn.err.li 14,6: function `g` is already defined
+   14 |   fn g(i: int, i: int) {
       |      ^
-error: fn.err.li 13,16: variable `i` is already defined
-   13 |   fn g(i: int, i: int) {
+error: fn.err.li 14,16: variable `i` is already defined
+   14 |   fn g(i: int, i: int) {
       |                ^
-error: fn.err.li 19,11: mismatched types: `string` (expected) and `int` (found)
-   19 |     yield v
+error: fn.err.li 20,11: mismatched types: `string` (expected) and `int` (found)
+   20 |     yield v
       |           ^
-error: fn.err.li 24,1: `v` is not function (`int`)
-   24 | v()
+error: fn.err.li 25,1: `v` is not function (`int`)
+   25 | v()
       | ^^^
-error: fn.err.li 26,1: cannot call `int`
-   26 | 0()
+error: fn.err.li 27,1: cannot call `int`
+   27 | 0()
       | ^^^
