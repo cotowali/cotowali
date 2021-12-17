@@ -6,6 +6,8 @@
 /// License, v. 2.0. If a copy of the MPL was not distributed with this
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+require 'platform'
+
 module http {
   fn get(url: string): string {
 #if pwsh
@@ -26,10 +28,26 @@ module http {
         }
       }
     } else if has_command('wget') {
-      sh {
-        wget -q -O - --header 'Accept: */*' "$%url" 2> '/dev/null' || {
-          echo 'http error' >&2
-          exit 1
+      if platform::is_busybox('wget') {
+
+#if !test
+        if url.starts_with('https') {
+          eprintln('WARN: busybox wget does not support TLS. skip certification')
+        }
+#endif
+        sh {
+          wget -q -O - --header 'Accept: */*' --no-check-certificate "$%url" 2> '/dev/null' || {
+            echo 'http error' >&2
+            exit 1
+          }
+        }
+
+      } else {
+        sh {
+          wget -q -O - --header 'Accept: */*' "$%url" 2> '/dev/null' || {
+            echo 'http error' >&2
+            exit 1
+          }
         }
       }
     }
