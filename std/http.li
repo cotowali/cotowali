@@ -36,6 +36,7 @@ module http {
         }
 #endif
         sh {
+          wget -O - -S --header 'Accept: */*' --no-check-certificate "$%url" 1>&2
           wget -q -O - --header 'Accept: */*' --no-check-certificate "$%url" 2> '/dev/null' || {
             echo 'http error' >&2
             exit 1
