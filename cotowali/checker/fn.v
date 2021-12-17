@@ -91,12 +91,12 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 fn (mut c Checker) fn_param_by_index(decl ast.FnDecl, i int) {
 	param := decl.params[i]
 	fn_info := decl.function_info()
-	if default_expr := param.default() {
-		c.expr(default_expr)
+	if default := param.default() {
+		c.expr(default)
 		param_ts := param.type_symbol()
-		default_ts := default_expr.type_symbol()
+		default_ts := default.type_symbol()
 		if builtin_type(.placeholder) in [param_ts.typ, default_ts.typ] {
-			c.check_types(want: param_ts, got: default_ts, pos: default_expr.pos()) or {}
+			c.check_types(want: param_ts, got: default_ts, pos: default.pos()) or {}
 		}
 	} else {
 		n := fn_info.min_params_count() + (if decl.is_method { 1 } else { 0 })

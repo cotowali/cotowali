@@ -73,9 +73,9 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 				e.write(', ')
 			}
 			e.write(e.pwsh_var(param))
-			if default_expr := param.default() {
+			if default := param.default() {
 				e.write(' = ')
-				e.expr(default_expr)
+				e.expr(default)
 			}
 		}
 	}

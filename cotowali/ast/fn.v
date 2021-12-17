@@ -161,8 +161,8 @@ fn (mut r Resolver) fn_param(mut param FnParam) {
 		}
 	}
 	r.var_(mut param.var_, is_left_of_assignment: true)
-	if default_expr := param.default() {
-		r.expr(default_expr)
+	if default := param.default() {
+		r.expr(default)
 	}
 }
 

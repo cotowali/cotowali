@@ -122,12 +122,12 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			} else {
 				'\$1'
 			}
-			if default_expr := param.default() {
+			if default := param.default() {
 				e.writeln(r'if [ $# -eq 0 ]')
 				e.writeln('then')
 				e.indent()
 				{
-					e.assign(e.ident_for(param), default_expr, param.type_symbol())
+					e.assign(e.ident_for(param), default, param.type_symbol())
 				}
 				e.unindent()
 				e.writeln('else')
