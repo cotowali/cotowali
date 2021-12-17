@@ -103,7 +103,7 @@ fn (mut c Checker) fn_param_by_index(decl ast.FnDecl, i int) {
 		if i >= n && !fn_info.variadic {
 			// fn f(a: int = 0, b: int)
 			//                  ^^^^^^
-			c.error('expected default expr for `$param.name()`', param.pos)
+			c.error('expected default expression for `$param.name()`', param.pos)
 		}
 	}
 }

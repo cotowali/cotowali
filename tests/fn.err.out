@@ -4,7 +4,7 @@ error: fn.err.li 1,15: variable `i` is already defined
 error: fn.err.li 2,10: unknown type `foo`
     2 | fn f2(i: foo) {}
       |          ^^^
-error: fn.err.li 3,27: expected default expr for `c`
+error: fn.err.li 3,27: expected default expression for `c`
     3 | fn f3(a: int, b: int = 0, c: int) {}
       |                           ^^^^^^
 error: fn.err.li 6,3: cannot use yield in function that return non-sequence type
