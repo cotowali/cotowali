@@ -13,3 +13,12 @@ error: call_expr.err.li 12,1: expected 1 arguments, but got 0
 error: call_expr.err.li 13,1: expected 1 arguments, but got 2
    13 | f(0, 1)
       | ^^^^^^^
+error: call_expr.err.li 16,1: expected least 2 arguments, but got 1
+   16 | f_opt(0)
+      | ^^^^^^^^
+error: call_expr.err.li 17,13: mismatched types: `int` (expected) and `string` (found)
+   17 | f_opt(0, 0, 'c')
+      |             ^^^
+error: call_expr.err.li 18,1: expected 4 arguments, but got 5
+   18 | f_opt(0, 0, 0, 0, 0)
+      | ^^^^^^^^^^^^^^^^^^^^

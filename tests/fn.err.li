@@ -1,5 +1,6 @@
 fn f1(i: int, i: int) {}
 fn f2(i: foo) {}
+fn f3(a: int, b: int = 0, c: int) {}
 
 fn g(i: int): string {
   yield '0'

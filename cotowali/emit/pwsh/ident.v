@@ -5,11 +5,18 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module pwsh
 
-import cotowali.ast { ArrayLiteral, Expr, FnDecl, MapLiteral }
+import cotowali.ast { ArrayLiteral, Expr, FnDecl, FnParam, MapLiteral }
 import cotowali.symbols
 import cotowali.util { li_panic }
 
-type ValueOfIdentFor = ArrayLiteral | Expr | FnDecl | MapLiteral | ast.Var | string | symbols.Var
+type ValueOfIdentFor = ArrayLiteral
+	| Expr
+	| FnDecl
+	| FnParam
+	| MapLiteral
+	| ast.Var
+	| string
+	| symbols.Var
 
 fn (mut e Emitter) ident_for(v ValueOfIdentFor) string {
 	return match v {
@@ -25,6 +32,9 @@ fn (mut e Emitter) ident_for(v ValueOfIdentFor) string {
 		}
 		FnDecl {
 			e.ident_for(v.sym)
+		}
+		FnParam {
+			e.ident_for(v.var_)
 		}
 		ast.Var {
 			sym := v.sym() or { li_panic(@FILE, @LINE, 'sym is nil') }

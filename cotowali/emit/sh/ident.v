@@ -5,11 +5,11 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module sh
 
-import cotowali.ast { ArrayLiteral, Expr, FnDecl, MapLiteral }
+import cotowali.ast { ArrayLiteral, Expr, FnDecl, FnParam, MapLiteral }
 import cotowali.symbols
 import cotowali.util { li_panic }
 
-type IdentForValue = ArrayLiteral | Expr | FnDecl | MapLiteral | ast.Var | symbols.Var
+type IdentForValue = ArrayLiteral | Expr | FnDecl | FnParam | MapLiteral | ast.Var | symbols.Var
 
 fn (mut e Emitter) ident_for(v IdentForValue) string {
 	return match v {
@@ -22,6 +22,9 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 		}
 		FnDecl {
 			e.ident_for(v.sym)
+		}
+		FnParam {
+			e.ident_for(v.var_)
 		}
 		ast.Var {
 			sym := v.sym() or { li_panic(@FILE, @LINE, 'sym is nil') }

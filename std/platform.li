@@ -39,6 +39,13 @@ module platform {
     return system() == 'Darwin'
   }
 
+  fn is_busybox(name: string): bool {
+    if is_linux() && has_command('which') && has_command('realpath') {
+      return @realpath(@which(name)).contains('busybox')
+    }
+    return false
+  }
+
   fn shell(): string {
 #if sh
     return 'sh'

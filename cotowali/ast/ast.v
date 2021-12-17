@@ -8,7 +8,7 @@ module ast
 import cotowali.source { Source }
 import cotowali.util.checksum
 
-pub type Node = Expr | File | Ident | Stmt
+pub type Node = Expr | File | FnParam | Ident | Stmt
 
 [heap]
 pub struct File {
