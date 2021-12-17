@@ -9,6 +9,7 @@ import cotowali.source { Pos }
 import cotowali.token { Token }
 import cotowali.symbols {
 	BuiltinFunctionKey,
+	FunctionParam,
 	FunctionTypeInfo,
 	Scope,
 	Type,
@@ -28,8 +29,28 @@ pub mut:
 	attrs         []Attr
 	pipe_in_param Var
 	sym           &symbols.Var
-	params        []Var
+	params        []FnParam
 	body          Block
+}
+
+pub struct FnParam {
+pub:
+	pos     Pos
+	default Expr = Empty{}
+pub mut:
+	var_ Var
+}
+
+pub fn (param &FnParam) name() string {
+	return param.var_.name()
+}
+
+pub fn (param &FnParam) default() ?Expr {
+	return if param.default !is Empty { param.default } else { none }
+}
+
+pub fn (param &FnParam) type_symbol() &TypeSymbol {
+	return Expr(param.var_).type_symbol()
 }
 
 pub fn (f FnDecl) function_info() FunctionTypeInfo {
@@ -106,9 +127,13 @@ pub fn (f FnDecl) get_run_test_call_expr() CallExpr {
 
 pub fn (f FnDecl) children() []Node {
 	mut children := []Node{cap: f.params.len + 1}
-	children << f.params.map(Node(Expr(it)))
+	children << f.params.map(Node(it))
 	children << Stmt(f.body)
 	return children
+}
+
+pub fn (p FnParam) children() []Node {
+	return [Node(Expr(p.var_)), p.default]
 }
 
 fn (mut r Resolver) fn_decl(mut decl FnDecl) {
@@ -122,7 +147,23 @@ fn (mut r Resolver) fn_decl(mut decl FnDecl) {
 	if decl.attrs.any(it.kind() == .mangle) {
 		decl.sym.mangle = true
 	}
+	for mut param in decl.params {
+		r.fn_param(mut param)
+	}
 	r.block(decl.body)
+}
+
+fn (mut r Resolver) fn_param(mut param FnParam) {
+	$if trace_resolver ? {
+		r.trace_begin(@FN)
+		defer {
+			r.trace_end()
+		}
+	}
+	r.var_(mut param.var_, is_left_of_assignment: true)
+	if default_expr := param.default() {
+		r.expr(default_expr)
+	}
 }
 
 // --
@@ -305,12 +346,14 @@ fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 			if pipe_in_sequence_info := pipe_in.sequence_info() {
 				pipe_in = e.scope.must_lookup_type(pipe_in_sequence_info.elem)
 			}
-			new_fn_params := if pipe_in_tuple_info := pipe_in.tuple_info() {
+			new_fn_params := (if pipe_in_tuple_info := pipe_in.tuple_info() {
 				elements := pipe_in_tuple_info.elements
 				elements.map(e.scope.lookup_or_register_reference_type(target: it.typ).typ)
 			} else {
 				[e.scope.lookup_or_register_reference_type(target: pipe_in.typ).typ]
-			}
+			}).map(FunctionParam{
+				typ: it
+			})
 			func.sym = if new_fn := e.scope.register_function(name: sym.name, params: new_fn_params) {
 				new_fn
 			} else {

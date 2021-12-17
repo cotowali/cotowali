@@ -33,6 +33,7 @@ pub fn (mut r Resolver) resolve(mut node Node) {
 		File { r.file(node) }
 		Stmt { r.stmt(node) }
 		Expr { r.expr(node) }
+		FnParam { r.fn_param(mut node) }
 		Ident {}
 	}
 }

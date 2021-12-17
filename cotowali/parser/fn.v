@@ -19,20 +19,26 @@ import cotowali.util { li_panic, nil_to_none, struct_name }
 
 struct FnParamParsingInfo {
 mut:
-	name string
-	ts   &TypeSymbol
-	pos  Pos
+	name     string
+	name_pos Pos
+	pos      Pos
+	default  ast.Expr = ast.Empty{}
+	ts       &TypeSymbol
+}
+
+fn (p &FnParamParsingInfo) has_default() bool {
+	return p.default !is ast.Empty
 }
 
 fn (mut p Parser) register_function_param(param FnParamParsingInfo) ?ast.Var {
-	param_sym := p.scope.register_var(name: param.name, pos: param.pos, typ: param.ts.typ) or {
-		new_placeholder_var(param.name, param.pos)
-		return p.error(err.msg, param.pos)
+	param_sym := p.scope.register_var(name: param.name, pos: param.name_pos, typ: param.ts.typ) or {
+		new_placeholder_var(param.name, param.name_pos)
+		return p.error(err.msg, param.name_pos)
 	}
 	return ast.Var{
 		ident: ast.Ident{
 			scope: p.scope
-			pos: param.pos
+			pos: param.name_pos
 			text: param.name
 		}
 		sym: param_sym
@@ -59,12 +65,17 @@ mut:
 
 fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 	ret_typ := if isnil(info.ret_ts) { builtin_type(.void) } else { info.ret_ts.typ }
+	params := info.params.map(symbols.FunctionParam{
+		name: it.name
+		typ: it.ts.typ
+		has_default: it.has_default()
+	})
 	return match info.kind {
 		.default {
 			scope.register_function(
 				name: info.name.text
 				pos: info.name.pos
-				params: info.params.map(it.ts.typ)
+				params: params
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
 				ret: ret_typ
@@ -75,7 +86,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 			receiver.register_method(
 				name: info.name.text
 				pos: info.name.pos
-				params: info.params[1..].map(it.ts.typ)
+				params: params[1..]
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
 				ret: ret_typ
@@ -84,7 +95,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 		.infix_op {
 			scope.register_infix_op_function(info.name, // name is op token
 				pos: info.name.pos
-				params: info.params.map(it.ts.typ)
+				params: params
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
 				ret: ret_typ
@@ -93,7 +104,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 		.prefix_op {
 			scope.register_prefix_op_function(info.name, // name is op token
 				pos: info.name.pos
-				params: info.params.map(it.ts.typ)
+				params: params
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
 				ret: ret_typ
@@ -102,7 +113,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 		.cast_op {
 			scope.register_cast_function(
 				pos: info.name.pos
-				params: info.params.map(it.ts.typ)
+				params: params
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
 				ret: ret_typ
@@ -119,14 +130,24 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 
 	for {
 		name_tok := p.consume_with_check(.ident) ?
+		name_pos := name_tok.pos
 		p.consume_with_check(.colon) ?
 		ts := p.parse_type() ?
+		pos := name_pos.merge(p.pos(-1))
 
-		info.params << FnParamParsingInfo{
+		mut param := FnParamParsingInfo{
 			name: name_tok.text
-			pos: name_tok.pos
+			name_pos: name_pos
 			ts: ts
+			pos: pos
 		}
+
+		if _ := p.consume_if_kind_eq(.assign) {
+			param.default = p.parse_expr(.toplevel) ?
+		} else {
+		}
+
+		info.params << param
 
 		if sequence_info := ts.sequence_info() {
 			p.consume_with_check(.r_paren) ?
@@ -165,12 +186,14 @@ fn (mut p Parser) parse_receiver() ?FnParamParsingInfo {
 
 		p.consume_with_check(.colon) ?
 		ts := (p.parse_type() ?)
+		pos := name_pos.merge(p.pos(-1))
 
 		p.consume_with_check(.r_paren) ?
 		return FnParamParsingInfo{
 			name: name
-			pos: name_pos
+			name_pos: name_pos
 			ts: ts
+			pos: pos
 		}
 	}
 }
@@ -315,10 +338,14 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 
 	p.scope.owner = sym
 
-	mut params := []ast.Var{len: info.params.len}
+	mut params := []ast.FnParam{len: info.params.len}
 	for i, param in info.params {
 		if registered := p.register_function_param(param) {
-			params[i] = registered
+			params[i] = ast.FnParam{
+				var_: registered
+				default: param.default
+				pos: param.pos
+			}
 		} else {
 			has_error = true
 			continue

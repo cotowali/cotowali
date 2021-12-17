@@ -6,7 +6,7 @@
 module checker
 
 import cotowali.ast { Expr }
-import cotowali.symbols { ArrayTypeInfo, TypeSymbol, builtin_type }
+import cotowali.symbols { ArrayTypeInfo, builtin_type }
 import cotowali.messages { args_count_mismatch }
 
 fn (mut c Checker) nameof(expr ast.Nameof) {
@@ -65,7 +65,7 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 			c.error('test function cannot have pipe-in', stmt.sym.pos)
 		}
 		if stmt.params.len != 0 {
-			pos := stmt.params[0].pos().merge(stmt.params.last().pos())
+			pos := stmt.params[0].var_.pos().merge(stmt.params.last().var_.pos())
 			c.error('test function cannot have parameters', pos)
 		}
 		if fn_info.ret != builtin_type(.void) {
@@ -82,8 +82,30 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 	}
 
 	c.attrs(stmt.attrs)
-	c.exprs(stmt.params.map(Expr(it)))
+	for i, _ in stmt.params {
+		c.fn_param_by_index(stmt, i)
+	}
 	c.block(stmt.body)
+}
+
+fn (mut c Checker) fn_param_by_index(decl ast.FnDecl, i int) {
+	param := decl.params[i]
+	fn_info := decl.function_info()
+	if default_expr := param.default() {
+		c.expr(default_expr)
+		param_ts := param.type_symbol()
+		default_ts := default_expr.type_symbol()
+		if builtin_type(.placeholder) in [param_ts.typ, default_ts.typ] {
+			c.check_types(want: param_ts, got: default_ts, pos: default_expr.pos()) or {}
+		}
+	} else {
+		n := fn_info.min_params_count() + (if decl.is_method { 1 } else { 0 })
+		if i >= n && !fn_info.variadic {
+			// fn f(a: int = 0, b: int)
+			//                  ^^^^^^
+			c.error('expected default expr for `$param.name()`', param.pos)
+		}
+	}
 }
 
 fn (mut c Checker) call_command_expr(expr ast.CallCommandExpr) {
@@ -113,21 +135,25 @@ fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	scope := expr.scope
 	function_info := expr.function_info()
 	params := function_info.params
-	param_syms := params.map(scope.must_lookup_type(it))
 	args := expr.args
 
 	if function_info.is_test {
 		c.error('cannot explicitly call test function', pos)
 	}
 
+	min_params_count := function_info.min_params_count()
+
 	if function_info.variadic {
-		min_len := params.len - 1
-		if args.len < min_len {
-			c.error(args_count_mismatch(expected: '$min_len or more', actual: args.len),
+		if args.len < min_params_count {
+			c.error(args_count_mismatch(expected: '$min_params_count or more', actual: args.len),
 				pos)
 			return
 		}
-	} else if args.len != params.len {
+	} else if args.len < min_params_count && params.len != min_params_count {
+		c.error(args_count_mismatch(expected: 'least $min_params_count', actual: args.len),
+			pos)
+		return
+	} else if args.len < min_params_count || args.len > params.len {
 		c.error(args_count_mismatch(expected: params.len, actual: args.len), pos)
 		return
 	}
@@ -135,23 +161,18 @@ fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	c.exprs(args)
 
 	mut call_args_types_ok := true
-	varargs_elem_ts := if function_info.variadic {
-		scope.must_lookup_type((param_syms.last().info as ArrayTypeInfo).elem)
-	} else {
-		// ?TypeSymbol(none)
-		&TypeSymbol{}
-	}
 	for i, arg in args {
 		arg_ts := arg.type_symbol()
 		param_ts := if function_info.variadic && i >= params.len - 1 {
-			if arg.is_glob_literal() && varargs_elem_ts.typ == builtin_type(.string) {
+			varargs_elem_typ := (scope.must_lookup_type(params.last().typ).info as ArrayTypeInfo).elem
+			if arg.is_glob_literal() && varargs_elem_typ == builtin_type(.string) {
 				// allow glob literal as string varargs
 				continue
 			}
 
-			varargs_elem_ts
+			scope.must_lookup_type(varargs_elem_typ)
 		} else {
-			scope.must_lookup_type(params[i])
+			scope.must_lookup_type(params[i].typ)
 		}
 
 		if param_ts.kind() == .placeholder || arg_ts.kind() == .placeholder {

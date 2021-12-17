@@ -10,13 +10,19 @@ fn test_signature() ? {
 	f1 := s.register_type(
 		name: 'f1'
 		info: FunctionTypeInfo{
-			params: [builtin_type(.int), builtin_type(.bool)]
+			params: [
+				builtin_type(.int),
+				builtin_type(.bool),
+			].map(FunctionParam{ typ: it })
 		}
 	) ?
 	f2 := s.register_type(
 		name: 'f2'
 		info: FunctionTypeInfo{
-			params: [builtin_type(.int), builtin_type(.bool)]
+			params: [
+				builtin_type(.int),
+				builtin_type(.bool),
+			].map(FunctionParam{ typ: it })
 			ret: builtin_type(.int)
 		}
 	) ?
@@ -24,7 +30,10 @@ fn test_signature() ? {
 		name: 'f3'
 		info: FunctionTypeInfo{
 			pipe_in: builtin_type(.int)
-			params: [builtin_type(.int), builtin_type(.bool)]
+			params: [
+				builtin_type(.int),
+				builtin_type(.bool),
+			].map(FunctionParam{ typ: it })
 			ret: builtin_type(.int)
 		}
 	) ?
@@ -32,7 +41,12 @@ fn test_signature() ? {
 		name: 'f4'
 		info: FunctionTypeInfo{
 			pipe_in: builtin_type(.int)
-			params: [builtin_type(.int), s.must_lookup_array_type(elem: builtin_type(.int)).typ]
+			params: [
+				builtin_type(.int),
+				s.must_lookup_array_type(elem: builtin_type(.int)).typ,
+			].map(FunctionParam{
+				typ: it
+			})
 			variadic: true
 			ret: builtin_type(.int)
 		}
@@ -158,7 +172,7 @@ fn test_method() ? {
 		assert false
 	}
 
-	base_method1 := base.register_method(name: 'f', params: [], ret: int_) ?
+	base_method1 := base.register_method(name: 'f') ?
 	assert base_method1.id != 0
 	if found := t1.lookup_method('f') {
 		assert found.id == base_method1.id
@@ -166,8 +180,8 @@ fn test_method() ? {
 		assert false
 	}
 
-	method1 := t1.register_method(name: 'f', params: [int_], ret: int_) ?
-	if _ := t1.register_method(name: 'f', params: [int_], ret: int_) {
+	method1 := t1.register_method(name: 'f') ?
+	if _ := t1.register_method(name: 'f') {
 		assert false
 	}
 	assert method1.id != 0
@@ -183,7 +197,9 @@ fn test_method() ? {
 		name: 'f'
 		pipe_in: int_
 		params: [
-			int_,
+			FunctionParam{
+				typ: int_
+			},
 		]
 	) ?
 	assert method2.id != 0

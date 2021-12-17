@@ -87,7 +87,7 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 fn (mut e Emitter) fn_decl(node FnDecl) {
 	if !node.has_body {
 		e.writeln('')
-		params_str := node.params.map('$it.ident.text').join(', ')
+		params_str := node.params.map(it.name()).join(', ')
 		e.writeln('# info: fn ${e.ident_for(node)}($params_str)')
 		e.writeln('')
 		return
@@ -122,9 +122,29 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			} else {
 				'\$1'
 			}
-			e.assign(e.ident_for(param), value, ast.Expr(param).type_symbol())
-			if i < node.params.len - 1 {
-				e.writeln('shift')
+			if default_expr := param.default() {
+				e.writeln(r'if [ $# -eq 0 ]')
+				e.writeln('then')
+				e.indent()
+				{
+					e.assign(e.ident_for(param), default_expr, param.type_symbol())
+				}
+				e.unindent()
+				e.writeln('else')
+				e.indent()
+				{
+					e.assign(e.ident_for(param.var_), value, param.type_symbol())
+					if i < node.params.len - 1 {
+						e.writeln('shift')
+					}
+				}
+				e.unindent()
+				e.writeln('fi')
+			} else {
+				e.assign(e.ident_for(param.var_), value, param.type_symbol())
+				if i < node.params.len - 1 {
+					e.writeln('shift')
+				}
 			}
 		}
 

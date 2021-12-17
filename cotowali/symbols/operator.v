@@ -50,8 +50,8 @@ pub fn (mut s Scope) register_infix_op_function(op Token, f RegisterFnArgs) ?&Va
 	fn_info := f.FunctionTypeInfo
 	verify_op_signature(.infix_op, op, fn_info) ?
 
-	lhs_ts := s.lookup_type(fn_info.params[0]) ?
-	rhs_ts := s.lookup_type(fn_info.params[1]) ?
+	lhs_ts := s.lookup_type(fn_info.params[0].typ) ?
+	rhs_ts := s.lookup_type(fn_info.params[1].typ) ?
 
 	fn_typ := s.lookup_or_register_function_type(fn_info).typ
 
@@ -119,7 +119,7 @@ pub fn (mut s Scope) register_prefix_op_function(op Token, f RegisterFnArgs) ?&V
 	fn_info := f.FunctionTypeInfo
 	verify_op_signature(.prefix_op, op, fn_info) ?
 
-	operand_ts := s.lookup_type(fn_info.params[0]) ?
+	operand_ts := s.lookup_type(fn_info.params[0].typ) ?
 	fn_typ := s.lookup_or_register_function_type(fn_info).typ
 
 	v := &Var{
@@ -173,7 +173,7 @@ pub fn (mut s Scope) register_cast_function(f RegisterFnArgs, params CastFunctio
 	check_no_pipe_in(subject, fn_info) ?
 
 	$if !prod {
-		if params.from != builtin_type(.placeholder) && params.from != fn_info.params[0] {
+		if params.from != builtin_type(.placeholder) && params.from != fn_info.params[0].typ {
 			li_panic(@FILE, @LINE, 'mismatch from.typ and params[0]')
 		}
 		if params.to != builtin_type(.placeholder) && params.to != fn_info.ret {
@@ -181,7 +181,7 @@ pub fn (mut s Scope) register_cast_function(f RegisterFnArgs, params CastFunctio
 		}
 	}
 
-	from, to := s.must_lookup_type(fn_info.params[0]), s.must_lookup_type(fn_info.ret)
+	from, to := s.must_lookup_type(fn_info.params[0].typ), s.must_lookup_type(fn_info.ret)
 
 	if to.typ == builtin_type(.void) {
 		return error('$subject must have return values')

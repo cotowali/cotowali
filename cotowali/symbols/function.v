@@ -14,18 +14,45 @@ pub struct RegisterFnArgs {
 }
 
 pub struct FunctionTypeInfo {
+mut:
+	min_params_count int = -1
 pub:
 	receiver Type = builtin_type(.placeholder)
 	pipe_in  Type = builtin_type(.void)
-	params   []Type
+	params   []FunctionParam
 	variadic bool
 	is_test  bool
 	ret      Type = builtin_type(.void)
 }
 
+pub struct FunctionParam {
+pub:
+	name        string
+	typ         Type
+	has_default bool
+}
+
 pub fn (ts TypeSymbol) function_info() ?FunctionTypeInfo {
 	resolved := ts.resolved()
 	return if resolved.info is FunctionTypeInfo { resolved.info } else { none }
+}
+
+pub fn (f &FunctionTypeInfo) min_params_count() int {
+	if f.min_params_count >= 0 {
+		return f.min_params_count
+	}
+	for i, param in f.params {
+		if param.has_default {
+			unsafe {
+				f.min_params_count = i
+			}
+			return f.min_params_count
+		}
+	}
+	unsafe {
+		f.min_params_count = if f.variadic { f.params.len - 1 } else { f.params.len }
+	}
+	return f.min_params_count
 }
 
 pub fn (f &FunctionTypeInfo) is_method() bool {
@@ -51,14 +78,18 @@ fn (f &FunctionTypeInfo) signature(s &Scope) string {
 
 	sb.write_string('(')
 	for i, param in f.params {
-		ts := s.must_lookup_type(param)
-		if i < f.params.len - 1 {
-			sb.write_string('$ts.name, ')
-		} else if f.variadic {
+		ts := s.must_lookup_type(param.typ)
+		if i == f.params.len - 1 && f.variadic {
 			array := ts.array_info() or { li_panic(@FILE, @LINE, '') }
 			sb.write_string('...${s.must_lookup_type(array.elem).name}')
 		} else {
 			sb.write_string('$ts.name')
+			if param.has_default {
+				sb.write_string(' ? ')
+			}
+		}
+		if i < f.params.len - 1 {
+			sb.write_string(', ')
 		}
 	}
 	sb.write_string(')')

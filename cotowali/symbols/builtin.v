@@ -81,13 +81,16 @@ pub fn (mut s Scope) register_builtin() {
 		}
 	}
 
-	f_ := fn (k BuiltinFunctionKey, function_info FunctionTypeInfo) BuiltinFunctionInfo {
-		return BuiltinFunctionInfo{k, function_info}
+	f_ := fn (k BuiltinFunctionKey, params []Type, ret Type) BuiltinFunctionInfo {
+		return BuiltinFunctionInfo{k, FunctionTypeInfo{
+			params: params.map(FunctionParam{ typ: it })
+			ret: ret
+		}}
 	}
 
 	fns := [
-		f_(.echo, params: [t_(.any)], ret: t_(.string)),
-		f_(.read, params: [t_(.any)], ret: t_(.bool)),
+		f_(.echo, [t_(.any)], t_(.string)),
+		f_(.read, [t_(.any)], t_(.bool)),
 	]
 	for f in fns {
 		typ := s.lookup_or_register_function_type(f.function_info).typ

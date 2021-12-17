@@ -71,3 +71,49 @@ fn test_return_void() {
   assert(false)
 }
 test_return_void()
+
+fn test_default_expr() {
+  fn sum_with_1_2_3(a: int = 1, b: int = 2, c: int = 3): int {
+    return a + b + c
+  }
+
+  fn sum_with_2_3(a: int, b: int = 2, c: int = 3): int {
+    return a + b + c
+  }
+
+  assert(sum_with_1_2_3() == 1 + 2 + 3)
+  assert(sum_with_1_2_3(2) == 2 + 2 + 3)
+  assert(sum_with_1_2_3(2, 4) == 2 + 4 + 3)
+  assert(sum_with_1_2_3(2, 4, 6) == 2 + 4 + 6)
+  assert(sum_with_2_3(2) == 2 + 2 + 3)
+  assert(sum_with_2_3(2, 4) == 2 + 4 + 3)
+  assert(sum_with_2_3(2, 4, 6) == 2 + 4 + 6)
+
+  fn sum_with_1_2_3_variadic(a: int = 1, b: int = 2, c: int = 3, nums: ...int): int {
+    var n = a + b + c
+    for v in nums {
+      n += v
+    }
+    return n
+  }
+
+  fn sum_with_2_3_variadic(a: int, b: int = 2, c: int = 3, nums: ...int): int {
+    var n = a + b + c
+    for v in nums {
+      n += v
+    }
+    return n
+  }
+  assert(sum_with_1_2_3_variadic() == 1 + 2 + 3)
+  assert(sum_with_1_2_3_variadic(2) == 2 + 2 + 3)
+  assert(sum_with_1_2_3_variadic(2, 4) == 2 + 4 + 3)
+  assert(sum_with_1_2_3_variadic(2, 4, 6) == 2 + 4 + 6)
+  assert(sum_with_1_2_3_variadic(2, 4, 6, 8) == 2 + 4 + 6 + 8)
+  assert(sum_with_1_2_3_variadic(2, 4, 6, 8, 10) == 2 + 4 + 6 + 8 + 10)
+  assert(sum_with_2_3_variadic(2) == 2 + 2 + 3)
+  assert(sum_with_2_3_variadic(2, 4) == 2 + 4 + 3)
+  assert(sum_with_2_3_variadic(2, 4, 6) == 2 + 4 + 6)
+  assert(sum_with_2_3_variadic(2, 4, 6, 8) == 2 + 4 + 6 + 8)
+  assert(sum_with_2_3_variadic(2, 4, 6, 8, 10) == 2 + 4 + 6 + 8 + 10)
+}
+test_default_expr()
