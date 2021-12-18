@@ -8,6 +8,10 @@ assert("a\nb" == 'a
 b')
 assert("\"\\" == r'"\')
 
+assert('`abc`' == r'`abc`')
+assert("`abc`" == r"`abc`")
+assert("`abc`" == "\x60abc\x60")
+
 assert("\x41" == 'A')
 assert('\x41' == "\\x41")
 

@@ -69,6 +69,9 @@ fn (mut e Emitter) double_quote_string_literal(expr StringLiteral) {
 					hex := '0' + v.text[1..] // tirm \xff -> 0xff
 					e.write('\$([char]$hex)')
 				}
+				.string_literal_content_back_quote {
+					e.write('``')
+				}
 				else {
 					e.write(v.text.replace('`', '``')) // need to escape backquote in double-quoted literal
 				}

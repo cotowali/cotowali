@@ -57,6 +57,9 @@ fn (mut e Emitter) double_quote_string_literal_value(expr StringLiteral) {
 						octal := to_octal(hex.int())
 						e.write("\$(printf '\\$octal')") // printf '\0ddd' is octal (0xXX is not posix compliant)
 					}
+					.string_literal_content_back_quote {
+						e.write(r'\`')
+					}
 					else {
 						e.write(v.text)
 					}

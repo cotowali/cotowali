@@ -13,6 +13,7 @@ const (
 	sq     = `'`
 	dq     = `"`
 	bs     = `\\`
+	bq     = `\``
 	dollar = `$`
 )
 
@@ -83,46 +84,51 @@ fn (mut lex Lexer) read_double_quote_string_literal_content(params StringLiteral
 		return lex.new_token(.string_literal_content_glob)
 	}
 
-	if lex.byte() == lexer.dollar {
-		lex.consume()
-		if is_ident_first_char(lex.char(0)) {
-			lex.read_ident_or_keyword()
-			return lex.new_token(.string_literal_content_var)
-		} else if lex.byte() == `{` {
-			lex.lex_ctx.push(kind: .inside_string_literal_expr_substitution)
+	match lex.byte() {
+		lexer.dollar {
 			lex.consume()
-			return lex.new_token(.string_literal_content_expr_open)
+			if is_ident_first_char(lex.char(0)) {
+				lex.read_ident_or_keyword()
+				return lex.new_token(.string_literal_content_var)
+			} else if lex.byte() == `{` {
+				lex.lex_ctx.push(kind: .inside_string_literal_expr_substitution)
+				lex.consume()
+				return lex.new_token(.string_literal_content_expr_open)
+			}
 		}
-	}
-
-	if lex.byte() == lexer.bs {
-		match lex.char(1).byte() {
-			lexer.bs {
-				return lex.new_token_with_consume_n(2, .string_literal_content_escaped_back_slash)
-			}
-			lexer.dollar {
-				return lex.new_token_with_consume_n(2, .string_literal_content_escaped_dollar)
-			}
-			lexer.dq {
-				return lex.new_token_with_consume_n(2, .string_literal_content_escaped_double_quote)
-			}
-			`n` {
-				return lex.new_token_with_consume_n(2, .string_literal_content_escaped_newline)
-			}
-			`x` {
-				lex.consume_n(2)
-				if lex.char(0).@is(.hex_digit) && lex.char(1).@is(.hex_digit) {
-					return lex.new_token_with_consume_n(2, .string_literal_content_hex)
+		lexer.bq {
+			return lex.new_token_with_consume(.string_literal_content_back_quote)
+		}
+		lexer.bs {
+			match lex.char(1).byte() {
+				lexer.bs {
+					return lex.new_token_with_consume_n(2, .string_literal_content_escaped_back_slash)
+				}
+				lexer.dollar {
+					return lex.new_token_with_consume_n(2, .string_literal_content_escaped_dollar)
+				}
+				lexer.dq {
+					return lex.new_token_with_consume_n(2, .string_literal_content_escaped_double_quote)
+				}
+				`n` {
+					return lex.new_token_with_consume_n(2, .string_literal_content_escaped_newline)
+				}
+				`x` {
+					lex.consume_n(2)
+					if lex.char(0).@is(.hex_digit) && lex.char(1).@is(.hex_digit) {
+						return lex.new_token_with_consume_n(2, .string_literal_content_hex)
+					}
+				}
+				else {
+					li_panic(@FN, @LINE, '')
 				}
 			}
-			else {
-				li_panic(@FN, @LINE, '')
-			}
 		}
+		else {}
 	}
 
 	for !lex.is_eof() {
-		if lex.byte() in [lexer.dq, lexer.bs, lexer.dollar] {
+		if lex.byte() in [lexer.dq, lexer.bs, lexer.bq, lexer.dollar] {
 			break
 		}
 		if params.is_glob && is_glob_char(lex.char(0)) {
