@@ -59,39 +59,6 @@ fn (mut e Emitter) assign_stmt(stmt ast.AssignStmt) {
 	e.writeln('')
 }
 
-fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
-	e.write('if ( -not (')
-	e.expr(stmt.args[0])
-	e.writeln(') )')
-
-	e.writeln('{')
-	{
-		e.indent()
-
-		is_test := if f := e.current_fn() { f.is_test() } else { false }
-		e.write(if is_test { 'echo (' } else { '[Console]::Error.WriteLine(' })
-		{
-			e.write("'LINE $stmt.pos.line: Assertion Failed'")
-			if msg_expr := stmt.message_expr() {
-				e.write(" + ': ' + ")
-				e.expr(msg_expr)
-			}
-		}
-		e.writeln(')')
-
-		if is_test {
-			// use in test runner. see std/testing.li
-			e.writeln(r'$script:assert_failed = $true')
-			e.writeln('return')
-		} else {
-			e.writeln('exit 1')
-		}
-
-		e.unindent()
-	}
-	e.writeln('}')
-}
-
 fn (mut e Emitter) block(block ast.Block) {
 	for stmt in block.stmts {
 		e.stmt(stmt)

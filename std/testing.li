@@ -37,14 +37,16 @@ module testing {
     }
     pwsh {
       $script:total_count++
-      $out = invoke-expression %command
-      if ($script:assert_failed) {
+      try {
+        $out = invoke-expression %command
+        echo OK
+        $script:passed_count++
+      } catch [CotowaliAssertionFailedException] {
+        $out += echo $_.Exception.ToString()
+
         echo 'FAILED'
         $script:failed_count++
         $script:assert_failed = $false
-      } else {
-        echo OK
-        $script:passed_count++
       }
       if ($out.length -gt 0) {
         echo ''
