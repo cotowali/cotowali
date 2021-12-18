@@ -53,3 +53,43 @@ module int {
     assert::int::le(1, 0)
   }
 }
+
+module float {
+  #[test]
+  fn test_eq() {
+    assert::float::eq(0.1, 0.1)
+    assert::float::eq(0.1, 0.2)
+  }
+
+  #[test]
+  fn test_ne() {
+    assert::float::ne(0.1, 0.2)
+    assert::float::ne(0.1, 0.1)
+  }
+
+  #[test]
+  fn test_gt() {
+    assert::float::gt(0.2, 0.1)
+    assert::float::gt(0.1, 0.1)
+  }
+
+  #[test]
+  fn test_ge() {
+    assert::float::ge(0.2, 0.1)
+    assert::float::ge(0.1, 0.1)
+    assert::float::ge(0.0, 0.1)
+  }
+
+  #[test]
+  fn test_lt() {
+    assert::float::lt(0.1, 0.2)
+    assert::float::lt(0.1, 0.1)
+  }
+
+  #[test]
+  fn test_le() {
+    assert::float::le(0.1, 0.2)
+    assert::float::le(0.1, 0.1)
+    assert::float::le(0.1, 0.0)
+  }
+}

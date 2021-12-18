@@ -54,5 +54,47 @@ LINE 54: Assertion Failed: (left <= right)
 left : `1`
 right: `0`
 
+testing float::test_eq ... FAILED
+
+Output:
+LINE 60: Assertion Failed: (left == right)
+left : `0.1`
+right: `0.2`
+
+testing float::test_ne ... FAILED
+
+Output:
+LINE 64: Assertion Failed: (left != right)
+left : `0.1`
+right: `0.1`
+
+testing float::test_gt ... FAILED
+
+Output:
+LINE 68: Assertion Failed: (left > right)
+left : `0.1`
+right: `0.1`
+
+testing float::test_ge ... FAILED
+
+Output:
+LINE 72: Assertion Failed: (left >= right)
+left : `0`
+right: `0.1`
+
+testing float::test_lt ... FAILED
+
+Output:
+LINE 76: Assertion Failed: (left < right)
+left : `0.1`
+right: `0.1`
+
+testing float::test_le ... FAILED
+
+Output:
+LINE 80: Assertion Failed: (left <= right)
+left : `0.1`
+right: `0`
+
 test result: FAILED
-8 total; 0 passed; 8 failed;
+14 total; 0 passed; 14 failed;
