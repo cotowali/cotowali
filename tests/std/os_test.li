@@ -86,6 +86,7 @@ fn test_path_exists() {
   ]
   for dir in dirs {
     assert(os::path::exists(dir), "exists('$dir')")
+    assert(!os::path::is_file(dir), "!is_file('$dir')")
     assert(os::path::is_dir(dir), "is_dir('$dir')")
   }
 
@@ -99,6 +100,7 @@ fn test_path_exists() {
   ]
   for file in files {
     assert(os::path::exists(file), "exists('$file')")
+    assert(os::path::is_file(file), "is_file('$file')")
     assert(!os::path::is_dir(file), "!is_dir('$file')")
   }
 
@@ -111,6 +113,7 @@ fn test_path_exists() {
   ]
   for path in not_exists {
     assert(!os::path::exists(path), "!exists('$path')")
+    assert(!os::path::is_file(path), "!is_file('$path')")
     assert(!os::path::is_dir(path), "!is_dir('$path')")
   }
 }
