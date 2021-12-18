@@ -10,9 +10,10 @@ import cotowali.source { Char }
 import cotowali.util { li_panic }
 
 const (
-	sq = `'`
-	dq = `"`
-	bs = `\\`
+	sq     = `'`
+	dq     = `"`
+	bs     = `\\`
+	dollar = `$`
 )
 
 [params]
@@ -82,7 +83,7 @@ fn (mut lex Lexer) read_double_quote_string_literal_content(params StringLiteral
 		return lex.new_token(.string_literal_content_glob)
 	}
 
-	if lex.byte() == `$` {
+	if lex.byte() == lexer.dollar {
 		lex.consume()
 		if is_ident_first_char(lex.char(0)) {
 			lex.read_ident_or_keyword()
@@ -99,7 +100,7 @@ fn (mut lex Lexer) read_double_quote_string_literal_content(params StringLiteral
 			lexer.bs {
 				return lex.new_token_with_consume_n(2, .string_literal_content_escaped_back_slash)
 			}
-			`$` {
+			lexer.dollar {
 				return lex.new_token_with_consume_n(2, .string_literal_content_escaped_dollar)
 			}
 			lexer.dq {
@@ -121,7 +122,7 @@ fn (mut lex Lexer) read_double_quote_string_literal_content(params StringLiteral
 	}
 
 	for !lex.is_eof() {
-		if lex.byte() in [lexer.dq, lexer.bs, `$`] {
+		if lex.byte() in [lexer.dq, lexer.bs, lexer.dollar] {
 			break
 		}
 		if params.is_glob && is_glob_char(lex.char(0)) {
