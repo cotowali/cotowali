@@ -28,4 +28,30 @@ module assert {
       assert(lhs != rhs, internal::message_infix(lhs, '!=', rhs))
     }
   }
+
+  module int {
+    fn eq(lhs: int, rhs: int) {
+      assert(lhs == rhs, internal::message_infix("$lhs", '==', "$rhs"))
+    }
+
+    fn ne(lhs: int, rhs: int) {
+      assert(lhs != rhs, internal::message_infix("$lhs", '!=', "$rhs"))
+    }
+
+    fn gt(lhs: int, rhs: int) {
+      assert(lhs > rhs, internal::message_infix("$lhs", '>', "$rhs"))
+    }
+
+    fn ge(lhs: int, rhs: int) {
+      assert(lhs >= rhs, internal::message_infix("$lhs", '>=', "$rhs"))
+    }
+
+    fn lt(lhs: int, rhs: int) {
+      assert(lhs < rhs, internal::message_infix("$lhs", '<', "$rhs"))
+    }
+
+    fn le(lhs: int, rhs: int) {
+      assert(lhs <= rhs, internal::message_infix("$lhs", '<=', "$rhs"))
+    }
+  }
 }

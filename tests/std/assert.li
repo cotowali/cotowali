@@ -13,3 +13,43 @@ module string {
     assert::string::ne('a', 'a')
   }
 }
+
+module int {
+  #[test]
+  fn test_eq() {
+    assert::int::eq(1, 1)
+    assert::int::eq(1, 2)
+  }
+
+  #[test]
+  fn test_ne() {
+    assert::int::ne(1, 2)
+    assert::int::ne(1, 1)
+  }
+
+  #[test]
+  fn test_gt() {
+    assert::int::gt(2, 1)
+    assert::int::gt(1, 1)
+  }
+
+  #[test]
+  fn test_ge() {
+    assert::int::ge(2, 1)
+    assert::int::ge(1, 1)
+    assert::int::ge(0, 1)
+  }
+
+  #[test]
+  fn test_lt() {
+    assert::int::lt(1, 2)
+    assert::int::lt(1, 1)
+  }
+
+  #[test]
+  fn test_le() {
+    assert::int::le(1, 2)
+    assert::int::le(1, 1)
+    assert::int::le(1, 0)
+  }
+}
