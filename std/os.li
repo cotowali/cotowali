@@ -47,11 +47,11 @@ module os {
     }
 
     fn is_abs(path: string): bool {
-      if platform::is_windows() {
-        eprintln('windows is not supported for now')
-        exit(1)
-      }
+#if pwsh
+      pwsh { return [System.IO.Path]::IsPathFullyQualified(%path) }
+#else
       return path.len() > 0 && path[0] == separator
+#endif
     }
 
     fn abs(path: string): string {
