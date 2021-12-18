@@ -63,36 +63,18 @@ module os {
 
     fn clean(path: string): string {
       var sep = separator
-      var prefix = ''
       var is_root = path.starts_with(sep)
-      var res = path
-      while true {
-        var new = res
-          .replace("$sep(\\.$sep)+", sep) // /././././ -> /
-          .replace("[^.$sep]+/\\.\\.$sep", sep) // abc/../ -> /
-          .replace("[^.$sep]+/\\.\\.\$", sep) // abc/.. -> /
-          .replace("[^.]\\.$sep\\.\\.$sep", "..$sep") // ./../ -> ../
-          .replace("${sep}+", sep) // // -> /
-        var replaced = new.len() != res.len()
-        res = new
-        if !replaced {
-          break
-        }
-      }
-      res = res.trim_suffix("$sep.").trim_suffix(sep)
-      if res == "$sep.." {
-        res = ''
-      }
-      if res == '' {
+
+      if has_command('realpath') {
         if is_root {
-          return sep
+          return @realpath('-sm', path)
+        } else {
+          return @realpath('-sm', '--relative-to', '.', path)
         }
-        return '.'
       }
-      if !is_root {
-        res = res.trim_prefix(sep)
+      if has_command('python') {
+        return @python('-c', 'import os, sys; print(os.path.normpath(sys.argv[1]))', path)
       }
-      return res
     }
   }
 }

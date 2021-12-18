@@ -29,8 +29,8 @@ fn test_clean_path() {
   assert(os::path::clean(os::path::join('a', 'b', 'c')) == os::path::join('a', 'b', 'c'))
   // /a/../../ -> /
   assert(os::path::clean(os::path::join("${sep}a", '..', "..$sep")) == sep)
-  // a/../.. -> .
-  assert(os::path::clean(os::path::join('a', '..', '..')) == '.')
+  // a/../.. -> ..
+  assert(os::path::clean(os::path::join('a', '..', '..')) == '..')
   // ./././ -> .
   assert(os::path::clean(os::path::join('.', '.', '.')) == '.')
   // ../../.. -> ../../..
