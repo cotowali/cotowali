@@ -122,7 +122,7 @@ fn test_lexer() {
 	ktest(@FN, @LINE, 'a && b || c &', [.ident, .logical_and, .ident, .logical_or, .ident, .amp,
 		.eof])
 	ktest(@FN, @LINE, 'return 0;', [.key_return, .int_literal, .semicolon])
-	ktest(@FN, @LINE, 'assert a == b', [.key_assert, .ident, .eq, .ident])
+	ktest(@FN, @LINE, 'assert a == b', [.ident, .ident, .eq, .ident])
 	ktest(@FN, @LINE, 'a < b || c > d', [.ident, .lt, .ident, .logical_or, .ident, .gt, .ident])
 	ktest(@FN, @LINE, 'a <= b || c >= d', [.ident, .le, .ident, .logical_or, .ident, .ge, .ident])
 	ktest(@FN, @LINE, '!cond', [.not, .ident])
