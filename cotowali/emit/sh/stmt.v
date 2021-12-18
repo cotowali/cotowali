@@ -78,7 +78,7 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 		if msg_expr := stmt.message_expr() {
 			tmp := e.new_tmp_ident()
 			e.assign(tmp, msg_expr, msg_expr.type_symbol())
-			msg += '" (\$$tmp)"'
+			msg += '": \$$tmp"'
 		}
 		e.writeln('echo $msg >&2')
 		is_test := if f := e.cur_fn() { f.is_test() } else { false }

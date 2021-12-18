@@ -73,14 +73,8 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 		{
 			e.write("'LINE $stmt.pos.line: Assertion Failed'")
 			if msg_expr := stmt.message_expr() {
-				// ...WriteLine(...Assertion Failed' + ' (' + msg_expr + ')')
-				//                                  ^^^^^^^^^^        ^^^^^^
-				e.write(" + ' (' + ") //            |                 |
-				//       ^^^^^^---------------------+                 |
-				e.expr(msg_expr) //                                   |
-				//                                                    |
-				e.write(" + ')'") //                                  |
-				//       ^^^^^^---------------------------------------+
+				e.write(" + ': ' + ")
+				e.expr(msg_expr)
 			}
 		}
 		e.writeln(')')
