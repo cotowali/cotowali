@@ -9,7 +9,8 @@ fn (mut e Emitter) builtin() {
 	e.writeln(sh.builtin)
 }
 
-const builtin = '
+const builtin = [
+	'
 # -- start builtin --
 #
 # Copyright (c) 2021 zakuro <z@kuro.red>. All rights reserved.
@@ -17,7 +18,17 @@ const builtin = '
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
+',
+	'
+cotowali_true_value() {
+	echo $true_value
+}
 
+cotowali_false_value() {
+	echo $false_value
+}
+',
+	'
 array_to_str() {
   name=\$1
   echo "\$( eval echo \$(array_elements \$name) )"
@@ -141,4 +152,5 @@ map_set() {
 }
 
 # -- end builtin --
-'
+',
+].join('\n')

@@ -80,5 +80,20 @@ module os {
         return @python('-c', 'import os, sys; print(os.path.normpath(sys.argv[1]))', path)
       }
     }
+
+    fn exists(path: string): bool {
+      sh { [ -e "$%path" ] && cotowali_true_value || cotowali_false_value }
+      pwsh { [System.IO.Directory]::Exists(%path) -or [System.IO.File]::Exists(%path) }
+    }
+
+    fn is_file(path: string): bool {
+      sh { [ -f "$%path" ] && cotowali_true_value || cotowali_false_value }
+      pwsh { [System.IO.File]::Exists(%path) }
+    }
+
+    fn is_dir(path: string): bool {
+      sh { [ -d "$%path" ] && cotowali_true_value || cotowali_false_value }
+      pwsh { [System.IO.Directory]::Exists(%path) }
+    }
   }
 }

@@ -71,3 +71,50 @@ fn test_abs_path() {
   assert(os::path::abs('..') == os::path::clean(os::path::join(pwd(), '../')))
 }
 test_abs_path()
+
+fn test_path_exists() {
+  var dirs = [
+    '.',
+    '..',
+    pwd(),
+    './././.',
+    os::getenv('HOME'),
+    '../../../../../../../../../../../../../../../',
+    '/',
+    '//',
+    '../cotowali',
+  ]
+  for dir in dirs {
+    assert(os::path::exists(dir), "exists('$dir')")
+    assert(!os::path::is_file(dir), "!is_file('$dir')")
+    assert(os::path::is_dir(dir), "is_dir('$dir')")
+  }
+
+  var files = [
+    'README.md',
+    './README.md',
+    '../cotowali/README.md',
+    'std/os.li',
+    './std/os.li',
+    '../cotowali/std/os.li',
+  ]
+  for file in files {
+    assert(os::path::exists(file), "exists('$file')")
+    assert(os::path::is_file(file), "is_file('$file')")
+    assert(!os::path::is_dir(file), "!is_dir('$file')")
+  }
+
+  var not_exists = [
+    'unknown_xxxxxx',
+    './unknown_xxxxxx',
+    '...',
+    '~',
+    '$HOME',
+  ]
+  for path in not_exists {
+    assert(!os::path::exists(path), "!exists('$path')")
+    assert(!os::path::is_file(path), "!is_file('$path')")
+    assert(!os::path::is_dir(path), "!is_dir('$path')")
+  }
+}
+test_path_exists()
