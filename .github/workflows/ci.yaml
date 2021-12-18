@@ -90,7 +90,7 @@ jobs:
 #  # https://github.com/cotowali/cotowali/runs/4276302273
 #      - run: z ci run-on-all-conditions
   slack-notify:
-    if: failure()
+    if: ${{ failure() && github.ref == 'refs/heads/main' }}
     needs: [format, test, test-alpine, test-macos, sanitize, run-on-all-conditions]
     runs-on: ubuntu-latest
     steps:
