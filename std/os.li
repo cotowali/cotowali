@@ -62,10 +62,7 @@ module os {
     }
 
     fn clean(path: string): string {
-      if platform::is_busybox('realpath') {
-        eprintln('busybox is not supported for now')
-        exit(1)
-      }
+      platform::does_not_support_busybox('os::path::clean')
       var sep = separator
       var is_root = path.starts_with(sep)
 
