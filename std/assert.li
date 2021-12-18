@@ -1,0 +1,31 @@
+/// assert.li
+///
+/// Copyright (c) 2021 zakuro <z@kuro.red>. All rights reserved.
+///
+/// This Source Code Form is subject to the terms of the Mozilla Public
+/// License, v. 2.0. If a copy of the MPL was not distributed with this
+/// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+module assert {
+  module internal {
+    fn message(summary: string, details: ...string): string {
+      return "($summary)\n" + details.join("\n")
+    }
+    fn message_infix(left: string, op: string, right: string): string {
+      return message("left $op right",
+        "left : `$left`",
+        "right: `$right`",
+      )
+    }
+  }
+
+  module string {
+    fn eq(lhs: string, rhs: string) {
+      assert(lhs == rhs, internal::message_infix(lhs, '==', rhs))
+    }
+
+    fn ne(lhs: string, rhs: string) {
+      assert(lhs != rhs, internal::message_infix(lhs, '!=', rhs))
+    }
+  }
+}
