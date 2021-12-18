@@ -40,7 +40,10 @@ module platform {
   }
 
   fn is_busybox(name: string): bool {
-    if is_linux() && has_command('which') && has_command('realpath') {
+    if has_command('busybox') && has_command('which') && has_command('realpath') {
+      if name == '' {
+        name = 'realpath'
+      }
       return @realpath(@which(name)).contains('busybox')
     }
     return false

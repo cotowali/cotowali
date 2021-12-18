@@ -1,3 +1,4 @@
+require 'platform'
 require 'os'
 
 fn test_env() {
@@ -24,6 +25,10 @@ fn test_path() {
 test_path()
 
 fn test_clean_path() {
+  if platform::is_busybox('') {
+    return
+  }
+
   var sep = os::path::separator
   // a/b/c -> a/b/c
   assert(os::path::clean(os::path::join('a', 'b', 'c')) == os::path::join('a', 'b', 'c'))
@@ -47,6 +52,10 @@ fn test_clean_path() {
 test_clean_path()
 
 fn test_abs_path() {
+  if platform::is_busybox('') {
+    return
+  }
+
   var sep = os::path::separator
   assert(os::path::is_abs(sep))
   assert(os::path::is_abs(sep + os::path::join('a', 'b')))
