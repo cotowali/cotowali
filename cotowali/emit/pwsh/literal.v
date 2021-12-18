@@ -21,7 +21,7 @@ fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 			if i > 0 {
 				e.write(', ')
 			}
-			e.expr(elem)
+			e.expr(elem, paren: elem is ast.CallExpr || elem is ast.CallCommandExpr)
 		}
 		e.write(')')
 	}
