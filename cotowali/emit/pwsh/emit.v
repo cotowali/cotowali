@@ -20,11 +20,53 @@ pub fn (mut e Emitter) emit(f &File) {
 
 fn (mut e Emitter) file(f &File) {
 	e.writeln('# file: $f.source.path')
+	e.writeln('try')
+	e.writeln('{')
+
+	e.writeln('')
 	e.stmts(f.stmts)
+	e.writeln('')
+
+	e.writeln('}')
+	e.writeln('catch [$pwsh.base_exception_class]')
+	e.writeln('{')
+	e.indent()
+	{
+		e.writeln('[Console]::Error.WriteLine(\$_)')
+		e.writeln('exit 1')
+	}
+	e.unindent()
+	e.writeln('}')
 	e.writeln('')
 }
 
+const base_exception_class = 'CotowaliExecption'
+
 fn (mut e Emitter) builtin() {
+	e.writeln('
+class $pwsh.base_exception_class: Exception
+{
+	[int] \$Line
+
+	${pwsh.base_exception_class}([int]\$line)
+		: base("LINE \${line}: Cotowali Error")
+	{
+		\$this.Line = \$line
+	}
+
+	${pwsh.base_exception_class}([int]\$line, [string]\$msg)
+		: base("LINE \${line}: \$msg")
+	{
+		\$this.Line = \$line
+	}
+
+	[string]ToString() {
+		return \$this.Message
+	}
+}
+')
+	e.define_assertion_error_class()
+
 	e.writeln(r'
 function read() {
 	# read ($original_input) ([ref]$a) ([ref]$b)
