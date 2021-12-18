@@ -73,22 +73,45 @@ fn test_abs_path() {
 test_abs_path()
 
 fn test_path_exists() {
-  assert(os::path::exists('.'))
-  assert(os::path::exists('..'))
-  assert(os::path::exists(pwd()))
-  assert(os::path::exists('./README.md'))
-  assert(os::path::exists('README.md'))
-  assert(os::path::exists('../cotowali'))
-  assert(os::path::exists('/'))
-  assert(os::path::exists('//'))
-  assert(os::path::exists('./././.'))
-  assert(os::path::exists(os::getenv('HOME')))
-  assert(os::path::exists('../../../../../../../../../../../../../../../'))
+  var dirs = [
+    '.',
+    '..',
+    pwd(),
+    './././.',
+    os::getenv('HOME'),
+    '../../../../../../../../../../../../../../../',
+    '/',
+    '//',
+    '../cotowali',
+  ]
+  for dir in dirs {
+    assert(os::path::exists(dir), "exists('$dir')")
+    assert(os::path::is_dir(dir), "is_dir('$dir')")
+  }
 
-  assert(!os::path::exists('unknown_xxxxxx'))
-  assert(!os::path::exists('./unknown_xxxxxx'))
-  assert(!os::path::exists('...'))
-  assert(!os::path::exists('~'))
-  assert(!os::path::exists('$HOME'))
+  var files = [
+    'README.md',
+    './README.md',
+    '../cotowali/README.md',
+    'std/os.li',
+    './std/os.li',
+    '../cotowali/std/os.li',
+  ]
+  for file in files {
+    assert(os::path::exists(file), "exists('$file')")
+    assert(!os::path::is_dir(file), "!is_dir('$file')")
+  }
+
+  var not_exists = [
+    'unknown_xxxxxx',
+    './unknown_xxxxxx',
+    '...',
+    '~',
+    '$HOME',
+  ]
+  for path in not_exists {
+    assert(!os::path::exists(path), "!exists('$path')")
+    assert(!os::path::is_dir(path), "!is_dir('$path')")
+  }
 }
 test_path_exists()

@@ -85,5 +85,10 @@ module os {
       sh { [ -e "$%path" ] && cotowali_true_value || cotowali_false_value }
       pwsh { [System.IO.Directory]::Exists(%path) -or [System.IO.File]::Exists(%path) }
     }
+
+    fn is_dir(path: string): bool {
+      sh { [ -d "$%path" ] && cotowali_true_value || cotowali_false_value }
+      pwsh { [System.IO.Directory]::Exists(%path) }
+    }
   }
 }
