@@ -11,7 +11,6 @@ pub enum TokenKind {
 	unknown
 	ident
 	key_as
-	key_assert
 	key_break
 	key_continue
 	key_else
@@ -200,7 +199,6 @@ pub fn token_kinds(class TokenKindClass) []TokenKind {
 		.keyword {
 			kinds([
 				.key_as,
-				.key_assert,
 				.key_else,
 				.key_export,
 				.key_fn,
@@ -250,6 +248,7 @@ pub fn (k TokenKind) @is(class TokenKindClass) bool {
 
 pub enum KeywordIdent {
 	not_a_keyword_ident
+	assert_
 	sh
 	pwsh
 	inline
@@ -258,6 +257,7 @@ pub enum KeywordIdent {
 pub fn (t Token) keyword_ident() KeywordIdent {
 	if t.kind == .ident {
 		match t.text {
+			'assert' { return .assert_ }
 			'sh' { return .sh }
 			'pwsh' { return .pwsh }
 			'inline' { return .inline }

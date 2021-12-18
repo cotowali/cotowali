@@ -93,9 +93,6 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 	}
 
 	match p.kind(0) {
-		.key_assert {
-			return ast.Stmt(p.parse_assert_stmt() ?)
-		}
 		.key_fn {
 			return ast.Stmt(p.parse_fn_decl() ?)
 		}
@@ -148,6 +145,11 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.sh, .pwsh, .inline {
 			if p.kind(1) == .l_brace {
 				return ast.Stmt(p.parse_inline_shell() ?)
+			}
+		}
+		.assert_ {
+			if p.kind(1) == .l_paren {
+				return ast.Stmt(p.parse_assert_stmt() ?)
 			}
 		}
 		.not_a_keyword_ident {}
