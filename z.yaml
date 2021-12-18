@@ -134,7 +134,7 @@ tasks:
         git push origin "$tag"
   ci:
     tasks:
-      setup-v: cd /tmp && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
+      setup-v: cd .. && git clone --depth=1 https://github.com/vlang/v && cd v && make && pwd >> $GITHUB_PATH
       format: v fmt -verify {{format_sources}}
       test: z test
       test.pwsh: z test pwsh

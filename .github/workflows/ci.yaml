@@ -54,6 +54,15 @@ jobs:
       - uses: actions/checkout@v2
       - run: z ci setup-v
       - run: z ci test
+  test-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/setup-go@v2
+      - run: go install github.com/zakuro9715/z
+      - uses: actions/checkout@v2
+      - run: z ci setup-v
+      - run: echo $PATH
+
 # shellcheck:
 #   runs-on: ubuntu-latest
 #   strategy:
