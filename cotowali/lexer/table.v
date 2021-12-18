@@ -58,7 +58,6 @@ const (
 
 	table_for_keywords = {
 		'as':       tk(.key_as)
-		'assert':   tk(.key_assert)
 		'break':    tk(.key_break)
 		'continue': tk(.key_continue)
 		'else':     tk(.key_else)
