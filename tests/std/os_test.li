@@ -71,3 +71,24 @@ fn test_abs_path() {
   assert(os::path::abs('..') == os::path::clean(os::path::join(pwd(), '../')))
 }
 test_abs_path()
+
+fn test_path_exists() {
+  assert(os::path::exists('.'))
+  assert(os::path::exists('..'))
+  assert(os::path::exists(pwd()))
+  assert(os::path::exists('./README.md'))
+  assert(os::path::exists('README.md'))
+  assert(os::path::exists('../cotowali'))
+  assert(os::path::exists('/'))
+  assert(os::path::exists('//'))
+  assert(os::path::exists('./././.'))
+  assert(os::path::exists(os::getenv('HOME')))
+  assert(os::path::exists('../../../../../../../../../../../../../../../'))
+
+  assert(!os::path::exists('unknown_xxxxxx'))
+  assert(!os::path::exists('./unknown_xxxxxx'))
+  assert(!os::path::exists('...'))
+  assert(!os::path::exists('~'))
+  assert(!os::path::exists('$HOME'))
+}
+test_path_exists()
