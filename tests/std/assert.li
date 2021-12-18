@@ -1,1 +1,15 @@
 require 'assert'
+
+module string {
+  #[test]
+  fn test_eq() {
+    assert::string::eq('a', 'a')
+    assert::string::eq('a', 'b')
+  }
+
+  #[test]
+  fn test_ne() {
+    assert::string::ne('a', 'b')
+    assert::string::ne('a', 'a')
+  }
+}

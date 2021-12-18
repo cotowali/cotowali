@@ -1,2 +1,16 @@
-test result: OK
-0 total; 0 passed; 0 failed;
+testing string::test_eq ... FAILED
+
+Output:
+LINE 24: Assertion Failed: (left == right)
+left : `a`
+right: `b`
+
+testing string::test_ne ... FAILED
+
+Output:
+LINE 28: Assertion Failed: (left != right)
+left : `a`
+right: `a`
+
+test result: FAILED
+2 total; 0 passed; 2 failed;
