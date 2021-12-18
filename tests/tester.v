@@ -13,12 +13,13 @@ import runtime
 // -- config --
 
 const (
-	skip_list      = ['raytracing.li', 'welcome.li']
-	pwsh_skip_list = [
+	skip_list            = ['raytracing.li', 'welcome.li']
+	pwsh_skip_list       = [
 		'readme_example.li',
 		'posix_test.li',
 		'glob_test.li',
 	]
+	use_test_runner_list = ['test_runner_test.li', 'std/assert.li']
 )
 
 // --
@@ -82,6 +83,10 @@ fn is_target_file(s string, opt TestOption) bool {
 		return false
 	}
 	return s.ends_with(suffix(.li)) && !is_mod_file(s)
+}
+
+fn use_test_runner(f string) bool {
+	return use_test_runner_list.any(f.ends_with(it))
 }
 
 fn get_sources(paths []string, opt TestOption) []string {
@@ -213,7 +218,7 @@ fn (t &TestCase) run() TestResult {
 		t.lic.execute(.compile_to_file, t.path)
 	} else if t.is_noemit_test {
 		t.lic.execute(.noemit, t.path)
-	} else if t.path.contains('test_runner_test') {
+	} else if use_test_runner(t.path) {
 		t.lic.execute(.test, t.path)
 	} else {
 		t.lic.execute(.run, t.path)

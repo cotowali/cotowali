@@ -15,11 +15,12 @@ fn (mut e Emitter) assert_stmt(stmt AssertStmt) {
 	e.writeln('{')
 	e.indent()
 	{
-		e.write('throw New-Object $pwsh.assertion_error_class -ArgumentList $stmt.pos.line')
+		e.write('throw New-Object $pwsh.assertion_error_class -ArgumentList ($stmt.pos.line')
 		if msg_expr := stmt.message_expr() {
 			e.write(', ')
-			e.expr(msg_expr)
+			e.expr(msg_expr, paren: true)
 		}
+		e.write(')')
 	}
 	e.unindent()
 	e.writeln('}')
