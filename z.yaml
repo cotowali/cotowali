@@ -102,6 +102,7 @@ tasks:
     tasks:
       unit: v test ${@:-./cotowali}
       integration: v run tests/tester.v $@
+      fast: v run tests/tester.v --fast $@
       compile: v run tests/tester.v --compile $@
       fix: z test integration --fix $@
       prod: z test integration --prod $@

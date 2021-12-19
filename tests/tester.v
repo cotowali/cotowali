@@ -20,6 +20,7 @@ const (
 		'glob_test.li',
 	]
 	use_test_runner_list = ['test_runner_test.li', 'std/assert.li']
+	slow_list            = os.glob('tests/require_remote/*') ?
 )
 
 // --
@@ -80,6 +81,9 @@ fn is_target_file(s string, opt TestOption) bool {
 		return false
 	}
 	if opt.pwsh && pwsh_skip_list.any(s.ends_with(it)) {
+		return false
+	}
+	if opt.fast && slow_list.any(s.ends_with(it)) {
 		return false
 	}
 	return s.ends_with(suffix(.li)) && !is_mod_file(s)
@@ -163,6 +167,7 @@ struct TestOption {
 	compile_only bool
 	pwsh         bool
 	prod         bool
+	fast         bool
 	autofree     bool
 	parallel     bool = true
 }
@@ -423,6 +428,7 @@ fn main() {
 		println('  --compile      compile tests instead of run tests')
 		println('  --pwsh         use pwsh backend')
 		println("  --prod         enable V's -prod")
+		println('  --fast         skip slow tests')
 		println('  --autofree     enable autofree')
 		println('  --no-parallel  disable parallel test')
 		return
@@ -433,6 +439,7 @@ fn main() {
 	compile_only := '--compile' in os.args
 	pwsh := '--pwsh' in os.args
 	prod := '--prod' in os.args
+	fast := '--fast' in os.args
 	autofree := '--autofree' in os.args
 	parallel := '--no-parallel' !in os.args
 	if compile_only && (fix_mode || shellcheck) {
@@ -456,6 +463,7 @@ fn main() {
 		autofree: autofree
 		pwsh: pwsh
 		prod: prod
+		fast: fast
 		parallel: parallel
 	)
 	exit(if t.run() { 0 } else { 1 })
