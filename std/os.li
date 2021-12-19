@@ -103,5 +103,13 @@ module os {
       sh { [ -d "$%path" ] && cotowali_true_value || cotowali_false_value }
       pwsh { [System.IO.Directory]::Exists(%path) }
     }
+
+    fn is_symlink(path: string): bool {
+      if !exists(path) {
+        return false
+      }
+      sh { [ -L "$%path" ] && cotowali_true_value || cotowali_false_value }
+      pwsh { (Get-Item %path).LinkType -eq 'SymbolicLink' }
+    }
   }
 }

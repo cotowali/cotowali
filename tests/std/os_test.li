@@ -116,3 +116,25 @@ fn test_path_exists() {
   }
 }
 test_path_exists()
+
+fn test_symlink() {
+  var prefix = '/tmp/symlink'
+
+  var readme_link = prefix + 'README.md'
+  @ln('-s', os::path::abs('README.md'), readme_link)
+  assert(os::path::is_file(readme_link))
+  assert(os::path::is_symlink(readme_link))
+  rm(readme_link)
+
+  var cotowali_link = prefix + 'cotowali'
+  @ln('-s', os::path::abs('cotowali'), cotowali_link)
+  assert(os::path::is_dir(cotowali_link))
+  assert(os::path::is_symlink(cotowali_link))
+  rm(cotowali_link)
+
+  assert(os::path::exists('README.md'))
+  assert(!os::path::is_symlink('README.md'))
+  assert(os::path::exists('cotowali'))
+  assert(!os::path::is_symlink('cotowali'))
+}
+test_symlink()
