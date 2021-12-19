@@ -47,6 +47,27 @@ array_set() {
   eval "\${name}_\$i=\'\$val\'"
 }
 
+array_push() {
+	name=\$1
+	value=\$2
+
+	array_set \$name \$(( \${name}_len )) "\$value"
+  eval "\${name}_len=\$(( \${name}_len + 1 ))"
+}
+
+array_push_array() {
+  name="\$1"
+  values_name="\$2"
+	values_len=\$(( \${values_name}_len ))
+
+  push_array_i=0
+  while [ "\$push_array_i" -lt "\$values_len" ]
+  do
+		array_push "\$name" "\$(array_get \$values_name \$push_array_i)"
+    push_array_i=\$((push_array_i + 1))
+  done
+}
+
 array_len() {
   name="\$1"
   eval "echo \\\$\${name}_len"
