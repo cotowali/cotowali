@@ -1,0 +1,9 @@
+error: attrs.li 1,1: cannot use attributes here
+    1 | #[attr]
+      | ^^^^^^^
+error: attrs.li 4,1: cannot use attributes here
+    4 | #[attr]
+      | ^^^^^^^
+warning: attrs.li 7,1: unknown attribute `abc`
+    7 | #[abc]
+      | ^^^^^^

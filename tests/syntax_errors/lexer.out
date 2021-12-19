@@ -1,0 +1,6 @@
+error: lexer.li 1,1: too many decimal points in number
+    1 | 1.0.0
+      | ^^^^^
+error: lexer.li 3,1: unexpected token `eof`, expecting `single_quote`
+    3 | 
+      | ^

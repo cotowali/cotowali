@@ -1,3 +1,0 @@
-error: for_in.err.li 1,10: `int` is not iterable
-    1 | for i in 10 {
-      |          ^^

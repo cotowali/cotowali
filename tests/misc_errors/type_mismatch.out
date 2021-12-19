@@ -1,0 +1,3 @@
+error: type_mismatch.li 1,1: mismatched types: `int` (left) and `string` (right)
+    1 | 1 + 'a'
+      | ^^^^^^^

@@ -1,0 +1,26 @@
+error: if_syntax.li 1,1: unexpected compiler directive #endif (missing #if)
+    1 | #endif
+      | ^^^^^^
+error: if_syntax.li 3,9: unexpected token `)`, expecting `eol`
+    3 | #if true)
+      |         ^
+error: if_syntax.li 5,5: unexpected token `*`
+    5 | #if *
+      |     ^
+error: if_syntax.li 7,5: unexpected token `)`
+    7 | #if )
+      |     ^
+error: if_syntax.li 9,7: unexpected token `
+`
+    9 | #if !!
+      |       ^
+error: if_syntax.li 11,4: unexpected token `
+`
+   11 | #if
+      |    ^
+error: if_syntax.li 13,9: unexpected token `(`, expecting `eol`
+   13 | #if true(
+      |         ^
+error: if_syntax.li 16,1: missing #endif
+   16 | 
+      | ^

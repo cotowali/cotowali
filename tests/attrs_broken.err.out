@@ -1,7 +1,0 @@
-error: attrs_broken.err.li 1,6: unexpected token `
-`, expecting `r_bracket`
-    1 | #[abc
-      |      ^
-error: attrs_broken.err.li 2,6: unexpected token `}`
-    2 | f() {}
-      |      ^
