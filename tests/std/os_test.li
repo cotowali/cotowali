@@ -121,13 +121,13 @@ fn test_symlink() {
   var prefix = '/tmp/symlink'
 
   var readme_link = prefix + 'README.md'
-  @ln('-s', os::path::abs('README.md'), readme_link)
+  os::symlink(os::path::abs('README.md'), readme_link)
   assert(os::path::is_file(readme_link))
   assert(os::path::is_symlink(readme_link))
   rm(readme_link)
 
   var cotowali_link = prefix + 'cotowali'
-  @ln('-s', os::path::abs('cotowali'), cotowali_link)
+  os::symlink(os::path::abs('cotowali'), cotowali_link)
   assert(os::path::is_dir(cotowali_link))
   assert(os::path::is_symlink(cotowali_link))
   rm(cotowali_link)

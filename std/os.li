@@ -34,6 +34,18 @@ module os {
     pwsh { [Environment]::SetEnvironmentVariable($%key, $null) }
   }
 
+  fn symlink(src: string, dest: string) {
+    if platform::is_windows() {
+      eprintln('symlink does not supports windows for now')
+      exit(1)
+    }
+    if path::exists(dest) {
+      "Filed to create symbolic link `$dest`: File exists"
+      return
+    }
+    @ln('-s', src, dest)
+  }
+
   module path {
     var separator = '/'
     var list_separator = ':'
