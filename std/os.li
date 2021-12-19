@@ -34,6 +34,18 @@ module os {
     pwsh { [Environment]::SetEnvironmentVariable($%key, $null) }
   }
 
+  fn symlink(src: string, dest: string) {
+    if platform::is_windows() {
+      eprintln('symlink does not supports windows for now')
+      exit(1)
+    }
+    if path::exists(dest) {
+      "Filed to create symbolic link `$dest`: File exists"
+      return
+    }
+    @ln('-s', src, dest)
+  }
+
   module path {
     var separator = '/'
     var list_separator = ':'
@@ -102,6 +114,14 @@ module os {
     fn is_dir(path: string): bool {
       sh { [ -d "$%path" ] && cotowali_true_value || cotowali_false_value }
       pwsh { [System.IO.Directory]::Exists(%path) }
+    }
+
+    fn is_symlink(path: string): bool {
+      if !exists(path) {
+        return false
+      }
+      sh { [ -L "$%path" ] && cotowali_true_value || cotowali_false_value }
+      pwsh { (Get-Item %path).LinkType -eq 'SymbolicLink' }
     }
   }
 }
