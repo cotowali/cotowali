@@ -30,7 +30,10 @@ module platform {
     if has_command(command) {
       return
     }
+    required_command_not_found(command)
+  }
 
+  fn required_command_not_found(command: string) {
     eprintln("$command: command not found")
     exit(127)
   }

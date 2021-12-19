@@ -34,10 +34,9 @@ module http {
           exit 1
         }
       }
+    } else {
+      platform::required_command_not_found('curl')
     }
-
-    // report error
-    platform::require_command('curl')
 #endif
   }
 }
