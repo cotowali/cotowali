@@ -1,6 +1,10 @@
+require 'platform'
 require 'http'
 
 fn test_request() {
-  assert (http::get('https://httpstat.us/200') == '200 OK')
+  assert (http::get('http://httpbin.org/base64/aHR0cAo%3D') == '200 OK')
+  if platform::is_busybox() {
+    return
+  }
 }
 test_request()
