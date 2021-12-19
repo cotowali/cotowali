@@ -31,6 +31,10 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 				}
 				e.writeln('')
 			}
+			ast.InfixExpr {
+				e.write('array_copy "$name" ')
+				e.expr(value as ast.Expr, writeln: true)
+			}
 			ast.Var {
 				ident := e.ident_for(ast.Expr(expr))
 				e.array_assign(name, ident)

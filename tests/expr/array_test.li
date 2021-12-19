@@ -78,6 +78,10 @@ fn test_array_add() {
   assert([0] + [1, 2] == [0, 1, 2])
   assert([]int{} + [1, 2] == [1, 2])
   assert(([' '] + ['  ', ' ']).len() == 3)
+
+  var arr = [0, 1] + [2]
+  arr += [3, 4]
+  assert(arr == [0, 1, 2, 3, 4])
 }
 test_array_add()
 
