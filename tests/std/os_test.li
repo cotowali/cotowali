@@ -138,3 +138,9 @@ fn test_symlink() {
   assert(!os::path::is_symlink('cotowali'))
 }
 test_symlink()
+
+fn test_home() {
+  @cd()
+  assert(os::path::home() == pwd())
+}
+test_home()

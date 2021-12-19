@@ -123,5 +123,11 @@ module os {
       sh { [ -L "$%path" ] && cotowali_true_value || cotowali_false_value }
       pwsh { (Get-Item %path).LinkType -eq 'SymbolicLink' }
     }
+
+    fn home(): string {
+      var path = ''
+      inline { %path="$HOME" }
+      return path
+    }
   }
 }
