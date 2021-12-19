@@ -29,3 +29,5 @@ fn int |> g() {
 
 "2" ** 2
 2 ** "2"
+
+1 + undefined_variable

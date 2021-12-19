@@ -58,3 +58,6 @@ error: expr.err.li 30,1: invalid operation: `string` ** `int`
 error: expr.err.li 31,1: invalid operation: `int` ** `string`
    31 | 2 ** "2"
       | ^^^^^^^^
+error: expr.err.li 33,5: variable `undefined_variable` is not defined
+   33 | 1 + undefined_variable
+      |     ^^^^^^^^^^^^^^^^^^
