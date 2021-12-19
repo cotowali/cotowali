@@ -74,6 +74,17 @@ fn index_test() {
 }
 index_test()
 
+fn test_array_add() {
+  assert([0] + [1, 2] == [0, 1, 2])
+  assert([]int{} + [1, 2] == [1, 2])
+  assert(([' '] + ['  ', ' ']).len() == 3)
+
+  var arr = [0, 1] + [2]
+  arr += [3, 4]
+  assert(arr == [0, 1, 2, 3, 4])
+}
+test_array_add()
+
 fn array_of_array_test() {
   var v1 = [[1, 2], [3, 4]]
   assert(v1[0][0] == 1)

@@ -61,6 +61,17 @@ fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
 				e.array_to_str(expr.right)
 			}, expr, opt)
 		}
+		.plus {
+			ident := e.new_tmp_ident()
+			e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, v ExprWithValue<ast.InfixExpr, string>) {
+				expr, ident := v.expr, v.value
+				e.write('array_copy $ident ')
+				e.expr(expr.left, writeln: true)
+				e.write('array_push_array $ident ')
+				e.expr(expr.right, writeln: true)
+			}, expr_with_value(expr, ident))
+			e.array(ident, opt)
+		}
 		else {
 			li_panic(@FILE, @LINE, 'invalid operator')
 		}
