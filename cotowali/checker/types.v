@@ -111,6 +111,11 @@ fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
 		}
 	}
 
+	if builtin_type(.placeholder) in [v.want.typ, v.got.typ] {
+		// error is repoted. e.g. undefiend variable.
+		return
+	}
+
 	if v.want.typ == v.got.typ {
 		return
 	}
