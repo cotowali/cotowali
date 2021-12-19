@@ -7,6 +7,36 @@
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 module platform {
+  // -- commands --
+
+  fn has_command(command: string): bool {
+    var code: int
+    sh {
+      type $%command > /dev/null 2>&1
+        %code=$?
+    }
+    pwsh {
+      get-command $%command > /dev/null 2>&1
+        if ($?) {
+          %code = 0
+        } else {
+          %code = 1
+        }
+    }
+    return code == 0
+  }
+
+  fn require_command(command: string) {
+    if has_command(command) {
+      return
+    }
+
+    eprintln("$command: command not found")
+    exit(127)
+  }
+
+  // -- system --
+
   fn uname(): string {
     inline { uname -a }
   }

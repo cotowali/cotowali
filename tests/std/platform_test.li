@@ -1,5 +1,12 @@
 require 'platform'
 
+fn test_has_command() {
+  assert(platform::has_command('ls'))
+  assert(!platform::has_command('xxx'))
+  assert(platform::has_command('test_has_command'))
+}
+test_has_command()
+
 fn test_shell() {
 #if sh
   assert(platform::shell() == 'sh')
