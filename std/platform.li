@@ -72,7 +72,7 @@ module platform {
     return system() == 'Darwin'
   }
 
-  fn is_busybox(name: string): bool {
+  fn is_busybox(name: string = ''): bool {
     if has_command('busybox') && has_command('which') && has_command('realpath') {
       if name == '' {
         name = 'realpath'
