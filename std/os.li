@@ -55,10 +55,14 @@ module os {
     }
 
     fn abs(path: string): string {
-      if is_abs(path) {
-        return clean(path)
+      var abs_path = path
+      if !is_abs(path) {
+        abs_path = join(pwd(), path)
       }
-      return clean(join(pwd(), path))
+      if !platform::is_busybox() && (platform::has_command('python') || platform::has_command('realpath')) {
+        abs_path = clean(abs_path)
+      }
+      return abs_path
     }
 
     fn clean(path: string): string {
