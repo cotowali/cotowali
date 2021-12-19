@@ -49,6 +49,20 @@ module platform {
     return false
   }
 
+  fn does_not_support_windows(name: string) {
+    if is_windows() {
+      eprintln("$name does not support windows for now")
+      exit(1)
+    }
+  }
+
+  fn does_not_support_busybox(name: string, command: string = '') {
+    if is_busybox(command) {
+      eprintln("$name does not support busybox for now")
+      exit(1)
+    }
+  }
+
   fn shell(): string {
 #if sh
     return 'sh'

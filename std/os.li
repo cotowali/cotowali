@@ -47,11 +47,11 @@ module os {
     }
 
     fn is_abs(path: string): bool {
-      if platform::is_windows() {
-        eprintln('windows is not supported for now')
-        exit(1)
-      }
+#if pwsh
+      pwsh { return [System.IO.Path]::IsPathFullyQualified(%path) }
+#else
       return path.len() > 0 && path[0] == separator
+#endif
     }
 
     fn abs(path: string): string {
@@ -62,10 +62,7 @@ module os {
     }
 
     fn clean(path: string): string {
-      if platform::is_busybox('realpath') {
-        eprintln('busybox is not supported for now')
-        exit(1)
-      }
+      platform::does_not_support_busybox('os::path::clean')
       var sep = separator
       var is_root = path.starts_with(sep)
 
