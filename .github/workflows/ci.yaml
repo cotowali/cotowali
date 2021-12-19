@@ -43,6 +43,16 @@ jobs:
       - run: z ci setup-v
       - run: z test compile
       - run: docker run -v $(pwd):/app/cotowali -w /app/cotowali alpine ./tests/run.sh
+  test-busybox:
+    runs-on: ubuntu-latest
+    env:
+      VFLAGS: "-cc clang"
+    steps:
+      - uses: zakuro9715/setup-z@main
+      - uses: actions/checkout@v2
+      - run: z ci setup-v
+      - run: z test compile
+      - run: docker run -v $(pwd):/app/cotowali -w /app/cotowali busybox ./tests/run.sh
   test-macos:
     runs-on: macos-latest
     env:

@@ -73,12 +73,16 @@ module platform {
   }
 
   fn is_busybox(name: string = ''): bool {
-    if has_command('busybox') && has_command('which') && has_command('realpath') {
-      if name == '' {
-        name = 'realpath'
-      }
-      return @realpath(@which(name)).contains('busybox')
+#if sh
+    if name == '' {
+      name = 'realpath'
     }
+    if has_command(name) {
+      var help_text = ''
+      sh { %help_text=$($%name 2>&1 | head -n 1) }
+      return help_text.contains('BusyBox')
+    }
+#endif
     return false
   }
 
