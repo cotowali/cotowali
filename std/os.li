@@ -46,6 +46,13 @@ module os {
     @ln('-s', src, dest)
   }
 
+  fn username(): string {
+    var name = ''
+      sh   { %name="$USER" }
+    pwsh { %name=[System.Environment]::UserName }
+    return name
+  }
+
   module path {
     var separator = '/'
     var list_separator = ':'

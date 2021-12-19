@@ -144,3 +144,8 @@ fn test_home() {
   assert(os::path::home() == pwd())
 }
 test_home()
+
+fn test_username() {
+  assert(os::username() != '')
+}
+test_username()
