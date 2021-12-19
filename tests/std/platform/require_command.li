@@ -1,0 +1,4 @@
+require 'platform'
+
+platform::require_command('ls')
+platform::require_command('missingcommand')

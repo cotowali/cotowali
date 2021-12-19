@@ -6,6 +6,8 @@
 /// License, v. 2.0. If a copy of the MPL was not distributed with this
 /// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+require 'platform'
+
 module http {
   fn get(url: string): string {
 #if pwsh
@@ -18,24 +20,23 @@ module http {
       }
     }
 #else
-    if has_command('curl') {
+    if platform::has_command('curl') {
       sh {
         curl -sSL --fail "$%url" 2> '/dev/null' || {
           echo 'http error' >&2
           exit 1
         }
       }
-    } else if has_command('wget') {
+    } else if platform::has_command('wget') {
       sh {
         wget -q -O - --header 'Accept: */*' "$%url" 2> '/dev/null' || {
           echo 'http error' >&2
           exit 1
         }
       }
+    } else {
+      platform::required_command_not_found('curl')
     }
-
-    // report error
-    require_command('curl')
 #endif
   }
 }

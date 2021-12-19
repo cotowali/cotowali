@@ -66,14 +66,14 @@ module os {
       var sep = separator
       var is_root = path.starts_with(sep)
 
-      if has_command('realpath') {
+      if platform::has_command('realpath') {
         if is_root {
           return @realpath('-sm', path)
         } else {
           return @realpath('-sm', '--relative-to', '.', path)
         }
       }
-      if has_command('python') {
+      if platform::has_command('python') {
         return @python('-c', 'import os, sys; print(os.path.normpath(sys.argv[1]))', path)
       }
     }
