@@ -34,7 +34,7 @@ module tar {
     }
   }
 
-  fn extract_from(archive: string) {
+  fn extract_file(archive: string) {
     sh {
       tar -xf $%archive
     }
@@ -57,7 +57,7 @@ module tar {
       @tar('-zx')
     }
 
-    fn extract_from(archive: string) {
+    fn extract_file(archive: string) {
       @tar('-zxf', archive)
     }
   }
