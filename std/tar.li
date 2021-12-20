@@ -26,8 +26,17 @@ module tar {
     pwsh { $input | tar -xf '-' }
   }
 
+  fn string |> extract_on(dir: string) {
+    sh { tar -xf '-' -C $%dir }
+    pwsh { $input | tar -xf '-' -C $%dir }
+  }
+
   fn extract_file(archive: string) {
     inline { tar -xf $%archive }
+  }
+
+  fn extract_file_on(archive: string, dir: string) {
+    inline { tar -xf $%archive -C $%dir }
   }
 
 #if !pwsh
@@ -44,8 +53,16 @@ module tar {
       @tar('-zx')
     }
 
+    fn string |> extract_on(dir: string) {
+      @tar('-zx', '-C', dir)
+    }
+
     fn extract_file(archive: string) {
       @tar('-zxf', archive)
+    }
+
+    fn extract_file_on(archive: string, dir: string) {
+      @tar('-zxf', archive, '-C', dir)
     }
   }
 #endif
