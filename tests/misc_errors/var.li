@@ -17,3 +17,15 @@ fn f() {
 fn mismatched_variables_count() {
   var (a, b, c): (int, int)
 }
+
+fn assign_to_const() {
+  const (a, b) = (0, 1)
+  a = 10
+  b = 10
+  (a, b) = 10
+
+  const arr = [[0, 1], [2, 3]]
+  arr = 0
+  arr[0] = 0
+  arr[0][0] = 0
+}

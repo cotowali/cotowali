@@ -96,8 +96,8 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 		.key_fn {
 			return ast.Stmt(p.parse_fn_decl() ?)
 		}
-		.key_var {
-			return ast.Stmt(p.parse_var_stmt() ?)
+		.key_var, .key_const {
+			return ast.Stmt(p.parse_decl_assign_stmt() ?)
 		}
 		.key_if {
 			return ast.Stmt(p.parse_if_stmt() ?)
@@ -200,7 +200,7 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 	li_panic(@FILE, @LINE, '')
 }
 
-fn (mut p Parser) parse_var_stmt() ?ast.AssignStmt {
+fn (mut p Parser) parse_decl_assign_stmt() ?ast.AssignStmt {
 	$if trace_parser ? {
 		p.trace_begin(@FN)
 		defer {
@@ -208,7 +208,8 @@ fn (mut p Parser) parse_var_stmt() ?ast.AssignStmt {
 		}
 	}
 
-	p.consume_with_assert(.key_var)
+	key := p.consume_with_assert(.key_var, .key_const)
+	is_const := key.kind == .key_const
 
 	left := p.parse_expr(.toplevel) ?
 
@@ -230,6 +231,7 @@ fn (mut p Parser) parse_var_stmt() ?ast.AssignStmt {
 
 	return ast.AssignStmt{
 		is_decl: true
+		is_const: is_const
 		scope: p.scope
 		typ: typ
 		left: left

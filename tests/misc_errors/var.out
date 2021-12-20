@@ -25,3 +25,18 @@ error: var.li 14,3: cannot assign to variables outside of current function
 error: var.li 18,7: expected 2 variables, but found 3 variables
    18 |   var (a, b, c): (int, int)
       |       ^^^^^^^^^
+error: var.li 25,3: mismatched types: `(int, int)` (expected) and `int` (found)
+   25 |   (a, b) = 10
+      |   ^^^^^^^^^^^
+error: var.li 28,3: mismatched types: `[][]int` (expected) and `int` (found)
+   28 |   arr = 0
+      |   ^^^^^^^
+error: var.li 28,3: cannot assign to constant variable
+   28 |   arr = 0
+      |   ^^^^^^^
+error: var.li 29,3: cannot assign to constant variable
+   29 |   arr[0] = 0
+      |   ^^^^^^^^^^
+error: var.li 30,3: cannot assign to constant variable
+   30 |   arr[0][0] = 0
+      |   ^^^^^^^^^^^^^

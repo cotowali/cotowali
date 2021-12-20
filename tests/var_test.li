@@ -26,3 +26,10 @@ assert(tuple_b_1 == 0 && tuple_b_2 == 0)
 
 var arr: []string
 assert(arr == []string{})
+
+const const_v = 10
+assert(const_v == 10)
+const const_tuple = (1, 2)
+assert(const_tuple == (1, 2))
+const const_arr = [1, 2]
+assert(const_arr == [1, 2])

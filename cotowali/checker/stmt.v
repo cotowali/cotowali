@@ -120,6 +120,10 @@ fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 		return
 	}
 
+	if stmt.is_const && !stmt.is_decl {
+		c.error('cannot assign to constant variable', stmt.pos())
+	}
+
 	match stmt.left {
 		ast.Var, ast.ParenExpr {
 			pos := stmt.pos()

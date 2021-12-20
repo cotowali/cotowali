@@ -17,6 +17,7 @@ pub:
 	id             u64
 	pos            Pos = none_pos()
 	is_placeholder bool
+	is_const       bool
 pub mut:
 	mangle       bool
 	typ          Type = builtin_type(.placeholder)

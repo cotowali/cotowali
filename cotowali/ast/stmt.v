@@ -73,10 +73,11 @@ pub struct AssignStmt {
 mut:
 	scope &Scope
 pub mut:
-	is_decl bool
-	typ     Type = builtin_type(.placeholder)
-	left    Expr
-	right   Expr
+	is_decl  bool
+	is_const bool
+	typ      Type = builtin_type(.placeholder)
+	left     Expr
+	right    Expr
 }
 
 pub fn (s &AssignStmt) pos() Pos {
@@ -86,6 +87,28 @@ pub fn (s &AssignStmt) pos() Pos {
 [inline]
 pub fn (s &AssignStmt) children() []Node {
 	return [Node(s.left), Node(s.right)]
+}
+
+pub fn (mut s AssignStmt) set_is_const(left Expr) {
+	if s.is_decl || s.is_const {
+		return
+	}
+	match left {
+		Var {
+			if sym := left.sym() {
+				s.is_const = sym.is_const
+			}
+		}
+		IndexExpr {
+			s.set_is_const(left.left)
+		}
+		ParenExpr {
+			for expr in left.exprs {
+				s.set_is_const(expr)
+			}
+		}
+		else {}
+	}
 }
 
 fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
@@ -117,7 +140,12 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 						typ: builtin_type(.any)
 					}
 				} else {
-					stmt.left.sym = stmt.scope.register_var(name: name, pos: pos, typ: typ) or {
+					stmt.left.sym = stmt.scope.register_var(
+						name: name
+						pos: pos
+						typ: typ
+						is_const: stmt.is_const
+					) or {
 						r.error(err.msg, pos)
 						stmt.scope.must_lookup_var(name)
 					}
@@ -167,6 +195,8 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 			r.error('invalid left-hand side of assignment', stmt.left.pos())
 		}
 	}
+
+	stmt.set_is_const(stmt.left)
 }
 
 pub struct AssertStmt {
