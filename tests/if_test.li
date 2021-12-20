@@ -53,3 +53,40 @@ if eq(1, 2) {
 } else {
   assert(false)
 }
+
+// ---
+
+var text = 'text'
+if text == 'text' {
+  assert(true)
+} else if text == 'xxx' {
+  assert(false)
+} else {
+  assert(false)
+}
+
+if text == 'xxx' {
+  assert(false)
+} else if text == 'text' {
+  assert(true)
+} else {
+  assert(false)
+}
+
+// ---
+
+var arr = [0, 1]
+if arr == [0, 1] {
+  assert(true)
+} else if arr == [0] {
+  assert(false)
+} else {
+  assert(false)
+}
+if arr == [0] {
+  assert(false)
+} else if arr == [0, 1] {
+  assert(true)
+} else {
+  assert(false)
+}

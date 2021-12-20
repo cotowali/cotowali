@@ -17,7 +17,11 @@ fn (mut e Emitter) stmts(stmts []Stmt) {
 }
 
 fn (mut e Emitter) begin_stmt() {
-	e.stmt_head_pos[e.cur_kind] = e.code().pos()
+	e.stmt_head_pos[e.cur_kind] << e.code().pos()
+}
+
+fn (mut e Emitter) end_stmt() {
+	e.stmt_head_pos[e.cur_kind].pop()
 }
 
 fn (mut e Emitter) stmt(stmt Stmt) {
@@ -41,6 +45,7 @@ fn (mut e Emitter) stmt(stmt Stmt) {
 		ast.WhileStmt { e.while_stmt(stmt) }
 		ast.YieldStmt { e.yield_stmt(stmt) }
 	}
+	e.end_stmt()
 }
 
 fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
