@@ -35,11 +35,8 @@ module tar {
   }
 
   fn extract_file(archive: string) {
-    sh {
+    inline {
       tar -xf $%archive
-    }
-    pwsh {
-      $input | tar -xf $%archive
     }
   }
 
