@@ -79,6 +79,10 @@ pub mut:
 	right   Expr
 }
 
+pub fn (s &AssignStmt) pos() Pos {
+	return s.left.pos().merge(s.right.pos())
+}
+
 [inline]
 pub fn (s &AssignStmt) children() []Node {
 	return [Node(s.left), Node(s.right)]
