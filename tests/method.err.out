@@ -1,6 +1,0 @@
-error: method.err.li 4,13: method `Num.f` is already defined
-    4 | fn (n: Num) f() {}
-      |             ^
-error: method.err.li 7,1: function `Num.undefined` is not defined
-    7 | n.undefined()
-      | ^^^^^^^^^^^^^

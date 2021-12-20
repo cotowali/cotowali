@@ -57,7 +57,8 @@ fn suffix(s FileSuffix) string {
 
 fn is_err_test_file(f string) bool {
 	name := os.base(f.trim_suffix(suffix(.li)).trim_suffix(suffix(.todo)))
-	return name.ends_with(suffix(.err)) || name == 'error'
+	dir_parts := os.dir(f).split(os.path_separator)
+	return name.ends_with(suffix(.err)) || name == 'error' || dir_parts.any(it.ends_with('errors'))
 }
 
 fn is_todo_test_file(f string) bool {

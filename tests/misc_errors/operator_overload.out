@@ -1,0 +1,18 @@
+error: operator_overload.li 3,15: infix operator function must have 2 parameters
+    3 | fn (w1: Word) == (): bool
+      |               ^^
+error: operator_overload.li 4,15: infix operator function must have 2 parameters
+    4 | fn (w1: Word) + (w2: Word, w3: Word): Word
+      |               ^
+error: operator_overload.li 5,22: infix operator function cannot have pipe in
+    5 | fn (w1: Word) int |> + (w2: Word): Word
+      |                      ^
+error: operator_overload.li 6,15: `++` is not infix operator
+    6 | fn (w1: Word) ++ (w2: Word, w3: Word): Word
+      |               ^^
+error: operator_overload.li 12,5: mismatched types: `string` (left) and `Strange` (right)
+   12 | _ = strange1 == strange2 == strange1
+      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: operator_overload.li 13,5: mismatched types: `Strange` (left) and `void` (right)
+   13 | _ = strange1 == !strange2
+      |     ^^^^^^^^^^^^^^^^^^^^^

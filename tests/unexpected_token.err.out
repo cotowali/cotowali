@@ -1,3 +1,0 @@
-error: unexpected_token.err.li 1,5: unexpected token `=`
-    1 | var = 0
-      |     ^

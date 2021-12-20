@@ -1,6 +1,0 @@
-error: continue_break.err.li 2,3: `break` is not in a loop
-    2 |   break
-      |   ^^^^^
-error: continue_break.err.li 3,3: `continue` is not in a loop
-    3 |   continue
-      |   ^^^^^^^^

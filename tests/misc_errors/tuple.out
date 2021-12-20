@@ -1,0 +1,69 @@
+error: tuple.li 2,10: mismatched types: `...(int, int)` (expected) and `int` (found)
+    2 |   return 0
+      |          ^
+error: tuple.li 3,10: mismatched types: `...(int, int)` (expected) and `(string, string)` (found)
+    3 |   return ('x', 'y')
+      |          ^^^^^^^^^^
+error: tuple.li 6,1: mismatched types: `int` (left) and `(int, int)` (pipe in of right)
+    6 | 0 |> f()
+      | ^^^^^^^^
+error: tuple.li 10,3: expected 0 arguments, but got 1
+   10 |   read(&v)
+      |   ^^^^^^^^
+error: tuple.li 14,1: mismatched types: `int` (left) and `()` (pipe in of right)
+   14 | 0 |> zero()
+      | ^^^^^^^^^^^
+error: tuple.li 15,1: mismatched types: `(int, int)` (left) and `()` (pipe in of right)
+   15 | (1, 2) |> zero()
+      | ^^^^^^^^^^^^^^^^
+error: tuple.li 17,1: mismatched types: `(int, int)` (left) and `int` (right)
+   17 | (0, 0) == (1)
+      | ^^^^^^^^^^^^^
+error: tuple.li 18,1: mismatched types: `(int, int)` (left) and `(string, string)` (right)
+   18 | (0, 0) == ('a', 'b')
+      | ^^^^^^^^^^^^^^^^^^^^
+error: tuple.li 19,1: invalid operation: `(int, int)` * `(int, int)`
+   19 | (0, 0) * (0, 0)
+      | ^^^^^^^^^^^^^^^
+error: tuple.li 20,1: invalid operation: `(int, int)` / `(int, int)`
+   20 | (0, 0) / (0, 0)
+      | ^^^^^^^^^^^^^^^
+error: tuple.li 21,1: mismatched types: `(int, int)` (left) and `int` (right)
+   21 | (0, 1) + 2
+      | ^^^^^^^^^^
+error: tuple.li 23,9: cannot use sequence type as tuple element
+   23 | var v: (...int)
+      |         ^^^^^^
+error: tuple.li 24,14: cannot use tuple as tuple element
+   24 | var nested: ((int, int))
+      |              ^^^^^^^^^^
+error: tuple.li 29,8: cannot decompose non-tuple type `int`
+   29 |   v = (...n, ...n)
+      |        ^^^^
+error: tuple.li 29,14: cannot decompose non-tuple type `int`
+   29 |   v = (...n, ...n)
+      |              ^^^^
+error: tuple.li 30,8: cannot decompose non-tuple type `int`
+   30 |   v = (...0, ...0)
+      |        ^^^^
+error: tuple.li 30,14: cannot decompose non-tuple type `int`
+   30 |   v = (...0, ...0)
+      |              ^^^^
+error: tuple.li 36,17: index -1 out of bounds for `(int, string)` (2 elements tuple)
+   36 |   _ = (0, "10")[-1]
+      |                 ^^
+error: tuple.li 37,17: index 2 out of bounds for `(int, string)` (2 elements tuple)
+   37 |   _ = (0, "10")[2]
+      |                 ^
+error: tuple.li 38,17: index of tuple must be int literal.
+   38 |   _ = (0, "10")[n]
+      |                 ^
+error: tuple.li 43,15: index -1 out of bounds for `IntStr` (2 elements tuple)
+   43 |   _ = int_str[-1]
+      |               ^^
+error: tuple.li 44,15: index 2 out of bounds for `IntStr` (2 elements tuple)
+   44 |   _ = int_str[2]
+      |               ^
+error: tuple.li 45,15: index of tuple must be int literal.
+   45 |   _ = int_str[n]
+      |               ^
