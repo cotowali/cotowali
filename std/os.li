@@ -46,6 +46,16 @@ module os {
     @ln('-s', src, dest)
   }
 
+  fn username(): string {
+    if platform::has_command('whoami') {
+      return @whoami()
+    }
+    var name = ''
+    sh   { %name="$USER" }
+    pwsh { %name=[System.Environment]::UserName }
+    return name
+  }
+
   module path {
     var separator = '/'
     var list_separator = ':'
@@ -122,6 +132,12 @@ module os {
       }
       sh { [ -L "$%path" ] && cotowali_true_value || cotowali_false_value }
       pwsh { (Get-Item %path).LinkType -eq 'SymbolicLink' }
+    }
+
+    fn home(): string {
+      var path = ''
+      inline { %path="$HOME" }
+      return path
     }
   }
 }
