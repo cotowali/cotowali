@@ -47,8 +47,11 @@ module os {
   }
 
   fn username(): string {
+    if platform::has_command('whoami') {
+      return @whoami()
+    }
     var name = ''
-      sh   { %name="$USER" }
+    sh   { %name="$USER" }
     pwsh { %name=[System.Environment]::UserName }
     return name
   }
