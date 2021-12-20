@@ -1,3 +1,5 @@
+
+require 'platform'
 require 'tar'
 require 'os'
 
@@ -64,7 +66,7 @@ fn test_tgz() {
   rm(hello_txt)
 
   cat(hello_tgz) |> tar::gz::extract()
-  assert(@file(hello_tgz).contains('gzip'))
+  if !platform::is_busybox() { assert(@file(hello_tgz).contains('gzip')) } // busybox doesn't have file command
   assert((cat(hello_txt) |> join('')) == 'hello')
   rm(hello_tgz, hello_txt)
 #endif
@@ -76,7 +78,7 @@ fn test_tgz() {
   rm(hello_txt)
 
   tar::gz::extract_file(hello_tgz)
-  assert(@file(hello_tgz).contains('gzip'))
+  if !platform::is_busybox() { assert(@file(hello_tgz).contains('gzip')) }
   assert((cat(hello_txt) |> join('')) == 'hello2')
   rm(hello_tgz, hello_txt)
 
@@ -93,7 +95,7 @@ fn test_tgz() {
   rm(hello_txt)
 
   cat(hello_tgz) |> tar::gz::extract_on(dir)
-  assert(@file(hello_tgz).contains('gzip'))
+  if !platform::is_busybox() { assert(@file(hello_tgz).contains('gzip')) }
   assert((cat(dir_hello_txt) |> join('')) == 'hello3')
   rm_r(hello_tgz, dir)
 #endif
@@ -105,7 +107,7 @@ fn test_tgz() {
   rm(hello_txt)
 
   tar::gz::extract_file_on(hello_tgz, dir)
-  assert(@file(hello_tgz).contains('gzip'))
+  if !platform::is_busybox() { assert(@file(hello_tgz).contains('gzip')) }
   assert((cat(dir_hello_txt) |> join('')) == 'hello4')
   rm_r(hello_tgz, dir)
 
