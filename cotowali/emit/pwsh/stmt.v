@@ -91,7 +91,7 @@ fn (mut e Emitter) expr_stmt(stmt ast.Expr) {
 		false
 	}) && stmt.typ() != builtin_type(.void)
 
-	e.writeln(if redirect_to_null { r'> $null' } else { '' })
+	e.writeln(if redirect_to_null { r' > $null' } else { '' })
 }
 
 fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
