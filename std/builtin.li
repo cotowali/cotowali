@@ -250,7 +250,7 @@ fn (s: string) index(t: string): int {
   if t.len() == 0 {
     return 0
   }
-  return (s |> @awk('-v', "t=$t", '{print index($1, t) - 1}')) as int
+  return (s |> @awk('-v', 'RS=""', '-v', "t=$t", '{print index($0, t) - 1}')) as int
 
 #endif
 }

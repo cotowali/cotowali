@@ -79,11 +79,15 @@ fn test_contains() {
   assert('abc'.contains('ab'))
   assert('abc'.contains('bc'))
   assert('abc'.contains('abc'))
+  assert("ab  c".contains("ab"))
+  assert("ab  c".contains("c"))
+  assert("ab  c".contains(" "))
 
   assert(!'abc'.contains('x'))
   assert(!'abc'.contains(' '))
   assert(!'abc'.contains('abcd'))
   assert(!'abc'.contains('ac'))
+  assert(!"ab c".contains("bc"))
 }
 test_contains()
 
