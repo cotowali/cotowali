@@ -52,8 +52,6 @@ fn test_tar() {
 }
 test_tar()
 
-#if !pwsh
-
 fn test_tgz() {
   var hello_txt = 'hello.txt'
   var hello_tgz = 'hello.tar.gz'
@@ -103,5 +101,3 @@ fn test_tgz() {
 
 }
 test_tgz()
-
-#endif

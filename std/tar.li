@@ -36,34 +36,35 @@ module tar {
   }
 
   fn extract_file_on(archive: string, dir: string) {
+    internal::prepare_dir(dir)
     inline { tar -xf $%archive -C $%dir }
   }
 
-#if !pwsh
   module gz {
     fn create(file: string) |> string {
-      @tar('-zc', file)
+      inline { tar -zcf '-' $%file }
     }
 
     fn create_to(archive: string, file: string) {
-      @tar('-zcf', archive, file)
+      inline { tar -zcf $%archive $%file }
     }
 
     fn string |> extract() {
-      @tar('-zx')
+      sh { tar -zxf '-' }
+      pwsh { $input | tar -zxf '-' }
     }
 
     fn string |> extract_on(dir: string) {
-      @tar('-zx', '-C', dir)
+      sh { tar -zxf '-' -C $%dir }
+      pwsh { $input | tar -zxf '-' -C $%dir }
     }
 
     fn extract_file(archive: string) {
-      @tar('-zxf', archive)
+      inline { tar -zxf $%archive }
     }
 
     fn extract_file_on(archive: string, dir: string) {
-      @tar('-zxf', archive, '-C', dir)
+      inline { tar -zxf $%archive -C $%dir }
     }
   }
-#endif
 }
