@@ -9,6 +9,16 @@
 require 'platform'
 
 module tar {
+  module internal {
+    fn prepare_dir(path: string) {
+      if os::path::is_file(path) {
+        eprintln("Fatal error: `$path` file exits")
+      }
+      if !os::path::exists(path) {
+        mkdir_p(path)
+      }
+    }
+  }
   if !platform::has_command('tar.exe') {
     platform::require_command('tar')
   }
@@ -27,6 +37,7 @@ module tar {
   }
 
   fn string |> extract_on(dir: string) {
+    internal::prepare_dir(dir)
     sh { tar -xf '-' -C $%dir }
     pwsh { $input | tar -xf '-' -C $%dir }
   }
@@ -55,6 +66,7 @@ module tar {
     }
 
     fn string |> extract_on(dir: string) {
+      internal::prepare_dir(dir)
       sh { tar -zxf '-' -C $%dir }
       pwsh { $input | tar -zxf '-' -C $%dir }
     }
@@ -64,6 +76,7 @@ module tar {
     }
 
     fn extract_file_on(archive: string, dir: string) {
+      internal::prepare_dir(dir)
       inline { tar -zxf $%archive -C $%dir }
     }
   }
