@@ -1,8 +1,14 @@
+
+require 'platform'
 require 'tar'
+require 'os'
 
 fn test_tar() {
   var hello_txt = 'hello.txt'
   var hello_tar = 'hello.tar'
+
+  // --
+
   'hello' |> hello_txt
   tar::create(hello_txt) |> hello_tar
   rm(hello_txt)
@@ -11,41 +17,99 @@ fn test_tar() {
   assert((cat(hello_txt) |> join('')) == 'hello')
   rm(hello_tar, hello_txt)
 
+  // --
 
   'hello2' |> hello_txt
   tar::create_to(hello_tar, hello_txt)
   rm(hello_txt)
 
-  tar::extract_from(hello_tar)
+  tar::extract_file(hello_tar)
   assert((cat(hello_txt) |> join('')) == 'hello2')
   rm(hello_tar, hello_txt)
+
+  // --
+
+  var dir = 'hello_dir'
+  var dir_hello_txt = os::path::join(dir, hello_txt)
+
+  // --
+
+  'hello3' |> hello_txt
+  tar::create(hello_txt) |> hello_tar
+  rm(hello_txt)
+
+  cat(hello_tar) |> tar::extract_on(dir)
+  assert((cat(dir_hello_txt) |> join('')) == 'hello3')
+  rm_r(hello_tar, dir)
+
+  // --
+  //
+  'hello4' |> hello_txt
+  tar::create_to(hello_tar, hello_txt)
+  rm(hello_txt)
+
+  tar::extract_file_on(hello_tar, dir)
+  assert((cat(dir_hello_txt) |> join('')) == 'hello4')
+  rm_r(hello_tar, dir)
 }
 test_tar()
-
-#if !pwsh
 
 fn test_tgz() {
   var hello_txt = 'hello.txt'
   var hello_tgz = 'hello.tar.gz'
+
+  // --
+
+#if !pwsh  // see comment of std/tar.li
   'hello' |> hello_txt
   tar::gz::create(hello_txt) |> hello_tgz
-  assert(@file(hello_tgz).contains('gzip'))
   rm(hello_txt)
 
   cat(hello_tgz) |> tar::gz::extract()
+  if !platform::is_busybox() { assert(@file(hello_tgz).contains('gzip')) } // busybox doesn't have file command
   assert((cat(hello_txt) |> join('')) == 'hello')
   rm(hello_tgz, hello_txt)
+#endif
 
+  // --
 
   'hello2' |> hello_txt
   tar::gz::create_to(hello_tgz, hello_txt)
-  assert(@file(hello_tgz).contains('gzip'))
   rm(hello_txt)
 
-  tar::gz::extract_from(hello_tgz)
+  tar::gz::extract_file(hello_tgz)
+  if !platform::is_busybox() { assert(@file(hello_tgz).contains('gzip')) }
   assert((cat(hello_txt) |> join('')) == 'hello2')
   rm(hello_tgz, hello_txt)
-}
-test_tar()
 
+  // --
+
+  var dir = 'hello_dir'
+  var dir_hello_txt = os::path::join(dir, hello_txt)
+
+  // --
+
+#if !pwsh  // see comment of std/tar.li
+  'hello3' |> hello_txt
+  tar::gz::create(hello_txt) |> hello_tgz
+  rm(hello_txt)
+
+  cat(hello_tgz) |> tar::gz::extract_on(dir)
+  if !platform::is_busybox() { assert(@file(hello_tgz).contains('gzip')) }
+  assert((cat(dir_hello_txt) |> join('')) == 'hello3')
+  rm_r(hello_tgz, dir)
 #endif
+
+  // --
+  //
+  'hello4' |> hello_txt
+  tar::gz::create_to(hello_tgz, hello_txt)
+  rm(hello_txt)
+
+  tar::gz::extract_file_on(hello_tgz, dir)
+  if !platform::is_busybox() { assert(@file(hello_tgz).contains('gzip')) }
+  assert((cat(dir_hello_txt) |> join('')) == 'hello4')
+  rm_r(hello_tgz, dir)
+
+}
+test_tgz()

@@ -9,57 +9,81 @@
 require 'platform'
 
 module tar {
+  module internal {
+    fn prepare_dir(path: string) {
+      if os::path::is_file(path) {
+        eprintln("Fatal error: `$path` file exits")
+      }
+      if !os::path::exists(path) {
+        mkdir_p(path)
+      }
+    }
+  }
   if !platform::has_command('tar.exe') {
     platform::require_command('tar')
   }
 
   fn create(file: string) |> string {
-    inline {
-      tar -cf '-' $%file
-    }
+    inline { tar -cf '-' $%file }
   }
 
   fn create_to(archive: string, file: string) {
-    inline {
-      tar -cf $%archive $%file
-    }
+    inline { tar -cf $%archive $%file }
   }
 
   fn string |> extract() {
-    sh {
-      tar -xf '-'
-    }
-    pwsh {
-      $input | tar -xf '-'
-    }
+    sh { tar -xf '-' }
+    pwsh { $input | tar -xf '-' }
   }
 
-  fn extract_from(archive: string) {
-    sh {
-      tar -xf $%archive
-    }
-    pwsh {
-      $input | tar -xf $%archive
-    }
+  fn string |> extract_on(dir: string) {
+    internal::prepare_dir(dir)
+    sh { tar -xf '-' -C $%dir }
+    pwsh { $input | tar -xf '-' -C $%dir }
   }
 
-#if !pwsh
+  fn extract_file(archive: string) {
+    inline { tar -xf $%archive }
+  }
+
+  fn extract_file_on(archive: string, dir: string) {
+    internal::prepare_dir(dir)
+    inline { tar -xf $%archive -C $%dir }
+  }
+
+  // TODO: In pwsh, handle binary stdout correctly (current implementation is broken)
+
   module gz {
+#if !pwsh
     fn create(file: string) |> string {
-      @tar('-zc', file)
+      inline { tar -zcf '-' $%file }
     }
+#endif
 
     fn create_to(archive: string, file: string) {
-      @tar('-zcf', archive, file)
+      inline { tar -zcf $%archive $%file }
     }
 
+#if !pwsh
     fn string |> extract() {
-      @tar('-zx')
+      sh { tar -zxf '-' }
+      pwsh { $input | tar -zxf '-' }
     }
 
-    fn extract_from(archive: string) {
-      @tar('-zxf', archive)
+    fn string |> extract_on(dir: string) {
+      internal::prepare_dir(dir)
+      sh { tar -zxf '-' -C $%dir }
+      pwsh { $input | tar -zxf '-' -C $%dir }
+    }
+#endif
+
+    fn extract_file(archive: string) {
+      inline { tar -zxf $%archive }
+    }
+
+    fn extract_file_on(archive: string, dir: string) {
+      internal::prepare_dir(dir)
+      inline { tar -zxf $%archive -C $%dir }
     }
   }
-#endif
 }
