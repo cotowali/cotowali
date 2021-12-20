@@ -51,15 +51,20 @@ module tar {
     inline { tar -xf $%archive -C $%dir }
   }
 
+  // TODO: In pwsh, handle binary stdout correctly (current implementation is broken)
+
   module gz {
+#if !pwsh
     fn create(file: string) |> string {
       inline { tar -zcf '-' $%file }
     }
+#endif
 
     fn create_to(archive: string, file: string) {
       inline { tar -zcf $%archive $%file }
     }
 
+#if !pwsh
     fn string |> extract() {
       sh { tar -zxf '-' }
       pwsh { $input | tar -zxf '-' }
@@ -70,6 +75,7 @@ module tar {
       sh { tar -zxf '-' -C $%dir }
       pwsh { $input | tar -zxf '-' -C $%dir }
     }
+#endif
 
     fn extract_file(archive: string) {
       inline { tar -zxf $%archive }
