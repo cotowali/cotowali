@@ -32,7 +32,7 @@ mut:
 	out           io.Writer
 	codes         map[CodeKind]&code.Builder
 	cur_kind      CodeKind = .main
-	stmt_head_pos map[CodeKind]int
+	stmt_head_pos map[CodeKind][]int
 }
 
 [inline]
@@ -62,7 +62,7 @@ fn (mut e Emitter) code() &code.Builder {
 
 [inline]
 fn (mut e Emitter) stmt_head_pos() int {
-	return e.stmt_head_pos[e.cur_kind]
+	return e.stmt_head_pos[e.cur_kind].last()
 }
 
 [inline]
