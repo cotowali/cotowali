@@ -135,6 +135,7 @@ fn cp_r(args: ...string) {
     cp -r "$@"
   }
 }
+#endif
 
 fn mkdir(args: ...string)
 
@@ -142,8 +143,8 @@ fn mkdir_p(args: ...string) {
   sh {
     mkdir -p "$@"
   }
+  pwsh { mkdir $args }
 }
-#endif
 
 #[mangle]
 fn pwd(): string {
@@ -155,13 +156,12 @@ fn ls(files: ...string) |> ...string
 
 fn rm(paths: ...string)
 
-#if !pwsh
 fn rm_r(paths: ...string) {
-  sh {
-    rm -r "$@"
-  }
+  sh   { rm -r "$@" }
+  pwsh { rm -r $args }
 }
 
+#if !pwsh
 fn touch(files: ...string)
 
 #[mangle]
