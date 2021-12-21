@@ -1,0 +1,7 @@
+require 'platform'
+
+module cotowali {
+  module release {
+    const archive_name = "cotowali_${platform::system()}_${platform::machine()}.tar.gz"
+  }
+}
