@@ -71,9 +71,19 @@ fn ...string |> head(n: int) |> ...string {
 }
 
 #[mangle]
+fn ...string |> first() |> string {
+  return head(1) as string
+}
+
+#[mangle]
 fn ...string |> tail(n: int) |> ...string {
   sh { tail -n $%n }
   pwsh { $input | select -last %n }
+}
+
+#[mangle]
+fn ...string |> last() |> string {
+  return tail(1) as string
 }
 
 fn ...any |> count() |> int {
