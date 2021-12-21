@@ -5,6 +5,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
+import cotowali.util.checksum { hexhash }
+
 fn join_name_for_ident(names ...string) string {
 	return names.join('_')
 }
@@ -29,7 +31,7 @@ pub fn (v Symbol) name_for_ident() string {
 	mut name := replace_name_for_ident(if v.name.len > 0 { v.name } else { 'sym$v.id()' })
 	if v is Var {
 		if v.mangle {
-			name += v.id.str()
+			name += hexhash(.md5, name)
 		}
 	}
 	if s := v.scope() {
