@@ -130,7 +130,6 @@ fn test_lexer() {
 	ktest(@FN, @LINE, 'a-----', [.ident]) // TODO
 	ktest(@FN, @LINE, 'a -----', [.ident, .minusminus, .minusminus, .minus])
 	ktest(@FN, @LINE, 'a*****', [.ident, .pow, .pow, .mul])
-	ktest(@FN, @LINE, 'struct f { }', [.key_struct, .ident, .l_brace, .r_brace])
 	ktest(@FN, @LINE, '{ 0: 0 }', [.l_brace, .int_literal, .colon, .int_literal, .r_brace])
 	ktest(@FN, @LINE, 'map[string]string', [.key_map, .l_bracket, .ident, .r_bracket, .ident])
 	ktest(@FN, @LINE, '0.0 as int', [.float_literal, .key_as, .ident])
@@ -142,7 +141,6 @@ fn test_lexer() {
 		.double_quote])
 	ktest(@FN, @LINE, 'yield 0', [.key_yield, .int_literal])
 	ktest(@FN, @LINE, 'while true { }', [.key_while, .bool_literal, .l_brace, .r_brace])
-	ktest(@FN, @LINE, 'use PATH', [.key_use, .ident])
 	ktest(@FN, @LINE, 'export PATH', [.key_export, .ident])
 	ktest(@FN, @LINE, 'nameof(v)', [.key_nameof, .l_paren, .ident, .r_paren])
 	ktest(@FN, @LINE, 'typeof(v)', [.key_typeof, .l_paren, .ident, .r_paren])

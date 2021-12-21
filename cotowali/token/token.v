@@ -26,10 +26,8 @@ pub enum TokenKind {
 	key_nameof
 	key_require
 	key_return
-	key_struct
 	key_type
 	key_typeof
-	key_use
 	key_var
 	key_while
 	key_yield
@@ -212,10 +210,8 @@ pub fn token_kinds(class TokenKindClass) []TokenKind {
 				.key_nameof,
 				.key_require,
 				.key_return,
-				.key_struct,
 				.key_type,
 				.key_typeof,
-				.key_use,
 				.key_var,
 				.key_while,
 				.key_yield,
