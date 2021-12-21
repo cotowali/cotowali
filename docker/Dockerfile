@@ -70,4 +70,6 @@ WORKDIR $COTOWALI_ROOT
 
 COPY . .
 
+RUN z build && z symlink
+
 CMD ["bash"]
