@@ -72,18 +72,20 @@ fn ...string |> head(n: int) |> ...string {
 
 #[mangle]
 fn ...string |> first() |> string {
-  return head(1) as string
+  sh { head -n 1 }
+  pwsh { "$($input | select -first 1)" }
 }
 
 #[mangle]
 fn ...string |> tail(n: int) |> ...string {
   sh { tail -n $%n }
-  pwsh { $input | select -last %n }
+  pwsh { ($input | select -last %n) }
 }
 
 #[mangle]
 fn ...string |> last() |> string {
-  return tail(1) as string
+  sh { tail -n 1 }
+  pwsh { "$($input | select -last 1)" }
 }
 
 fn ...any |> count() |> int {
