@@ -12,6 +12,7 @@ pub enum TokenKind {
 	ident
 	key_as
 	key_break
+	key_const
 	key_continue
 	key_else
 	key_export
@@ -199,6 +200,7 @@ pub fn token_kinds(class TokenKindClass) []TokenKind {
 		.keyword {
 			kinds([
 				.key_as,
+				.key_const,
 				.key_else,
 				.key_export,
 				.key_fn,

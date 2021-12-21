@@ -116,34 +116,38 @@ fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 
 	// if left type is placeholder, left is undefined variable.
 	// So error has been reported by resolver.
-	if stmt.left.typ() != builtin_type(.placeholder) {
-		match stmt.left {
-			ast.Var, ast.ParenExpr {
-				pos := stmt.left.pos().merge(stmt.right.pos())
-				if !stmt.is_decl && is_assignment_to_outside_of_fn(c.current_fn, stmt.left) {
-					c.error('cannot assign to variables outside of current function',
-						pos)
-				} else if stmt.right !is ast.DefaultValue {
-					// if stmt.right is DefaultValue, no need to check because it is decl without init expr.
-					c.check_types(
-						want: stmt.left.type_symbol()
-						got: stmt.right.type_symbol()
-						pos: pos
-					) or {}
-				}
-			}
-			ast.IndexExpr {
-				index_expr := stmt.left as ast.IndexExpr
-				index_left_ts := index_expr.left.type_symbol()
+	if stmt.left.typ() == builtin_type(.placeholder) {
+		return
+	}
 
-				if index_left_ts.resolved().kind() !in [.map, .array] {
-					c.error('`$index_left_ts.name` does not support index assignment',
-						index_expr.pos)
-				}
+	if stmt.is_const && !stmt.is_decl {
+		c.error('cannot assign to constant variable', stmt.pos())
+	}
+
+	match stmt.left {
+		ast.Var, ast.ParenExpr {
+			pos := stmt.pos()
+			if !stmt.is_decl && is_assignment_to_outside_of_fn(c.current_fn, stmt.left) {
+				c.error('cannot assign to variables outside of current function', pos)
+			} else if stmt.right !is ast.DefaultValue {
+				// if stmt.right is DefaultValue, no need to check because it is decl without init expr.
+				c.check_types(
+					want: stmt.left.type_symbol()
+					got: stmt.right.type_symbol()
+					pos: pos
+				) or {}
 			}
-			else {
-				// Handled by resolver. Nothing to do
+		}
+		ast.IndexExpr {
+			index_expr := stmt.left as ast.IndexExpr
+			index_left_ts := index_expr.left.type_symbol()
+
+			if index_left_ts.resolved().kind() !in [.map, .array] {
+				c.error('`$index_left_ts.name` does not support index assignment', index_expr.pos)
 			}
+		}
+		else {
+			// Handled by resolver. Nothing to do
 		}
 	}
 }
