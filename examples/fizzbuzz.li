@@ -1,15 +1,15 @@
-fn fizzbuzz(n: int) {
-  for i in seq(n) {
-    if i % 3 == 0 && i % 5 == 0 {
-      echo('fizzbuzz')
-    } else if i % 3 == 0 {
-      echo('fizz')
-    } else if i % 5 == 0 {
-      echo('buzz')
-    } else {
-      echo(i)
-    }
+fn fizzbuzz(i: int): string {
+  if i % 3 == 0 && i % 5 == 0 {
+    return 'fizzbuzz'
+  } else if i % 3 == 0 {
+    return 'fizz'
+  } else if i % 5 == 0 {
+    return 'buzz'
+  } else {
+    return "$i"
   }
 }
 
-fizzbuzz(20)
+for i in range(0, 20) {
+  println(fizzbuzz(i + 1))
+}
