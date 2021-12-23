@@ -64,7 +64,12 @@ assert(((1, 2) |> @awk('{print $1 + $2}')) == '3')
 
 ### Use [Konryu](https://github.com/cotowali/konryu) (cotowali installer written in cotowali)
 
-WIP
+```
+curl -sSL https://konryu.cotowali.org | sh
+# add to your shell config like .bashrc
+export PATH="$HOME/.konryu/bin:$PATH"
+eval "$(konryu init)"
+```
 
 ### Build from source
 
