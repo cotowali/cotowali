@@ -1,9 +1,17 @@
-Before first release
-====================
+v0.1.0
+======
 
+- const variable
 - namespace -> mod
 - fix module lookup
 - global module access `::mod`
+- nameof
+- std
+    - term
+    - os
+    - os::path
+    - platform
+- fix many bugs
 
 monthly.2021.12
 ---------------
