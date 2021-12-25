@@ -93,3 +93,17 @@ module float {
     assert::float::le(0.1, 0.0)
   }
 }
+
+module bool {
+  #[test]
+  fn test_and() {
+    assert::bool::and(true, true)
+    assert::bool::and(true, false)
+  }
+
+  #[test]
+  fn test_ne() {
+    assert::bool::or(true, false)
+    assert::bool::or(false, false)
+  }
+}
