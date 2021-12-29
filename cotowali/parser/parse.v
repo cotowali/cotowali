@@ -12,8 +12,8 @@ import cotowali.symbols { Scope }
 import cotowali.ast
 import cotowali.compiler_directives { missing_endif_directive }
 import cotowali.util { li_panic }
+import cotowali.util.http
 import net.urllib { URL }
-import net.http
 import os
 
 pub fn (mut p Parser) parse(scope &Scope) &ast.File {
