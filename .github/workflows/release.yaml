@@ -24,18 +24,37 @@ jobs:
           name: linux
           path: dist/*
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
       - run: z ci setup-v
-      - run: z build
-      - run: ./bin/lic run scripts/pack.li
+
+      - run: z scripts/pack.li > scripts/pack.sh
+
+      - name: build_arm64
+        run: z build
+        env:
+          CFLAGS: -arch arm64
+      - name: pack arm64
+        run: sh scripts/pack.sh
+      - name: rename x86_64 -> arm64
+        run: mv dist/cotowali_Darwin_{x86_64,arm64}.tar.gz
+
+      - name: remove cache
+        run: rm -rf ~/.vmodules
+
+      - name: build x86_64
+        run: z build
+      - name: pack x86_64
+        run: sh scripts/pack.sh
+
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: macos
           path: dist/*
+
   release:
     needs: [build-linux, build-macos]
     runs-on: ubuntu-latest
