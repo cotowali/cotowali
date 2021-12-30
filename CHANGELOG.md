@@ -1,5 +1,13 @@
+v0.1
+====
+
+v0.1.1
+------
+
+- no longer depends on openssl
+
 v0.1.0
-======
+------
 
 - const variable
 - namespace -> mod
