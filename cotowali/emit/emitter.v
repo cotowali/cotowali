@@ -28,7 +28,7 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 			mut e := pwsh.new_emitter(out, ctx)
 			return e
 		}
-		.hoshikudzu {
+		.ush {
 			li_panic(@FILE, @LINE, 'emitter.new_emitter cannot use for $ctx.config.backend')
 		}
 	}
