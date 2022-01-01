@@ -190,6 +190,16 @@ fn which(name: string): string {
 }
 #endif
 
+// -- bool ---
+
+fn (b: bool) as(): string {
+  if b {
+    return 'true'
+  } else {
+    return 'false'
+  }
+}
+
 // --- string ---
 
 fn ...string |> filter(pat: string) |> ...string {
