@@ -80,4 +80,14 @@ module assert {
       assert(lhs <= rhs, internal::message_infix("$lhs", '<=', "$rhs"))
     }
   }
+
+  module bool {
+    fn and(lhs: bool, rhs: bool) {
+      assert(lhs && rhs, internal::message_infix("$lhs", '&&', "$rhs"))
+    }
+
+    fn or(lhs: bool, rhs: bool) {
+      assert(lhs || rhs, internal::message_infix("$lhs", '||', "$rhs"))
+    }
+  }
 }

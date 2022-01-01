@@ -96,5 +96,19 @@ LINE 80: Assertion Failed: (left <= right)
 left : `0.1`
 right: `0`
 
+testing bool::test_and ... FAILED
+
+Output:
+LINE 86: Assertion Failed: (left && right)
+left : `true`
+right: `false`
+
+testing bool::test_ne ... FAILED
+
+Output:
+LINE 90: Assertion Failed: (left || right)
+left : `false`
+right: `false`
+
 test result: FAILED
-14 total; 0 passed; 14 failed;
+16 total; 0 passed; 16 failed;
