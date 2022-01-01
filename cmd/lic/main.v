@@ -6,32 +6,21 @@
 module main
 
 import os
+import arrays
 import cli { Command, Flag }
 import v.vmod
+import cmd.cmdutil
 import cotowali { compile }
-import cotowali.config { backend_from_str, default_feature }
-import cotowali.context { Context, new_context }
-import cotowali.source { Source }
+import cotowali.config { Config }
+import cotowali.context { Context }
 import cotowali.errors { PrettyFormatter }
 import cotowali.util { li_panic }
 import cmd.tools
 
 const (
-	backend_flag = Flag{
-		flag: .string
-		name: 'backend'
-		abbrev: 'b'
-		default_value: ['sh']
-		global: true
-	}
 	no_emit_flag = Flag{
 		flag: .bool
 		name: 'no-emit'
-		global: true
-	}
-	no_builtin_flag = Flag{
-		flag: .bool
-		name: 'no-builtin'
 		global: true
 	}
 	test_flag = Flag{
@@ -50,100 +39,50 @@ const (
 		abbrev: 'W'
 		global: true
 	}
-	define_flag = Flag{
-		flag: .string_array
-		name: 'define'
-		abbrev: 'd'
-		description: '<name>=[<value>] define compiler variable'
-		global: true
-	}
-	flags = [
-		backend_flag,
+	flags = arrays.concat(cmdutil.common_flags, ...[
 		no_emit_flag,
-		no_builtin_flag,
 		test_flag,
 		no_shebang_flag,
 		warn_flag,
-		define_flag,
-	]
+	])
 )
 
-fn new_source_from_args(args []string) ?&Source {
-	match args.len {
-		0 {
-			return &Source{
-				path: 'stdin'
-				code: os.get_raw_lines_joined()
-			}
-		}
-		1 {
-			return source.read_file(args[0])
-		}
-		else {
-			return error('too many source files')
-		}
-	}
-}
-
 fn new_ctx_from_cmd(cmd Command) &Context {
+	mut ctx := cmdutil.new_ctx_from_cmd(cmd)
+
 	no_emit := cmd.flags.get_bool(no_emit_flag.name) or { li_panic(@FILE, @LINE, '') }
-	no_builtin := cmd.flags.get_bool(no_builtin_flag.name) or { li_panic(@FILE, @LINE, '') }
 	is_test := cmd.name == 'test' || cmd.flags.get_bool(test_flag.name) or {
 		li_panic(@FILE, @LINE, '')
 	}
 
-	backend_str := cmd.flags.get_string(backend_flag.name) or { li_panic(@FILE, @LINE, '') }
-	backend := backend_from_str(backend_str) or {
-		eprintln(err)
-		exit(1)
-	}
-
-	mut feature := default_feature()
 	no_shebang := cmd.flags.get_bool(no_shebang_flag.name) or { li_panic(@FILE, @LINE, '') }
 	if no_shebang {
-		feature.clear(.shebang)
+		ctx.config.feature.clear(.shebang)
 	}
+
 	warns := cmd.flags.get_strings(warn_flag.name) or { li_panic(@FILE, @LINE, '') }
 	for warn_str in warns {
-		feature.set_by_str('warn_$warn_str') or {
+		ctx.config.feature.set_by_str('warn_$warn_str') or {
 			eprintln(err)
 			exit(1)
 		}
 	}
 
-	mut ctx := new_context(
+	ctx.config = Config{
+		...ctx.config
 		no_emit: no_emit
-		no_builtin: no_builtin
 		is_test: is_test
-		backend: backend
-		feature: feature
-	)
-	defines := cmd.flags.get_strings(define_flag.name) or { li_panic(@FILE, @LINE, '') }
-	for define in defines {
-		parts := define.split_nth('=', 2)
-		match parts.len {
-			1 { ctx.compiler_symbols.define(parts[0]) }
-			2 { ctx.compiler_symbols.define_with_value(parts[0], parts[1]) }
-			else { li_panic(@FILE, @LINE, '') }
-		}
 	}
-
 	return ctx
 }
 
 fn execute_run_or_test(cmd Command) ? {
 	mut ctx := new_ctx_from_cmd(cmd)
-	source_args, run_args := if cmd.args.len == 0 {
-		//
-		[]string{}, []string{}
-	} else {
-		[cmd.args[0]], cmd.args[1..]
-	}
-	s := new_source_from_args(source_args) or {
+	s, args := cmdutil.parse_args(cmd.args) or {
 		eprintln(err)
 		exit(1)
 	}
-	cotowali.run(s, run_args, ctx) or {
+	cotowali.run(s, args, ctx) or {
 		eprint(ctx.errors.format(PrettyFormatter{}))
 		exit(1)
 	}
@@ -151,7 +90,7 @@ fn execute_run_or_test(cmd Command) ? {
 
 fn execute_compile(cmd Command) ? {
 	mut ctx := new_ctx_from_cmd(cmd)
-	s := new_source_from_args(cmd.args) or {
+	s := cmdutil.new_source_from_args(cmd.args) or {
 		eprintln(err)
 		exit(1)
 	}

@@ -6,40 +6,28 @@
 module main
 
 import os
+import arrays
 import cli { Command, Flag }
 import v.vmod
-import cotowali.config { backend_from_str, default_feature }
-import cotowali.context { Context, new_context }
+import cmd.cmdutil
+import cotowali.context { Context }
 import cotowali.shell { new_shell }
 import cotowali.util { li_panic }
 
 const (
-	backend_flag = Flag{
-		flag: .string
-		name: 'backend'
-		abbrev: 'b'
-		default_value: ['sh']
-		global: true
-	}
 	sh_flag = Flag{
 		flag: .string
 		name: 'sh'
 		default_value: ['sh']
 		global: true
 	}
-	flags = [backend_flag, sh_flag]
+	flags = arrays.concat(cmdutil.common_flags, sh_flag)
 )
 
 fn new_ctx_from_cmd(cmd Command) &Context {
-	backend_str := cmd.flags.get_string(backend_flag.name) or { li_panic(@FILE, @LINE, '') }
-	backend := backend_from_str(backend_str) or {
-		eprintln(err)
-		exit(1)
-	}
-
-	mut feature := default_feature()
-	feature.set(.interactive)
-	return new_context(backend: backend, feature: feature)
+	mut ctx := cmdutil.new_ctx_from_cmd(cmd)
+	ctx.config.feature.set(.interactive)
+	return ctx
 }
 
 fn execute(cmd Command) ? {
