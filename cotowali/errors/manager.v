@@ -50,14 +50,16 @@ pub fn (e ErrorManager) has_syntax_error() bool {
 	return e.has_syntax_error
 }
 
-pub fn (mut e ErrorManager) sort() {
+fn (mut e ErrorManager) sort() {
 	for _, mut list in e.list {
 		list.sort(a.pos.i < b.pos.i)
 	}
 }
 
-pub fn (mut e ErrorManager) all() []ErrOrWarn {
-	e.sort()
+pub fn (e &ErrorManager) all() []ErrOrWarn {
+	unsafe {
+		e.sort()
+	}
 	mut keys := e.list.keys()
 	keys.sort()
 

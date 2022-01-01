@@ -44,7 +44,7 @@ pub fn (p PrettyFormatter) format(e ErrOrWarn) string {
 	return lines.map('$it\n').join('')
 }
 
-pub fn (mut errors ErrorManager) format(f Formatter) string {
+pub fn (errors &ErrorManager) format(f Formatter) string {
 	mut sb := strings.new_builder(10)
 
 	for e in errors.all() {

@@ -77,7 +77,7 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 }
 
 fn execute_run_or_test(cmd Command) ? {
-	mut ctx := new_ctx_from_cmd(cmd)
+	ctx := new_ctx_from_cmd(cmd)
 	s, args := cmdutil.parse_args(cmd.args) or {
 		eprintln(err)
 		exit(1)
@@ -89,7 +89,7 @@ fn execute_run_or_test(cmd Command) ? {
 }
 
 fn execute_compile(cmd Command) ? {
-	mut ctx := new_ctx_from_cmd(cmd)
+	ctx := new_ctx_from_cmd(cmd)
 	s := cmdutil.new_source_from_args(cmd.args) or {
 		eprintln(err)
 		exit(1)
