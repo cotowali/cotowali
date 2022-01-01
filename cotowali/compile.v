@@ -12,6 +12,7 @@ import cotowali.context { Context }
 import cotowali.source { Source }
 import cotowali.compiler { new_compiler }
 import cotowali.util { li_panic }
+import cotowali.himorogi
 
 pub fn compile(s Source, ctx &Context) ?string {
 	c := new_compiler(s, ctx)
@@ -39,6 +40,10 @@ fn compile_to_temp_file(s Source, ctx &Context) ?string {
 }
 
 pub fn run(s Source, args []string, ctx &Context) ?int {
+	if ctx.config.backend == .himorogi {
+		return himorogi.run(s, args, ctx)
+	}
+
 	temp_file := compile_to_temp_file(s, ctx) ?
 	defer {
 		os.rm(temp_file) or { li_panic(@FN, @FILE, @LINE, err) }

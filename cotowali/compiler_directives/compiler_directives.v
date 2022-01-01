@@ -88,6 +88,9 @@ pub fn new_compiler_symbol_table(config Config) CompilerSymbolTable {
 			table.define('powershell')
 		}
 		.ush {}
+		.himorogi {
+			table.define('himorogi')
+		}
 	}
 	if config.feature.has(.interactive) {
 		table.define('lish')

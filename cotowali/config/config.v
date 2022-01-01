@@ -6,6 +6,7 @@
 module config
 
 import os
+import cotowali.util { li_panic }
 
 pub enum Backend {
 	sh
@@ -14,6 +15,7 @@ pub enum Backend {
 	zsh
 	pwsh
 	ush
+	himorogi
 }
 
 pub fn (b Backend) is_sh_like() bool {
@@ -28,6 +30,7 @@ pub fn (b Backend) shebang() string {
 		.zsh { '#!/usr/bin/env dash' }
 		.pwsh { '#!/usr/bin/env pwsh' }
 		.ush { '' }
+		.himorogi { '' }
 	}
 }
 
@@ -48,6 +51,7 @@ pub fn (backend Backend) find_executable_path() ?string {
 		.bash { ['bash', 'bash.exe'] }
 		.zsh { ['zsh'] }
 		.ush { panic('') }
+		.himorogi { ['himorogi'] }
 	}
 	for cmd in cmds {
 		if found := os.find_abs_path_of_executable(cmd) {
@@ -64,6 +68,7 @@ pub fn (backend Backend) script_ext() string {
 		.zsh { '.zsh' }
 		.pwsh { '.ps1' }
 		.ush { '.ush' }
+		.himorogi { li_panic(@FN, @FILE, @LINE, '') }
 	}
 }
 
@@ -106,6 +111,7 @@ pub fn backend_from_str(s string) ?Backend {
 		'zsh' { return .zsh }
 		'pwsh', 'powershell' { return .pwsh }
 		'ush', 'universal' { return .ush }
+		'himorogi' { return .himorogi }
 		else { return error('unknown backend `$s`') }
 	}
 }
