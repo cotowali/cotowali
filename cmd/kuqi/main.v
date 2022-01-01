@@ -6,7 +6,7 @@
 import os
 import cli { Command }
 import v.vmod
-import kuqi
+import cotowali.kuqi
 
 fn execute(cmd Command) ? {
 	mut qi := kuqi.new(&Stdio{})
