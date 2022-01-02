@@ -55,7 +55,9 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 		li_panic(@FN, @FILE, @LINE, '')
 	}
 
-	no_shebang := cmd.flags.get_bool(no_shebang_flag.name) or { li_panic(@FN, @FILE, @LINE, '') }
+	no_shebang := cmd.flags.get_bool(no_shebang_flag.name) or {
+		li_panic(@FN, @FILE, @LINE, '') //
+	}
 	if no_shebang {
 		ctx.config.feature.clear(.shebang)
 	}

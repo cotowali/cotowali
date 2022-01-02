@@ -76,7 +76,9 @@ pub fn new_ctx_from_cmd(cmd Command) &Context {
 		backend: backend
 		feature: default_feature()
 	)
-	defines := cmd.flags.get_strings(cmdutil.define_flag.name) or { li_panic(@FN, @FILE, @LINE, '') }
+	defines := cmd.flags.get_strings(cmdutil.define_flag.name) or {
+		li_panic(@FN, @FILE, @LINE, '')
+	}
 	for define in defines {
 		parts := define.split_nth('=', 2)
 		match parts.len {
