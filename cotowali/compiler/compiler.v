@@ -37,6 +37,25 @@ pub fn (c &Compiler) compile() ?string {
 	return sb.str()
 }
 
+pub fn parse_and_check(s &Source, ctx &Context) ?&ast.File {
+	mut f := parser.parse(s, ctx)
+
+	if ctx.errors.has_syntax_error() {
+		return error('syntax error')
+	}
+
+	if ctx.config.is_test {
+		f.stmts << parser.parse(new_source('finish_test', 'testing::finish()'), ctx).stmts
+	}
+	ast.resolve(mut f, ctx)
+	checker.check(mut f, ctx)
+
+	if ctx.errors.len() > 0 {
+		return error('checker error')
+	}
+	return f
+}
+
 fn (c &Compiler) ush_compile_to(w io.Writer) ? {
 	mut ctx := c.ctx
 	config := ctx.config
@@ -66,31 +85,19 @@ fn (c &Compiler) ush_compile_to(w io.Writer) ? {
 
 pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	ctx := c.ctx
-	config := ctx.config
 
-	if config.backend == .ush {
+	if ctx.config.backend == .ush {
 		c.ush_compile_to(w) ?
 		return
 	}
 
-	if config.backend !in [.sh, .pwsh] {
-		return error('$config.backend backend is not yet implemented.')
-	}
-	mut f := parser.parse(c.source, ctx)
-
-	if !ctx.errors.has_syntax_error() {
-		if config.is_test {
-			f.stmts << parser.parse(new_source('finish_test', 'testing::finish()'), ctx).stmts
-		}
-
-		ast.resolve(mut f, ctx)
-		checker.check(mut f, ctx)
-	}
-	if ctx.errors.len() > 0 {
-		return error('compile error')
+	if ctx.config.backend !in [.sh, .pwsh] {
+		return error('$ctx.config.backend backend is not yet implemented.')
 	}
 
-	if config.no_emit {
+	f := parse_and_check(c.source, ctx) ?
+
+	if ctx.config.no_emit {
 		return
 	}
 
