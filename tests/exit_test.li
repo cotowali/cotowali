@@ -1,0 +1,7 @@
+fn noreturn(): string {
+  exit(0)
+  return 'err'
+}
+
+println(noreturn())
+assert(false)
