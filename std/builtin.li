@@ -121,7 +121,34 @@ fn range(begin: int, end: int) |> ...int {
 
 // -- posix --
 
+#if sh
+var __cotowali_exit_sig__ = 'USR1'
+var __cotowali_exit_code_file__: string
+sh {
+  %__cotowali_exit_code_file__="/tmp/$$.code.txt"
+}
+
+fn __cotowali_exit_send__(code: int) {
+  code |> __cotowali_exit_code_file__
+  sh { kill -s $%__cotowali_exit_sig__ "$$" }
+}
+
+fn __cotowali_exit_trap__() {
+  var code = @cat(__cotowali_exit_code_file__)
+  rm(__cotowali_exit_code_file__) |> null
+  @exit(code)
+}
+
+sh { trap '%__cotowali_exit_trap__' $%__cotowali_exit_sig__ }
+
+#[mangle]
+fn exit(code: int) {
+  __cotowali_exit_send__(code)
+}
+
+# else
 fn exit(code: int)
+#endif
 
 fn string |> cat(files: ...string) |> ...string
 
