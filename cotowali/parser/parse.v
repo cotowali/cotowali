@@ -25,7 +25,7 @@ pub fn (mut p Parser) parse(scope &Scope) &ast.File {
 	mut ctx := p.ctx
 	if !(ctx.builtin_loaded() || ctx.config.no_builtin) {
 		ctx.builtin_source = source.read_file(cotowali_builtin_path()) or {
-			li_panic(@FILE, @LINE, err)
+			li_panic(@FN, @FILE, @LINE, err)
 		}
 		mut builtin_parser := new_parser(ctx.builtin_source, ctx)
 		file.stmts << ast.RequireStmt{
@@ -34,7 +34,7 @@ pub fn (mut p Parser) parse(scope &Scope) &ast.File {
 	}
 	if ctx.config.is_test && !ctx.testing_loaded() {
 		ctx.testing_source = source.read_file(cotowali_testing_path()) or {
-			li_panic(@FILE, @LINE, err)
+			li_panic(@FN, @FILE, @LINE, err)
 		}
 		mut testing_parser := new_parser(ctx.testing_source, ctx)
 		file.stmts << ast.RequireStmt{
@@ -71,7 +71,7 @@ pub fn parse_file_relative(base_source &Source, path string, ctx &Context) ?&ast
 	source_path := get_cotowali_source_path(path)
 	if source_url := base_source.url() {
 		url := source_url.resolve_reference(&URL{ user: 0, path: source_path }) or {
-			li_panic(@FILE, @LINE, 'faild to resolve url')
+			li_panic(@FN, @FILE, @LINE, 'faild to resolve url')
 		}
 		return parse_remote_file(url, ctx)
 	}

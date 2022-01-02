@@ -19,7 +19,7 @@ pub fn (e ErrOrWarn) label() string {
 }
 
 pub fn (e ErrOrWarn) source() &Source {
-	return e.pos.source() or { li_panic(@FILE, @LINE, 'source is nil') }
+	return e.pos.source() or { li_panic(@FN, @FILE, @LINE, 'source is nil') }
 }
 
 // Err represents cotowali compile error

@@ -209,7 +209,7 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 		e.write(match left_ts.kind() {
 			.array { 'array_get ' }
 			.map { 'map_get ' }
-			else { li_panic(@FILE, @LINE, 'invalid index left') }
+			else { li_panic(@FN, @FILE, @LINE, 'invalid index left') }
 		})
 
 		e.expr(v.expr.left)
@@ -236,7 +236,7 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op := expr.op
 	$if !prod {
 		if !op.kind.@is(.infix_op) {
-			li_panic(@FILE, @LINE, 'not a infix op')
+			li_panic(@FN, @FILE, @LINE, 'not a infix op')
 		}
 	}
 
@@ -261,7 +261,7 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 			match ts.kind() {
 				.array { e.infix_expr_for_array(expr, opt) }
 				.tuple { e.infix_expr_for_tuple(expr, opt) }
-				else { li_panic(@FILE, @LINE, 'invarid operand of infix expr (`$ts.name`)') }
+				else { li_panic(@FN, @FILE, @LINE, 'invarid operand of infix expr (`$ts.name`)') }
 			}
 		}
 	}
@@ -270,7 +270,7 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 	$if !prod {
 		if expr.left.resolved_typ() != builtin_type(.bool) {
-			li_panic(@FILE, @LINE, 'not a bool operand')
+			li_panic(@FN, @FILE, @LINE, 'not a bool operand')
 		}
 	}
 
@@ -285,7 +285,7 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 	op := match expr.op.kind {
 		.logical_and { '&&' }
 		.logical_or { '||' }
-		else { li_panic(@FILE, @LINE, 'invalid op') }
+		else { li_panic(@FN, @FILE, @LINE, 'invalid op') }
 	}
 
 	if opt.mode == .command {
@@ -303,7 +303,7 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 fn (mut e Emitter) infix_expr_for_number(expr ast.InfixExpr, opt ExprOpt) {
 	$if !prod {
 		if expr.left.resolved_typ() !in [builtin_type(.int), builtin_type(.float)] {
-			li_panic(@FILE, @LINE, 'invalid operand')
+			li_panic(@FN, @FILE, @LINE, 'invalid operand')
 		}
 	}
 
@@ -318,7 +318,7 @@ fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
 	$if !prod {
 		if expr.left.resolved_typ() !in [builtin_type(.float),
 			builtin_type(.int)] {
-			li_panic(@FILE, @LINE, 'invalid operand')
+			li_panic(@FN, @FILE, @LINE, 'invalid operand')
 		}
 	}
 	e.write_echo_if_command(opt)
@@ -336,7 +336,7 @@ fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
 fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 	$if !prod {
 		if expr.left.resolved_typ() != builtin_type(.int) {
-			li_panic(@FILE, @LINE, 'invalid operand')
+			li_panic(@FN, @FILE, @LINE, 'invalid operand')
 		}
 	}
 
@@ -351,7 +351,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 				.ge { '-ge' }
 				.lt { '-lt' }
 				.le { '-le' }
-				else { li_panic(@FILE, @LINE, 'invalid op') }
+				else { li_panic(@FN, @FILE, @LINE, 'invalid op') }
 			}
 			e.sh_test_cond_infix(expr.left, op, expr.right)
 		}, expr, opt)
@@ -372,7 +372,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 			e.sh_awk_infix_expr(expr)
 		}
 		else {
-			li_panic(@FILE, @LINE, 'invalid op `$expr.op.text`')
+			li_panic(@FN, @FILE, @LINE, 'invalid op `$expr.op.text`')
 		}
 	}
 }
@@ -380,7 +380,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 	$if !prod {
 		if expr.left.resolved_typ() != builtin_type(.string) {
-			li_panic(@FILE, @LINE, 'not a string operand')
+			li_panic(@FN, @FILE, @LINE, 'not a string operand')
 		}
 	}
 
@@ -398,7 +398,7 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 			e.expr(expr.right)
 		}
 		else {
-			li_panic(@FILE, @LINE, 'invalid op `$expr.op.text`')
+			li_panic(@FN, @FILE, @LINE, 'invalid op `$expr.op.text`')
 		}
 	}
 }
@@ -406,7 +406,7 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
 	$if !prod {
 		if expr.left.type_symbol().resolved().kind() != .tuple {
-			li_panic(@FILE, @LINE, 'not a string operand')
+			li_panic(@FN, @FILE, @LINE, 'not a string operand')
 		}
 	}
 
@@ -425,7 +425,7 @@ fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
 			e.expr(expr.right)
 		}
 		else {
-			li_panic(@FILE, @LINE, 'invalid op `$expr.op.text`')
+			li_panic(@FN, @FILE, @LINE, 'invalid op `$expr.op.text`')
 		}
 	}
 }
@@ -433,7 +433,7 @@ fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
 fn (mut e Emitter) module_item(expr ast.ModuleItem, opt ExprOpt) {
 	$if !prod {
 		if !expr.is_resolved() {
-			li_panic(@FILE, @LINE, 'unresolved module item')
+			li_panic(@FN, @FILE, @LINE, 'unresolved module item')
 		}
 	}
 	e.expr(expr.item, opt)
@@ -472,7 +472,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 	op := expr.op
 	$if !prod {
 		if !op.kind.@is(.prefix_op) {
-			li_panic(@FILE, @LINE, 'not a prefix op')
+			li_panic(@FN, @FILE, @LINE, 'not a prefix op')
 		}
 	}
 
@@ -495,7 +495,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		}
 		.minus {
 			infix_expr := expr.convert_to_infix_expr() or {
-				li_panic(@FILE, @LINE, 'faild to convert to infix expr')
+				li_panic(@FN, @FILE, @LINE, 'faild to convert to infix expr')
 			}
 			e.infix_expr(infix_expr, subexpr_opt)
 		}
@@ -508,7 +508,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 			e.write(' ; }')
 		}
 		else {
-			li_panic(@FILE, @LINE, 'invalid op `$expr.op.text`')
+			li_panic(@FN, @FILE, @LINE, 'invalid op `$expr.op.text`')
 		}
 	}
 }

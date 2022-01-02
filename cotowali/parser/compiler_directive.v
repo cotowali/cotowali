@@ -98,7 +98,7 @@ fn (mut p Parser) process_compiler_directive_error_or_warning(hash Token, kind C
 	match kind {
 		.error { p.error(msg, pos) }
 		.warning { p.warn(msg, pos) }
-		else { li_panic(@FILE, @LINE, 'invalid directive ${kind}. expecting error or warning') }
+		else { li_panic(@FN, @FILE, @LINE, 'invalid directive ${kind}. expecting error or warning') }
 	}
 }
 
@@ -150,7 +150,7 @@ fn (mut p Parser) process_compiler_directive_define_undef(hash Token, kind Compi
 			p.ctx.compiler_symbols.undef(key.text)
 		}
 		else {
-			li_panic(@FILE, @LINE, 'invalid directive ${kind}. expecting #define or #undef')
+			li_panic(@FN, @FILE, @LINE, 'invalid directive ${kind}. expecting #define or #undef')
 		}
 	}
 }
@@ -264,7 +264,7 @@ fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDi
 					return
 				}
 				if next_kind != .else_ {
-					li_panic(@FILE, @LINE, 'expecting #else')
+					li_panic(@FN, @FILE, @LINE, 'expecting #else')
 				}
 
 				p.if_directive_depth++
@@ -291,7 +291,7 @@ fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDi
 			p.if_directive_depth--
 		}
 		else {
-			li_panic(@FILE, @LINE, 'invalid directive ${kind}. expecting #if or #endif')
+			li_panic(@FN, @FILE, @LINE, 'invalid directive ${kind}. expecting #if or #endif')
 		}
 	}
 }

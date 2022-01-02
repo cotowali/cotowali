@@ -29,11 +29,11 @@ fn (mut e Emitter) single_quote_string_literal_value(expr StringLiteral) {
 					e.write(v.text) // @'a*b' -> 'a'*'b'
 				}
 				else {
-					li_panic(@LINE, @FN, sh.invalid_string_literal)
+					li_panic(@FN, @FILE, @LINE, sh.invalid_string_literal)
 				}
 			}
 		} else {
-			li_panic(@LINE, @FN, sh.invalid_string_literal)
+			li_panic(@FN, @FILE, @LINE, sh.invalid_string_literal)
 		}
 	}
 }
@@ -79,7 +79,7 @@ fn (mut e Emitter) single_quote_raw_string_literal_value(expr StringLiteral) {
 	if content is Token {
 		e.write("'$content.text'")
 	} else {
-		li_panic(@LINE, @FN, sh.invalid_string_literal)
+		li_panic(@FN, @FILE, @LINE, sh.invalid_string_literal)
 	}
 }
 
@@ -89,7 +89,7 @@ fn (mut e Emitter) double_quote_raw_string_literal_value(expr StringLiteral) {
 		text := content.text.replace("'", r"'\''") // r"a'b" -> 'a'\''b'
 		e.write("'$text'")
 	} else {
-		li_panic(@LINE, @FN, sh.invalid_string_literal)
+		li_panic(@FN, @FILE, @LINE, sh.invalid_string_literal)
 	}
 }
 
@@ -99,7 +99,7 @@ fn (mut e Emitter) string_literal_value(expr StringLiteral) {
 		.double_quote, .double_quote_with_at_prefix { e.double_quote_string_literal_value(expr) }
 		.single_quote_with_r_prefix { e.single_quote_raw_string_literal_value(expr) }
 		.double_quote_with_r_prefix { e.double_quote_raw_string_literal_value(expr) }
-		else { li_panic(@FILE, @LINE, 'not a string') }
+		else { li_panic(@FN, @FILE, @LINE, 'not a string') }
 	}
 }
 
@@ -114,7 +114,7 @@ fn (mut e Emitter) string_literal(expr StringLiteral, opt ExprOpt) {
 	$if !prod {
 		if expr.is_raw() {
 			if expr.contents.len > 1 {
-				li_panic(@FILE, @LINE, 'invalid raw string')
+				li_panic(@FN, @FILE, @LINE, 'invalid raw string')
 			}
 		}
 	}

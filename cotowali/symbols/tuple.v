@@ -35,5 +35,5 @@ pub fn (s Scope) lookup_tuple_type(info TupleTypeInfo) ?&TypeSymbol {
 }
 
 pub fn (s Scope) must_lookup_tuple_type(info TupleTypeInfo) &TypeSymbol {
-	return s.lookup_tuple_type(info) or { li_panic(@FILE, @LINE, err) }
+	return s.lookup_tuple_type(info) or { li_panic(@FN, @FILE, @LINE, err) }
 }

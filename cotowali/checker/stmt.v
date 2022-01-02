@@ -101,7 +101,7 @@ fn is_assignment_to_outside_of_fn(current_fn &ast.FnDecl, left ast.Expr) bool {
 			!isnil(current_fn)
 		}
 	}
-	li_panic(@FILE, @LINE, 'invalid left')
+	li_panic(@FN, @FILE, @LINE, 'invalid left')
 }
 
 fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {

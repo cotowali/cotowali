@@ -36,7 +36,7 @@ fn (mut p Parser) parse_inline_shell() ?ast.InlineShell {
 				}
 			}
 			else {
-				li_panic(@FILE, @LINE, 'invalid token `$tok.kind` in inline shell')
+				li_panic(@FN, @FILE, @LINE, 'invalid token `$tok.kind` in inline shell')
 			}
 		}
 	}

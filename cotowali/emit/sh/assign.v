@@ -45,7 +45,7 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 			ast.StringLiteral {
 				$if !prod {
 					if !expr.is_glob() {
-						li_panic(@FILE, @LINE, 'not a array value')
+						li_panic(@FN, @FILE, @LINE, 'not a array value')
 					}
 				}
 				e.write('array_copy "$name" ')
@@ -53,7 +53,7 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 				e.writeln('')
 			}
 			else {
-				li_panic(@FILE, @LINE, 'not a array value')
+				li_panic(@FN, @FILE, @LINE, 'not a array value')
 			}
 		}
 	}
@@ -109,7 +109,7 @@ fn (mut e Emitter) assign(name string, value ExprOrString, ts TypeSymbol) {
 
 fn (mut e Emitter) destructuring_assign(names []string, expr ast.Expr) {
 	tuple_info := expr.type_symbol().tuple_info() or {
-		li_panic(@FILE, @LINE, 'destrucuturing not tuple value')
+		li_panic(@FN, @FILE, @LINE, 'destrucuturing not tuple value')
 	}
 	e.write('set -- ')
 	e.expr(expr, writeln: true, quote: false)
@@ -124,7 +124,7 @@ fn (mut e Emitter) index_assign(left ast.Expr, index ast.Expr, right ast.Expr) {
 	e.write(match left.type_symbol().resolved().kind() {
 		.array { 'array_set $name ' }
 		.map { 'map_set $name ' }
-		else { li_panic(@FILE, @LINE, 'invalid index left') }
+		else { li_panic(@FN, @FILE, @LINE, 'invalid index left') }
 	})
 	e.expr(index)
 	e.write(' ')

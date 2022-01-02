@@ -241,7 +241,7 @@ fn (lex Lexer) @assert(cond CharCond) {
 	$if debug {
 		if !cond(lex.char(0)) {
 			dump(lex.char(0))
-			li_panic(@FILE, @LINE, '')
+			li_panic(@FN, @FILE, @LINE, '')
 		}
 	}
 }

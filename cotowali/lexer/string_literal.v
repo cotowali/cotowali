@@ -120,7 +120,7 @@ fn (mut lex Lexer) read_double_quote_string_literal_content(params StringLiteral
 					}
 				}
 				else {
-					li_panic(@FN, @LINE, '')
+					li_panic(@FN, @FILE, @LINE, '')
 				}
 			}
 		}

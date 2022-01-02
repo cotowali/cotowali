@@ -17,5 +17,5 @@ pub fn write(mut w io.Writer, data WritableData) ?int {
 }
 
 pub fn must_write(mut w io.Writer, data WritableData) int {
-	return write(mut w, data) or { li_panic(@FN, @LINE, err) }
+	return write(mut w, data) or { li_panic(@FN, @FILE, @LINE, err) }
 }

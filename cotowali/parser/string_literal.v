@@ -19,9 +19,9 @@ fn (mut p Parser) parse_string_literal() ?ast.StringLiteral {
 		.double_quote_with_at_prefix { return p.parse_double_quote_string_literal() }
 		.single_quote_with_r_prefix { return p.parse_raw_string_literal(.single_quote) }
 		.double_quote_with_r_prefix { return p.parse_raw_string_literal(.double_quote) }
-		else { li_panic(@FILE, @LINE, 'expected quote') }
+		else { li_panic(@FN, @FILE, @LINE, 'expected quote') }
 	}
-	li_panic(@FILE, @LINE, 'expected quote')
+	li_panic(@FN, @FILE, @LINE, 'expected quote')
 }
 
 fn (mut p Parser) parse_raw_string_literal(quote TokenKind) ?ast.StringLiteral {

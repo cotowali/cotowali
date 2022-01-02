@@ -125,7 +125,7 @@ pub fn (s &Scope) get_child(key NameOrID) ?&Scope {
 }
 
 pub fn (s &Scope) must_get_child(key NameOrID) &Scope {
-	return s.get_child(key) or { li_panic(@FILE, @LINE, 'child scope `$key` not found') }
+	return s.get_child(key) or { li_panic(@FN, @FILE, @LINE, 'child scope `$key` not found') }
 }
 
 pub fn (mut s Scope) create_child(name string) ?&Scope {
@@ -148,7 +148,7 @@ pub fn (mut s Scope) get_or_create_child(name string) &Scope {
 }
 
 pub fn (mut s Scope) must_create_child(name string) &Scope {
-	return s.create_child(name) or { li_panic(@FILE, @LINE, err.msg) }
+	return s.create_child(name) or { li_panic(@FN, @FILE, @LINE, err.msg) }
 }
 
 pub fn (s &Scope) ident_for(v Var) string {

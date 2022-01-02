@@ -162,7 +162,7 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 		match tail_tok.kind {
 			.comma {}
 			.r_paren { break }
-			else { li_panic(@FILE, @LINE, '') }
+			else { li_panic(@FN, @FILE, @LINE, '') }
 		}
 	}
 }
@@ -456,7 +456,7 @@ fn (mut p Parser) parse_nameof_or_typeof() ?ast.Expr {
 			}
 		}
 		else {
-			li_panic(@FILE, @LINE, 'invalid key')
+			li_panic(@FN, @FILE, @LINE, 'invalid key')
 		}
 	}
 }

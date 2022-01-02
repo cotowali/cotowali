@@ -30,7 +30,7 @@ fn compile_to_temp_file(s Source, ctx &Context) ?string {
 	ext := ctx.config.backend.script_ext()
 	temp_path := os.join_path(os.temp_dir(), '$base$ext')
 
-	mut f := os.create(temp_path) or { li_panic(@FILE, @LINE, err) }
+	mut f := os.create(temp_path) or { li_panic(@FN, @FILE, @LINE, err) }
 	c.compile_to(f) ?
 	defer {
 		f.close()
@@ -41,7 +41,7 @@ fn compile_to_temp_file(s Source, ctx &Context) ?string {
 pub fn run(s Source, args []string, ctx &Context) ?int {
 	temp_file := compile_to_temp_file(s, ctx) ?
 	defer {
-		os.rm(temp_file) or { li_panic(@FILE, @LINE, err) }
+		os.rm(temp_file) or { li_panic(@FN, @FILE, @LINE, err) }
 	}
 	executable := ctx.config.backend.find_executable_path() or {
 		eprintln(err.msg)

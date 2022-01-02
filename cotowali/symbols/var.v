@@ -105,7 +105,7 @@ pub fn new_placeholder_var(name string, pos Pos) &Var {
 }
 
 pub fn (mut s Scope) must_register_var(v Var) &Var {
-	return s.register_var(v) or { li_panic(@FILE, @LINE, err) }
+	return s.register_var(v) or { li_panic(@FN, @FILE, @LINE, err) }
 }
 
 pub fn (s &Scope) lookup_var(name string) ?&Var {
@@ -122,7 +122,7 @@ pub fn (s &Scope) lookup_var(name string) ?&Var {
 }
 
 pub fn (s &Scope) must_lookup_var(name string) &Var {
-	return s.lookup_var(name) or { li_panic(@FILE, @LINE, err) }
+	return s.lookup_var(name) or { li_panic(@FN, @FILE, @LINE, err) }
 }
 
 pub fn (s &Scope) lookup_var_with_pos(name string, pos Pos) ?&Var {
@@ -141,9 +141,9 @@ pub fn (s &Scope) lookup_var_with_pos(name string, pos Pos) ?&Var {
 }
 
 pub fn (s &Scope) must_lookup_var_with_pos(name string, pos Pos) &Var {
-	return s.lookup_var_with_pos(name, pos) or { li_panic(@FILE, @LINE, err) }
+	return s.lookup_var_with_pos(name, pos) or { li_panic(@FN, @FILE, @LINE, err) }
 }
 
 pub fn (mut s Scope) lookup_or_register_var(v Var) &Var {
-	return s.lookup_var(v.name) or { s.register_var(v) or { li_panic(@FILE, @LINE, err) } }
+	return s.lookup_var(v.name) or { s.register_var(v) or { li_panic(@FN, @FILE, @LINE, err) } }
 }
