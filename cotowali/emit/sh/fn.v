@@ -153,7 +153,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			tmp_to_read := e.new_tmp_ident()
 			pipe_in_param_ident := e.ident_for(pipe_in_param)
 			if _ := pipe_in_param_ts.sequence_info() {
-				li_panic(@FILE, @LINE, 'pipe in param cannot be sequence')
+				li_panic(@FN, @FILE, @LINE, 'pipe in param cannot be sequence')
 			}
 			e.writeln('read $tmp_to_read')
 			e.assign(pipe_in_param_ident, '\$$tmp_to_read', pipe_in_param_ts)

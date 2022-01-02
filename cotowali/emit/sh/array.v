@@ -50,7 +50,7 @@ fn (mut e Emitter) array_elements(name string) {
 
 fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
 	if expr.left.type_symbol().resolved().kind() != .array {
-		li_panic(@FILE, @LINE, 'not a array operand')
+		li_panic(@FN, @FILE, @LINE, 'not a array operand')
 	}
 
 	match expr.op.kind {
@@ -73,7 +73,7 @@ fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
 			e.array(ident, opt)
 		}
 		else {
-			li_panic(@FILE, @LINE, 'invalid operator')
+			li_panic(@FN, @FILE, @LINE, 'invalid operator')
 		}
 	}
 }

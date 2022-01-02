@@ -18,7 +18,7 @@ pub fn (mut lex Lexer) next() ?Token {
 		if err is LexerErr {
 			return err.token
 		}
-		li_panic(@FILE, @LINE, err)
+		li_panic(@FN, @FILE, @LINE, err)
 	}
 }
 
@@ -159,7 +159,7 @@ pub fn (mut lex Lexer) do_read() ?Token {
 			else { lex.read_unknown() }
 		}
 	}
-	li_panic(@FILE, @LINE, '')
+	li_panic(@FN, @FILE, @LINE, '')
 }
 
 fn (lex Lexer) is_eol() bool {

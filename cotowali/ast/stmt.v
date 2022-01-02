@@ -209,7 +209,7 @@ pub mut:
 pub fn (s &AssertStmt) cond() Expr {
 	$if !prod {
 		if s.args.len == 0 {
-			li_panic(@FILE, @LINE, 'assert cond is not set')
+			li_panic(@FN, @FILE, @LINE, 'assert cond is not set')
 		}
 	}
 	return s.args[0]

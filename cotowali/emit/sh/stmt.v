@@ -168,7 +168,7 @@ fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
 			Token {
 				$if !prod {
 					if part.kind != .inline_shell_content_text {
-						li_panic(@FILE, @LINE, 'want inline_shell_content_text. got $part.kind')
+						li_panic(@FN, @FILE, @LINE, 'want inline_shell_content_text. got $part.kind')
 					}
 				}
 				e.write(part.text)

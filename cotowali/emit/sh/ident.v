@@ -27,7 +27,7 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 			e.ident_for(v.var_)
 		}
 		ast.Var {
-			sym := v.sym() or { li_panic(@FILE, @LINE, 'sym is nil') }
+			sym := v.sym() or { li_panic(@FN, @FILE, @LINE, 'sym is nil') }
 			e.ident_for(sym)
 		}
 		ArrayLiteral, MapLiteral {
@@ -38,7 +38,7 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 				// v bug: Segfault
 				// ast.Var, ArrayLiteral, MapLiteral { e.ident_for(v) }
 				ast.Var {
-					sym := v.sym() or { li_panic(@FILE, @LINE, 'sym is nil') }
+					sym := v.sym() or { li_panic(@FN, @FILE, @LINE, 'sym is nil') }
 					e.ident_for(sym)
 				}
 				ArrayLiteral, MapLiteral {
@@ -51,7 +51,7 @@ fn (mut e Emitter) ident_for(v IdentForValue) string {
 					e.ident_for(v.ident)
 				}
 				else {
-					li_panic(@FILE, @LINE, 'cannot take ident')
+					li_panic(@FN, @FILE, @LINE, 'cannot take ident')
 				}
 			}
 		}

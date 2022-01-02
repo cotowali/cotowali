@@ -141,7 +141,7 @@ pub fn (expr Expr) pos() Pos {
 
 pub fn (mut e InfixExpr) typ() Type {
 	if f := e.overloaded_function() {
-		return (f.type_symbol().function_info() or { li_panic(@FILE, @LINE, 'not a function') }).ret
+		return (f.type_symbol().function_info() or { li_panic(@FN, @FILE, @LINE, 'not a function') }).ret
 	}
 
 	if e.op.kind.@is(.comparsion_op) || e.op.kind.@is(.logical_infix_op) {
@@ -154,8 +154,8 @@ pub fn (mut e InfixExpr) typ() Type {
 	right_ts_resolved := e.right.type_symbol().resolved()
 
 	if left_ts_resolved.kind() == .tuple && right_ts_resolved.kind() == .tuple && e.op.kind == .plus {
-		left_elements := (left_ts_resolved.tuple_info() or { li_panic(@FILE, @LINE, '') }).elements
-		right_elements := (right_ts_resolved.tuple_info() or { li_panic(@FILE, @LINE, '') }).elements
+		left_elements := (left_ts_resolved.tuple_info() or { li_panic(@FN, @FILE, @LINE, '') }).elements
+		right_elements := (right_ts_resolved.tuple_info() or { li_panic(@FN, @FILE, @LINE, '') }).elements
 		mut elements := []TupleElement{cap: left_elements.len + right_elements.len}
 		elements << left_elements
 		elements << right_elements
@@ -213,7 +213,7 @@ pub fn (mut e ParenExpr) typ() Type {
 
 pub fn (e PrefixExpr) typ() Type {
 	if f := e.overloaded_function() {
-		return (f.type_symbol().function_info() or { li_panic(@FILE, @LINE, 'not a function') }).ret
+		return (f.type_symbol().function_info() or { li_panic(@FN, @FILE, @LINE, 'not a function') }).ret
 	}
 
 	match e.op.kind {
@@ -318,7 +318,7 @@ pub:
 pub fn (expr &AsExpr) overloaded_function() ?&symbols.Var {
 	f := Expr(expr).scope().lookup_cast_function(from: expr.expr.typ(), to: expr.typ) ?
 	if !f.is_function() {
-		li_panic(@FILE, @LINE, 'not a function')
+		li_panic(@FN, @FILE, @LINE, 'not a function')
 	}
 	return f
 }
@@ -416,7 +416,7 @@ pub fn (expr &InfixExpr) overloaded_function() ?&symbols.Var {
 	right_ts := expr.right.type_symbol()
 	fn_var := expr.scope.lookup_infix_op_function(expr.op, left_ts.typ, right_ts.typ) ?
 	if !fn_var.is_function() {
-		li_panic(@FILE, @LINE, 'not a function')
+		li_panic(@FN, @FILE, @LINE, 'not a function')
 	}
 	return fn_var
 }
@@ -526,7 +526,7 @@ fn (mut r Resolver) module_item(mut expr ModuleItem, opt ResolveExprOpt) {
 	} else {
 		$if !prod {
 			if expr.modules.len == 0 {
-				li_panic(@FILE, @LINE, 'module item: modules.len = 0')
+				li_panic(@FN, @FILE, @LINE, 'module item: modules.len = 0')
 			}
 		}
 
@@ -657,7 +657,7 @@ pub fn (expr &PrefixExpr) overloaded_function() ?&symbols.Var {
 	operand_typ := expr.expr.typ()
 	fn_var := expr.scope.lookup_prefix_op_function(expr.op, operand_typ) ?
 	if !fn_var.is_function() {
-		li_panic(@FILE, @LINE, 'not a function')
+		li_panic(@FN, @FILE, @LINE, 'not a function')
 	}
 	return fn_var
 }
@@ -796,7 +796,7 @@ fn (mut r Resolver) var_(mut v Var, opt ResolveExprOpt) {
 
 	$if !prod {
 		if !isnil(v.sym) && v.sym.name != v.ident.text {
-			li_panic(@FILE, @LINE, 'mismatched name: sym.name = $v.sym.name, ident.text = $v.ident.text')
+			li_panic(@FN, @FILE, @LINE, 'mismatched name: sym.name = $v.sym.name, ident.text = $v.ident.text')
 		}
 	}
 

@@ -171,7 +171,7 @@ fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
 
 	p.open_scope(name)
 	for local in locals {
-		p.scope.register_var(name: local) or { li_panic(@FILE, @LINE, err) }
+		p.scope.register_var(name: local) or { li_panic(@FN, @FILE, @LINE, err) }
 	}
 	defer {
 		p.close_scope()
@@ -197,7 +197,7 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 		}
 		node.stmts << p.parse_stmt()
 	}
-	li_panic(@FILE, @LINE, '')
+	li_panic(@FN, @FILE, @LINE, '')
 }
 
 fn (mut p Parser) parse_decl_assign_stmt() ?ast.AssignStmt {
@@ -282,7 +282,7 @@ fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
 		.mul_assign { TokenKind.mul }
 		.div_assign { TokenKind.div }
 		.mod_assign { TokenKind.mod }
-		else { li_panic(@FILE, @LINE, '') }
+		else { li_panic(@FN, @FILE, @LINE, '') }
 	}
 	match infix_op_kind {
 		.plus, .minus, .mul, .div, .mod {
@@ -297,7 +297,7 @@ fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
 			}
 		}
 		else {
-			li_panic(@FILE, @LINE, '')
+			li_panic(@FN, @FILE, @LINE, '')
 		}
 	}
 	return ast.AssignStmt{

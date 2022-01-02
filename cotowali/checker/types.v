@@ -53,7 +53,7 @@ fn can_promote(want TypeSymbol, got TypeSymbol) bool {
 		}
 	}
 
-	scope_of_want := want.scope() or { li_panic(@FILE, @LINE, err) }
+	scope_of_want := want.scope() or { li_panic(@FN, @FILE, @LINE, err) }
 
 	if want_sequence_info := want.sequence_info() {
 		if want_elem := scope_of_want.lookup_type(want_sequence_info.elem) {
@@ -67,8 +67,8 @@ fn can_promote(want TypeSymbol, got TypeSymbol) bool {
 }
 
 fn can_promote_tuple(want TypeSymbol, got TypeSymbol) bool {
-	want_tuple := want.tuple_info() or { li_panic(@FILE, @LINE, 'not a tuple') }
-	got_tuple := got.tuple_info() or { li_panic(@FILE, @LINE, 'not a tuple') }
+	want_tuple := want.tuple_info() or { li_panic(@FN, @FILE, @LINE, 'not a tuple') }
+	got_tuple := got.tuple_info() or { li_panic(@FN, @FILE, @LINE, 'not a tuple') }
 	if want_tuple.elements.len != got_tuple.elements.len {
 		return false
 	}

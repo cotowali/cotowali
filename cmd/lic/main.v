@@ -50,17 +50,17 @@ const (
 fn new_ctx_from_cmd(cmd Command) &Context {
 	mut ctx := cmdutil.new_ctx_from_cmd(cmd)
 
-	no_emit := cmd.flags.get_bool(no_emit_flag.name) or { li_panic(@FILE, @LINE, '') }
+	no_emit := cmd.flags.get_bool(no_emit_flag.name) or { li_panic(@FN, @FILE, @LINE, '') }
 	is_test := cmd.name == 'test' || cmd.flags.get_bool(test_flag.name) or {
-		li_panic(@FILE, @LINE, '')
+		li_panic(@FN, @FILE, @LINE, '')
 	}
 
-	no_shebang := cmd.flags.get_bool(no_shebang_flag.name) or { li_panic(@FILE, @LINE, '') }
+	no_shebang := cmd.flags.get_bool(no_shebang_flag.name) or { li_panic(@FN, @FILE, @LINE, '') }
 	if no_shebang {
 		ctx.config.feature.clear(.shebang)
 	}
 
-	warns := cmd.flags.get_strings(warn_flag.name) or { li_panic(@FILE, @LINE, '') }
+	warns := cmd.flags.get_strings(warn_flag.name) or { li_panic(@FN, @FILE, @LINE, '') }
 	for warn_str in warns {
 		ctx.config.feature.set_by_str('warn_$warn_str') or {
 			eprintln(err)

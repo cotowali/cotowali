@@ -31,5 +31,5 @@ pub fn (s Scope) lookup_sequence_type(info SequenceTypeInfo) ?&TypeSymbol {
 }
 
 pub fn (s Scope) must_lookup_sequence_type(info SequenceTypeInfo) &TypeSymbol {
-	return s.lookup_sequence_type(info) or { li_panic(@FILE, @LINE, err) }
+	return s.lookup_sequence_type(info) or { li_panic(@FN, @FILE, @LINE, err) }
 }

@@ -26,7 +26,7 @@ pub fn (s Scope) lookup_alias_type(info AliasTypeInfo) ?&TypeSymbol {
 }
 
 pub fn (s Scope) must_lookup_alias_type(info AliasTypeInfo) &TypeSymbol {
-	return s.lookup_alias_type(info) or { li_panic(@FILE, @LINE, err) }
+	return s.lookup_alias_type(info) or { li_panic(@FN, @FILE, @LINE, err) }
 }
 
 pub fn (ts &TypeSymbol) resolved() &TypeSymbol {

@@ -54,7 +54,7 @@ pub fn (param &FnParam) type_symbol() &TypeSymbol {
 }
 
 pub fn (f FnDecl) function_info() FunctionTypeInfo {
-	return f.type_symbol().function_info() or { li_panic(@FILE, @LINE, err) }
+	return f.type_symbol().function_info() or { li_panic(@FN, @FILE, @LINE, err) }
 }
 
 pub fn (f FnDecl) type_symbol() &TypeSymbol {
@@ -62,7 +62,7 @@ pub fn (f FnDecl) type_symbol() &TypeSymbol {
 }
 
 pub fn (f FnDecl) signature() string {
-	return f.type_symbol().signature() or { li_panic(@FILE, @LINE, err) }
+	return f.type_symbol().signature() or { li_panic(@FN, @FILE, @LINE, err) }
 }
 
 pub fn (f FnDecl) ret_type_symbol() &TypeSymbol {
@@ -81,7 +81,7 @@ pub fn (f FnDecl) is_test() bool {
 }
 
 pub fn (f FnDecl) get_run_test_call_expr() CallExpr {
-	scope := f.sym.scope() or { li_panic(@FILE, @LINE, 'scope is nil') }
+	scope := f.sym.scope() or { li_panic(@FN, @FILE, @LINE, 'scope is nil') }
 	testing := scope.root().must_get_child('testing')
 	sq_token := Token{
 		kind: .single_quote
@@ -260,7 +260,7 @@ pub fn (e CallExpr) receiver() ?Expr {
 }
 
 pub fn (e CallExpr) function_info() FunctionTypeInfo {
-	return e.func.type_symbol().function_info() or { li_panic(@FILE, @LINE, err) }
+	return e.func.type_symbol().function_info() or { li_panic(@FN, @FILE, @LINE, err) }
 }
 
 pub fn (e CallExpr) is_builtin_function_call(key BuiltinFunctionKey) bool {
@@ -334,13 +334,13 @@ fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 		return
 	}
 
-	function_info := ts.function_info() or { li_panic(@FILE, @LINE, err) }
+	function_info := ts.function_info() or { li_panic(@FN, @FILE, @LINE, err) }
 	e.typ = function_info.ret
 	e.func_id = sym.id
 	if owner := e.scope.owner() {
 		if sym.id == builtin_function_id(.read) {
 			owner_function_info := owner.type_symbol().function_info() or {
-				li_panic(@FILE, @LINE, err)
+				li_panic(@FN, @FILE, @LINE, err)
 			}
 			mut pipe_in := e.scope.must_lookup_type(owner_function_info.pipe_in)
 			if pipe_in_sequence_info := pipe_in.sequence_info() {
@@ -390,20 +390,20 @@ pub fn (expr &Nameof) children() []Node {
 pub fn (expr &Nameof) value() string {
 	msg := 'cannot take name'
 	if expr.args.len != 1 {
-		li_panic(@FILE, @LINE, msg)
+		li_panic(@FN, @FILE, @LINE, msg)
 	}
 
 	arg := expr.args[0]
 	match arg {
 		Var {
-			return (arg.sym() or { li_panic(@FILE, @LINE, msg) }).name
+			return (arg.sym() or { li_panic(@FN, @FILE, @LINE, msg) }).name
 		}
 		ModuleItem {
-			return (arg.item.sym() or { li_panic(@FILE, @LINE, msg) }).display_name()
+			return (arg.item.sym() or { li_panic(@FN, @FILE, @LINE, msg) }).display_name()
 		}
 		else {}
 	}
-	li_panic(@FILE, @LINE, msg)
+	li_panic(@FN, @FILE, @LINE, msg)
 }
 
 fn (mut r Resolver) nameof(expr Nameof, opt ResolveExprOpt) {
@@ -438,7 +438,7 @@ pub fn (expr &Typeof) children() []Node {
 
 pub fn (expr &Typeof) value() string {
 	if expr.args.len != 1 {
-		li_panic(@FILE, @LINE, 'Typeof.value: expr.args.len = $expr.args.len')
+		li_panic(@FN, @FILE, @LINE, 'Typeof.value: expr.args.len = $expr.args.len')
 	}
 	return expr.args[0].type_symbol().name
 }

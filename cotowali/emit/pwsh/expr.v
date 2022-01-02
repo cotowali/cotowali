@@ -65,7 +65,7 @@ fn (mut e Emitter) as_expr(expr ast.AsExpr, opt ExprOpt) {
 
 fn (mut e Emitter) decompose_expr(expr ast.DecomposeExpr, opt ExprOpt) {
 	// any decompose expr handled in other places (e.g. paren_expr)
-	li_panic(@FILE, @LINE, 'invalid decompose')
+	li_panic(@FN, @FILE, @LINE, 'invalid decompose')
 }
 
 fn (mut e Emitter) default_value(expr ast.DefaultValue, opt ExprOpt) {
@@ -105,7 +105,7 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	op := expr.op
 	if !op.kind.@is(.infix_op) {
-		li_panic(@FILE, @LINE, 'not a infix op')
+		li_panic(@FN, @FILE, @LINE, 'not a infix op')
 	}
 
 	if call_expr := expr.overloaded_function_call_expr() {
@@ -177,7 +177,7 @@ fn (mut e Emitter) infix_expr_for_pwsh_array(expr ast.InfixExpr, opt ExprOpt) {
 		.eq { e.pwsh_array_eq(expr.left, expr.right) }
 		.ne { e.pwsh_array_ne(expr.left, expr.right) }
 		.plus { e.pwsh_array_concat(expr.left, expr.right) }
-		else { li_panic(@FILE, @LINE, 'wrong op $expr.op.text for array') }
+		else { li_panic(@FN, @FILE, @LINE, 'wrong op $expr.op.text for array') }
 	}
 }
 
@@ -191,7 +191,7 @@ fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
 
 fn (mut e Emitter) module_item(expr ast.ModuleItem, opt ExprOpt) {
 	if !expr.is_resolved() {
-		li_panic(@FILE, @LINE, 'unresolved module item')
+		li_panic(@FN, @FILE, @LINE, 'unresolved module item')
 	}
 	e.expr(expr.item, opt)
 }
@@ -233,7 +233,7 @@ fn (mut e Emitter) paren_expr(expr ast.ParenExpr, opt ExprOpt) {
 fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 	op := expr.op
 	if !op.kind.@is(.prefix_op) {
-		li_panic(@FILE, @LINE, 'not a prefix op')
+		li_panic(@FN, @FILE, @LINE, 'not a prefix op')
 	}
 
 	if call_expr := expr.overloaded_function_call_expr() {
@@ -252,7 +252,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		.not { '! ' }
 		.plus { '+' }
 		.minus { '-' }
-		else { li_panic(@FILE, @LINE, 'invalid op $op.text') }
+		else { li_panic(@FN, @FILE, @LINE, 'invalid op $op.text') }
 	})
 	e.expr(expr.expr, paren: true)
 }

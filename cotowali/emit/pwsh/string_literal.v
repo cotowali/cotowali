@@ -30,14 +30,14 @@ fn (mut e Emitter) single_quote_string_literal(expr StringLiteral) {
 					e.write('$v.text')
 				}
 				.string_literal_content_glob {
-					li_panic(@FILE, @LINE, 'glob is unimplemented')
+					li_panic(@FN, @FILE, @LINE, 'glob is unimplemented')
 				}
 				else {
-					li_panic(@FILE, @LINE, pwsh.invalid_string_literal)
+					li_panic(@FN, @FILE, @LINE, pwsh.invalid_string_literal)
 				}
 			}
 		} else {
-			li_panic(@FILE, @LINE, pwsh.invalid_string_literal)
+			li_panic(@FN, @FILE, @LINE, pwsh.invalid_string_literal)
 		}
 	}
 }
@@ -63,7 +63,7 @@ fn (mut e Emitter) double_quote_string_literal(expr StringLiteral) {
 					e.write(r'`$')
 				}
 				.string_literal_content_glob {
-					li_panic(@FILE, @LINE, 'glob is unimplemented')
+					li_panic(@FN, @FILE, @LINE, 'glob is unimplemented')
 				}
 				.string_literal_content_hex {
 					hex := '0' + v.text[1..] // tirm \xff -> 0xff
@@ -81,14 +81,14 @@ fn (mut e Emitter) double_quote_string_literal(expr StringLiteral) {
 			e.expr(v.@as(builtin_type(.string)))
 			e.write(r')')
 		} else {
-			li_panic(@FILE, @LINE, pwsh.invalid_string_literal)
+			li_panic(@FN, @FILE, @LINE, pwsh.invalid_string_literal)
 		}
 	}
 }
 
 fn (mut e Emitter) raw_string_literal(expr StringLiteral) {
 	if expr.contents.len != 1 {
-		li_panic(@FILE, @LINE, pwsh.invalid_string_literal)
+		li_panic(@FN, @FILE, @LINE, pwsh.invalid_string_literal)
 	}
 
 	content := expr.contents[0]
@@ -96,11 +96,11 @@ fn (mut e Emitter) raw_string_literal(expr StringLiteral) {
 		text := match expr.close.kind {
 			.single_quote { content.text }
 			.double_quote { content.text.replace("'", "''") }
-			else { li_panic(@FILE, @LINE, pwsh.invalid_string_literal) }
+			else { li_panic(@FN, @FILE, @LINE, pwsh.invalid_string_literal) }
 		}
 		e.write("'$text'")
 	} else {
-		li_panic(@FILE, @LINE, pwsh.invalid_string_literal)
+		li_panic(@FN, @FILE, @LINE, pwsh.invalid_string_literal)
 	}
 }
 
@@ -113,6 +113,6 @@ fn (mut e Emitter) string_literal(expr StringLiteral, opt ExprOpt) {
 		.single_quote, .single_quote_with_at_prefix { e.single_quote_string_literal(expr) }
 		.double_quote, .double_quote_with_at_prefix { e.double_quote_string_literal(expr) }
 		.single_quote_with_r_prefix, .double_quote_with_r_prefix { e.raw_string_literal(expr) }
-		else { li_panic(@FILE, @LINE, 'not a string') }
+		else { li_panic(@FN, @FILE, @LINE, 'not a string') }
 	}
 }

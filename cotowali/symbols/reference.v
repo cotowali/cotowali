@@ -25,5 +25,5 @@ pub fn (s Scope) lookup_reference_type(info ReferenceTypeInfo) ?&TypeSymbol {
 }
 
 pub fn (s Scope) must_lookup_reference_type(info ReferenceTypeInfo) &TypeSymbol {
-	return s.lookup_reference_type(info) or { li_panic(@FILE, @LINE, err) }
+	return s.lookup_reference_type(info) or { li_panic(@FN, @FILE, @LINE, err) }
 }

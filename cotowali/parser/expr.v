@@ -60,7 +60,7 @@ const expr_kind_to_op_table = (fn () map[ExprKind][]TokenKind {
 }())
 
 fn (e ExprKind) op_kinds() []TokenKind {
-	return parser.expr_kind_to_op_table[e] or { li_panic(@FILE, @LINE, '') }
+	return parser.expr_kind_to_op_table[e] or { li_panic(@FN, @FILE, @LINE, '') }
 }
 
 fn (k ExprKind) outer() ExprKind {

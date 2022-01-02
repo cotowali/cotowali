@@ -37,5 +37,5 @@ pub fn (s Scope) lookup_array_type(info ArrayTypeInfo) ?&TypeSymbol {
 }
 
 pub fn (s Scope) must_lookup_array_type(info ArrayTypeInfo) &TypeSymbol {
-	return s.lookup_array_type(info) or { li_panic(@FILE, @LINE, err) }
+	return s.lookup_array_type(info) or { li_panic(@FN, @FILE, @LINE, err) }
 }

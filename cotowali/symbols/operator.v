@@ -33,7 +33,7 @@ fn verify_op_signature(expected TokenKindClass, op Token, fn_info FunctionTypeIn
 		.infix_op { 'infix' }
 		.prefix_op { 'prefix' }
 		.postfix_op { 'postfix' }
-		else { li_panic(@FILE, @LINE, 'not op kind') }
+		else { li_panic(@FN, @FILE, @LINE, 'not op kind') }
 	} + ' operator'
 
 	if !op.kind.@is(expected) {
@@ -174,10 +174,10 @@ pub fn (mut s Scope) register_cast_function(f RegisterFnArgs, params CastFunctio
 
 	$if !prod {
 		if params.from != builtin_type(.placeholder) && params.from != fn_info.params[0].typ {
-			li_panic(@FILE, @LINE, 'mismatch from.typ and params[0]')
+			li_panic(@FN, @FILE, @LINE, 'mismatch from.typ and params[0]')
 		}
 		if params.to != builtin_type(.placeholder) && params.to != fn_info.ret {
-			li_panic(@FILE, @LINE, 'mismatch to.typ and ret')
+			li_panic(@FN, @FILE, @LINE, 'mismatch to.typ and ret')
 		}
 	}
 

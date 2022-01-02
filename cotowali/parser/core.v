@@ -63,13 +63,13 @@ fn (mut p Parser) trace_end() {
 
 pub fn (p &Parser) token(i int) Token {
 	if i >= p.buf.len {
-		li_panic(@FILE, @LINE, 'cannot take token($i) (p.buf.len = $p.buf.len)')
+		li_panic(@FN, @FILE, @LINE, 'cannot take token($i) (p.buf.len = $p.buf.len)')
 	}
 	if i < 0 {
 		if i == -1 {
 			return p.prev_tok
 		}
-		li_panic(@FILE, @LINE, 'cannot take negative token($i)')
+		li_panic(@FN, @FILE, @LINE, 'cannot take negative token($i)')
 	}
 	return p.buf[(p.token_idx + i) % p.buf.len]
 }
@@ -97,7 +97,7 @@ fn (mut p Parser) read_token() Token {
 			}
 			else {}
 		}
-		li_panic(@FILE, @LINE, err)
+		li_panic(@FN, @FILE, @LINE, err)
 	}
 	return tok
 }
@@ -215,6 +215,6 @@ fn (mut p Parser) open_scope(name string) &Scope {
 
 fn (mut p Parser) close_scope() &Scope {
 	p.scope.pos = p.scope.pos.merge(p.pos(0))
-	p.scope = p.scope.parent() or { li_panic(@FILE, @LINE, err) }
+	p.scope = p.scope.parent() or { li_panic(@FN, @FILE, @LINE, err) }
 	return p.scope
 }
