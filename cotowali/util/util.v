@@ -34,6 +34,15 @@ pub fn struct_name<T>(v T) string {
 	return s.split('.').last()
 }
 
+[unsafe]
+pub fn str_to_bytes_unsafe(s string) []byte {
+	buf := []byte{len: s.len}
+	unsafe {
+		buf.data = s.str
+	}
+	return buf
+}
+
 pub fn to_octal(num int) string {
 	buf_len := num / 8 + 2 // ceil(num / 8) + '\0'
 	unsafe {
