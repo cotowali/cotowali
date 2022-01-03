@@ -1,0 +1,42 @@
+// Copyright (c) 2021 zakuro <z@kuro.red>. All rights reserved.
+//
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
+module interpreter
+
+import cotowali.ast
+import cotowali.util { li_panic }
+
+struct Null {}
+
+type Value = Null | []Value | bool | f64 | i64 | string
+
+[noreturn]
+fn todo(func string, file string, line string) {
+	li_panic(func, file, line, 'unimplemented')
+}
+
+fn (mut e Interpreter) array_literal(expr ast.ArrayLiteral) Value {
+	todo(@FN, @FILE, @LINE)
+}
+
+fn (mut e Interpreter) bool_literal(expr ast.BoolLiteral) Value {
+	todo(@FN, @FILE, @LINE)
+}
+
+fn (mut e Interpreter) float_literal(expr ast.FloatLiteral) Value {
+	todo(@FN, @FILE, @LINE)
+}
+
+fn (mut e Interpreter) int_literal(expr ast.IntLiteral) Value {
+	todo(@FN, @FILE, @LINE)
+}
+
+fn (mut e Interpreter) null_literal(expr ast.NullLiteral) Value {
+	todo(@FN, @FILE, @LINE)
+}
+
+fn (mut e Interpreter) map_literal(expr ast.MapLiteral) Value {
+	todo(@FN, @FILE, @LINE)
+}

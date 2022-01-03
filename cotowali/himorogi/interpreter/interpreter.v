@@ -45,6 +45,10 @@ fn (e &Interpreter) eprintln<T>(s T) {
 }
 
 pub fn (mut e Interpreter) run(f &File) int {
-	e.println('hello himorogi')
+	e.file(f)
 	return 0
+}
+
+pub fn (mut e Interpreter) file(f &File) {
+	e.stmts(f.stmts)
 }
