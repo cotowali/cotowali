@@ -66,7 +66,7 @@ tasks:
       build: v {{kuqi_path}} -o {{bin}}/kuqi $@
       build.gc: v {{kuqi_path}} -o {{bin}}/kuqi -gc boehm $@
       build.win: v {{kuqi_path}} -o {{bin}}/kuqi.exe -os windows $@
-      install: cp {{bin}}/lic {{install_dir}}/lic
+      install: cp {{bin}}/kuqi {{install_dir}}/kuqi
       symlink: ln -fs {{bin}}/kuqi {{install_dir}}/kuqi
 
   ast: z run tools ast $@
