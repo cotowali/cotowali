@@ -6,19 +6,19 @@
 module main
 
 import os
-import cli { Command, Flag }
+import cli { Command }
 import v.vmod
 import cmd.cmdutil
 import cotowali.errors { PrettyFormatter }
-import cotowali.context { new_context }
 import cotowali.himorogi
 
 const (
-	flags = []Flag{}
+	flags = cmdutil.flags.excepts(.backend)
 )
 
 fn execute(cmd Command) ? {
-	ctx := new_context(backend: .himorogi)
+	mut ctx := cmdutil.new_ctx_from_cmd(cmd)
+	ctx.config.backend = .himorogi
 	s, args := cmdutil.parse_args(cmd.args) or {
 		eprintln(err)
 		exit(1)
