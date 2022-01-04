@@ -6,7 +6,6 @@
 module main
 
 import os
-import arrays
 import cli { Command, Flag }
 import v.vmod
 import cmd.cmdutil
@@ -39,12 +38,7 @@ const (
 		abbrev: 'W'
 		global: true
 	}
-	flags = arrays.concat(cmdutil.common_flags, ...[
-		no_emit_flag,
-		test_flag,
-		no_shebang_flag,
-		warn_flag,
-	])
+	flags = cmdutil.flags.extends(no_emit_flag, test_flag, no_shebang_flag, warn_flag)
 )
 
 fn new_ctx_from_cmd(cmd Command) &Context {

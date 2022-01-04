@@ -87,6 +87,7 @@ pub fn (mut f Feature) set_by_str(s string) ? {
 	}
 }
 
+[params]
 pub struct Config {
 pub mut:
 	backend    Backend = .sh
