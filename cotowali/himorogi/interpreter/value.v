@@ -22,19 +22,19 @@ fn (mut e Interpreter) array_literal(expr ast.ArrayLiteral) Value {
 }
 
 fn (mut e Interpreter) bool_literal(expr ast.BoolLiteral) Value {
-	todo(@FN, @FILE, @LINE)
+	return expr.token.bool()
 }
 
 fn (mut e Interpreter) float_literal(expr ast.FloatLiteral) Value {
-	todo(@FN, @FILE, @LINE)
+	return expr.token.text.f64()
 }
 
 fn (mut e Interpreter) int_literal(expr ast.IntLiteral) Value {
-	todo(@FN, @FILE, @LINE)
+	return expr.token.text.i64()
 }
 
 fn (mut e Interpreter) null_literal(expr ast.NullLiteral) Value {
-	todo(@FN, @FILE, @LINE)
+	return Null{}
 }
 
 fn (mut e Interpreter) map_literal(expr ast.MapLiteral) Value {
