@@ -12,6 +12,14 @@ struct Null {}
 
 type Value = Null | []Value | bool | f64 | i64 | string
 
+fn (v Value) str() string {
+	return match v {
+		Null { '' }
+		string { v }
+		[]Value, bool, f64, i64 { v.str() }
+	}
+}
+
 [noreturn]
 fn todo(func string, file string, line string) {
 	li_panic(func, file, line, 'unimplemented')
