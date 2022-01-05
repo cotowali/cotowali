@@ -20,6 +20,16 @@ fn (v Value) str() string {
 	}
 }
 
+fn promote(lhs Value, rhs Value) (Value, Value) {
+	return if lhs is i64 && rhs is f64 {
+		Value(f64(lhs)), Value(rhs)
+	} else if lhs is f64 && rhs is i64 {
+		Value(lhs), Value(f64(rhs))
+	} else {
+		lhs, rhs
+	}
+}
+
 [noreturn]
 fn todo(func string, file string, line string) {
 	li_panic(func, file, line, 'unimplemented')

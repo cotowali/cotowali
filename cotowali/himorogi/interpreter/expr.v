@@ -97,21 +97,15 @@ fn (mut e Interpreter) infix_expr(expr ast.InfixExpr) Value {
 		return e.call_expr(call_expr)
 	}
 
-	todo(@FN, @FILE, @LINE)
-
-	/*
-	ts := Expr(expr).type_symbol()
-	ts_resolved := ts.resolved()
-	is_int := ts_resolved.typ == builtin_type(.int)
-
-
 	if op.kind == .pow {
 		todo(@FN, @FILE, @LINE)
 	}
 
+	lhs, rhs := promote(e.expr(expr.left), e.expr(expr.right))
 	return match op.kind {
 		.eq { Value(lhs == rhs) }
 		.ne { Value(lhs != rhs) }
+		/*
 		.lt { Value(lhs < rhs) }
 		.le { Value(lhs <= rhs) }
 		.gt { Value(lhs > rhs) }
@@ -123,9 +117,9 @@ fn (mut e Interpreter) infix_expr(expr ast.InfixExpr) Value {
 		.mul { lhs * rhs }
 		.div { lhs / rhs }
 		.mod { lhs % rhs }
-		else { li_panic(@FN, @FILE, @LINE, 'unimplemented') }
+		*/
+		else { todo(@FN, @FILE, @LINE) }
 	}
-	*/
 }
 
 fn (mut e Interpreter) module_item(expr ast.ModuleItem) Value {
