@@ -19,6 +19,7 @@ const (
 fn execute(cmd Command) ? {
 	mut ctx := cmdutil.new_ctx_from_cmd(cmd)
 	ctx.config.backend = .himorogi
+	ctx.config.no_builtin = true
 	s, args := cmdutil.parse_args(cmd.args) or {
 		eprintln(err)
 		exit(1)
