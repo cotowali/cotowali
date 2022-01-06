@@ -78,10 +78,11 @@ fn execute_run_or_test(cmd Command) ? {
 		eprintln(err)
 		exit(1)
 	}
-	cotowali.run(s, args, ctx) or {
+	code := cotowali.run(s, args, ctx) or {
 		eprint(ctx.errors.format(PrettyFormatter{}))
 		exit(1)
 	}
+	exit(code)
 }
 
 fn execute_compile(cmd Command) ? {

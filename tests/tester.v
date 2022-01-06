@@ -13,6 +13,16 @@ import runtime
 // -- config --
 
 const (
+	fail_list            = [
+		'assert.li',
+		'assert_minimal.li',
+		'exit_nonzero_test.li',
+		'test_runner_test.li',
+		'std/platform/require_command.li',
+		'std/platform/required_command_not_found.li',
+		'std/assert.li',
+		'std/http_404.li',
+	]
 	skip_list            = ['raytracing.li', 'welcome.li']
 	pwsh_skip_list       = [
 		'readme_example.li',
@@ -60,6 +70,10 @@ fn is_err_test_file(f string) bool {
 	name := os.base(f.trim_string_right(suffix(.li)).trim_string_right(suffix(.todo)))
 	dir_parts := os.dir(f).split(os.path_separator)
 	return name.ends_with(suffix(.err)) || name == 'error' || dir_parts.any(it.ends_with('errors'))
+}
+
+fn is_fail_test_file(f string) bool {
+	return fail_list.any(f.ends_with(it))
 }
 
 fn is_todo_test_file(f string) bool {
@@ -168,6 +182,7 @@ fn (lic Lic) new_test_case(path string, opt TestOption) TestCase {
 		path: path
 		out_path: out
 		is_err_test: is_err_test_file(path)
+		is_fail_test: is_fail_test_file(path)
 		is_todo_test: is_todo_test_file(path)
 		is_noemit_test: is_noemit_test_file(path)
 		expected: os.read_file(out) or { '' }
@@ -212,6 +227,7 @@ mut:
 	out_path           string [required]
 	is_shellcheck_test bool
 	is_err_test        bool   [required]
+	is_fail_test       bool   [required]
 	is_todo_test       bool   [required]
 	is_noemit_test     bool   [required]
 	expected           string [required]
@@ -252,7 +268,11 @@ fn (t &TestCase) run() TestResult {
 		exit_code: cmd_res.exit_code
 	}
 
-	correct_exit_code := if t.is_err_test { result.exit_code != 0 } else { result.exit_code == 0 }
+	correct_exit_code := if t.is_err_test || (t.is_fail_test && !t.opt.compile_only) {
+		result.exit_code != 0
+	} else {
+		result.exit_code == 0
+	}
 	result.status = if t.is_todo_test {
 		TestResultStatus.todo
 		// result.status = .todo
