@@ -39,7 +39,22 @@ fn (mut e Interpreter) stmt(stmt Stmt) {
 }
 
 fn (mut e Interpreter) assert_stmt(stmt ast.AssertStmt) {
-	todo(@FN, @FILE, @LINE)
+	if e.expr(stmt.cond()).bool() {
+		return
+	}
+
+	eprint('LINE $stmt.pos.line: Assertion Failed')
+	if msg_expr := stmt.message_expr() {
+		eprint(': $msg_expr')
+	}
+	eprintln('')
+
+	is_test := if f := e.current_fn() { f.is_test() } else { false }
+	if is_test {
+		todo(@FN, @FILE, @LINE)
+	}
+
+	exit(1)
 }
 
 fn (mut e Interpreter) assign_stmt(stmt ast.AssignStmt) {

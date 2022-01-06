@@ -12,6 +12,13 @@ struct Null {}
 
 type Value = Null | []Value | bool | f64 | i64 | string
 
+fn (v Value) bool() bool {
+	if v is bool {
+		return v
+	}
+	li_panic(@FN, @FILE, @LINE, '$v is not a bool')
+}
+
 fn (v Value) str() string {
 	return match v {
 		Null { '' }
