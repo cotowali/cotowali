@@ -31,7 +31,7 @@ fn (mut p Parser) parse_inline_shell() ?ast.InlineShell {
 					ident: ast.Ident{
 						scope: p.scope
 						pos: tok.pos
-						text: tok.text.trim_prefix('%')
+						text: tok.text.trim_string_left('%')
 					}
 				}
 			}

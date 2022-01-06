@@ -57,25 +57,25 @@ fn suffix(s FileSuffix) string {
 }
 
 fn is_err_test_file(f string) bool {
-	name := os.base(f.trim_suffix(suffix(.li)).trim_suffix(suffix(.todo)))
+	name := os.base(f.trim_string_right(suffix(.li)).trim_string_right(suffix(.todo)))
 	dir_parts := os.dir(f).split(os.path_separator)
 	return name.ends_with(suffix(.err)) || name == 'error' || dir_parts.any(it.ends_with('errors'))
 }
 
 fn is_todo_test_file(f string) bool {
-	return f.trim_suffix(suffix(.li)).ends_with(suffix(.todo))
+	return f.trim_string_right(suffix(.li)).ends_with(suffix(.todo))
 }
 
 fn is_noemit_test_file(f string) bool {
-	return f.trim_suffix(suffix(.li)).trim_suffix(suffix(.todo)).ends_with(suffix(.noemit))
+	return f.trim_string_right(suffix(.li)).trim_string_right(suffix(.todo)).ends_with(suffix(.noemit))
 }
 
 fn is_mod_file(f string) bool {
-	return f.trim_suffix(suffix(.li)).ends_with(suffix(.mod))
+	return f.trim_string_right(suffix(.li)).ends_with(suffix(.mod))
 }
 
 fn out_path(f string) string {
-	return f.trim_suffix(suffix(.li)) + suffix(.out)
+	return f.trim_string_right(suffix(.li)) + suffix(.out)
 }
 
 fn is_target_file(s string, opt TestOption) bool {
@@ -153,7 +153,7 @@ fn (lic Lic) execute(c LicCommand, file string) os.Result {
 	return match c {
 		.shellcheck { os.execute('$cmd -test $file | shellcheck -') }
 		.compile { os.execute('$cmd -test $file') }
-		.compile_to_file { os.execute('$cmd -test $file > ${file.trim_suffix(suffix(.li))}${suffix(.sh)}') }
+		.compile_to_file { os.execute('$cmd -test $file > ${file.trim_string_right(suffix(.li))}${suffix(.sh)}') }
 		.noemit { os.execute('$cmd -no-emit $file') }
 		.run { os.execute('$cmd run $file') }
 		.test { os.execute('$cmd test $file') }
@@ -222,7 +222,7 @@ fn (t TestCase) is_normal_test() bool {
 }
 
 fn fix_todo(f string, s FileSuffix) {
-	base := f.trim_suffix(suffix(s)).trim_suffix(suffix(.todo))
+	base := f.trim_string_right(suffix(s)).trim_string_right(suffix(.todo))
 	os.mv(f, base + suffix(s)) or { panic(err) }
 }
 
@@ -320,7 +320,7 @@ fn (r TestResult) failed_message(file string) string {
 }
 
 fn (r TestResult) message() string {
-	file := os.real_path(r.path).trim_prefix(os.real_path(@VMODROOT)).trim_prefix('/')
+	file := os.real_path(r.path).trim_string_left(os.real_path(@VMODROOT)).trim_string_left('/')
 	return match r.status {
 		.failed { r.failed_message(file) }
 		else { r.summary_message(file) }
