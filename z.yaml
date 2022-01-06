@@ -54,7 +54,7 @@ tasks:
       install: cp {{bin}}/lic {{install_dir}}/lic
       symlink: ln -fs {{bin}}/lic {{install_dir}}/lic
   himorogi:
-    run: z himorogi run
+    run: z himorogi run $@
     tasks:
       build: mkdir -p {{bin}} && v {{himorogi_path}} -o {{bin}}/himorogi
       build.win: mkdir -p {{bin}} && v {{himorogi_path}} -o {{bin}}/himorogi.exe -os windows
