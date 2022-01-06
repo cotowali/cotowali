@@ -7,18 +7,57 @@ module interpreter
 
 import cotowali.context { Context }
 import cotowali.ast { File, FnDecl }
+import cotowali.util { li_panic }
+
+[heap]
+struct Scope {
+	name   string
+	parent &Scope = 0
+mut:
+	children map[string]&Scope
+}
+
+fn (s &Scope) parent() ?&Scope {
+	if isnil(s.parent) {
+		return none
+	}
+	return s.parent
+}
+
+fn (mut s Scope) open_child(name string) &Scope {
+	if name in s.children {
+		s.children[name] = &Scope{
+			name: name
+			parent: s
+		}
+	}
+	return s.children[name]
+}
 
 pub struct Interpreter {
 mut:
 	ctx        &Context
 	current_fn &FnDecl = 0
+	scope      &Scope
 }
 
 [inline]
 pub fn new_interpreter(ctx &Context) Interpreter {
 	return Interpreter{
 		ctx: ctx
+		scope: &Scope{}
 	}
+}
+
+fn (mut e Interpreter) open_scope(name string) &Scope {
+	s := e.scope.open_child(name)
+	e.scope = s
+	return s
+}
+
+fn (mut e Interpreter) close_scope() &Scope {
+	e.scope = e.scope.parent() or { li_panic(@FN, @FILE, @LINE, 'cannot close global scope') }
+	return e.scope
 }
 
 fn (e &Interpreter) current_fn() ?&FnDecl {
