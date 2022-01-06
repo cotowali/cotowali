@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         cc: [clang, gcc]
-        test_arg: ['', 'prod', 'pwsh']
+        test_arg: ['', 'prod', 'pwsh', 'himorogi']
     env:
       VFLAGS: "-cc ${{ matrix.cc }}"
     steps:
@@ -55,13 +55,16 @@ jobs:
       - run: docker run -v $(pwd):/app/cotowali -w /app/cotowali busybox ./tests/run.sh
   test-macos:
     runs-on: macos-latest
+    strategy:
+      matrix:
+        test_arg: ['', 'prod', 'himorogi']
     env:
       VFLAGS: "-cc clang"
     steps:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
       - run: z ci setup-v
-      - run: z ci test
+      - run: z ci test ${{ matrix.test_arg }}
 # shellcheck:
 #   runs-on: ubuntu-latest
 #   strategy:

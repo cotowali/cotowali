@@ -121,6 +121,7 @@ tasks:
       fix: z test integration --fix $@
       prod: z test integration --prod $@
       pwsh: z test integration --pwsh $@
+      himorogi: z test integration --himorogi $@
       hello: z run examples/hello.li
       watch: |
         watch=""
@@ -159,6 +160,7 @@ tasks:
       format: v fmt -verify .
       test: z test
       test.pwsh: z test pwsh
+      test.himorogi: z test himorogi
       test.prod: z test prod
       test.shellcheck: z test --shellcheck
       run-on-all-conditions:

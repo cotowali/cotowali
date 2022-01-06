@@ -19,6 +19,7 @@ const (
 		'posix_test.li',
 		'glob_test.li',
 	]
+	himorogi_list        = ['empty.li']
 	use_test_runner_list = ['test_runner_test.li', 'std/assert.li']
 	slow_list            = os.glob('tests/require_remote/*') ?
 )
@@ -84,6 +85,9 @@ fn is_target_file(s string, opt TestOption) bool {
 	if opt.pwsh && pwsh_skip_list.any(s.ends_with(it)) {
 		return false
 	}
+	if opt.himorogi && !himorogi_list.any(s.ends_with(it)) {
+		return false
+	}
 	if opt.fast && slow_list.any(s.ends_with(it)) {
 		return false
 	}
@@ -137,6 +141,14 @@ fn (lic Lic) compile() ? {
 }
 
 fn (lic Lic) execute(c LicCommand, file string) os.Result {
+	if lic.bin.contains('himorogi') {
+		if c == .run {
+			return os.execute('$lic.bin $file')
+		} else {
+			panic('invalid command `$c` for himorogi')
+		}
+	}
+
 	cmd := '$lic.bin -b $lic.backend'
 	return match c {
 		.shellcheck { os.execute('$cmd -test $file | shellcheck -') }
@@ -167,6 +179,7 @@ struct TestOption {
 	fix_mode     bool
 	compile_only bool
 	pwsh         bool
+	himorogi     bool
 	prod         bool
 	fast         bool
 	autofree     bool
@@ -322,7 +335,7 @@ mut:
 
 fn new_test_suite(paths []string, opt TestOption) TestSuite {
 	dir := os.real_path(@VMODROOT)
-	lic_dir := os.join_path(dir, 'cmd', 'lic')
+	lic_dir := os.join_path(dir, 'cmd', if opt.himorogi { 'himorogi' } else { 'lic' })
 	sources := get_sources(paths, opt)
 
 	lic := Lic{
@@ -330,7 +343,7 @@ fn new_test_suite(paths []string, opt TestOption) TestSuite {
 		autofree: opt.autofree
 		source: lic_dir
 		backend: if opt.pwsh { 'pwsh' } else { 'sh' }
-		bin: os.join_path('tests', 'lic')
+		bin: os.join_path('tests', if opt.himorogi { 'himorogi' } else { 'lic' })
 	}
 
 	lic.compile() or {
@@ -428,6 +441,7 @@ fn main() {
 		println('  --fix-mode     auto fix failed tests')
 		println('  --compile      compile tests instead of run tests')
 		println('  --pwsh         use pwsh backend')
+		println('  --himorogi     himorogi test')
 		println("  --prod         enable V's -prod")
 		println('  --fast         skip slow tests')
 		println('  --autofree     enable autofree')
@@ -439,6 +453,7 @@ fn main() {
 	fix_mode := '--fix' in os.args
 	compile_only := '--compile' in os.args
 	pwsh := '--pwsh' in os.args
+	himorogi := '--himorogi' in os.args
 	prod := '--prod' in os.args
 	fast := '--fast' in os.args
 	autofree := '--autofree' in os.args
@@ -463,6 +478,7 @@ fn main() {
 		compile_only: compile_only
 		autofree: autofree
 		pwsh: pwsh
+		himorogi: himorogi
 		prod: prod
 		fast: fast
 		parallel: parallel
