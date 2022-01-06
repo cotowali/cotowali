@@ -76,7 +76,7 @@ pub fn (mut shell Shell) stdout_read() string {
 	for shell.is_alive() && !out.ends_with(done_marker) {
 		out += p.stdout_read()
 	}
-	return out.trim_suffix(done_marker)
+	return out.trim_string_right(done_marker)
 }
 
 pub fn (mut shell Shell) stderr_read() string {

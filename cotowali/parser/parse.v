@@ -94,7 +94,7 @@ pub fn parse_remote_file(url URL, ctx &Context) ?&ast.File {
 
 	http_url_str := http_url.str()
 	path := if scheme in [.http, .https] {
-		http_url_str.trim_prefix('$url.scheme:').trim_prefix('//')
+		http_url_str.trim_string_left('$url.scheme:').trim_string_left('//')
 	} else {
 		http_url.path
 	}
