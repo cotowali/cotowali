@@ -15,6 +15,7 @@ struct Scope {
 	parent &Scope = 0
 mut:
 	children map[string]&Scope
+	vars     map[string]&Value
 }
 
 fn (s &Scope) parent() ?&Scope {
@@ -32,6 +33,28 @@ fn (mut s Scope) open_child(name string) &Scope {
 		}
 	}
 	return s.children[name]
+}
+
+fn (s &Scope) lookup_var(name string) &Value {
+	return s.vars[name] or {
+		mut parent := s.parent() or { li_panic(@FN, @FILE, @LINE, 'variable $name not found') }
+		parent.lookup_var(name)
+	}
+}
+
+fn (mut s Scope) set_var(name string, value Value) {
+	if name !in s.vars {
+		s.vars[name] = &value
+	}
+	mut parent := s.parent() or { li_panic(@FN, @FILE, @LINE, 'variable $name not found') }
+	parent.set_var(name, value)
+}
+
+fn (mut s Scope) register_var(name string, value Value) {
+	if name in s.vars {
+		li_panic(@FN, @FILE, @LINE, 'variable $name exists')
+	}
+	s.vars[name] = &value
 }
 
 pub struct Interpreter {

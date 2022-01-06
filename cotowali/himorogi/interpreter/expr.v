@@ -221,7 +221,3 @@ fn (mut e Interpreter) selector_expr(expr ast.SelectorExpr) Value {
 	// method call is handled by call_expr. Nothing to do
 	li_panic(@FN, @FILE, @LINE, 'unreachable')
 }
-
-fn (mut e Interpreter) var_(v ast.Var) Value {
-	todo(@FN, @FILE, @LINE)
-}

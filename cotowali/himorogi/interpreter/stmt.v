@@ -57,10 +57,6 @@ fn (mut e Interpreter) assert_stmt(stmt ast.AssertStmt) {
 	exit(1)
 }
 
-fn (mut e Interpreter) assign_stmt(stmt ast.AssignStmt) {
-	todo(@FN, @FILE, @LINE)
-}
-
 fn (mut e Interpreter) block(block ast.Block) {
 	for stmt in block.stmts {
 		e.stmt(stmt)
