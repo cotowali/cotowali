@@ -6,7 +6,6 @@
 module cmdutil
 
 import os
-import arrays
 import cli { Command, Flag }
 import cotowali.config { Backend, Config, backend_from_str, default_feature }
 import cotowali.context { Context, new_context }
@@ -42,7 +41,9 @@ pub fn (flags Flags) array() []Flag {
 }
 
 pub fn (flags Flags) extends(extra_flags ...Flag) Flags {
-	return arrays.concat(flags, ...extra_flags)
+	mut res := flags
+	res << extra_flags
+	return res
 }
 
 pub fn (flags Flags) excepts(excepts ...FlagKind) Flags {
