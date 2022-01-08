@@ -43,8 +43,9 @@ fn (s &Scope) lookup_var(name string) &Value {
 }
 
 fn (mut s Scope) set_var(name string, value Value) {
-	if name !in s.vars {
+	if name in s.vars {
 		s.vars[name] = &value
+		return
 	}
 	mut parent := s.parent() or { li_panic(@FN, @FILE, @LINE, 'variable $name not found') }
 	parent.set_var(name, value)
