@@ -5,6 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module interpreter
 
+import math
 import cotowali.ast
 import cotowali.util { li_panic }
 
@@ -55,6 +56,39 @@ fn (lhs_orig Value) sub(rhs_orig Value) Value {
 		Value(lhs - rhs)
 	} else {
 		li_panic(@FN, @FILE, @LINE, '$lhs + $rhs')
+	}
+}
+
+fn (lhs_orig Value) mul(rhs_orig Value) Value {
+	lhs, rhs := promote(lhs_orig, rhs_orig)
+	return if lhs is f64 && rhs is f64 {
+		Value(lhs * rhs)
+	} else if lhs is i64 && rhs is i64 {
+		Value(lhs * rhs)
+	} else {
+		li_panic(@FN, @FILE, @LINE, 'invalid operation: $lhs + $rhs')
+	}
+}
+
+fn (lhs_orig Value) div(rhs_orig Value) Value {
+	lhs, rhs := promote(lhs_orig, rhs_orig)
+	return if lhs is f64 && rhs is f64 {
+		Value(lhs / rhs)
+	} else if lhs is i64 && rhs is i64 {
+		Value(lhs / rhs)
+	} else {
+		li_panic(@FN, @FILE, @LINE, 'invalid operation: $lhs / $rhs')
+	}
+}
+
+fn (lhs_orig Value) mod(rhs_orig Value) Value {
+	lhs, rhs := promote(lhs_orig, rhs_orig)
+	return if lhs is f64 && rhs is f64 {
+		Value(math.fmod(lhs, rhs))
+	} else if lhs is i64 && rhs is i64 {
+		Value(lhs % rhs)
+	} else {
+		li_panic(@FN, @FILE, @LINE, 'invalid operation: $lhs / $rhs')
 	}
 }
 

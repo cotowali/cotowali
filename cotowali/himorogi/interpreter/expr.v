@@ -115,11 +115,9 @@ fn (mut e Interpreter) infix_expr(expr ast.InfixExpr) Value {
 		*/
 		.plus { lhs.add(rhs) }
 		.minus { lhs.sub(rhs) }
-		/*
-		.mul { lhs * rhs }
-		.div { lhs / rhs }
-		.mod { lhs % rhs }
-		*/
+		.mul { lhs.mul(rhs) }
+		.div { lhs.div(rhs) }
+		.mod { lhs.mod(rhs) }
 		else { todo(@FN, @FILE, @LINE) }
 	}
 }
@@ -132,6 +130,9 @@ fn (mut e Interpreter) module_item(expr ast.ModuleItem) Value {
 }
 
 fn (mut e Interpreter) paren_expr(expr ast.ParenExpr) Value {
+	if expr.exprs.len == 1 {
+		return e.expr(expr.exprs[0])
+	}
 	todo(@FN, @FILE, @LINE)
 	/*
 	if expr.exprs.len == 0 {
