@@ -7,7 +7,6 @@ assert(1 / 2.0 == 0.5)
 
 assert(1.5 ** 2 == 1.5 * 1.5)
 
-#if !himorogi
 var v = 10.0
 assert(-v == -10)
 assert(+v == 10)
@@ -15,6 +14,7 @@ assert(-+v == +-v)
 assert(- -v == + +v)
 assert(- - -v == -v)
 
+#if !himorogi
 fn negative(v: float): float {
   return -v
 }

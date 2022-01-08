@@ -176,20 +176,14 @@ fn (mut e Interpreter) prefix_expr(expr ast.PrefixExpr) Value {
 		return e.call_expr(call_expr)
 	}
 
-	todo(@FN, @FILE, @LINE)
-	/*
-	if op.kind == .amp {
-		todo(@FN, @FILE, @LINE)
-	}
-
 	value := e.expr(expr.expr)
 	return match op.kind {
-		.not { value.not() }
+		.amp { todo(@FN, @FILE, @LINE) }
+		.not { todo(@FN, @FILE, @LINE) }
 		.plus { value }
-		.minus { value * Value(-1) }
+		.minus { value.mul(i64(-1)) }
 		else { li_panic(@FN, @FILE, @LINE, 'invalid op $op.text') }
 	}
-	*/
 }
 
 fn (mut e Interpreter) pipeline(pipeline ast.Pipeline) Value {
