@@ -19,6 +19,45 @@ fn (v Value) bool() bool {
 	li_panic(@FN, @FILE, @LINE, '$v is not a bool')
 }
 
+fn (v Value) @as<T>() {
+	if v is T {
+		return v
+	}
+	li_panic(@FN, @FILE, @LINE, '$v is not a ${typeof(T).name}')
+}
+
+fn (lhs_orig Value) add(rhs_orig Value) Value {
+	lhs, rhs := promote(lhs_orig, rhs_orig)
+
+	if lhs is []Value && rhs is []Value {
+		mut res := []Value{cap: lhs.len + rhs.len}
+		res << lhs
+		res << rhs
+		return res
+	}
+
+	return if lhs is f64 && rhs is f64 {
+		Value(lhs + rhs)
+	} else if lhs is i64 && rhs is i64 {
+		Value(lhs + rhs)
+	} else if lhs is string && rhs is string {
+		Value(lhs + rhs)
+	} else {
+		li_panic(@FN, @FILE, @LINE, '$lhs + $rhs')
+	}
+}
+
+fn (lhs_orig Value) sub(rhs_orig Value) Value {
+	lhs, rhs := promote(lhs_orig, rhs_orig)
+	return if lhs is f64 && rhs is f64 {
+		Value(lhs - rhs)
+	} else if lhs is i64 && rhs is i64 {
+		Value(lhs - rhs)
+	} else {
+		li_panic(@FN, @FILE, @LINE, '$lhs + $rhs')
+	}
+}
+
 fn (v Value) str() string {
 	return match v {
 		Null { '' }

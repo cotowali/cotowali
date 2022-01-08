@@ -112,8 +112,10 @@ fn (mut e Interpreter) infix_expr(expr ast.InfixExpr) Value {
 		.ge { Value(lhs >= rhs) }
 		.logical_and { Value(lhs.bool() && rhs.bool()) }
 		.logical_or { Value(lhs.bool() || rhs.bool()) }
-		.plus { lhs + rhs }
-		.minus { lhs - rhs }
+		*/
+		.plus { lhs.add(rhs) }
+		.minus { lhs.sub(rhs) }
+		/*
 		.mul { lhs * rhs }
 		.div { lhs / rhs }
 		.mod { lhs % rhs }
