@@ -92,6 +92,17 @@ fn (lhs_orig Value) mod(rhs_orig Value) Value {
 	}
 }
 
+fn (lhs_orig Value) pow(rhs_orig Value) Value {
+	lhs, rhs := promote(lhs_orig, rhs_orig)
+	return if lhs is f64 && rhs is f64 {
+		Value(math.pow(lhs, rhs))
+	} else if lhs is i64 && rhs is i64 {
+		Value(math.powi(lhs, rhs))
+	} else {
+		li_panic(@FN, @FILE, @LINE, 'invalid operation: $lhs / $rhs')
+	}
+}
+
 fn (v Value) str() string {
 	return match v {
 		Null { '' }

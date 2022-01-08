@@ -97,10 +97,6 @@ fn (mut e Interpreter) infix_expr(expr ast.InfixExpr) Value {
 		return e.call_expr(call_expr)
 	}
 
-	if op.kind == .pow {
-		todo(@FN, @FILE, @LINE)
-	}
-
 	lhs, rhs := promote(e.expr(expr.left), e.expr(expr.right))
 	return match op.kind {
 		.eq { Value(lhs == rhs) }
@@ -118,6 +114,7 @@ fn (mut e Interpreter) infix_expr(expr ast.InfixExpr) Value {
 		.mul { lhs.mul(rhs) }
 		.div { lhs.div(rhs) }
 		.mod { lhs.mod(rhs) }
+		.pow { lhs.pow(rhs) }
 		else { todo(@FN, @FILE, @LINE) }
 	}
 }

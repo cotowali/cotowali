@@ -5,9 +5,9 @@ assert(1e+2 + 1e-2 == 100.01)
 assert(1.0 / 2 == 0.5)
 assert(1 / 2.0 == 0.5)
 
-#if !himorogi
 assert(1.5 ** 2 == 1.5 * 1.5)
 
+#if !himorogi
 var v = 10.0
 assert(-v == -10)
 assert(+v == 10)
