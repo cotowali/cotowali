@@ -7,8 +7,6 @@
   </a>
 </div>
 
-> This project is Work in Progress. First release is planned for later 2021.
-
 ## Concepts of Cotowali
 
 - Outputs shell script that is fully compliant with POSIX standards.
