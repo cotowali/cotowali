@@ -88,7 +88,7 @@ fn (lhs_orig Value) mod(rhs_orig Value) Value {
 	} else if lhs is i64 && rhs is i64 {
 		Value(lhs % rhs)
 	} else {
-		li_panic(@FN, @FILE, @LINE, 'invalid operation: $lhs / $rhs')
+		li_panic(@FN, @FILE, @LINE, 'invalid operation: $lhs % $rhs')
 	}
 }
 
@@ -99,7 +99,7 @@ fn (lhs_orig Value) pow(rhs_orig Value) Value {
 	} else if lhs is i64 && rhs is i64 {
 		Value(math.powi(lhs, rhs))
 	} else {
-		li_panic(@FN, @FILE, @LINE, 'invalid operation: $lhs / $rhs')
+		li_panic(@FN, @FILE, @LINE, 'invalid operation: $lhs ** $rhs')
 	}
 }
 
