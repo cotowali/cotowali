@@ -105,10 +105,8 @@ fn (mut e Interpreter) infix_expr(expr ast.InfixExpr) Value {
 		.le { Value(lhs.le(rhs)) }
 		.gt { Value(lhs.gt(rhs)) }
 		.ge { Value(lhs.ge(rhs)) }
-		/*
 		.logical_and { Value(lhs.bool() && rhs.bool()) }
 		.logical_or { Value(lhs.bool() || rhs.bool()) }
-		*/
 		.plus { lhs.add(rhs) }
 		.minus { lhs.sub(rhs) }
 		.mul { lhs.mul(rhs) }
@@ -179,7 +177,7 @@ fn (mut e Interpreter) prefix_expr(expr ast.PrefixExpr) Value {
 	value := e.expr(expr.expr)
 	return match op.kind {
 		.amp { todo(@FN, @FILE, @LINE) }
-		.not { todo(@FN, @FILE, @LINE) }
+		.not { Value(!value.bool()) }
 		.plus { value }
 		.minus { value.mul(i64(-1)) }
 		else { li_panic(@FN, @FILE, @LINE, 'invalid op $op.text') }

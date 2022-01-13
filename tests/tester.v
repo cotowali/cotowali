@@ -29,7 +29,13 @@ const (
 		'posix_test.li',
 		'glob_test.li',
 	]
-	himorogi_list        = ['assert_minimal.li', 'empty.li', 'expr/int_test.li', 'expr/float_test.li']
+	himorogi_list        = [
+		'assert_minimal.li',
+		'empty.li',
+		'expr/int_test.li',
+		'expr/float_test.li',
+		'expr/bool_test.li',
+	]
 	use_test_runner_list = ['test_runner_test.li', 'std/assert.li']
 	slow_list            = os.glob('tests/require_remote/*') ?
 )
