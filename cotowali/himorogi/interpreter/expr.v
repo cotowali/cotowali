@@ -101,11 +101,11 @@ fn (mut e Interpreter) infix_expr(expr ast.InfixExpr) Value {
 	return match op.kind {
 		.eq { Value(lhs.eq(rhs)) }
 		.ne { Value(lhs.ne(rhs)) }
+		.lt { Value(lhs.lt(rhs)) }
+		.le { Value(lhs.le(rhs)) }
+		.gt { Value(lhs.gt(rhs)) }
+		.ge { Value(lhs.ge(rhs)) }
 		/*
-		.lt { Value(lhs < rhs) }
-		.le { Value(lhs <= rhs) }
-		.gt { Value(lhs > rhs) }
-		.ge { Value(lhs >= rhs) }
 		.logical_and { Value(lhs.bool() && rhs.bool()) }
 		.logical_or { Value(lhs.bool() || rhs.bool()) }
 		*/

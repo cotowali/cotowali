@@ -112,6 +112,36 @@ fn (lhs_orig Value) ne(rhs_orig Value) bool {
 	return !lhs_orig.eq(rhs_orig)
 }
 
+fn (lhs_orig Value) lt(rhs_orig Value) bool {
+	lhs, rhs := promote(lhs_orig, rhs_orig)
+	return if lhs is f64 && rhs is f64 {
+		lhs < rhs
+	} else if lhs is i64 && rhs is i64 {
+		lhs < rhs
+	} else {
+		li_panic(@FN, @FILE, @LINE, 'invalid operation: $lhs / $rhs')
+	}
+}
+
+fn (lhs Value) le(rhs Value) bool {
+	return lhs.lt(rhs) || lhs.eq(rhs)
+}
+
+fn (lhs_orig Value) gt(rhs_orig Value) bool {
+	lhs, rhs := promote(lhs_orig, rhs_orig)
+	return if lhs is f64 && rhs is f64 {
+		lhs > rhs
+	} else if lhs is i64 && rhs is i64 {
+		lhs > rhs
+	} else {
+		li_panic(@FN, @FILE, @LINE, 'invalid operation: $lhs / $rhs')
+	}
+}
+
+fn (lhs Value) ge(rhs Value) bool {
+	return lhs.gt(rhs) || lhs.eq(rhs)
+}
+
 fn (v Value) str() string {
 	return match v {
 		Null { '' }

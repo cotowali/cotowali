@@ -18,7 +18,6 @@ assert(-+v == +-v)
 assert(- -v == + +v)
 assert(- - -v == -v)
 
-#if !himorogi
 assert(0 < 1)
 assert(0 <= 1)
 assert(0 <= 0)
@@ -26,6 +25,7 @@ assert(1 > 0)
 assert(1 >= 0)
 assert(0 >= 0)
 
+#if !himorogi
 fn zero(): int {
   var v = 0
 
