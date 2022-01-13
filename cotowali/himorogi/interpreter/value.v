@@ -103,6 +103,15 @@ fn (lhs_orig Value) pow(rhs_orig Value) Value {
 	}
 }
 
+fn (lhs_orig Value) eq(rhs_orig Value) bool {
+	lhs, rhs := promote(lhs_orig, rhs_orig)
+	return lhs == rhs
+}
+
+fn (lhs_orig Value) ne(rhs_orig Value) bool {
+	return !lhs_orig.eq(rhs_orig)
+}
+
 fn (v Value) str() string {
 	return match v {
 		Null { '' }

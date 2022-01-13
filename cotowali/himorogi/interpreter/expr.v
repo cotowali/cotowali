@@ -99,8 +99,8 @@ fn (mut e Interpreter) infix_expr(expr ast.InfixExpr) Value {
 
 	lhs, rhs := promote(e.expr(expr.left), e.expr(expr.right))
 	return match op.kind {
-		.eq { Value(lhs == rhs) }
-		.ne { Value(lhs != rhs) }
+		.eq { Value(lhs.eq(rhs)) }
+		.ne { Value(lhs.ne(rhs)) }
 		/*
 		.lt { Value(lhs < rhs) }
 		.le { Value(lhs <= rhs) }
