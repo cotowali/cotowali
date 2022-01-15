@@ -150,7 +150,7 @@ fn exit(code: int) {
 fn exit(code: int)
 #endif
 
-fn string |> cat(files: ...string) |> ...string
+fn ...string |> cat(files: ...string) |> ...string
 
 #if pwsh
 fn seq(n: int) |> ...int {
