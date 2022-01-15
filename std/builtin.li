@@ -234,7 +234,7 @@ fn ...string |> filter(pat: string) |> ...string {
   sh { grep '-E' "$%pat" }
 }
 
-fn ...string |> replace(old: string, new: string): ...string {
+fn ...string |> replace(old: string, new: string) |> ...string {
 #if pwsh
   pwsh {
     $input | %% { $_ -replace %old, %new }
