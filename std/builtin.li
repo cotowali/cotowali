@@ -265,8 +265,11 @@ fn (s: string) replace(old: string, new: string): string {
 }
 
 fn (s: string) substr(i: int, n: int): string {
-  if n <= 0 {
+  if n == 0 {
     return ''
+  }
+  if n < 0 {
+    n = s.len()
   }
 #if pwsh
 
