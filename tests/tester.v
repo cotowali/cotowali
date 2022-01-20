@@ -17,6 +17,7 @@ const (
 		'assert.li',
 		'assert_minimal.li',
 		'exit_nonzero_test.li',
+		'panic.li',
 		'test_runner_test.li',
 		'std/platform/require_command.li',
 		'std/platform/required_command_not_found.li',

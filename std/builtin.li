@@ -150,6 +150,11 @@ fn exit(code: int) {
 fn exit(code: int)
 #endif
 
+fn panic(msg: string) {
+  eprintln("panic: $msg")
+  exit(1)
+}
+
 fn ...string |> cat(files: ...string) |> ...string
 
 #if pwsh

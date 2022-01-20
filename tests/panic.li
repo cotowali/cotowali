@@ -1,0 +1,2 @@
+panic('err')
+assert(false)
