@@ -23,6 +23,7 @@ const (
 		`/`: tk(.div)
 		`%`: tk(.mod)
 		`&`: tk(.amp)
+		`|`: tk(.bar)
 		`=`: tk(.assign)
 		`!`: tk(.not)
 		`,`: tk(.comma)

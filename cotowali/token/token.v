@@ -40,6 +40,7 @@ pub enum TokenKind {
 	dot
 	dotdotdot
 	amp
+	bar
 	question
 	int_literal
 	float_literal

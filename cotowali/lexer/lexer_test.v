@@ -135,6 +135,7 @@ fn test_lexer() {
 	ktest(@FN, @LINE, '0.0 as int', [.float_literal, .key_as, .ident])
 	ktest(@FN, @LINE, '#[attr]', [.hash, .l_bracket, .ident, .r_bracket])
 	ktest(@FN, @LINE, 'f()?', [.ident, .l_paren, .r_paren, .question])
+	ktest(@FN, @LINE, 'a | b', [.ident, .bar, .ident])
 	ktest(@FN, @LINE, '.....', [.dotdotdot, .dot, .dot])
 	ktest(@FN, @LINE, ':::::', [.coloncolon, .coloncolon, .colon])
 	ktest(@FN, @LINE, 'require "file.li"', [.key_require, .double_quote, .string_literal_content_text,
