@@ -205,6 +205,8 @@ fn rm_r(paths: ...string) {
   pwsh { rm -r $args }
 }
 
+fn sleep(seconds: int)
+
 #if !pwsh
 fn touch(files: ...string)
 
