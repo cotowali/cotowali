@@ -31,7 +31,7 @@ pub fn (_ Stdio) receive() ?string {
 				continue
 			}
 		}
-		buf.write_b(byte(c))
+		buf.write_byte(byte(c))
 		conlen--
 	}
 	payload := buf.str()
@@ -48,7 +48,7 @@ fn get_raw_input() string {
 		if buf.len > 2 && (c == eof || chr in [`\r`, `\n`]) {
 			break
 		}
-		buf.write_b(chr)
+		buf.write_byte(chr)
 	}
 	return buf.str()
 }
