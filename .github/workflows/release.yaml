@@ -15,6 +15,7 @@ jobs:
     steps:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
+      - run: sudo apt install libgc-dev
       - run: z ci setup-v
       - run: z build
       - run: ./bin/lic run scripts/pack.li
