@@ -13,6 +13,7 @@ RUN apt-get update \
     git \
     make \
     clang \
+    libgc-dev \
   && rm -rf /var/lib/apt/lists/*
 
 RUN curl -sSL https://gobinaries.com/zakuro9715/z | sh
