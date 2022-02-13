@@ -10,6 +10,26 @@ import net.urllib { URL }
 import cotowali.util.checksum
 import cotowali.util { li_panic }
 
+pub type Line = string
+
+pub fn (line Line) col(col int) Char {
+	// col is 1-based
+
+	if col < 1 {
+		return ''
+	}
+
+	mut line_i := 0
+	for i := 0; i < col - 1; i++ {
+		line_i += utf8_char_len(line[line_i])
+		if line_i >= line.len {
+			return ''
+		}
+	}
+
+	return line.substr(line_i, line_i + utf8_char_len(line[line_i]))
+}
+
 pub enum SourceScheme {
 	local
 	http
@@ -91,7 +111,7 @@ fn (mut s Source) set_line_head_indices() {
 	}
 }
 
-pub fn (s &Source) line(i int) string {
+pub fn (s &Source) line(i int) Line {
 	if s.line_head_indices.len == 0 {
 		unsafe { s.set_line_head_indices() }
 	}

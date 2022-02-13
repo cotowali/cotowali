@@ -35,3 +35,14 @@ fn test_line() ? {
 	assert s.line(2) == '//'
 	assert s.line(100000) == ''
 }
+
+fn test_line_at() {
+	line := Line('🐈 nyan')
+	assert line.col(1) == '🐈'
+	assert line.col(2) == ' '
+	assert line.col(3) == 'n'
+
+	assert line.col(-1) == ''
+	assert line.col(0) == ''
+	assert line.col(100) == ''
+}
