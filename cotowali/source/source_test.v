@@ -13,7 +13,6 @@ fn test_read_file() {
 	expected := Source{
 		path: @FILE
 		code: code
-		lines: got.lines
 	}
 
 	assert got == expected
@@ -35,4 +34,15 @@ fn test_line() ? {
 	s := read_file(@FILE) ?
 	assert s.line(2) == '//'
 	assert s.line(100000) == ''
+}
+
+fn test_line_at() {
+	line := Line('🐈 nyan')
+	assert line.col(1) == '🐈'
+	assert line.col(2) == ' '
+	assert line.col(3) == 'n'
+
+	assert line.col(-1) == ''
+	assert line.col(0) == ''
+	assert line.col(100) == ''
 }

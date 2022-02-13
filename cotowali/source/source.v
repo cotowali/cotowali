@@ -10,6 +10,26 @@ import net.urllib { URL }
 import cotowali.util.checksum
 import cotowali.util { li_panic }
 
+pub type Line = string
+
+pub fn (line Line) col(col int) Char {
+	// col is 1-based
+
+	if col < 1 {
+		return ''
+	}
+
+	mut line_i := 0
+	for i := 0; i < col - 1; i++ {
+		line_i += utf8_char_len(line[line_i])
+		if line_i >= line.len {
+			return ''
+		}
+	}
+
+	return line.substr(line_i, line_i + utf8_char_len(line[line_i]))
+}
+
 pub enum SourceScheme {
 	local
 	http
@@ -30,7 +50,7 @@ pub fn source_scheme_from_str(s string) ?SourceScheme {
 [heap]
 pub struct Source {
 mut:
-	lines []string
+	line_head_indices []int
 pub:
 	scheme SourceScheme = .local
 	path   string
@@ -79,17 +99,30 @@ pub fn (s &Source) slice(begin int, end int) string {
 	return s.code.substr(begin, end)
 }
 
-fn (mut s Source) set_lines() {
-	s.lines = s.code.split_into_lines()
-}
-
-pub fn (s &Source) line(i int) string {
-	if s.lines.len == 0 {
-		unsafe {
-			s.set_lines()
+fn (mut s Source) set_line_head_indices() {
+	s.line_head_indices = [-1, 0] // line 0 is unused. line 1 is first line
+	for i := 0; i < s.code.len; i++ {
+		if s.at(i) == '\r' && s.at(i + 1) == '\n' {
+			i++
+		}
+		if s.at(i) == '\n' {
+			s.line_head_indices << i + 1
 		}
 	}
-	return if i <= s.lines.len { s.lines[i - 1] } else { '' }
+}
+
+pub fn (s &Source) line(i int) Line {
+	if s.line_head_indices.len == 0 {
+		unsafe { s.set_line_head_indices() }
+	}
+
+	return if i + 1 < s.line_head_indices.len {
+		s.slice(s.line_head_indices[i], s.line_head_indices[i + 1])
+	} else if i == s.line_head_indices.len - 1 {
+		s.slice(s.line_head_indices[i], s.code.len)
+	} else {
+		''
+	}.trim_right('\n\r')
 }
 
 pub fn (s &Source) file_name() string {
