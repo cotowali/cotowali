@@ -5,6 +5,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module symbols
 
+import cotowali.source { pos }
+
 fn test_global_scope() {
 	mut s := new_global_scope()
 	assert s.is_global()
@@ -56,4 +58,25 @@ fn test_scope() ? {
 	assert !child.is_ancestor_of(child2_child)
 	assert !child2.is_ancestor_of(child_child)
 	assert !s.is_ancestor_of(s)
+}
+
+fn test_innermost() {
+	mut s := new_global_scope()
+	s.pos = pos(line: 1, last_line: 10)
+	mut s_1 := s.must_create_child('1')
+	s_1.pos = pos(line: 3, last_line: 6)
+	mut s_1_1 := s_1.must_create_child('1')
+	s_1_1.pos = pos(line: 5, last_line: 5, col: 1, len: 3)
+	mut s_1_2 := s_1.must_create_child('2')
+	s_1_2.pos = pos(line: 5, last_line: 5, col: 6, len: 3)
+	mut s_2 := s.must_create_child('2')
+	s_2.pos = pos(line: 7, last_line: 9)
+
+	println(s_1.id)
+	println(s_1_1.id)
+	assert s.innermost(line: 2).id == s.id
+	assert s.innermost(line: 4).id == s_1.id
+	assert s.innermost(line: 5, col: 2).id == s_1_1.id
+	assert s.innermost(line: 5, col: 8).id == s_1_2.id
+	assert s.innermost(line: 8).id == s_2.id
 }

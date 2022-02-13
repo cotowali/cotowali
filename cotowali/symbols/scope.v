@@ -103,6 +103,15 @@ pub fn (s &Scope) children() []&Scope {
 	return ids.map(s.children[it])
 }
 
+pub fn (s &Scope) innermost(pos Pos) &Scope {
+	for child in s.children() {
+		if child.pos.includes(pos) {
+			return child.innermost(pos)
+		}
+	}
+	return s
+}
+
 pub fn (s &Scope) is_ancestor_of(target &Scope) bool {
 	if s2 := target.parent() {
 		return if s.id == s2.id { true } else { s.is_ancestor_of(s2) }
