@@ -31,7 +31,9 @@ jobs:
     steps:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
+      - run: sudo apt install libgc-dev
       - run: z ci setup-v
+      - run: z build
       - run: z ci test ${{ matrix.test_arg }}
   test-alpine:
     runs-on: ubuntu-latest
@@ -64,6 +66,7 @@ jobs:
       - uses: zakuro9715/setup-z@main
       - uses: actions/checkout@v2
       - run: z ci setup-v
+      - run: z build
       - run: z ci test ${{ matrix.test_arg }}
 # shellcheck:
 #   runs-on: ubuntu-latest

@@ -10,6 +10,9 @@ import jsonrpc
 import lsp
 import cotowali.context { Context }
 
+// for libgc.a
+#flag -lpthread
+
 interface SendReceiver {
 	send(string)
 	receive() ?string

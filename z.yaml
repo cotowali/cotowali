@@ -24,7 +24,7 @@ tasks:
   debug: z lic debug $@
   no-emit: z lic no-emit $@
 
-  build: z lic build && z lish build && z himorogi build && z kuqi build
+  build: z lic build && z lish build && z himorogi build && z kuqi build.gc
   build.win: z lic build.win && z lish build.win && z himorogi build.win && z kuqi build.win
   symlink: z lic symlink && z lish symlink && z himorogi symlink && z kuqi symlink
   install: z lic install && z lish install && z himorogi install && z kuqi install
@@ -79,7 +79,7 @@ tasks:
     tasks:
       run: v run {{kuqi_path}} $@
       build: v {{kuqi_path}} -o {{bin}}/kuqi $@
-      build.gc: v {{kuqi_path}} -o {{bin}}/kuqi -gc boehm $@
+      build.gc: v {{kuqi_path}} -o {{bin}}/kuqi -cg -gc boehm -d static_boehm $@
       build.win: v {{kuqi_path}} -o {{bin}}/kuqi.exe -os windows $@
       install: cp {{bin}}/kuqi {{install_dir}}/kuqi
       symlink: ln -fs {{bin}}/kuqi {{install_dir}}/kuqi
