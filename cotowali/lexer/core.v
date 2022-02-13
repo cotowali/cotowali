@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module lexer
 
-import cotowali.source { Char, CharClass, CharCond, Pos, Source }
+import cotowali.source { Char, CharClass, CharCond, Pos, Source, pos }
 import cotowali.token { Token, TokenKind }
 import cotowali.context { Context }
 import cotowali.util { Unit, li_panic, min }
@@ -57,7 +57,7 @@ pub:
 mut:
 	prev_char         Char
 	prev_tok          Token
-	pos               Pos
+	pos               Pos = pos(i: 0)
 	closed            bool // for iter
 	in_string_literal bool
 	lex_ctx           LexicalContextStore

@@ -10,7 +10,7 @@ import cotowali.util { max, nil_to_none }
 pub struct Pos {
 	source &Source = 0
 pub:
-	i    int
+	i    int = -1
 	line int = 1
 	col  int = 1
 pub mut:
@@ -52,12 +52,13 @@ pub fn pos(pos Pos) Pos {
 pub fn none_pos() Pos {
 	return Pos{
 		i: -1
+		len: -1
 	}
 }
 
 [inline]
 pub fn (p Pos) is_none() bool {
-	return p.i < 0
+	return p.i < 0 && p.len < 0
 }
 
 pub fn (p1 Pos) merge(p2 Pos) Pos {
