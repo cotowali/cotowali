@@ -32,6 +32,14 @@ pub:
 	code int
 }
 
+pub fn (e &Err) msg() string {
+	return e.msg
+}
+
+pub fn (e &Err) code() int {
+	return e.code
+}
+
 pub fn (e &Err) source() &Source {
 	return ErrOrWarn(e).source()
 }
@@ -48,6 +56,14 @@ pub:
 	// Implements IError
 	msg  string
 	code int
+}
+
+pub fn (e &Warn) msg() string {
+	return e.msg
+}
+
+pub fn (e &Warn) code() int {
+	return e.code
 }
 
 pub fn (e &Warn) source() &Source {
@@ -67,12 +83,12 @@ pub:
 	code int
 }
 
-pub struct LexerWarn {
-pub:
-	token Token
-	// Implements IError
-	msg  string
-	code int
+pub fn (e &LexerErr) msg() string {
+	return e.msg
+}
+
+pub fn (e &LexerErr) code() int {
+	return e.code
 }
 
 pub fn (err LexerErr) to_err() Err {
@@ -81,6 +97,22 @@ pub fn (err LexerErr) to_err() Err {
 		msg: err.msg
 		code: err.code
 	}
+}
+
+pub struct LexerWarn {
+pub:
+	token Token
+	// Implements IError
+	msg  string
+	code int
+}
+
+pub fn (e &LexerWarn) msg() string {
+	return e.msg
+}
+
+pub fn (e &LexerWarn) code() int {
+	return e.code
 }
 
 pub struct ErrorWithPos {
