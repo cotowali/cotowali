@@ -9,13 +9,13 @@ import rand
 
 pub fn rand_in_range<T>(min T, max T) T {
 	$if T is u32 {
-		return rand.u32_in_range(min, max)
+		return rand.u32_in_range(min, max) or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 	} $else $if T is u64 {
-		return rand.u64_in_range(min, max)
+		return rand.u64_in_range(min, max) or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 	} $else $if T is int {
-		return rand.int_in_range(min, max)
+		return rand.int_in_range(min, max) or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 	} $else $if T is i64 {
-		return rand.i64_in_range(min, max)
+		return rand.i64_in_range(min, max) or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 	}
 	panic('invalid type')
 }
