@@ -1,3 +1,5 @@
+# We needs finantial suponsors to continue to develop. Please become a sponsor.
+
 <div align="center">
   <img width="200" src="https://raw.githubusercontent.com/cotowali/design/main/assets/cotowali.svg?sanitize=true">
   <h1>Cotowali</h1>
@@ -5,6 +7,7 @@
   <a href="http://mozilla.org/MPL/2.0/" rel="nofollow">
     <img  alt="License: MPL 2.0" src="https://img.shields.io/badge/License-MPL%202.0-blue.svg?style=flat-square">
   </a>
+
 </div>
 
 ## Concepts of Cotowali
