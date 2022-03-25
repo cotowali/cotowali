@@ -103,18 +103,6 @@ jobs:
 #  # double free error
 #  # https://github.com/cotowali/cotowali/runs/4276302273
 #      - run: z ci run-on-all-conditions
-  slack-notify:
-    if: ${{ failure() && github.ref == 'refs/heads/main' }}
-    needs: [format, test, test-alpine, test-macos, sanitize, run-on-all-conditions]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: Gamesight/slack-workflow-status@master
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          channel: ${{ secrets.SLACK_WEBHOOK_CHANNELL }}
-          name: 'GitHub Actions'
-          icon_url: 'https://raw.githubusercontent/cotowari/logo/main/cotowari.png'
   publish-dev-image:
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
