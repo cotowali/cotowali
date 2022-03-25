@@ -1,4 +1,5 @@
-# We need financial support to continue development. Please become a sponsor from [opencollective](https://opencollective.com/cotowali)
+# We need financial support to continue development.  Please [become a sponsor](https://opencollective.com/cotowali).
+
 
 <div align="center">
   <img width="200" src="https://raw.githubusercontent.com/cotowali/design/main/assets/cotowali.svg?sanitize=true">
