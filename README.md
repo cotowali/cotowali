@@ -60,7 +60,7 @@ assert((seq(3) |> twice_each() |> sum()) == 12)
 assert(((1, 2) |> @awk('{print $1 + $2}')) == '3')
 ```
 
-[There is more examples](./examples)
+[There are more examples](./examples)
 
 ## Installation
 
