@@ -20,7 +20,7 @@
 
 ## Example
 
-```
+```v
 fn fib(n: int): int {
   if n < 2 {
     return n
@@ -66,7 +66,7 @@ assert(((1, 2) |> @awk('{print $1 + $2}')) == '3')
 
 ### Use [Konryu](https://github.com/cotowali/konryu) (cotowali installer written in cotowali)
 
-```
+```sh
 curl -sSL https://konryu.cotowali.org | sh
 # add to your shell config like .bashrc
 export PATH="$HOME/.konryu/bin:$PATH"
@@ -78,14 +78,14 @@ eval "$(konryu init)"
 0. Install required tools
 
     - [The V Programming Language](https://github.com/vlang/v)
-        ```
+        ```sh
         git clone https://github.com/vlang/v
         cd v
         make
         ```
 
     - [zakuro9715/z](https://github.com/zakuro9715/z)
-        ```
+        ```sh
         go install github.com/zakuro9715/z
         # or
         curl -sSL gobinaries.com/zakuro9715/z | sh
@@ -93,13 +93,13 @@ eval "$(konryu init)"
 
 1. Build
 
-    ```
+    ```sh
     z build
     ```
 
 2. Install
 
-    ```
+    ```sh
     sudo z symlink
     # or
     sudo z install
@@ -107,7 +107,7 @@ eval "$(konryu init)"
 
 ## How to use
 
-```
+```sh
 # compile
 lic examples/add.li
 
