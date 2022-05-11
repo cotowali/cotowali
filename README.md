@@ -1,3 +1,5 @@
+**Cotowali is NOT dead. I'm working on private tasks related to cotowali.**
+
 # We need financial support to continue development.  Please [become a sponsor](https://opencollective.com/cotowali).
 
 
