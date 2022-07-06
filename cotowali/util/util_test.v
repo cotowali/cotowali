@@ -41,10 +41,6 @@ fn test_nil_to_none() {
 	assert v.opt() or { assert false } == &s
 }
 
-fn test_str_to_bytes_unsafe() {
-	assert unsafe { str_to_bytes_unsafe('abc') } == 'abc'.bytes()
-}
-
 struct Foo {}
 
 struct Bar {}
