@@ -182,7 +182,7 @@ fn (mut p Parser) check(kinds ...TokenKind) ?Token {
 }
 
 fn (mut p Parser) consume_with_check(kinds ...TokenKind) ?Token {
-	p.check(...kinds) ?
+	p.check(...kinds)?
 	return p.consume()
 }
 

@@ -64,7 +64,7 @@ pub fn parse_file(path string, ctx &Context) ?&ast.File {
 	if path in ctx.sources {
 		return none
 	}
-	return parse(source.read_file(path) ?, ctx)
+	return parse(source.read_file(path)?, ctx)
 }
 
 pub fn parse_file_relative(base_source &Source, path string, ctx &Context) ?&ast.File {

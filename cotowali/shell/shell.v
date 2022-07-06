@@ -29,7 +29,7 @@ fn new_sh_process(command string) ?&os.Process {
 pub fn new_shell(sh string, ctx &Context) ?Shell {
 	return Shell{
 		ctx: ctx
-		backend_process: new_sh_process(sh) ?
+		backend_process: new_sh_process(sh)?
 	}
 }
 

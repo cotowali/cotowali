@@ -130,7 +130,7 @@ pub fn (s &Source) file_name() string {
 }
 
 pub fn read_file(path string) ?&Source {
-	code := os.read_file(path) ?
+	code := os.read_file(path)?
 	return new_source(path, code)
 }
 

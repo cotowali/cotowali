@@ -316,7 +316,7 @@ pub:
 }
 
 pub fn (expr &AsExpr) overloaded_function() ?&symbols.Var {
-	f := Expr(expr).scope().lookup_cast_function(from: expr.expr.typ(), to: expr.typ) ?
+	f := Expr(expr).scope().lookup_cast_function(from: expr.expr.typ(), to: expr.typ)?
 	if !f.is_function() {
 		li_panic(@FN, @FILE, @LINE, 'not a function')
 	}
@@ -324,7 +324,7 @@ pub fn (expr &AsExpr) overloaded_function() ?&symbols.Var {
 }
 
 pub fn (expr &AsExpr) overloaded_function_call_expr() ?CallExpr {
-	sym := expr.overloaded_function() ?
+	sym := expr.overloaded_function()?
 	scope := Expr(expr).scope()
 	return CallExpr{
 		scope: scope
@@ -414,7 +414,7 @@ pub mut:
 pub fn (expr &InfixExpr) overloaded_function() ?&symbols.Var {
 	left_ts := expr.left.type_symbol()
 	right_ts := expr.right.type_symbol()
-	fn_var := expr.scope.lookup_infix_op_function(expr.op, left_ts.typ, right_ts.typ) ?
+	fn_var := expr.scope.lookup_infix_op_function(expr.op, left_ts.typ, right_ts.typ)?
 	if !fn_var.is_function() {
 		li_panic(@FN, @FILE, @LINE, 'not a function')
 	}
@@ -422,7 +422,7 @@ pub fn (expr &InfixExpr) overloaded_function() ?&symbols.Var {
 }
 
 pub fn (expr &InfixExpr) overloaded_function_call_expr() ?CallExpr {
-	sym := expr.overloaded_function() ?
+	sym := expr.overloaded_function()?
 	return CallExpr{
 		scope: expr.scope
 		func: Var{
@@ -655,7 +655,7 @@ pub fn (expr &PrefixExpr) int() int {
 
 pub fn (expr &PrefixExpr) overloaded_function() ?&symbols.Var {
 	operand_typ := expr.expr.typ()
-	fn_var := expr.scope.lookup_prefix_op_function(expr.op, operand_typ) ?
+	fn_var := expr.scope.lookup_prefix_op_function(expr.op, operand_typ)?
 	if !fn_var.is_function() {
 		li_panic(@FN, @FILE, @LINE, 'not a function')
 	}
@@ -663,7 +663,7 @@ pub fn (expr &PrefixExpr) overloaded_function() ?&symbols.Var {
 }
 
 pub fn (expr &PrefixExpr) overloaded_function_call_expr() ?CallExpr {
-	sym := expr.overloaded_function() ?
+	sym := expr.overloaded_function()?
 	return CallExpr{
 		scope: expr.scope
 		func: Var{

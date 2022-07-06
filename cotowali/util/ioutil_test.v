@@ -23,7 +23,7 @@ fn (b Buf) bytes() []byte {
 
 fn test_write() ? {
 	mut buf := Buf{}
-	write(mut buf, [byte(0)]) ?
+	write(mut buf, [byte(0)])?
 	assert buf.data == [byte(0)]
 	must_write(mut buf, 'abc')
 	assert buf.data == [byte(`a`), `b`, `c`]

@@ -13,13 +13,13 @@ fn test_lookup_and_register_var() ? {
 
 	name_v := 'v'
 
-	parent_v := parent.register_var(name: name_v) ?
+	parent_v := parent.register_var(name: name_v)?
 	mut found := parent.must_lookup_var(name_v)
 	assert found.id == parent_v.id
 	found = child.must_lookup_var(name_v)
 	assert found.id == parent_v.id
 
-	child_v := child.register_var(name: name_v) ?
+	child_v := child.register_var(name: name_v)?
 	found = parent.must_lookup_var(name_v)
 	assert found.id == parent_v.id
 	assert found.id != child_v.id
@@ -45,8 +45,8 @@ fn test_lookup_var_with_pos() ? {
 	name_v := 'v'
 	name_v_none := 'vnone'
 
-	parent_v := parent.register_var(name: name_v, pos: pos(i: 1)) ?
-	parent_v_none := parent.register_var(name: name_v_none, pos: none_pos()) ?
+	parent_v := parent.register_var(name: name_v, pos: pos(i: 1))?
+	parent_v_none := parent.register_var(name: name_v_none, pos: none_pos())?
 
 	assert parent.must_lookup_var_with_pos(name_v, none_pos()).id == parent_v.id
 	assert parent.must_lookup_var_with_pos(name_v, pos(i: 1)).id == parent_v.id
@@ -64,8 +64,8 @@ fn test_lookup_var_with_pos() ? {
 	assert child.must_lookup_var_with_pos(name_v_none, none_pos()).id == parent_v_none.id
 	assert child.must_lookup_var_with_pos(name_v_none, pos(i: 0)).id == parent_v_none.id
 
-	child_v := child.register_var(name: name_v, pos: pos(i: 2)) ?
-	child_v_none := child.register_var(name: name_v_none, pos: none_pos()) ?
+	child_v := child.register_var(name: name_v, pos: pos(i: 2))?
+	child_v_none := child.register_var(name: name_v_none, pos: none_pos())?
 
 	assert child.must_lookup_var_with_pos(name_v, none_pos()).id == child_v.id
 	assert child.must_lookup_var_with_pos(name_v, pos(i: 1)).id == parent_v.id
@@ -80,7 +80,7 @@ fn test_lookup_var_with_pos() ? {
 
 fn test_register_function() ? {
 	mut s := new_global_scope()
-	f := s.register_function(name: 'f') ?
+	f := s.register_function(name: 'f')?
 	assert f.id != 0
 	assert f.is_function()
 }
@@ -92,7 +92,7 @@ fn test_lookup_or_register_var() ? {
 	registered := s.lookup_or_register_var(name: 'v')
 	assert registered.id != 0
 	assert s.vars.keys().len == v_n + 1
-	assert (registered.scope() ?).id == s.id
+	assert (registered.scope()?).id == s.id
 
 	found := s.lookup_or_register_var(name: 'v')
 	assert registered.id == found.id

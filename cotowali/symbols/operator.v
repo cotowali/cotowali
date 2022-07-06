@@ -41,17 +41,17 @@ fn verify_op_signature(expected TokenKindClass, op Token, fn_info FunctionTypeIn
 	}
 
 	subject := '$expected_s function'
-	check_number_of_parameters(subject, if expected == .infix_op { 2 } else { 1 }, fn_info.params.len) ?
-	check_no_variadic(subject, fn_info) ?
-	check_no_pipe_in(subject, fn_info) ?
+	check_number_of_parameters(subject, if expected == .infix_op { 2 } else { 1 }, fn_info.params.len)?
+	check_no_variadic(subject, fn_info)?
+	check_no_pipe_in(subject, fn_info)?
 }
 
 pub fn (mut s Scope) register_infix_op_function(op Token, f RegisterFnArgs) ?&Var {
 	fn_info := f.FunctionTypeInfo
-	verify_op_signature(.infix_op, op, fn_info) ?
+	verify_op_signature(.infix_op, op, fn_info)?
 
-	lhs_ts := s.lookup_type(fn_info.params[0].typ) ?
-	rhs_ts := s.lookup_type(fn_info.params[1].typ) ?
+	lhs_ts := s.lookup_type(fn_info.params[0].typ)?
+	rhs_ts := s.lookup_type(fn_info.params[1].typ)?
 
 	fn_typ := s.lookup_or_register_function_type(fn_info).typ
 
@@ -117,9 +117,9 @@ pub fn (s &Scope) lookup_infix_op_function(op Token, lhs Type, rhs Type) ?&Var {
 
 pub fn (mut s Scope) register_prefix_op_function(op Token, f RegisterFnArgs) ?&Var {
 	fn_info := f.FunctionTypeInfo
-	verify_op_signature(.prefix_op, op, fn_info) ?
+	verify_op_signature(.prefix_op, op, fn_info)?
 
-	operand_ts := s.lookup_type(fn_info.params[0].typ) ?
+	operand_ts := s.lookup_type(fn_info.params[0].typ)?
 	fn_typ := s.lookup_or_register_function_type(fn_info).typ
 
 	v := &Var{
@@ -168,9 +168,9 @@ pub fn (mut s Scope) register_cast_function(f RegisterFnArgs, params CastFunctio
 	fn_info := f.FunctionTypeInfo
 
 	subject := 'cast function'
-	check_number_of_parameters(subject, 0, fn_info.params.len - 1) ?
-	check_no_variadic(subject, fn_info) ?
-	check_no_pipe_in(subject, fn_info) ?
+	check_number_of_parameters(subject, 0, fn_info.params.len - 1)?
+	check_no_variadic(subject, fn_info)?
+	check_no_pipe_in(subject, fn_info)?
 
 	$if !prod {
 		if params.from != builtin_type(.placeholder) && params.from != fn_info.params[0].typ {
