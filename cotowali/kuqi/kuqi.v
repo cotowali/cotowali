@@ -49,7 +49,7 @@ fn (mut qi Kuqi) send_null(id int) {
 
 fn (mut q Kuqi) decode<T>(data string) ?T {
 	decoded := json.decode(T, data) or {
-		q.send(new_error(jsonrpc.invalid_request))
+		q.io.send(json.encode(new_error(jsonrpc.invalid_request)))
 		return none
 	}
 	return decoded

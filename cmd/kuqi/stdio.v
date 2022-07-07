@@ -31,7 +31,7 @@ pub fn (_ Stdio) receive() ?string {
 				continue
 			}
 		}
-		buf.write_byte(byte(c))
+		buf.write_byte(u8(c))
 		conlen--
 	}
 	payload := buf.str()
@@ -44,7 +44,7 @@ fn get_raw_input() string {
 	mut buf := strings.new_builder(200)
 	for {
 		c := C.fgetc(&C.FILE(C.stdin))
-		chr := byte(c)
+		chr := u8(c)
 		if buf.len > 2 && (c == eof || chr in [`\r`, `\n`]) {
 			break
 		}
