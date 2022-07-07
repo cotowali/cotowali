@@ -30,5 +30,5 @@ fn (mut c Checker) check_file(mut f ast.File) {
 		c.source = old_source
 	}
 	c.source = f.source
-	c.stmts(f.stmts)
+	c.stmts(mut f.stmts)
 }

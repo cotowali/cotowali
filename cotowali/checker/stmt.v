@@ -35,10 +35,10 @@ fn stmt_is_specific_inline_shell(sh KeywordIdent, stmt ast.Stmt) bool {
 	return if stmt is ast.InlineShell { stmt.key.keyword_ident() == sh } else { false }
 }
 
-fn (mut c Checker) stmts(stmts []ast.Stmt) {
-	for i, stmt in stmts {
-		c.stmt(stmt)
-		if stmt is ast.InlineShell {
+fn (mut c Checker) stmts(mut stmts []ast.Stmt) {
+	for i, mut stmt in stmts {
+		c.stmt(mut stmt)
+		if mut stmt is ast.InlineShell {
 			if c.ctx.config.backend.is_sh_like() && stmt.key.keyword_ident() == .pwsh {
 				prev_is_sh := i > 0 && stmt_is_specific_inline_shell(.sh, stmts[i - 1])
 				next_is_sh := i < stmts.len - 1 && stmt_is_specific_inline_shell(.sh, stmts[i + 1])
@@ -60,7 +60,7 @@ fn (mut c Checker) stmts(stmts []ast.Stmt) {
 	}
 }
 
-fn (mut c Checker) stmt(stmt ast.Stmt) {
+fn (mut c Checker) stmt(mut stmt ast.Stmt) {
 	$if trace_checker ? {
 		c.trace_begin(@FN)
 		defer {
@@ -71,19 +71,19 @@ fn (mut c Checker) stmt(stmt ast.Stmt) {
 	match mut stmt {
 		ast.AssignStmt { c.assign_stmt(mut stmt) }
 		ast.AssertStmt { c.assert_stmt(stmt) }
-		ast.Block { c.block(stmt) }
+		ast.Block { c.block(mut stmt) }
 		ast.Break { c.break_(stmt) }
 		ast.Continue { c.continue_(stmt) }
 		ast.Expr { c.expr(stmt) }
 		ast.DocComment, ast.Empty {}
-		ast.FnDecl { c.fn_decl(stmt) }
+		ast.FnDecl { c.fn_decl(mut stmt) }
 		ast.ForInStmt { c.for_in_stmt(mut stmt) }
-		ast.IfStmt { c.if_stmt(stmt) }
+		ast.IfStmt { c.if_stmt(mut stmt) }
 		ast.InlineShell {}
-		ast.ModuleDecl { c.module_decl(stmt) }
+		ast.ModuleDecl { c.module_decl(mut stmt) }
 		ast.ReturnStmt { c.return_stmt(stmt) }
 		ast.RequireStmt { c.require_stmt(mut stmt) }
-		ast.WhileStmt { c.while_stmt(stmt) }
+		ast.WhileStmt { c.while_stmt(mut stmt) }
 		ast.YieldStmt { c.yield_stmt(stmt) }
 	}
 }
@@ -178,7 +178,7 @@ fn (mut c Checker) assert_stmt(stmt ast.AssertStmt) {
 	}
 }
 
-fn (mut c Checker) block(block ast.Block) {
+fn (mut c Checker) block(mut block ast.Block) {
 	$if trace_checker ? {
 		c.trace_begin(@FN)
 		defer {
@@ -186,7 +186,7 @@ fn (mut c Checker) block(block ast.Block) {
 		}
 	}
 
-	c.stmts(block.stmts)
+	c.stmts(mut block.stmts)
 }
 
 fn (mut c Checker) expect_inside_loop(stmt_name string, pos Pos) ? {
@@ -223,10 +223,10 @@ fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {
 		c.inside_loop = inside_loop_save
 	}
 
-	c.block(stmt.body)
+	c.block(mut stmt.body)
 }
 
-fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
+fn (mut c Checker) if_stmt(mut stmt ast.IfStmt) {
 	$if trace_checker ? {
 		c.trace_begin(@FN)
 		defer {
@@ -234,18 +234,18 @@ fn (mut c Checker) if_stmt(stmt ast.IfStmt) {
 		}
 	}
 
-	for i, branch in stmt.branches {
+	for i, mut branch in stmt.branches {
 		if i == stmt.branches.len - 1 && stmt.has_else {
-			c.block(branch.body)
+			c.block(mut branch.body)
 			break
 		}
 		c.expr(branch.cond)
 		c.expect_bool_expr(branch.cond, 'if condition') or {}
-		c.block(branch.body)
+		c.block(mut branch.body)
 	}
 }
 
-fn (mut c Checker) module_decl(mod ast.ModuleDecl) {
+fn (mut c Checker) module_decl(mut mod ast.ModuleDecl) {
 	$if trace_checker ? {
 		c.trace_begin(@FN, mod.block.scope.name)
 		defer {
@@ -253,7 +253,7 @@ fn (mut c Checker) module_decl(mod ast.ModuleDecl) {
 		}
 	}
 
-	c.block(mod.block)
+	c.block(mut mod.block)
 }
 
 fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
@@ -283,7 +283,7 @@ fn (mut c Checker) require_stmt(mut stmt ast.RequireStmt) {
 	c.check_file(mut stmt.file)
 }
 
-fn (mut c Checker) while_stmt(stmt ast.WhileStmt) {
+fn (mut c Checker) while_stmt(mut stmt ast.WhileStmt) {
 	$if trace_checker ? {
 		c.trace_begin(@FN)
 		defer {
@@ -300,7 +300,7 @@ fn (mut c Checker) while_stmt(stmt ast.WhileStmt) {
 		c.inside_loop = inside_loop_save
 	}
 
-	c.block(stmt.body)
+	c.block(mut stmt.body)
 }
 
 fn (mut c Checker) yield_stmt(stmt ast.YieldStmt) {

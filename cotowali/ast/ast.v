@@ -22,7 +22,7 @@ pub fn (f &File) checksum(algo checksum.Algorithm) string {
 	return f.source.checksum(algo)
 }
 
-fn (mut r Resolver) file(f &File) {
+fn (mut r Resolver) file(mut f File) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -36,5 +36,5 @@ fn (mut r Resolver) file(f &File) {
 		r.file = old_f
 	}
 
-	r.stmts(f.stmts)
+	r.stmts(mut f.stmts)
 }
