@@ -7,13 +7,12 @@ module checker
 
 import cotowali.ast
 import cotowali.errors
-import cotowali.source { Pos, Source }
+import cotowali.source { Pos }
 import cotowali.context { Context }
 import cotowali.debug { Tracer }
 
 pub struct Checker {
 mut:
-	source      &Source     = 0
 	current_fn  &ast.FnDecl = 0
 	inside_loop bool
 	ctx         &Context
