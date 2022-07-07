@@ -15,7 +15,7 @@ pub fn (c Char) rune() rune {
 	return rune(c.utf32_code())
 }
 
-pub fn (c Char) byte() byte {
+pub fn (c Char) byte() u8 {
 	return c[0]
 }
 

@@ -79,7 +79,7 @@ pub fn (mut b Builder) str() string {
 	return b.buf.str() + b.tail_str
 }
 
-pub fn (mut b Builder) bytes() []byte {
+pub fn (mut b Builder) bytes() []u8 {
 	return b.str().bytes()
 }
 

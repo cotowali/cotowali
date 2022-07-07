@@ -7,12 +7,12 @@ module util
 
 import io
 
-type WritableData = []byte | string
+type WritableData = []u8 | string
 
 pub fn write(mut w io.Writer, data WritableData) ?int {
 	return w.write(match data {
 		string { data.bytes() }
-		[]byte { data }
+		[]u8 { data }
 	})
 }
 
