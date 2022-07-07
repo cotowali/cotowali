@@ -30,11 +30,5 @@ fn (mut r Resolver) file(mut f File) {
 		}
 	}
 
-	old_f := r.file
-	r.file = f
-	defer {
-		r.file = old_f
-	}
-
 	r.stmts(mut f.stmts)
 }

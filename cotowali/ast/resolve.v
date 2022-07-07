@@ -11,8 +11,7 @@ import cotowali.debug { Tracer }
 
 pub struct Resolver {
 mut:
-	ctx  &Context
-	file &File = 0
+	ctx &Context
 
 	tracer Tracer [if trace_resolver ?]
 }
