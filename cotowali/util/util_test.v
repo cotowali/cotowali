@@ -5,10 +5,6 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module util
 
-fn test_unit() {
-	assert sizeof(Unit) == 0
-}
-
 fn test_in() {
 	assert @in(0, 0, 1)
 	assert @in(1, 0, 1)
@@ -24,7 +20,7 @@ fn test_in() {
 
 struct Ref {
 mut:
-	ref &string = 0
+	ref &string = unsafe { 0 }
 }
 
 fn (v Ref) opt() ?&string {

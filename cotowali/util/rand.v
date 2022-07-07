@@ -35,13 +35,13 @@ pub fn rand<T>() T {
 
 pub fn rand_n<T>(n T) T {
 	$if T is u32 {
-		return rand.u32n(n)
+		return rand.u32n(n) or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 	} $else $if T is u64 {
-		return rand.u64n(n)
+		return rand.u64n(n) or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 	} $else $if T is int {
-		return rand.intn(n)
+		return rand.intn(n) or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 	} $else $if T is i64 {
-		return rand.i64n(n)
+		return rand.i64n(n) or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 	}
 	panic('invalid type')
 }
