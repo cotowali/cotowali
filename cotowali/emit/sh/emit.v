@@ -21,11 +21,6 @@ pub fn (mut e Emitter) emit(f &ast.File) {
 }
 
 fn (mut e Emitter) file(f &ast.File) {
-	old_f := e.cur_file
-	defer {
-		e.cur_file = old_f
-	}
-	e.cur_file = f
 	e.writeln('# file: $f.source.path')
 	e.stmts(f.stmts)
 }
