@@ -103,7 +103,7 @@ pub fn parse_remote_file(url URL, ctx &Context) ?&ast.File {
 		return none
 	}
 
-	res := http.get(http_url_str) or { return error('failed to get $http_url_str ($err.msg)') }
+	res := http.get(http_url_str) or { return error('failed to get $http_url_str ($err.msg())') }
 	if res.status() != .ok {
 		return error('faild to get $http_url_str ($res.status_code $res.status())')
 	}

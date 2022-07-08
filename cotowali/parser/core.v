@@ -88,11 +88,11 @@ fn (mut p Parser) read_token() Token {
 	tok := p.lexer.read() or {
 		match err {
 			LexerErr {
-				p.syntax_error(err.msg, err.token.pos)
+				p.syntax_error(err.msg(), err.token.pos)
 				return err.token
 			}
 			LexerWarn {
-				p.warn(err.msg, err.token.pos)
+				p.warn(err.msg(), err.token.pos)
 				return err.token
 			}
 			else {}

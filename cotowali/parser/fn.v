@@ -33,7 +33,7 @@ fn (p &FnParamParsingInfo) has_default() bool {
 fn (mut p Parser) register_function_param(param FnParamParsingInfo) ?ast.Var {
 	param_sym := p.scope.register_var(name: param.name, pos: param.name_pos, typ: param.ts.typ) or {
 		new_placeholder_var(param.name, param.name_pos)
-		return p.error(err.msg, param.name_pos)
+		return p.error(err.msg(), param.name_pos)
 	}
 	return ast.Var{
 		ident: ast.Ident{
@@ -323,7 +323,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 	}
 	sym := info.register_sym(mut outer_scope) or {
 		has_error = true
-		p.error(err.msg, info.name.pos)
+		p.error(err.msg(), info.name.pos)
 		// use different name for duplicated function to create another scope
 		sym_name += util.rand<u64>().str()
 		new_placeholder_var(sym_name, info.name.pos)

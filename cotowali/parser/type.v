@@ -31,7 +31,7 @@ fn (mut p Parser) parse_ident_type() ?&TypeSymbol {
 	}
 
 	tok := p.consume_with_check(.ident)?
-	return p.scope.lookup_type(tok.text) or { return p.error(err.msg, tok.pos) }
+	return p.scope.lookup_type(tok.text) or { return p.error(err.msg(), tok.pos) }
 }
 
 fn (mut p Parser) parse_map_type() ?&TypeSymbol {
@@ -172,7 +172,7 @@ fn (mut p Parser) parse_type_decl() ?ast.Stmt {
 	pos = pos.merge(p.pos(-1))
 
 	p.scope.register_alias_type(name: ident.text, target: target) or {
-		return p.error(err.msg, pos)
+		return p.error(err.msg(), pos)
 	}
 
 	return ast.Empty{}

@@ -49,7 +49,7 @@ pub fn run(s Source, args []string, ctx &Context) ?int {
 		os.rm(temp_file) or { li_panic(@FN, @FILE, @LINE, err) }
 	}
 	executable := ctx.config.backend.find_executable_path() or {
-		eprintln(err.msg)
+		eprintln(err.msg())
 		exit(1)
 	}
 

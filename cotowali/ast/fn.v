@@ -324,7 +324,7 @@ fn (e CallExpr) lookup_sym(name string, scope &Scope) ?&symbols.Var {
 fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 	name := func.name()
 	sym := e.lookup_sym(name, func.scope()) or {
-		r.error(err.msg, e.pos)
+		r.error(err.msg(), e.pos)
 		return
 	}
 

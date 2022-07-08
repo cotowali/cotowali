@@ -146,7 +146,7 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 						typ: typ
 						is_const: stmt.is_const
 					) or {
-						r.error(err.msg, pos)
+						r.error(err.msg(), pos)
 						stmt.scope.must_lookup_var(name)
 					}
 				}
@@ -183,7 +183,7 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 								pos: pos
 								typ: typ
 							) or {
-								r.error(err.msg, pos)
+								r.error(err.msg(), pos)
 								stmt.scope.must_lookup_var(name)
 							}
 						}

@@ -13,7 +13,7 @@ fn test_notification_send() {
 	lg.notification('"Hello!"', .send)
 	buf := lg.buffer.str()
 	result := json.decode(TestLogItem, buf) or {
-		eprintln(err.msg)
+		eprintln(err.msg())
 		assert false
 		return
 	}
@@ -28,7 +28,7 @@ fn test_notification_receive() {
 	lg.notification('"Received!"', .receive)
 	buf := lg.buffer.str()
 	result := json.decode(TestLogItem, buf) or {
-		eprintln(err.msg)
+		eprintln(err.msg())
 		assert false
 		return
 	}
@@ -43,7 +43,7 @@ fn test_request_send() {
 	lg.request('"Request sent."', .send)
 	buf := lg.buffer.str()
 	result := json.decode(TestLogItem, buf) or {
-		eprintln(err.msg)
+		eprintln(err.msg())
 		assert false
 		return
 	}
@@ -58,7 +58,7 @@ fn test_request_receive() {
 	lg.request('"Request received."', .receive)
 	buf := lg.buffer.str()
 	result := json.decode(TestLogItem, buf) or {
-		eprintln(err.msg)
+		eprintln(err.msg())
 		assert false
 		return
 	}
@@ -73,7 +73,7 @@ fn test_response_send() {
 	lg.response('"Response sent."', .send)
 	buf := lg.buffer.str()
 	result := json.decode(TestLogItem, buf) or {
-		eprintln(err.msg)
+		eprintln(err.msg())
 		assert false
 		return
 	}
@@ -88,7 +88,7 @@ fn test_response_receive() {
 	lg.response('"Response received."', .receive)
 	buf := lg.buffer.str()
 	result := json.decode(TestLogItem, buf) or {
-		eprintln(err.msg)
+		eprintln(err.msg())
 		assert false
 		return
 	}

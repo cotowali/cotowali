@@ -433,7 +433,7 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 
 	stmt := if url := urllib.parse(path) {
 		f := parse_remote_file(url, p.ctx) or {
-			return if err is none { none } else { p.error(err.msg, pos) }
+			return if err is none { none } else { p.error(err.msg(), pos) }
 		}
 		ast.RequireStmt{
 			props: props
@@ -441,7 +441,7 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 		}
 	} else if is_relative_path(path) {
 		f := parse_file_relative(p.source(), path, p.ctx) or {
-			return if err is none { none } else { p.error(err.msg, pos) }
+			return if err is none { none } else { p.error(err.msg(), pos) }
 		}
 		ast.RequireStmt{
 			props: props
@@ -449,7 +449,7 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 		}
 	} else {
 		f := parse_file_in_cotowali_path(path, p.ctx) or {
-			return if err is none { none } else { p.error(err.msg, pos) }
+			return if err is none { none } else { p.error(err.msg(), pos) }
 		}
 		ast.RequireStmt{
 			props: props
