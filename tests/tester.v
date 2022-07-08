@@ -376,7 +376,7 @@ fn new_test_suite(paths []string, opt TestOption) TestSuite {
 	lic.compile() or {
 		eprintln([
 			'${term.fail_message('ERROR')} Faild to compile lic',
-			'    exit_code: $err.code',
+			'    exit_code: $err.code()',
 			'    output:',
 			indent_each_lines(2, err.msg()),
 		].join('\n'))
