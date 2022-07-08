@@ -60,7 +60,7 @@ mut:
 	pipe_in_param FnParamParsingInfo
 	params        []FnParamParsingInfo
 	variadic      bool
-	ret_ts        &TypeSymbol = 0
+	ret_ts        &TypeSymbol = unsafe { 0 }
 }
 
 fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
@@ -200,7 +200,9 @@ fn (mut p Parser) parse_receiver() ?FnParamParsingInfo {
 
 fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
 	p.consume_with_assert(.key_fn)
-	mut info := FnSignatureParsingInfo{}
+	mut info := FnSignatureParsingInfo{
+		ret_ts: 0
+	}
 	info.pipe_in_param.ts = p.scope.must_lookup_type(builtin_type(.void))
 
 	is_name_kind := fn (kind TokenKind) bool {

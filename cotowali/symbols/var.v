@@ -11,7 +11,7 @@ import cotowali.util { li_panic }
 
 pub struct Var {
 mut:
-	scope &Scope = 0
+	scope &Scope = unsafe { 0 }
 pub:
 	name           string [required]
 	id             u64

@@ -396,7 +396,7 @@ fn (mut r Resolver) default_value(expr DefaultValue, opt ResolveExprOpt) {
 
 pub struct Empty {
 pub:
-	scope &Scope = 0
+	scope &Scope = unsafe { 0 }
 	pos   Pos
 }
 
@@ -759,7 +759,7 @@ fn (mut r Resolver) selector_expr(mut expr SelectorExpr, opt ResolveExprOpt) {
 
 pub struct Var {
 mut:
-	sym &symbols.Var = 0
+	sym &symbols.Var = unsafe { 0 }
 pub mut:
 	ident Ident
 }

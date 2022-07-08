@@ -12,7 +12,7 @@ import cotowali.util { li_panic }
 [heap]
 struct Scope {
 	name   string
-	parent &Scope = 0
+	parent &Scope = unsafe { 0 }
 mut:
 	children map[string]&Scope
 	vars     map[string]&Value
@@ -61,7 +61,7 @@ fn (mut s Scope) register_var(name string, value Value) {
 pub struct Interpreter {
 mut:
 	ctx        &Context
-	current_fn &FnDecl = 0
+	current_fn &FnDecl = unsafe { 0 }
 	scope      &Scope
 }
 

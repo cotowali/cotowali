@@ -31,12 +31,12 @@ pub type TypeInfo = AliasTypeInfo
 
 pub struct TypeSymbol {
 mut:
-	scope   &Scope = 0
+	scope   &Scope = unsafe { 0 }
 	methods map[string]&Var
 pub mut:
 	pos Pos
 pub:
-	base &TypeSymbol = 0
+	base &TypeSymbol = unsafe { 0 }
 	typ  Type
 	name string
 	info TypeInfo = TypeInfo(PlaceholderTypeInfo{})

@@ -17,8 +17,8 @@ pub:
 	global_scope &Scope
 pub mut:
 	config           Config
-	builtin_source   &Source = 0
-	testing_source   &Source = 0
+	builtin_source   &Source = unsafe { 0 }
+	testing_source   &Source = unsafe { 0 }
 	sources          map[string]&Source
 	errors           ErrorManager
 	compiler_symbols CompilerSymbolTable

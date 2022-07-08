@@ -15,10 +15,10 @@ pub:
 	id   ID
 	name string
 pub mut:
-	owner &Var = 0
+	owner &Var = unsafe { 0 }
 	pos   Pos
 mut:
-	parent              &Scope = 0
+	parent              &Scope = unsafe { 0 }
 	children            map[u64]&Scope // map[ID]&Scope
 	name_to_child_id    map[string]ID
 	vars                map[string]&Var

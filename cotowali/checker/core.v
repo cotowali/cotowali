@@ -13,7 +13,7 @@ import cotowali.debug { Tracer }
 
 pub struct Checker {
 mut:
-	current_fn  &ast.FnDecl = 0
+	current_fn  &ast.FnDecl = unsafe { 0 }
 	inside_loop bool
 	ctx         &Context
 

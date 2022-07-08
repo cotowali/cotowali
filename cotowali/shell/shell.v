@@ -13,7 +13,7 @@ import cotowali.util { nil_to_none }
 pub struct Shell {
 mut:
 	ctx             &Context
-	backend_process &os.Process = 0
+	backend_process &os.Process = unsafe { 0 }
 	readline        Readline
 }
 
