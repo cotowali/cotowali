@@ -64,7 +64,7 @@ fn (mut p Parser) process_compiler_directive() {
 
 	kind := compiler_directive_kind_from_name(ident.text) or {
 		p.skip_until_eol()
-		p.error(err.msg, start_pos.merge(p.pos(-1)))
+		p.error(err.msg(), start_pos.merge(p.pos(-1)))
 		return
 	}
 	match kind {
@@ -260,7 +260,7 @@ fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDi
 
 				next_kind := compiler_directive_kind_from_name(p.token(1).text) or {
 					p.skip_until_eol()
-					p.error(err.msg, start_pos.merge(p.pos(-1)))
+					p.error(err.msg(), start_pos.merge(p.pos(-1)))
 					return
 				}
 				if next_kind != .else_ {

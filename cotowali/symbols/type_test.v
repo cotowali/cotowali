@@ -15,7 +15,7 @@ fn test_signature() ? {
 				builtin_type(.bool),
 			].map(FunctionParam{ typ: it })
 		}
-	) ?
+	)?
 	f2 := s.register_type(
 		name: 'f2'
 		info: FunctionTypeInfo{
@@ -25,7 +25,7 @@ fn test_signature() ? {
 			].map(FunctionParam{ typ: it })
 			ret: builtin_type(.int)
 		}
-	) ?
+	)?
 	f3 := s.register_type(
 		name: 'f3'
 		info: FunctionTypeInfo{
@@ -36,7 +36,7 @@ fn test_signature() ? {
 			].map(FunctionParam{ typ: it })
 			ret: builtin_type(.int)
 		}
-	) ?
+	)?
 	f4 := s.register_type(
 		name: 'f4'
 		info: FunctionTypeInfo{
@@ -50,19 +50,19 @@ fn test_signature() ? {
 			variadic: true
 			ret: builtin_type(.int)
 		}
-	) ?
+	)?
 	f5 := s.register_type(
 		name: 'f5'
 		info: FunctionTypeInfo{
 			is_test: true
 		}
-	) ?
+	)?
 
-	assert f1.signature() ? == 'fn (int, bool)'
-	assert f2.signature() ? == 'fn (int, bool): int'
-	assert f3.signature() ? == 'fn int |> (int, bool) |> int'
-	assert f4.signature() ? == 'fn int |> (int, ...int) |> int'
-	assert f5.signature() ? == '#[test] fn ()'
+	assert f1.signature()? == 'fn (int, bool)'
+	assert f2.signature()? == 'fn (int, bool): int'
+	assert f3.signature()? == 'fn int |> (int, bool) |> int'
+	assert f4.signature()? == 'fn int |> (int, ...int) |> int'
+	assert f5.signature()? == '#[test] fn ()'
 	if _ := s.must_lookup_type(builtin_type(.int)).signature() {
 		assert false
 	}
@@ -74,7 +74,7 @@ fn test_lookup_type_and_register_type() ? {
 
 	name_t := 't'
 
-	parent_t := parent.register_type(name: 't') ?
+	parent_t := parent.register_type(name: 't')?
 	mut found := parent.must_lookup_type(parent_t.typ)
 	assert found.typ == parent_t.typ
 	found = parent.must_lookup_type(parent_t.name)
@@ -84,7 +84,7 @@ fn test_lookup_type_and_register_type() ? {
 	found = child.must_lookup_type(parent_t.name)
 	assert found.typ == parent_t.typ
 
-	child_t := child.register_type(name: 't') ?
+	child_t := child.register_type(name: 't')?
 	found = child.must_lookup_type(child_t.typ)
 	assert found.typ != parent_t.typ
 	assert found.typ == child_t.typ
@@ -104,7 +104,7 @@ fn test_lookup_or_register_type() ? {
 	mut s := new_global_scope()
 	ts_n := s.type_symbols.keys().len
 	registered := s.lookup_or_register_type(name: 't')
-	assert (registered.scope() ?).id == s.id
+	assert (registered.scope()?).id == s.id
 	assert registered.typ != Type(0)
 	assert s.type_symbols.keys().len == ts_n + 1
 
@@ -128,11 +128,11 @@ fn test_is_number() ? {
 	mut s := new_global_scope()
 	int_int := s.lookup_or_register_tuple_type(elements: [int_t, int_t].map(TupleElement{ typ: it }))
 	assert !int_int.typ.is_number()
-	assert (int_int.tuple_info() ?).elements[0].typ.is_number()
+	assert (int_int.tuple_info()?).elements[0].typ.is_number()
 
 	int_arr := s.lookup_or_register_array_type(elem: int_t)
 	assert !int_arr.typ.is_number()
-	assert (int_arr.array_info() ?).elem.is_number()
+	assert (int_arr.array_info()?).elem.is_number()
 }
 
 fn test_struct_type() ? {
@@ -142,7 +142,7 @@ fn test_struct_type() ? {
 			'n': builtin_type(.int)
 			's': builtin_type(.string)
 		}
-	) ?
+	)?
 	if struct_info := ts.struct_info() {
 		assert struct_info.type_to_str(s) == 'struct { n int, s string }'
 	} else {
@@ -153,8 +153,8 @@ fn test_struct_type() ? {
 fn test_resolved() ? {
 	mut s := new_global_scope()
 	int_ := builtin_type(.int)
-	int2_ts := s.register_alias_type(name: 'int2', target: int_) ?
-	int3_ts := s.register_alias_type(name: 'int3', target: int2_ts.typ) ?
+	int2_ts := s.register_alias_type(name: 'int2', target: int_)?
+	int3_ts := s.register_alias_type(name: 'int3', target: int2_ts.typ)?
 	assert int2_ts.resolved().typ == int_
 	assert int3_ts.resolved().typ == int_
 	assert s.must_lookup_type(int_).resolved().typ == int_
@@ -164,15 +164,15 @@ fn test_method() ? {
 	mut s := new_global_scope()
 	int_ := builtin_type(.int)
 
-	mut base := (s.register_type(name: 'Base') ?)
-	mut t1 := (s.register_type(name: 'Type1', base: base) ?)
-	mut t2 := (s.register_type(name: 'Type2') ?)
+	mut base := (s.register_type(name: 'Base')?)
+	mut t1 := (s.register_type(name: 'Type1', base: base)?)
+	mut t2 := (s.register_type(name: 'Type2')?)
 
 	if _ := t1.lookup_method('f') {
 		assert false
 	}
 
-	base_method1 := base.register_method(name: 'f') ?
+	base_method1 := base.register_method(name: 'f')?
 	assert base_method1.id != 0
 	if found := t1.lookup_method('f') {
 		assert found.id == base_method1.id
@@ -180,7 +180,7 @@ fn test_method() ? {
 		assert false
 	}
 
-	method1 := t1.register_method(name: 'f') ?
+	method1 := t1.register_method(name: 'f')?
 	if _ := t1.register_method(name: 'f') {
 		assert false
 	}
@@ -201,7 +201,7 @@ fn test_method() ? {
 				typ: int_
 			},
 		]
-	) ?
+	)?
 	assert method2.id != 0
 	assert method1.id != method2.id
 	if found := t2.lookup_method('f') {
@@ -210,5 +210,5 @@ fn test_method() ? {
 		assert false
 	}
 
-	assert (method2.type_symbol().signature() ?) == 'fn (Type2) int |> (int)'
+	assert (method2.type_symbol().signature()?) == 'fn (Type2) int |> (int)'
 }

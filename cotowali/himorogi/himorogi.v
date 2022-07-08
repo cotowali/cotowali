@@ -11,7 +11,7 @@ import cotowali.compiler { parse_and_check }
 import cotowali.himorogi.interpreter { new_interpreter }
 
 pub fn run(s &Source, args []string, ctx &Context) ?int {
-	f := parse_and_check(s, ctx) ?
+	f := parse_and_check(s, ctx)?
 	mut e := new_interpreter(ctx)
 	return e.run(f)
 }

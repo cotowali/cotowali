@@ -94,7 +94,7 @@ pub fn (e &LexerErr) code() int {
 pub fn (err LexerErr) to_err() Err {
 	return Err{
 		pos: err.token.pos
-		msg: err.msg
+		msg: err.msg()
 		code: err.code
 	}
 }

@@ -33,7 +33,7 @@ pub fn new_compiler(source Source, ctx &Context) Compiler {
 
 pub fn (c &Compiler) compile() ?string {
 	mut sb := strings.new_builder(100)
-	c.compile_to(sb) ?
+	c.compile_to(sb)?
 	return sb.str()
 }
 
@@ -87,7 +87,7 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	ctx := c.ctx
 
 	if ctx.config.backend == .ush {
-		c.ush_compile_to(w) ?
+		c.ush_compile_to(w)?
 		return
 	}
 
@@ -95,7 +95,7 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 		return error('$ctx.config.backend backend is not yet implemented.')
 	}
 
-	f := parse_and_check(c.source, ctx) ?
+	f := parse_and_check(c.source, ctx)?
 
 	if ctx.config.no_emit {
 		return

@@ -9,22 +9,22 @@ import strings
 
 struct Buf {
 pub mut:
-	data []byte
+	data []u8
 }
 
-fn (mut b Buf) write(data []byte) ?int {
+fn (mut b Buf) write(data []u8) ?int {
 	b.data = data
 	return data.len
 }
 
-fn (b Buf) bytes() []byte {
+fn (b Buf) bytes() []u8 {
 	return b.data
 }
 
 fn test_write() ? {
 	mut buf := Buf{}
-	write(mut buf, [byte(0)]) ?
-	assert buf.data == [byte(0)]
+	write(mut buf, [u8(0)])?
+	assert buf.data == [u8(0)]
 	must_write(mut buf, 'abc')
-	assert buf.data == [byte(`a`), `b`, `c`]
+	assert buf.data == [u8(`a`), `b`, `c`]
 }

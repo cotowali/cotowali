@@ -17,8 +17,8 @@ fn (mut p Parser) parse_array_type() ?&TypeSymbol {
 	}
 
 	p.consume_with_assert(.l_bracket)
-	p.consume_with_check(.r_bracket) ?
-	elem := p.parse_type() ?
+	p.consume_with_check(.r_bracket)?
+	elem := p.parse_type()?
 	return p.scope.lookup_or_register_array_type(elem: elem.typ)
 }
 
@@ -30,8 +30,8 @@ fn (mut p Parser) parse_ident_type() ?&TypeSymbol {
 		}
 	}
 
-	tok := p.consume_with_check(.ident) ?
-	return p.scope.lookup_type(tok.text) or { return p.error(err.msg, tok.pos) }
+	tok := p.consume_with_check(.ident)?
+	return p.scope.lookup_type(tok.text) or { return p.error(err.msg(), tok.pos) }
 }
 
 fn (mut p Parser) parse_map_type() ?&TypeSymbol {
@@ -42,10 +42,10 @@ fn (mut p Parser) parse_map_type() ?&TypeSymbol {
 		}
 	}
 	p.consume_with_assert(.key_map)
-	p.consume_with_check(.l_bracket) ?
-	key := p.parse_type() ?
-	p.consume_with_check(.r_bracket) ?
-	value := p.parse_type() ?
+	p.consume_with_check(.l_bracket)?
+	key := p.parse_type()?
+	p.consume_with_check(.r_bracket)?
+	value := p.parse_type()?
 	return p.scope.lookup_or_register_map_type(key: key.typ, value: value.typ)
 }
 
@@ -58,7 +58,7 @@ fn (mut p Parser) parse_reference_type() ?&TypeSymbol {
 	}
 
 	p.consume_with_assert(.amp)
-	target := p.parse_type() ?
+	target := p.parse_type()?
 	return p.scope.lookup_or_register_reference_type(target: target.typ)
 }
 
@@ -82,7 +82,7 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 
 	mut elements := []TupleElement{}
 	for {
-		ts := p.parse_type() ?
+		ts := p.parse_type()?
 
 		mut element_pushed := false
 
@@ -109,7 +109,7 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 		if _ := p.consume_if_kind_eq(.r_paren) {
 			break
 		}
-		p.consume_with_check(.comma) ?
+		p.consume_with_check(.comma)?
 	}
 	return if elements.len == 1 {
 		// treat single value tuple as element type
@@ -128,7 +128,7 @@ fn (mut p Parser) parse_sequence_type() ?&TypeSymbol {
 	}
 
 	p.consume_with_assert(.dotdotdot)
-	elem := p.parse_type() ?
+	elem := p.parse_type()?
 	return p.scope.lookup_or_register_sequence_type(elem: elem.typ)
 }
 
@@ -143,12 +143,12 @@ fn (mut p Parser) parse_type() ?&TypeSymbol {
 	start_pos := p.pos(0)
 
 	mut ts := match p.kind(0) {
-		.l_bracket { p.parse_array_type() ? }
-		.key_map { p.parse_map_type() ? }
-		.amp { p.parse_reference_type() ? }
-		.dotdotdot { p.parse_sequence_type() ? }
-		.l_paren { p.parse_tuple_type() ? }
-		else { p.parse_ident_type() ? }
+		.l_bracket { p.parse_array_type()? }
+		.key_map { p.parse_map_type()? }
+		.amp { p.parse_reference_type()? }
+		.dotdotdot { p.parse_sequence_type()? }
+		.l_paren { p.parse_tuple_type()? }
+		else { p.parse_ident_type()? }
 	}
 	ts.pos = start_pos.merge(p.pos(-1))
 	return ts
@@ -165,14 +165,14 @@ fn (mut p Parser) parse_type_decl() ?ast.Stmt {
 	mut pos := p.pos(0)
 
 	p.consume_with_assert(.key_type)
-	ident := p.consume_with_check(.ident) ?
-	p.consume_with_check(.assign) ?
-	target := (p.parse_type() ?).typ
+	ident := p.consume_with_check(.ident)?
+	p.consume_with_check(.assign)?
+	target := (p.parse_type()?).typ
 
 	pos = pos.merge(p.pos(-1))
 
 	p.scope.register_alias_type(name: ident.text, target: target) or {
-		return p.error(err.msg, pos)
+		return p.error(err.msg(), pos)
 	}
 
 	return ast.Empty{}

@@ -20,6 +20,7 @@ import cotowali.symbols {
 import cotowali.messages { undefined }
 import cotowali.util { li_panic }
 
+[heap]
 pub struct FnDecl {
 pub:
 	parent_scope &Scope
@@ -150,7 +151,7 @@ fn (mut r Resolver) fn_decl(mut decl FnDecl) {
 	for mut param in decl.params {
 		r.fn_param(mut param)
 	}
-	r.block(decl.body)
+	r.block(mut decl.body)
 }
 
 fn (mut r Resolver) fn_param(mut param FnParam) {
@@ -161,15 +162,15 @@ fn (mut r Resolver) fn_param(mut param FnParam) {
 		}
 	}
 	r.var_(mut param.var_, is_left_of_assignment: true)
-	if default := param.default() {
-		r.expr(default)
+	if mut default := param.default() {
+		r.expr(mut default)
 	}
 }
 
 // --
 
 pub struct ReturnStmt {
-pub:
+pub mut:
 	expr Expr
 }
 
@@ -178,23 +179,24 @@ pub fn (s &ReturnStmt) children() []Node {
 	return [Node(s.expr)]
 }
 
-fn (mut r Resolver) return_stmt(stmt ReturnStmt) {
+fn (mut r Resolver) return_stmt(mut stmt ReturnStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
 			r.trace_end()
 		}
 	}
-	r.expr(stmt.expr)
+	r.expr(mut stmt.expr)
 }
 
 pub struct YieldStmt {
 pub:
-	pos  Pos
+	pos Pos
+pub mut:
 	expr Expr
 }
 
-fn (mut r Resolver) yield_stmt(stmt YieldStmt) {
+fn (mut r Resolver) yield_stmt(mut stmt YieldStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -202,7 +204,7 @@ fn (mut r Resolver) yield_stmt(stmt YieldStmt) {
 		}
 	}
 
-	r.expr(stmt.expr)
+	r.expr(mut stmt.expr)
 }
 
 [inline]
@@ -216,9 +218,9 @@ pub struct CallCommandExpr {
 pub:
 	pos     Pos
 	command string
-	args    []Expr
 pub mut:
 	scope &Scope
+	args  []Expr
 }
 
 [inline]
@@ -226,14 +228,14 @@ pub fn (expr &CallCommandExpr) children() []Node {
 	return expr.args.map(Node(it))
 }
 
-fn (mut r Resolver) call_command_expr(expr CallCommandExpr, opt ResolveExprOpt) {
+fn (mut r Resolver) call_command_expr(mut expr CallCommandExpr, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
 			r.trace_end()
 		}
 	}
-	r.exprs(expr.args, opt)
+	r.exprs(mut expr.args, opt)
 }
 
 pub struct CallExpr {
@@ -283,7 +285,7 @@ fn (mut r Resolver) call_expr(mut expr CallExpr, opt ResolveExprOpt) {
 	}
 
 	r.call_expr_func(mut expr, mut &expr.func)
-	r.exprs(expr.args, opt)
+	r.exprs(mut expr.args, opt)
 }
 
 fn (mut r Resolver) call_expr_func(mut e CallExpr, mut func Expr) {
@@ -298,7 +300,7 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr, mut func Expr) {
 			}
 		}
 		SelectorExpr {
-			r.selector_expr(func)
+			r.selector_expr(mut func)
 			r.call_expr_func_var(mut e, mut &func.ident)
 		}
 		else {
@@ -322,7 +324,7 @@ fn (e CallExpr) lookup_sym(name string, scope &Scope) ?&symbols.Var {
 fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 	name := func.name()
 	sym := e.lookup_sym(name, func.scope()) or {
-		r.error(err.msg, e.pos)
+		r.error(err.msg(), e.pos)
 		return
 	}
 
@@ -367,8 +369,9 @@ fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 pub struct Nameof {
 	scope &Scope
 pub:
+	pos Pos
+pub mut:
 	args []Expr
-	pos  Pos
 }
 
 pub fn (expr &Nameof) typ() Type {
@@ -406,18 +409,19 @@ pub fn (expr &Nameof) value() string {
 	li_panic(@FN, @FILE, @LINE, msg)
 }
 
-fn (mut r Resolver) nameof(expr Nameof, opt ResolveExprOpt) {
+fn (mut r Resolver) nameof(mut expr Nameof, opt ResolveExprOpt) {
 	if expr.args.len != 1 {
 		return
 	}
-	r.expr(expr.args[0], opt)
+	r.exprs(mut expr.args, opt)
 }
 
 pub struct Typeof {
 	scope &Scope
 pub:
+	pos Pos
+pub mut:
 	args []Expr
-	pos  Pos
 }
 
 pub fn (expr &Typeof) typ() Type {
@@ -443,9 +447,9 @@ pub fn (expr &Typeof) value() string {
 	return expr.args[0].type_symbol().name
 }
 
-fn (mut r Resolver) typeof_(expr Typeof, opt ResolveExprOpt) {
+fn (mut r Resolver) typeof_(mut expr Typeof, opt ResolveExprOpt) {
 	if expr.args.len != 1 {
 		return
 	}
-	r.expr(expr.args[0], opt)
+	r.exprs(mut expr.args, opt)
 }

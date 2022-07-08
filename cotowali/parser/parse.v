@@ -64,7 +64,7 @@ pub fn parse_file(path string, ctx &Context) ?&ast.File {
 	if path in ctx.sources {
 		return none
 	}
-	return parse(source.read_file(path) ?, ctx)
+	return parse(source.read_file(path)?, ctx)
 }
 
 pub fn parse_file_relative(base_source &Source, path string, ctx &Context) ?&ast.File {
@@ -103,7 +103,7 @@ pub fn parse_remote_file(url URL, ctx &Context) ?&ast.File {
 		return none
 	}
 
-	res := http.get(http_url_str) or { return error('failed to get $http_url_str ($err.msg)') }
+	res := http.get(http_url_str) or { return error('failed to get $http_url_str ($err.msg())') }
 	if res.status() != .ok {
 		return error('faild to get $http_url_str ($res.status_code $res.status())')
 	}

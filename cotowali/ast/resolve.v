@@ -11,8 +11,7 @@ import cotowali.debug { Tracer }
 
 pub struct Resolver {
 mut:
-	ctx  &Context
-	file &File = 0
+	ctx &Context
 
 	tracer Tracer [if trace_resolver ?]
 }
@@ -30,9 +29,9 @@ pub fn resolve(mut node Node, ctx &Context) {
 
 pub fn (mut r Resolver) resolve(mut node Node) {
 	match mut node {
-		File { r.file(node) }
-		Stmt { r.stmt(node) }
-		Expr { r.expr(node) }
+		File { r.file(mut node) }
+		Stmt { r.stmt(mut node) }
+		Expr { r.expr(mut node) }
 		FnParam { r.fn_param(mut node) }
 		Ident {}
 	}

@@ -41,31 +41,31 @@ pub fn (stmt Stmt) children() []Node {
 	}
 }
 
-fn (mut r Resolver) stmts(stmts []Stmt) {
-	for stmt in stmts {
-		r.stmt(stmt)
+fn (mut r Resolver) stmts(mut stmts []Stmt) {
+	for mut stmt in stmts {
+		r.stmt(mut stmt)
 	}
 }
 
-fn (mut r Resolver) stmt(stmt Stmt) {
+fn (mut r Resolver) stmt(mut stmt Stmt) {
 	match mut stmt {
-		AssertStmt { r.assert_stmt(stmt) }
+		AssertStmt { r.assert_stmt(mut stmt) }
 		AssignStmt { r.assign_stmt(mut stmt) }
-		Block { r.block(stmt) }
+		Block { r.block(mut stmt) }
 		Break {}
 		Continue {}
 		DocComment { r.doc_comment(stmt) }
 		Empty {}
-		Expr { r.expr(stmt) }
+		Expr { r.expr(mut stmt) }
 		FnDecl { r.fn_decl(mut stmt) }
 		ForInStmt { r.for_in_stmt(mut stmt) }
-		IfStmt { r.if_stmt(stmt) }
+		IfStmt { r.if_stmt(mut stmt) }
 		InlineShell { r.inline_shell(mut stmt) }
-		ModuleDecl { r.module_decl(stmt) }
-		RequireStmt { r.require_stmt(stmt) }
-		ReturnStmt { r.return_stmt(stmt) }
-		WhileStmt { r.while_stmt(stmt) }
-		YieldStmt { r.yield_stmt(stmt) }
+		ModuleDecl { r.module_decl(mut stmt) }
+		RequireStmt { r.require_stmt(mut stmt) }
+		ReturnStmt { r.return_stmt(mut stmt) }
+		WhileStmt { r.while_stmt(mut stmt) }
+		YieldStmt { r.yield_stmt(mut stmt) }
 	}
 }
 
@@ -120,9 +120,9 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 	}
 
 	if !stmt.is_decl {
-		r.expr(stmt.left, is_left_of_assignment: true)
+		r.expr(mut stmt.left, is_left_of_assignment: true)
 	}
-	r.expr(stmt.right)
+	r.expr(mut stmt.right)
 
 	if stmt.typ == builtin_type(.placeholder) {
 		stmt.typ = stmt.right.typ()
@@ -146,7 +146,7 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 						typ: typ
 						is_const: stmt.is_const
 					) or {
-						r.error(err.msg, pos)
+						r.error(err.msg(), pos)
 						stmt.scope.must_lookup_var(name)
 					}
 				}
@@ -164,7 +164,7 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 					r.error('expected $expr_types.len variables, but found $stmt.left.exprs.len variables',
 						Expr(stmt.left).pos())
 				}
-				for i, left in stmt.left.exprs {
+				for i, mut left in stmt.left.exprs {
 					if mut left is Var {
 						name, pos := left.ident.text, left.ident.pos
 						typ := if i < expr_types.len {
@@ -183,7 +183,7 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 								pos: pos
 								typ: typ
 							) or {
-								r.error(err.msg, pos)
+								r.error(err.msg(), pos)
 								stmt.scope.must_lookup_var(name)
 							}
 						}
@@ -226,7 +226,7 @@ pub fn (s &AssertStmt) children() []Node {
 	return s.args.map(Node(it))
 }
 
-fn (mut r Resolver) assert_stmt(stmt AssertStmt) {
+fn (mut r Resolver) assert_stmt(mut stmt AssertStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -234,7 +234,7 @@ fn (mut r Resolver) assert_stmt(stmt AssertStmt) {
 		}
 	}
 
-	r.exprs(stmt.args)
+	r.exprs(mut stmt.args)
 }
 
 pub struct Block {
@@ -248,7 +248,7 @@ pub fn (s &Block) children() []Node {
 	return s.stmts.map(Node(it))
 }
 
-fn (mut r Resolver) block(stmt Block) {
+fn (mut r Resolver) block(mut stmt Block) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -256,7 +256,7 @@ fn (mut r Resolver) block(stmt Block) {
 		}
 	}
 
-	r.stmts(stmt.stmts)
+	r.stmts(mut stmt.stmts)
 }
 
 pub struct Break {
@@ -312,7 +312,7 @@ fn (mut r Resolver) for_in_stmt(mut stmt ForInStmt) {
 		}
 	}
 
-	r.expr(stmt.expr)
+	r.expr(mut stmt.expr)
 
 	var_typ := if array_info := stmt.expr.type_symbol().array_info() {
 		array_info.elem
@@ -325,13 +325,12 @@ fn (mut r Resolver) for_in_stmt(mut stmt ForInStmt) {
 	stmt.var_.sym = stmt.body.scope.must_register_var(name: name, pos: pos, typ: typ)
 	r.var_(mut stmt.var_)
 
-	r.block(stmt.body)
+	r.block(mut stmt.body)
 }
 
 pub struct IfBranch {
 pub mut:
 	cond Expr
-pub:
 	body Block
 }
 
@@ -351,7 +350,7 @@ pub fn (s &IfStmt) children() []Node {
 	return children
 }
 
-fn (mut r Resolver) if_stmt(stmt IfStmt) {
+fn (mut r Resolver) if_stmt(mut stmt IfStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -359,9 +358,9 @@ fn (mut r Resolver) if_stmt(stmt IfStmt) {
 		}
 	}
 
-	for b in stmt.branches {
-		r.expr(b.cond)
-		r.block(b.body)
+	for mut b in stmt.branches {
+		r.expr(mut b.cond)
+		r.block(mut b.body)
 	}
 }
 
@@ -408,7 +407,7 @@ pub fn (mod &ModuleDecl) children() []Node {
 	return [Node(Stmt(mod.block))]
 }
 
-fn (mut r Resolver) module_decl(mod ModuleDecl) {
+fn (mut r Resolver) module_decl(mut mod ModuleDecl) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -416,7 +415,7 @@ fn (mut r Resolver) module_decl(mod ModuleDecl) {
 		}
 	}
 
-	r.block(mod.block)
+	r.block(mut mod.block)
 }
 
 pub struct RequireStmtProps {
@@ -481,7 +480,7 @@ pub fn (s &RequireStmt) children() []Node {
 	return [Node(s.file)]
 }
 
-fn (mut r Resolver) require_stmt(stmt RequireStmt) {
+fn (mut r Resolver) require_stmt(mut stmt RequireStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -489,11 +488,11 @@ fn (mut r Resolver) require_stmt(stmt RequireStmt) {
 		}
 	}
 
-	r.file(stmt.file)
+	r.file(mut stmt.file)
 }
 
 pub struct WhileStmt {
-pub:
+pub mut:
 	cond Expr
 	body Block
 }
@@ -503,7 +502,7 @@ pub fn (s &WhileStmt) children() []Node {
 	return [Node(s.cond), Node(Stmt(s.body))]
 }
 
-fn (mut r Resolver) while_stmt(stmt WhileStmt) {
+fn (mut r Resolver) while_stmt(mut stmt WhileStmt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -511,6 +510,6 @@ fn (mut r Resolver) while_stmt(stmt WhileStmt) {
 		}
 	}
 
-	r.expr(stmt.cond)
-	r.block(stmt.body)
+	r.expr(mut stmt.cond)
+	r.block(mut stmt.body)
 }

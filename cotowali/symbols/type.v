@@ -31,12 +31,12 @@ pub type TypeInfo = AliasTypeInfo
 
 pub struct TypeSymbol {
 mut:
-	scope   &Scope = 0
+	scope   &Scope = unsafe { 0 }
 	methods map[string]&Var
 pub mut:
 	pos Pos
 pub:
-	base &TypeSymbol = 0
+	base &TypeSymbol = unsafe { 0 }
 	typ  Type
 	name string
 	info TypeInfo = TypeInfo(PlaceholderTypeInfo{})
@@ -121,7 +121,7 @@ fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
 }
 
 pub fn (mut s Scope) register_type(ts TypeSymbol) ?&TypeSymbol {
-	s.check_before_register_type(ts) ?
+	s.check_before_register_type(ts)?
 	typ := if ts.typ == 0 { Type(auto_id()) } else { ts.typ }
 	new_ts := &TypeSymbol{
 		...ts
@@ -169,7 +169,7 @@ pub fn (s &Scope) lookup_type(key TypeOrName) ?&TypeSymbol {
 	// dont use `int_typ := if ...` to avoid compiler bug
 	mut typ := u64(0)
 	match key {
-		string { typ = s.name_to_type(key) ? }
+		string { typ = s.name_to_type(key)? }
 		Type { typ = key }
 	}
 

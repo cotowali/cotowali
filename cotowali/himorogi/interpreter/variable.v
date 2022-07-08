@@ -9,7 +9,7 @@ import cotowali.ast
 import cotowali.util { li_panic }
 
 fn (e &Interpreter) var_(v ast.Var) Value {
-	return *e.scope.lookup_var(v.name())
+	return e.scope.lookup_var(v.name())
 }
 
 fn (mut e Interpreter) assign_stmt(node ast.AssignStmt) {

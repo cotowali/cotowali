@@ -44,7 +44,7 @@ fn (mut c Checker) typeof_(expr ast.Typeof) {
 	c.expr(expr.args[0])
 }
 
-fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
+fn (mut c Checker) fn_decl(mut stmt ast.FnDecl) {
 	$if trace_checker ? {
 		c.trace_begin(@FN, stmt.sym.name, stmt.signature())
 		defer {
@@ -85,7 +85,7 @@ fn (mut c Checker) fn_decl(stmt ast.FnDecl) {
 	for i, _ in stmt.params {
 		c.fn_param_by_index(stmt, i)
 	}
-	c.block(stmt.body)
+	c.block(mut stmt.body)
 }
 
 fn (mut c Checker) fn_param_by_index(decl ast.FnDecl, i int) {

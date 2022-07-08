@@ -16,7 +16,7 @@ mut:
 	ctx        &Context
 	code       code.Builder
 	tmp_count  int
-	current_fn &FnDecl = 0
+	current_fn &FnDecl = unsafe { 0 }
 }
 
 [inline]

@@ -8,7 +8,7 @@ module source
 import cotowali.util { max, nil_to_none }
 
 pub struct Pos {
-	source &Source = 0
+	source &Source = unsafe { 0 }
 pub:
 	i    int = -1
 	line int = 1

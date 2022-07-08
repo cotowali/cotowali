@@ -195,7 +195,7 @@ fn (mut lex Lexer) new_token_with_consume_not_for(cond CharCond, kind TokenKind)
 
 // --
 
-fn (lex &Lexer) byte() byte {
+fn (lex &Lexer) byte() u8 {
 	return lex.char(0).byte()
 }
 

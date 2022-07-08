@@ -11,7 +11,7 @@ import cotowali.util { li_panic }
 
 pub struct Var {
 mut:
-	scope &Scope = 0
+	scope &Scope = unsafe { 0 }
 pub:
 	name           string [required]
 	id             u64
@@ -85,7 +85,7 @@ fn (mut s Scope) check_before_register_var(v Var) ? {
 }
 
 pub fn (mut s Scope) register_var(v Var) ?&Var {
-	s.check_before_register_var(v) ?
+	s.check_before_register_var(v)?
 	new_v := &Var{
 		...v
 		id: if v.id == 0 { auto_id() } else { v.id }

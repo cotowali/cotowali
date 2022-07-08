@@ -117,7 +117,7 @@ pub fn (s Scope) lookup_function_type(info FunctionTypeInfo) ?&TypeSymbol {
 }
 
 pub fn (s &Scope) lookup_function(name string) ?&Var {
-	v := s.lookup_var(name) ?
+	v := s.lookup_var(name)?
 	return if v.is_function() { v } else { none }
 }
 

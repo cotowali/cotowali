@@ -23,11 +23,11 @@ fn test_builder_simple() ? {
 	mut b := new_builder(10, new_context(indent: ' '))
 	s1, s2, s3 := 'bytes', 'str', 'strln'
 	mut n := 0
-	n = b.write(s1.bytes()) ?
+	n = b.write(s1.bytes())?
 	assert n == s1.len
-	n = b.write_string(s2) ?
+	n = b.write_string(s2)?
 	assert n == s2.len
-	n = b.writeln(s3) ?
+	n = b.writeln(s3)?
 	assert n == s3.len + 1
 
 	s := s1 + s2 + s3 + '\n'
@@ -54,29 +54,29 @@ fn test_builder_indent() ? {
 
 	// -- normal usage
 
-	b.write_string(s0_0) ?
-	b.write_string(s0_1) ?
-	b.writeln('') ?
+	b.write_string(s0_0)?
+	b.write_string(s0_1)?
+	b.writeln('')?
 	b.indent()
 
-	b.write_string(s1_0) ?
-	b.write_string(s1_1) ?
-	b.writeln('') ?
+	b.write_string(s1_0)?
+	b.write_string(s1_1)?
+	b.writeln('')?
 	b.indent()
 
-	b.write_string(s2_0) ?
-	b.write_string(s2_1) ?
-	b.writeln('') ?
+	b.write_string(s2_0)?
+	b.write_string(s2_1)?
+	b.writeln('')?
 	b.unindent()
 
-	b.write_string(s3_0) ?
-	b.write_string(s3_1) ?
-	b.writeln('') ?
+	b.write_string(s3_0)?
+	b.write_string(s3_1)?
+	b.writeln('')?
 	b.unindent()
 
-	b.write_string(s4_0) ?
-	b.write_string(s4_1) ?
-	b.writeln('') ?
+	b.write_string(s4_0)?
+	b.write_string(s4_1)?
+	b.writeln('')?
 
 	out1 := b.str()
 
@@ -90,40 +90,40 @@ fn test_builder_indent() ? {
 
 	// -- indent only after newline
 
-	b.write_string(s0_0) ?
+	b.write_string(s0_0)?
 	b.indent()
-	b.write_string(s0_1) ?
-	b.writeln('') ?
+	b.write_string(s0_1)?
+	b.writeln('')?
 
-	b.write_string(s1_0) ?
+	b.write_string(s1_0)?
 	b.indent()
-	b.write_string(s1_1) ?
-	b.writeln('') ?
+	b.write_string(s1_1)?
+	b.writeln('')?
 
-	b.write_string(s2_0) ?
+	b.write_string(s2_0)?
 	b.unindent()
-	b.write_string(s2_1) ?
-	b.writeln('') ?
+	b.write_string(s2_1)?
+	b.writeln('')?
 
-	b.write_string(s3_0) ?
+	b.write_string(s3_0)?
 	b.unindent()
-	b.write_string(s3_1) ?
-	b.writeln('') ?
+	b.write_string(s3_1)?
+	b.writeln('')?
 
-	b.write_string(s4_0) ?
+	b.write_string(s4_0)?
 	b.indent()
-	b.write_string(s4_1) ?
-	b.writeln('') ?
+	b.write_string(s4_1)?
+	b.writeln('')?
 
 	assert b.str() == out1
 }
 
 fn test_builder_comment() ? {
 	mut b := new_builder(10, new_default_context())
-	b.write_string('text') ?
-	b.writeln_comment('comment') ?
-	b.write_string('text ') ?
-	b.writeln_comment('comment\ncomment') ?
+	b.write_string('text')?
+	b.writeln_comment('comment')?
+	b.write_string('text ')?
+	b.writeln_comment('comment\ncomment')?
 
 	assert b.str() == [
 		'text # comment',
@@ -137,18 +137,18 @@ fn test_builder_seek() ? {
 	s1, s2, s3, s4 := 'ab', 'cd\n', 'ef', 'gh'
 
 	assert b.pos() == 0
-	b.write_string(s1) ?
-	b.write_string(s3) ?
+	b.write_string(s1)?
+	b.write_string(s3)?
 	assert b.pos() == b.len()
-	b.seek(s1.len) ?
+	b.seek(s1.len)?
 	assert b.pos() == s1.len
 	assert b.len() == s1.len + s3.len
-	b.write_string(s2) ?
+	b.write_string(s2)?
 	assert b.len() == s1.len + s2.len + s3.len
 
-	b.seek(tail) ?
+	b.seek(tail)?
 	assert b.pos() == b.len()
-	b.write_string(s4) ?
+	b.write_string(s4)?
 	assert b.len() == s1.len + s2.len + s3.len + s4.len
 
 	if _ := b.seek(-1) {
@@ -164,15 +164,15 @@ fn test_builder_seek() ? {
 fn test_lock_cursor() ? {
 	mut b := new_builder(10, new_default_context())
 	s := ['0', '1', '2', '3', '4', '5']
-	b.write_string(s[0]) ? // 0[cursor]
+	b.write_string(s[0])? // 0[cursor]
 	b.lock_cursor()
-	b.write_string(s[4]) ? // 0[cursor]4
-	b.write_string(s[3]) ? // 0[cursor]34
+	b.write_string(s[4])? // 0[cursor]4
+	b.write_string(s[3])? // 0[cursor]34
 	b.unlock_cursor()
-	b.write_string(s[1]) ? // 01[cursor]34
-	b.write_string(s[2]) ? // 012[cursor]34
-	b.seek(tail) ?
-	b.write_string(s[5]) ? // 012345[cursor]
+	b.write_string(s[1])? // 01[cursor]34
+	b.write_string(s[2])? // 012[cursor]34
+	b.seek(tail)?
+	b.write_string(s[5])? // 012345[cursor]
 
 	assert b.str() == s.join('')
 }

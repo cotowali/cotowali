@@ -8,7 +8,7 @@ module sh
 import io
 import cotowali.context { Context }
 import cotowali.emit.code
-import cotowali.ast { File, FnDecl }
+import cotowali.ast { FnDecl }
 import cotowali.util { li_panic }
 
 enum CodeKind {
@@ -24,7 +24,6 @@ const ordered_code_kinds = [
 pub struct Emitter {
 	ident_to_discard string = '__cotowali_dummy'
 mut:
-	cur_file      &File = 0
 	cur_fn        FnDecl
 	ctx           &Context
 	inside_fn     bool

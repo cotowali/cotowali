@@ -25,7 +25,7 @@ jobs:
     strategy:
       matrix:
         cc: [clang, gcc]
-        test_arg: ['', 'prod', 'pwsh', 'himorogi']
+        test_arg: ['', 'pwsh', 'himorogi']
     env:
       VFLAGS: "-cc ${{ matrix.cc }}"
     steps:
@@ -59,7 +59,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        test_arg: ['', 'prod', 'himorogi']
+        test_arg: ['', 'himorogi']
     env:
       VFLAGS: "-cc clang"
     steps:

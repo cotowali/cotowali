@@ -17,7 +17,7 @@ fn (mut p Parser) parse_module() ?ast.ModuleDecl {
 
 	p.consume_with_assert(.key_module)
 
-	mut ident := p.consume_with_check(.ident) ?
+	mut ident := p.consume_with_check(.ident)?
 
 	mut depth := 1
 	defer {
@@ -35,7 +35,7 @@ fn (mut p Parser) parse_module() ?ast.ModuleDecl {
 		p.consume_with_assert(.coloncolon)
 
 		depth += 1
-		ident = p.consume_with_check(.ident) ?
+		ident = p.consume_with_check(.ident)?
 		mod = ast.ModuleDecl{
 			block: ast.Block{
 				scope: p.open_scope(ident.text)
@@ -43,6 +43,6 @@ fn (mut p Parser) parse_module() ?ast.ModuleDecl {
 		}
 	}
 
-	mod.block = p.parse_block_without_new_scope() ?
+	mod.block = p.parse_block_without_new_scope()?
 	return mod
 }

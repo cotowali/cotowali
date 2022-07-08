@@ -32,7 +32,7 @@ fn compile_to_temp_file(s Source, ctx &Context) ?string {
 	temp_path := os.join_path(os.temp_dir(), '$base$ext')
 
 	mut f := os.create(temp_path) or { li_panic(@FN, @FILE, @LINE, err) }
-	c.compile_to(f) ?
+	c.compile_to(f)?
 	defer {
 		f.close()
 	}
@@ -44,12 +44,12 @@ pub fn run(s Source, args []string, ctx &Context) ?int {
 		return himorogi.run(s, args, ctx)
 	}
 
-	temp_file := compile_to_temp_file(s, ctx) ?
+	temp_file := compile_to_temp_file(s, ctx)?
 	defer {
 		os.rm(temp_file) or { li_panic(@FN, @FILE, @LINE, err) }
 	}
 	executable := ctx.config.backend.find_executable_path() or {
-		eprintln(err.msg)
+		eprintln(err.msg())
 		exit(1)
 	}
 

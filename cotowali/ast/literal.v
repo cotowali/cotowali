@@ -13,9 +13,9 @@ pub struct ArrayLiteral {
 pub:
 	pos            Pos
 	is_init_syntax bool // is `[]Type{init: v, len: n}` syntax
-	len            Expr
-	init           Expr
 pub mut:
+	len      Expr
+	init     Expr
 	elem_typ Type
 	scope    &Scope
 	elements []Expr
@@ -35,10 +35,10 @@ fn (mut r Resolver) array_literal(mut expr ArrayLiteral, opt ResolveExprOpt) {
 	}
 
 	if expr.is_init_syntax {
-		r.expr(expr.init, opt)
-		r.expr(expr.len, opt)
+		r.expr(mut expr.init, opt)
+		r.expr(mut expr.len, opt)
 	} else {
-		r.exprs(expr.elements, opt)
+		r.exprs(mut expr.elements, opt)
 	}
 	if expr.elements.len > 0 && expr.elem_typ == builtin_type(.placeholder) {
 		expr.elem_typ = expr.elements[0].typ()
@@ -46,16 +46,16 @@ fn (mut r Resolver) array_literal(mut expr ArrayLiteral, opt ResolveExprOpt) {
 }
 
 pub struct MapLiteralEntry {
-pub:
+pub mut:
 	key   Expr
 	value Expr
 }
 
 pub struct MapLiteral {
 pub:
-	pos     Pos
-	entries []MapLiteralEntry
+	pos Pos
 pub mut:
+	entries   []MapLiteralEntry
 	scope     &Scope
 	key_typ   Type
 	value_typ Type
@@ -78,9 +78,9 @@ fn (mut r Resolver) map_literal(mut expr MapLiteral, opt ResolveExprOpt) {
 		}
 	}
 
-	for entry in expr.entries {
-		r.expr(entry.key, opt)
-		r.expr(entry.value, opt)
+	for mut entry in expr.entries {
+		r.expr(mut entry.key, opt)
+		r.expr(mut entry.value, opt)
 	}
 	if expr.entries.len > 0 {
 		entry := expr.entries[0]
@@ -167,9 +167,13 @@ pub fn (s &StringLiteral) pos() Pos {
 	return s.open.pos.merge(s.close.pos)
 }
 
-pub fn (mut s StringLiteral) typ() Type {
+pub fn (s StringLiteral) typ() Type {
 	str := builtin_type(.string)
-	return if s.is_glob() { s.scope.lookup_or_register_array_type(elem: str).typ } else { str }
+	return if s.is_glob() {
+		unsafe { s.scope.lookup_or_register_array_type(elem: str).typ }
+	} else {
+		str
+	}
 }
 
 pub fn (s &StringLiteral) is_const() bool {
@@ -196,7 +200,7 @@ fn (s &StringLiteral) children() []Node {
 	return s.contents.filter(it is Expr).map(Node(it as Expr))
 }
 
-fn (mut r Resolver) string_literal(expr StringLiteral, opt ResolveExprOpt) {
+fn (mut r Resolver) string_literal(mut expr StringLiteral, opt ResolveExprOpt) {
 	$if trace_resolver ? {
 		r.trace_begin(@FN)
 		defer {
@@ -204,9 +208,9 @@ fn (mut r Resolver) string_literal(expr StringLiteral, opt ResolveExprOpt) {
 		}
 	}
 
-	for content in expr.contents {
-		if content is Expr {
-			r.expr(content, opt)
+	for mut content in expr.contents {
+		if mut content is Expr {
+			r.expr(mut content, opt)
 		}
 	}
 }

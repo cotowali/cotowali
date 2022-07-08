@@ -21,10 +21,10 @@ fn (mut p Parser) parse_attr() ?ast.Attr {
 		}
 	}
 
-	start := (p.consume_with_check(.hash) ?).pos
-	p.consume_with_check(.l_bracket) ?
+	start := (p.consume_with_check(.hash)?).pos
+	p.consume_with_check(.l_bracket)?
 	tok := p.consume()
-	end := (p.consume_with_check(.r_bracket) ?).pos
+	end := (p.consume_with_check(.r_bracket)?).pos
 	return ast.Attr{
 		pos: start.merge(end)
 		name: tok.text
@@ -94,13 +94,13 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 
 	match p.kind(0) {
 		.key_fn {
-			return ast.Stmt(p.parse_fn_decl() ?)
+			return ast.Stmt(p.parse_fn_decl()?)
 		}
 		.key_var, .key_const {
-			return ast.Stmt(p.parse_decl_assign_stmt() ?)
+			return ast.Stmt(p.parse_decl_assign_stmt()?)
 		}
 		.key_if {
-			return ast.Stmt(p.parse_if_stmt() ?)
+			return ast.Stmt(p.parse_if_stmt()?)
 		}
 		.key_break {
 			return ast.Break{
@@ -113,22 +113,22 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 			}
 		}
 		.key_for {
-			return ast.Stmt(p.parse_for_in_stmt() ?)
+			return ast.Stmt(p.parse_for_in_stmt()?)
 		}
 		.key_module {
-			return ast.Stmt(p.parse_module() ?)
+			return ast.Stmt(p.parse_module()?)
 		}
 		.key_return {
-			return ast.Stmt(p.parse_return_stmt() ?)
+			return ast.Stmt(p.parse_return_stmt()?)
 		}
 		.key_require {
-			return ast.Stmt(p.parse_require_stmt() ?)
+			return ast.Stmt(p.parse_require_stmt()?)
 		}
 		.key_type {
 			return p.parse_type_decl()
 		}
 		.key_while {
-			return ast.Stmt(p.parse_while_stmt() ?)
+			return ast.Stmt(p.parse_while_stmt()?)
 		}
 		.doc_comment {
 			return ast.DocComment{
@@ -136,7 +136,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 			}
 		}
 		.key_yield {
-			return ast.Stmt(p.parse_yield_stmt() ?)
+			return ast.Stmt(p.parse_yield_stmt()?)
 		}
 		else {}
 	}
@@ -144,19 +144,19 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 	match p.token(0).keyword_ident() {
 		.sh, .pwsh, .inline {
 			if p.kind(1) == .l_brace {
-				return ast.Stmt(p.parse_inline_shell() ?)
+				return ast.Stmt(p.parse_inline_shell()?)
 			}
 		}
 		.assert_ {
 			if p.kind(1) == .l_paren {
-				return ast.Stmt(p.parse_assert_stmt() ?)
+				return ast.Stmt(p.parse_assert_stmt()?)
 			}
 		}
 		.not_a_keyword_ident {}
 	}
-	expr := p.parse_expr(.toplevel) ?
+	expr := p.parse_expr(.toplevel)?
 	if p.kind(0).@is(.assign_op) {
-		return ast.Stmt(p.parse_assign_stmt_with_left(expr) ?)
+		return ast.Stmt(p.parse_assign_stmt_with_left(expr)?)
 	}
 	return expr
 }
@@ -176,12 +176,12 @@ fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
 	defer {
 		p.close_scope()
 	}
-	block := p.parse_block_without_new_scope() ?
+	block := p.parse_block_without_new_scope()?
 	return block
 }
 
 fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
-	p.consume_with_check(.l_brace) ?
+	p.consume_with_check(.l_brace)?
 	p.skip_eol() // ignore eol after brace.
 
 	mut node := ast.Block{
@@ -211,16 +211,16 @@ fn (mut p Parser) parse_decl_assign_stmt() ?ast.AssignStmt {
 	key := p.consume_with_assert(.key_var, .key_const)
 	is_const := key.kind == .key_const
 
-	left := p.parse_expr(.toplevel) ?
+	left := p.parse_expr(.toplevel)?
 
 	mut typ := builtin_type(.placeholder)
-	p.check(.assign, .colon) ?
+	p.check(.assign, .colon)?
 
 	if _ := p.consume_if_kind_eq(.colon) {
-		typ = (p.parse_type() ?).typ
+		typ = (p.parse_type()?).typ
 	}
 	right := if _ := p.consume_if_kind_eq(.assign) {
-		expr := p.parse_expr(.toplevel) ?
+		expr := p.parse_expr(.toplevel)?
 		expr
 	} else {
 		ast.Expr(ast.DefaultValue{
@@ -241,9 +241,9 @@ fn (mut p Parser) parse_decl_assign_stmt() ?ast.AssignStmt {
 
 fn (mut p Parser) parse_assert_stmt() ?ast.AssertStmt {
 	tok := p.consume()
-	p.consume_with_check(.l_paren) ?
-	args := p.parse_call_args() ?
-	r_paren := p.consume_with_check(.r_paren) ?
+	p.consume_with_check(.l_paren)?
+	args := p.parse_call_args()?
+	r_paren := p.consume_with_check(.r_paren)?
 	return ast.AssertStmt{
 		pos: tok.pos.merge(r_paren.pos)
 		args: args
@@ -267,7 +267,7 @@ fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
 		.mod_assign,
 	])
 
-	mut right := p.parse_expr(.toplevel) ?
+	mut right := p.parse_expr(.toplevel)?
 	if op.kind == .assign {
 		return ast.AssignStmt{
 			scope: p.scope
@@ -315,8 +315,8 @@ fn (mut p Parser) parse_if_branch(name string) ?ast.IfBranch {
 		}
 	}
 
-	cond := p.parse_expr(.toplevel) ?
-	block := p.parse_block(name, []) ?
+	cond := p.parse_expr(.toplevel)?
+	block := p.parse_block(name, [])?
 	return ast.IfBranch{
 		cond: cond
 		body: block
@@ -333,11 +333,11 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 
 	p.consume_with_assert(.key_if)
 
-	cond := p.parse_expr(.toplevel) ?
+	cond := p.parse_expr(.toplevel)?
 	mut branches := [
 		ast.IfBranch{
 			cond: cond
-			body: p.parse_block('if_$p.count', []) ?
+			body: p.parse_block('if_$p.count', [])?
 		},
 	]
 	mut has_else := false
@@ -346,16 +346,16 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 		p.consume_if_kind_eq(.key_else) or { break }
 
 		if _ := p.consume_if_kind_eq(.key_if) {
-			elif_cond := p.parse_expr(.toplevel) ?
+			elif_cond := p.parse_expr(.toplevel)?
 			branches << ast.IfBranch{
 				cond: elif_cond
-				body: p.parse_block('elif_${p.count}_$elif_count', []) ?
+				body: p.parse_block('elif_${p.count}_$elif_count', [])?
 			}
 			elif_count++
 		} else {
 			has_else = true
 			branches << ast.IfBranch{
-				body: p.parse_block('else_$p.count', []) ?
+				body: p.parse_block('else_$p.count', [])?
 			}
 			break
 		}
@@ -376,10 +376,10 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 	}
 
 	p.consume_with_assert(.key_for)
-	ident := p.consume_with_check(.ident) ?
-	p.consume_with_check(.key_in) ?
-	expr := p.parse_expr(.toplevel) ?
-	body := p.parse_block('for_$p.count', []) ?
+	ident := p.consume_with_check(.ident)?
+	p.consume_with_check(.key_in)?
+	expr := p.parse_expr(.toplevel)?
+	body := p.parse_block('for_$p.count', [])?
 	p.count++
 	return ast.ForInStmt{
 		var_: ast.Var{
@@ -410,7 +410,7 @@ fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
 		pos: p.pos(-1)
 	})
 	if p.kind(0) !in [.r_brace, .r_paren, .r_bracket, .semicolon] {
-		expr = p.parse_expr(.toplevel) ?
+		expr = p.parse_expr(.toplevel)?
 	}
 	return ast.ReturnStmt{
 		expr: expr
@@ -421,19 +421,19 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 	key_tok := p.consume_with_assert(.key_require)
 	mut pos := key_tok.pos
 
-	path_node := p.parse_string_literal() ?
+	path_node := p.parse_string_literal()?
 	path_pos := path_node.pos()
 	path := path_node.const_text() or {
 		return p.error('cannot require non-constant path', path_pos)
 	}
 
-	props := p.parse_require_stmt_props() ?
+	props := p.parse_require_stmt_props()?
 
 	pos = pos.merge(p.pos(-1))
 
 	stmt := if url := urllib.parse(path) {
 		f := parse_remote_file(url, p.ctx) or {
-			return if err is none { none } else { p.error(err.msg, pos) }
+			return if err is none { none } else { p.error(err.msg(), pos) }
 		}
 		ast.RequireStmt{
 			props: props
@@ -441,7 +441,7 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 		}
 	} else if is_relative_path(path) {
 		f := parse_file_relative(p.source(), path, p.ctx) or {
-			return if err is none { none } else { p.error(err.msg, pos) }
+			return if err is none { none } else { p.error(err.msg(), pos) }
 		}
 		ast.RequireStmt{
 			props: props
@@ -449,7 +449,7 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 		}
 	} else {
 		f := parse_file_in_cotowali_path(path, p.ctx) or {
-			return if err is none { none } else { p.error(err.msg, pos) }
+			return if err is none { none } else { p.error(err.msg(), pos) }
 		}
 		ast.RequireStmt{
 			props: props
@@ -457,7 +457,7 @@ fn (mut p Parser) parse_require_stmt() ?ast.RequireStmt {
 		}
 	}
 
-	p.require_stmt_verify_checksum(stmt) ?
+	p.require_stmt_verify_checksum(stmt)?
 	return stmt
 }
 
@@ -489,16 +489,16 @@ fn (mut p Parser) parse_require_stmt_props() ?ast.RequireStmtProps {
 	for {
 		p.skip_eol()
 
-		key_tok := p.consume_with_check(.ident) ?
+		key_tok := p.consume_with_check(.ident)?
 		key := key_tok.text
 
 		p.skip_eol()
-		p.consume_with_check(.colon) ?
+		p.consume_with_check(.colon)?
 
 		if key in props_map {
 			p.skip_eol()
 
-			value_node := p.parse_string_literal() ?
+			value_node := p.parse_string_literal()?
 			value_pos := value_node.pos()
 			value := value_node.const_text() or {
 				// report error then continue to parse
@@ -526,7 +526,7 @@ fn (mut p Parser) parse_require_stmt_props() ?ast.RequireStmtProps {
 		}
 
 		p.skip_eol()
-		p.consume_with_check(.comma) ?
+		p.consume_with_check(.comma)?
 
 		p.skip_eol()
 		if _ := p.consume_if_kind_eq(.r_brace) {
@@ -581,8 +581,8 @@ fn (mut p Parser) parse_while_stmt() ?ast.WhileStmt {
 	}
 
 	p.consume_with_assert(.key_while)
-	cond := p.parse_expr(.toplevel) ?
-	body := p.parse_block('while_$p.count', []) ?
+	cond := p.parse_expr(.toplevel)?
+	body := p.parse_block('while_$p.count', [])?
 	p.count++
 
 	return ast.WhileStmt{
@@ -600,7 +600,7 @@ fn (mut p Parser) parse_yield_stmt() ?ast.YieldStmt {
 	}
 
 	key := p.consume_with_assert(.key_yield)
-	expr := p.parse_expr(.toplevel) ?
+	expr := p.parse_expr(.toplevel)?
 	return ast.YieldStmt{
 		pos: key.pos.merge(expr.pos())
 		expr: expr

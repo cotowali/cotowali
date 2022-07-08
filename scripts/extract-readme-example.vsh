@@ -2,7 +2,7 @@
 
 // TODO: cleanup (regex ?)
 
-lines := read_lines('README.md') ?
+lines := read_lines('README.md')?
 mut i, mut begin, mut end := 0, -1, -1
 for i < lines.len {
 	mut line := lines[i]
@@ -24,4 +24,4 @@ for i < lines.len {
 	i++
 }
 
-write_file('examples/readme_example.li', lines[begin..end].map(it + '\n').join('')) ?
+write_file('examples/readme_example.li', lines[begin..end].map(it + '\n').join(''))?

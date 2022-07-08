@@ -13,7 +13,7 @@ import cotowali.util { nil_to_none }
 pub struct Shell {
 mut:
 	ctx             &Context
-	backend_process &os.Process = 0
+	backend_process &os.Process = unsafe { 0 }
 	readline        Readline
 }
 
@@ -29,7 +29,7 @@ fn new_sh_process(command string) ?&os.Process {
 pub fn new_shell(sh string, ctx &Context) ?Shell {
 	return Shell{
 		ctx: ctx
-		backend_process: new_sh_process(sh) ?
+		backend_process: new_sh_process(sh)?
 	}
 }
 

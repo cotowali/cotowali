@@ -15,7 +15,7 @@ fn test_get_env() ? {
 	}
 
 	os.setenv('LI_HOME', 'abc', true)
-	assert (getenv(.cotowali_home) ?) == 'abc'
+	assert (getenv(.cotowali_home)?) == 'abc'
 	os.setenv('COTOWALI_HOME', 'xyz', true)
-	assert (getenv(.cotowali_home) ?) == 'xyz'
+	assert (getenv(.cotowali_home)?) == 'xyz'
 }

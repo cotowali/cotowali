@@ -15,10 +15,10 @@ pub:
 	id   ID
 	name string
 pub mut:
-	owner &Var = 0
+	owner &Var = unsafe { 0 }
 	pos   Pos
 mut:
-	parent              &Scope = 0
+	parent              &Scope = unsafe { 0 }
 	children            map[u64]&Scope // map[ID]&Scope
 	name_to_child_id    map[string]ID
 	vars                map[string]&Var
@@ -157,7 +157,7 @@ pub fn (mut s Scope) get_or_create_child(name string) &Scope {
 }
 
 pub fn (mut s Scope) must_create_child(name string) &Scope {
-	return s.create_child(name) or { li_panic(@FN, @FILE, @LINE, err.msg) }
+	return s.create_child(name) or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 }
 
 pub fn (s &Scope) ident_for(v Var) string {
