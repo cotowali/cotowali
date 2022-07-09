@@ -1,6 +1,11 @@
 v0.1
 ====
 
+v0.1.2
+------
+
+- Update V compiler used for builds
+
 v0.1.1
 ------
 
