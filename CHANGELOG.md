@@ -1,8 +1,8 @@
 v0.1
 ====
 
-v0.1.2
-------
+v0.1.2 Onocoro(自凝)
+--------------------
 
 - Update V compiler used for builds
 
