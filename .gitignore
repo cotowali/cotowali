@@ -1,4 +1,5 @@
 *.c
+!/thirdparty/**/*
 /*.sh
 /cmd/lic/lic
 /lic
