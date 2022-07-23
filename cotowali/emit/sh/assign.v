@@ -115,7 +115,7 @@ fn (mut e Emitter) destructuring_assign(names []string, expr ast.Expr) {
 	e.expr(expr, writeln: true, quote: false)
 	for i, name in names {
 		ts := expr.scope().must_lookup_type(tuple_info.elements[i].typ)
-		e.assign(name, '\$${i + 1}', ts)
+		e.assign(name, '\${${i + 1}}', ts)
 	}
 }
 
