@@ -30,34 +30,34 @@ cotowali_false_value() {
 ',
 	'
 array_to_str() {
-  name=\$1
+  name=\${1}
   echo "\$( eval echo \$(array_elements \$name) )"
 }
 
 array_get() {
-  name=\$1
-  i=\$2
+  name=\${1}
+  i=\${2}
   eval echo "\\\$\${name}_\$i"
 }
 
 array_set() {
-  name=\$1
-  i=\$2
-  val=\$3
+  name=\${1}
+  i=\${2}
+  val=\${3}
   eval "\${name}_\$i=\'\$val\'"
 }
 
 array_push() {
-	name=\$1
-	value=\$2
+	name=\${1}
+	value=\${2}
 
 	array_set \$name \$(( \${name}_len )) "\$value"
   eval "\${name}_len=\$(( \${name}_len + 1 ))"
 }
 
 array_push_array() {
-  name="\$1"
-  values_name="\$2"
+  name="\${1}"
+  values_name="\${2}"
 	values_len=\$(( \${values_name}_len ))
 
   push_array_i=0
@@ -69,12 +69,12 @@ array_push_array() {
 }
 
 array_len() {
-  name="\$1"
+  name="\${1}"
   eval "echo \\\$\${name}_len"
 }
 
 array_elements() {
-  name=\$1
+  name=\${1}
   len="\$(array_len \$name)"
 
   i=0
@@ -91,7 +91,7 @@ array_elements() {
 }
 
 array_assign() {
-  name=\$1
+  name=\${1}
   shift
   len="\$#"
   eval "\${name}_len=\$len"
@@ -105,9 +105,9 @@ array_assign() {
 }
 
 array_init() {
-  name=\$1
-  len=\$2
-  value=\$3
+  name=\${1}
+  len=\${2}
+  value=\${3}
 
   eval "\${name}_len=\$len"
   i=0
@@ -119,8 +119,8 @@ array_init() {
 }
 
 array_copy() {
-  dest_name="\$1"
-  src_name="\$2"
+  dest_name="\${1}"
+  src_name="\${2}"
   len="\$(array_len \$src_name)"
   eval "\${dest_name}_len=\$len"
 
@@ -133,15 +133,15 @@ array_copy() {
 }
 
 map_keys_var() {
-  echo "__cotowali_meta_map_keys_\$1"
+  echo "__cotowali_meta_map_keys_\${1}"
 }
 
 map_keys() {
-  eval echo "\\\$\$(map_keys_var \$1)"
+  eval echo "\\\$\$(map_keys_var \${1})"
 }
 
 map_entries() {
-  name="\$1"
+  name="\${1}"
   for key in \$(map_keys \$name)
   do
     printf
@@ -149,8 +149,8 @@ map_entries() {
 }
 
 map_copy() {
-  dst="\$1"
-  src="\$2"
+  dst="\${1}"
+  src="\${2}"
   for key in \$(map_keys "\$src")
   do
     value="\$(map_get "\$src" "\$key")"
@@ -159,15 +159,15 @@ map_copy() {
 }
 
 map_get() {
-  name=\$1
-  key=\$2
+  name=\${1}
+  key=\${2}
   eval echo "\\\$\${name}_\$key"
 }
 
 map_set() {
-  name=\$1
-  key=\$2
-  value=\$3
+  name=\${1}
+  key=\${2}
+  value=\${3}
   eval "\${name}_\$key=\$value"
   eval "\$(map_keys_var \$name)=\\"\$({ map_keys \$name; echo \$key; } | sort | uniq )\\""
 }

@@ -120,7 +120,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 				e.writeln('array_assign "$name" "\$@"')
 				name
 			} else {
-				'\$1'
+				'\${1}'
 			}
 			if default := param.default() {
 				e.writeln(r'if [ $# -eq 0 ]')
