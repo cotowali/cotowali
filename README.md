@@ -1,5 +1,3 @@
-**Cotowali is NOT dead. I'm working on private tasks related to cotowali.**
-
 # We need financial support to continue development.  Please [become a sponsor](https://opencollective.com/cotowali).
 
 
@@ -7,10 +5,14 @@
   <img width="200" src="https://raw.githubusercontent.com/cotowali/design/main/assets/cotowali.svg?sanitize=true">
   <h1>Cotowali</h1>
   <p>A statically typed scripting language that transpile into POSIX sh</p>
-  <a href="http://mozilla.org/MPL/2.0/" rel="nofollow">
-    <img  alt="License: MPL 2.0" src="https://img.shields.io/badge/License-MPL%202.0-blue.svg?style=flat-square">
-  </a>
-
+  <p><a href="https://cotowali.org/" ref="nofollow" target="_blank">Website</a></p>
+  <p>
+    <a href="http://mozilla.org/MPL/2.0/" rel="nofollow">
+      <img  alt="License: MPL 2.0" src="https://img.shields.io/badge/License-MPL%202.0-blue.svg?style=flat-square">
+    <a href="https://discord.com/invite/nwEad5dNYg" rel="nofollow">
+      <img alt="Join Cotowali Discord" src=https://img.shields.io/static/v1?label=Discord&logo=discord&logoColor=white&message=Join&color=&style=flat-square
+    </a>
+  </p>
 </div>
 
 ## Concepts of Cotowali
