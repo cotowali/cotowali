@@ -3,7 +3,7 @@ module ns {
   fn f() {}
 }
 
-echo(n)
+var _ = n
 f()
 undefined_mod::f()
-echo(undefined_mod::n)
+var _ = undefined_mod::n

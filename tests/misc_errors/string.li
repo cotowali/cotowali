@@ -1,9 +1,9 @@
 var a = "a"
-echo("-- $undefined_variable --")
-echo("a = $a; b = $b; c = $c;")
+println("-- $undefined_variable --")
+println("a = $a; b = $b; c = $c;")
 
-echo("${ a + 1 } ${ x + 1 }")
-echo("${ 1 + "${ a + 1 } $x"} $x")
+println("${ a + 1 } ${ x + 1 }")
+println("${ 1 + "${ a + 1 } $x"} $x")
 
 fn string_does_not_support_index_assign() {
   "a"[0] = "a"
