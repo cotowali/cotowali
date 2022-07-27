@@ -2,7 +2,7 @@ fn f(a: int): int {
   return a
 }
 
-echo(x)
+var _ = x
 
 f("a") + "a"
 var x = "a" + f("a")

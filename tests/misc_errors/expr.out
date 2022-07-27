@@ -1,6 +1,6 @@
-error: expr.li 5,6: variable `x` is not defined
-    5 | echo(x)
-      |      ^
+error: expr.li 5,9: variable `x` is not defined
+    5 | var _ = x
+      |         ^
 error: expr.li 7,1: mismatched types: `int` (left) and `string` (right)
     7 | f("a") + "a"
       | ^^^^^^^^^^^^

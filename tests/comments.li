@@ -3,7 +3,7 @@
 assert(1 == 1) // comment
 
 // /*
-echo('this is not a block comment')
+println('this is not a block comment')
 // */
 
 
@@ -29,7 +29,7 @@ assert(1 /* comment */ /* /* comment */ */ == 1)
  *  *  *
  *  *  */
  *  */
- *  echo('this is comment')
+ *  println('this is comment')
  */
 // this is normal coment
 /* this is normal coment */

@@ -33,8 +33,7 @@ pub fn (t Type) is_number() bool {
 }
 
 pub enum BuiltinFunctionKey {
-	echo = 1
-	read
+	read = 1
 }
 
 pub fn builtin_function_id(key BuiltinFunctionKey) ID {
@@ -89,7 +88,6 @@ pub fn (mut s Scope) register_builtin() {
 	}
 
 	fns := [
-		f_(.echo, [t_(.any)], t_(.string)),
 		f_(.read, [t_(.any)], t_(.bool)),
 	]
 	for f in fns {
