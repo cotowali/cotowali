@@ -70,8 +70,8 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 		e.write(' ')
 		e.expr(receiver)
 	}
-	mut args := expr.args
-	for i, arg in args {
+
+	for i, arg in expr.args {
 		e.write(' ')
 
 		if arg is ast.StringLiteral {
