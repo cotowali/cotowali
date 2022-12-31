@@ -29,22 +29,22 @@ mut:
 	quote          bool = true
 }
 
-struct ExprWithOpt<T> {
+struct ExprWithOpt[T] {
 	expr T       [required]
 	opt  ExprOpt [required]
 }
 
-fn expr_with_opt<T>(expr T, opt ExprOpt) ExprWithOpt<T> {
-	return ExprWithOpt<T>{expr, opt}
+fn expr_with_opt[T](expr T, opt ExprOpt) ExprWithOpt[T] {
+	return ExprWithOpt[T]{expr, opt}
 }
 
-struct ExprWithValue<T, U> {
+struct ExprWithValue[T, U] {
 	expr  T [required]
 	value U [required]
 }
 
-fn expr_with_value<T, U>(expr T, v U) ExprWithValue<T, U> {
-	return ExprWithValue<T, U>{expr, v}
+fn expr_with_value[T, U](expr T, v U) ExprWithValue[T, U] {
+	return ExprWithValue[T, U]{expr, v}
 }
 
 fn (mut e Emitter) expr_or_string(expr ExprOrString, opt ExprOpt) {
@@ -106,16 +106,16 @@ fn (mut e Emitter) float_literal(expr ast.FloatLiteral, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	tmp_var := e.new_tmp_ident()
-	e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, v Tuple2<string, string>) {
+	e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, v Tuple2[string, string]) {
 		tmp_var, text := v.v1, v.v2
-		e.write('$tmp_var="\$(')
+		e.write('${tmp_var}="\$(')
 		{
-			awk_code := '{printf "$printf_format_float", \$1 }'
-			e.write("echo $text | awk '$awk_code'")
+			awk_code := '{printf "${printf_format_float}", \$1 }'
+			e.write("echo ${text} | awk '${awk_code}'")
 		}
 		e.writeln(')"')
 	}, tuple2(tmp_var, expr.token.text))
-	e.write('\$$tmp_var')
+	e.write('\$${tmp_var}')
 }
 
 fn (mut e Emitter) int_literal(expr ast.IntLiteral, opt ExprOpt) {
@@ -172,11 +172,11 @@ fn (mut e Emitter) var_(v ast.Var, opt ExprOpt) {
 		else {
 			s := if opt.mode == .inside_arithmetic {
 				// no need $ in arithmetic. e.g: $(( n == 0 ))
-				'$ident'
+				'${ident}'
 			} else if opt.quote {
-				'"\${$ident}"'
+				'"\${${ident}}"'
 			} else {
-				'\${$ident}'
+				'\${${ident}}'
 			}
 			e.write_echo_if_command_then_write(s, opt)
 		}
@@ -191,14 +191,14 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 
 	e.write_echo_if_command(opt)
 
-	e.sh_command_substitution(fn (mut e Emitter, v ExprWithOpt<ast.IndexExpr>) {
+	e.sh_command_substitution(fn (mut e Emitter, v ExprWithOpt[ast.IndexExpr]) {
 		left_ts := v.expr.left.type_symbol().resolved()
 
 		if tuple_info := left_ts.tuple_info() {
 			tmp := e.new_tmp_ident()
 			mut tmps := []string{cap: tuple_info.elements.len}
 			for i in 0 .. tuple_info.elements.len {
-				tmps << '${tmp}__$i'
+				tmps << '${tmp}__${i}'
 			}
 			e.destructuring_assign(tmps, v.expr.left)
 			e.write('echo \$${tmp}__')
@@ -261,7 +261,7 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 			match ts.kind() {
 				.array { e.infix_expr_for_array(expr, opt) }
 				.tuple { e.infix_expr_for_tuple(expr, opt) }
-				else { li_panic(@FN, @FILE, @LINE, 'invarid operand of infix expr (`$ts.name`)') }
+				else { li_panic(@FN, @FILE, @LINE, 'invarid operand of infix expr (`${ts.name}`)') }
 			}
 		}
 	}
@@ -296,7 +296,7 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 		}
 	}
 	e.expr(expr.left, mode: .condition)
-	e.write(' $op ')
+	e.write(' ${op} ')
 	e.expr(expr.right, mode: .condition)
 }
 
@@ -363,7 +363,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 			e.write_if(opt.mode != .inside_arithmetic, r'$(( ')
 			{
 				e.expr(expr.left, mode: .inside_arithmetic)
-				e.write(' $expr.op.text ')
+				e.write(' ${expr.op.text} ')
 				e.expr(expr.right, mode: .inside_arithmetic)
 			}
 			e.write_if(opt.mode != .inside_arithmetic, ' ))')
@@ -372,7 +372,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 			e.sh_awk_infix_expr(expr)
 		}
 		else {
-			li_panic(@FN, @FILE, @LINE, 'invalid op `$expr.op.text`')
+			li_panic(@FN, @FILE, @LINE, 'invalid op `${expr.op.text}`')
 		}
 	}
 }
@@ -398,7 +398,7 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 			e.expr(expr.right)
 		}
 		else {
-			li_panic(@FN, @FILE, @LINE, 'invalid op `$expr.op.text`')
+			li_panic(@FN, @FILE, @LINE, 'invalid op `${expr.op.text}`')
 		}
 	}
 }
@@ -425,7 +425,7 @@ fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
 			e.expr(expr.right)
 		}
 		else {
-			li_panic(@FN, @FILE, @LINE, 'invalid op `$expr.op.text`')
+			li_panic(@FN, @FILE, @LINE, 'invalid op `${expr.op.text}`')
 		}
 	}
 }
@@ -508,7 +508,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 			e.write(' ; }')
 		}
 		else {
-			li_panic(@FN, @FILE, @LINE, 'invalid op `$expr.op.text`')
+			li_panic(@FN, @FILE, @LINE, 'invalid op `${expr.op.text}`')
 		}
 	}
 }

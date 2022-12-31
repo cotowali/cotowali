@@ -58,7 +58,7 @@ pub fn (backend Backend) find_executable_path() ?string {
 			return found
 		}
 	}
-	return error('$backend not found')
+	return error('${backend} not found')
 }
 
 pub fn (backend Backend) script_ext() string {
@@ -88,7 +88,7 @@ pub fn default_feature() Feature {
 pub fn (mut f Feature) set_by_str(s string) ? {
 	match s {
 		'warn_all' { f.set(.warn_all) }
-		else { return error('unknown feature `$s`') }
+		else { return error('unknown feature `${s}`') }
 	}
 }
 
@@ -112,6 +112,6 @@ pub fn backend_from_str(s string) ?Backend {
 		'pwsh', 'powershell' { return .pwsh }
 		'ush', 'universal' { return .ush }
 		'himorogi' { return .himorogi }
-		else { return error('unknown backend `$s`') }
+		else { return error('unknown backend `${s}`') }
 	}
 }

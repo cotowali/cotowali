@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module parser
 
-import cotowali.token { TokenKind }
+import cotowali.token
 import cotowali.ast
 import cotowali.symbols { builtin_type }
 import cotowali.messages { duplicated_key, invalid_key }
@@ -73,7 +73,7 @@ fn (k ExprKind) inner() ExprKind {
 
 fn (mut p Parser) parse_infix_expr(kind ExprKind) ?ast.Expr {
 	$if trace_parser ? {
-		p.trace_begin(@FN, '$kind')
+		p.trace_begin(@FN, '${kind}')
 		defer {
 			p.trace_end()
 		}
@@ -125,7 +125,7 @@ fn (mut p Parser) parse_prefix_expr() ?ast.Expr {
 
 fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 	$if trace_parser ? {
-		p.trace_begin(@FN, '$kind')
+		p.trace_begin(@FN, '${kind}')
 		defer {
 			p.trace_end()
 		}

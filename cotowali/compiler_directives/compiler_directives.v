@@ -38,12 +38,12 @@ pub fn compiler_directive_kind_from_name(name string) ?CompilerDirectiveKind {
 		'if' { return .if_ }
 		'else' { return .else_ }
 		'endif' { return .endif }
-		else { return error('unknown compiler directive `#$name`') }
+		else { return error('unknown compiler directive `#${name}`') }
 	}
 }
 
 pub fn unexpected_compiler_directive(k CompilerDirectiveKind) string {
-	return 'unexpected compiler directive $k'
+	return 'unexpected compiler directive ${k}'
 }
 
 pub fn missing_if_directive(k CompilerDirectiveKind) string {

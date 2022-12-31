@@ -40,8 +40,8 @@ fn (mut e Emitter) expr(expr Expr, opt ExprOpt) {
 		ast.NullLiteral { e.null_literal(expr, opt) }
 		ast.PrefixExpr { e.prefix_expr(expr, opt) }
 		ast.SelectorExpr { e.selector_expr(expr, opt) }
-		ast.Nameof { e.write("'$expr.value()'") }
-		ast.Typeof { e.write("'$expr.value()'") }
+		ast.Nameof { e.write("'${expr.value()}'") }
+		ast.Typeof { e.write("'${expr.value()}'") }
 		ast.ArrayLiteral { e.array_literal(expr, opt) }
 		ast.StringLiteral { e.string_literal(expr, opt) }
 		ast.Var { e.var_(expr, opt) }
@@ -168,7 +168,7 @@ fn (mut e Emitter) infix_expr(expr ast.InfixExpr, opt ExprOpt) {
 	}
 
 	e.expr(expr.left, paren: true)
-	e.write(' $op_text ')
+	e.write(' ${op_text} ')
 	e.expr(expr.right, paren: true)
 }
 
@@ -177,7 +177,7 @@ fn (mut e Emitter) infix_expr_for_pwsh_array(expr ast.InfixExpr, opt ExprOpt) {
 		.eq { e.pwsh_array_eq(expr.left, expr.right) }
 		.ne { e.pwsh_array_ne(expr.left, expr.right) }
 		.plus { e.pwsh_array_concat(expr.left, expr.right) }
-		else { li_panic(@FN, @FILE, @LINE, 'wrong op $expr.op.text for array') }
+		else { li_panic(@FN, @FILE, @LINE, 'wrong op ${expr.op.text} for array') }
 	}
 }
 
@@ -252,7 +252,7 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 		.not { '! ' }
 		.plus { '+' }
 		.minus { '-' }
-		else { li_panic(@FN, @FILE, @LINE, 'invalid op $op.text') }
+		else { li_panic(@FN, @FILE, @LINE, 'invalid op ${op.text}') }
 	})
 	e.expr(expr.expr, paren: true)
 }

@@ -7,7 +7,7 @@ module util
 
 import math
 
-pub fn const_max<T>() T {
+pub fn const_max[T]() T {
 	$if T is u32 {
 		return u32(math.max_u32)
 	} $else $if T is u64 {
@@ -20,7 +20,7 @@ pub fn const_max<T>() T {
 	li_panic(@FN, @FILE, @LINE, 'Invalid type')
 }
 
-pub fn const_min<T>() T {
+pub fn const_min[T]() T {
 	$if T is u32 {
 		return u32(0)
 	} $else $if T is u64 {
@@ -33,21 +33,21 @@ pub fn const_min<T>() T {
 	li_panic(@FN, @FILE, @LINE, 'Invalid type')
 }
 
-pub fn abs<T>(v T) T {
+pub fn abs[T](v T) T {
 	if v < 0 {
 		return -v
 	}
 	return v
 }
 
-pub fn max<T>(a T, b T) T {
+pub fn max[T](a T, b T) T {
 	if a > b {
 		return a
 	}
 	return b
 }
 
-pub fn min<T>(a T, b T) T {
+pub fn min[T](a T, b T) T {
 	if a < b {
 		return a
 	}

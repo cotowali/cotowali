@@ -14,7 +14,7 @@ pub:
 
 fn (info ArrayTypeInfo) typename(s &Scope) string {
 	elem_ts := s.must_lookup_type(info.elem)
-	return '[]$elem_ts.name'
+	return '[]${elem_ts.name}'
 }
 
 pub fn (ts &TypeSymbol) array_info() ?ArrayTypeInfo {

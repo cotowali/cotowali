@@ -24,7 +24,7 @@ fn (mut q Kuqi) show_diagnostics(uri lsp.DocumentUri) {
 		}
 	}
 
-	q.send(jsonrpc.NotificationMessage<lsp.PublishDiagnosticsParams>{
+	q.send(jsonrpc.NotificationMessage[lsp.PublishDiagnosticsParams]{
 		method: lsp.method_publish_diagnostics
 		params: lsp.PublishDiagnosticsParams{
 			uri: uri

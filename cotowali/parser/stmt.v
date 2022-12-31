@@ -163,7 +163,7 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 
 fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
 	$if trace_parser ? {
-		p.trace_begin(@FN, name, '$locals')
+		p.trace_begin(@FN, name, '${locals}')
 		defer {
 			p.trace_end()
 		}
@@ -337,7 +337,7 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 	mut branches := [
 		ast.IfBranch{
 			cond: cond
-			body: p.parse_block('if_$p.count', [])?
+			body: p.parse_block('if_${p.count}', [])?
 		},
 	]
 	mut has_else := false
@@ -349,13 +349,13 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 			elif_cond := p.parse_expr(.toplevel)?
 			branches << ast.IfBranch{
 				cond: elif_cond
-				body: p.parse_block('elif_${p.count}_$elif_count', [])?
+				body: p.parse_block('elif_${p.count}_${elif_count}', [])?
 			}
 			elif_count++
 		} else {
 			has_else = true
 			branches << ast.IfBranch{
-				body: p.parse_block('else_$p.count', [])?
+				body: p.parse_block('else_${p.count}', [])?
 			}
 			break
 		}
@@ -379,7 +379,7 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 	ident := p.consume_with_check(.ident)?
 	p.consume_with_check(.key_in)?
 	expr := p.parse_expr(.toplevel)?
-	body := p.parse_block('for_$p.count', [])?
+	body := p.parse_block('for_${p.count}', [])?
 	p.count++
 	return ast.ForInStmt{
 		var_: ast.Var{
@@ -582,7 +582,7 @@ fn (mut p Parser) parse_while_stmt() ?ast.WhileStmt {
 
 	p.consume_with_assert(.key_while)
 	cond := p.parse_expr(.toplevel)?
-	body := p.parse_block('while_$p.count', [])?
+	body := p.parse_block('while_${p.count}', [])?
 	p.count++
 
 	return ast.WhileStmt{

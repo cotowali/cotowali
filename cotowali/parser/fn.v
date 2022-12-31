@@ -312,10 +312,10 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		param_name := if info.params.len == 1 {
 			info.params[0].ts.name
 		} else {
-			util.rand<u64>().str()
+			util.rand[u64]().str()
 		}
-		ret_name := if ret := nil_to_none(info.ret_ts) { ret.name } else { util.rand<u64>().str() }
-		'as_${param_name}_$ret_name'
+		ret_name := if ret := nil_to_none(info.ret_ts) { ret.name } else { util.rand[u64]().str() }
+		'as_${param_name}_${ret_name}'
 	} else {
 		op_ident := info.name.kind.str_for_ident()
 		type_names := info.params.map(it.ts.name).join('_')
@@ -325,12 +325,12 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		has_error = true
 		p.error(err.msg(), info.name.pos)
 		// use different name for duplicated function to create another scope
-		sym_name += util.rand<u64>().str()
+		sym_name += util.rand[u64]().str()
 		new_placeholder_var(sym_name, info.name.pos)
 	}
 
 	p.open_scope(if sym.is_method() {
-		'${sym.receiver_type_symbol().name}.$sym_name'
+		'${sym.receiver_type_symbol().name}.${sym_name}'
 	} else {
 		sym_name
 	})

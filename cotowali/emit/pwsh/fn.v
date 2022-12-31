@@ -8,7 +8,7 @@ module pwsh
 import cotowali.ast { CallCommandExpr, CallExpr, FnDecl }
 
 fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
-	e.write('$expr.command')
+	e.write('${expr.command}')
 	for arg in expr.args {
 		e.write(' ')
 		/*
@@ -94,7 +94,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			} else {
 				r'@($input)[0]'
 			}
-			e.writeln('${e.pwsh_var(param)} = $val')
+			e.writeln('${e.pwsh_var(param)} = ${val}')
 		}
 
 		e.block(node.body)

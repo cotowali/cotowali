@@ -21,6 +21,6 @@ pub fn (mut e Emitter) emit(f &ast.File) {
 }
 
 fn (mut e Emitter) file(f &ast.File) {
-	e.writeln('# file: $f.source.path')
+	e.writeln('# file: ${f.source.path}')
 	e.stmts(f.stmts)
 }

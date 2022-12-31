@@ -37,7 +37,7 @@ fn (mut s Scope) open_child(name string) &Scope {
 
 fn (s &Scope) lookup_var(name string) Value {
 	return s.vars[name] or {
-		mut parent := s.parent() or { li_panic(@FN, @FILE, @LINE, 'variable $name not found') }
+		mut parent := s.parent() or { li_panic(@FN, @FILE, @LINE, 'variable ${name} not found') }
 		parent.lookup_var(name)
 	}
 }
@@ -47,13 +47,13 @@ fn (mut s Scope) set_var(name string, value Value) {
 		s.vars[name] = &value
 		return
 	}
-	mut parent := s.parent() or { li_panic(@FN, @FILE, @LINE, 'variable $name not found') }
+	mut parent := s.parent() or { li_panic(@FN, @FILE, @LINE, 'variable ${name} not found') }
 	parent.set_var(name, value)
 }
 
 fn (mut s Scope) register_var(name string, value Value) {
 	if name in s.vars {
-		li_panic(@FN, @FILE, @LINE, 'variable $name exists')
+		li_panic(@FN, @FILE, @LINE, 'variable ${name} exists')
 	}
 	s.vars[name] = &value
 }
@@ -91,19 +91,19 @@ fn (e &Interpreter) current_fn() ?&FnDecl {
 	return e.current_fn
 }
 
-fn (e &Interpreter) print<T>(s T) {
+fn (e &Interpreter) print[T](s T) {
 	print(s.str())
 }
 
-fn (e &Interpreter) println<T>(s T) {
+fn (e &Interpreter) println[T](s T) {
 	println(s.str())
 }
 
-fn (e &Interpreter) eprint<T>(s T) {
+fn (e &Interpreter) eprint[T](s T) {
 	eprint(s.str())
 }
 
-fn (e &Interpreter) eprintln<T>(s T) {
+fn (e &Interpreter) eprintln[T](s T) {
 	eprintln(s.str())
 }
 

@@ -90,7 +90,7 @@ pub fn (mut lex Lexer) do_read() ?Token {
 
 		// --
 
-		ccc := '$c0$c1$c2'
+		ccc := '${c0}${c1}${c2}'
 
 		kind = table_for_three_chars_symbols[ccc] or { tk(.unknown) }
 		if kind != .unknown {
@@ -99,7 +99,7 @@ pub fn (mut lex Lexer) do_read() ?Token {
 
 		// --
 
-		cc := '$c0$c1'
+		cc := '${c0}${c1}'
 
 		kind = table_for_two_chars_symbols[cc] or { tk(.unknown) }
 		if kind != .unknown {

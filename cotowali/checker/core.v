@@ -38,7 +38,7 @@ fn (mut p Checker) trace_end() {
 
 fn (mut c Checker) error(msg string, pos Pos) IError {
 	$if trace_checker ? {
-		c.trace_begin(@FN, msg, '$pos')
+		c.trace_begin(@FN, msg, '${pos}')
 		defer {
 			c.trace_end()
 		}
@@ -52,7 +52,7 @@ fn (mut c Checker) error(msg string, pos Pos) IError {
 
 fn (mut c Checker) warn(msg string, pos Pos) IError {
 	$if trace_checker ? {
-		c.trace_begin(@FN, msg, '$pos')
+		c.trace_begin(@FN, msg, '${pos}')
 		defer {
 			c.trace_end()
 		}

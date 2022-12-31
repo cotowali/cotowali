@@ -6,13 +6,13 @@
 module util
 
 [noreturn]
-pub fn li_panic<T>(func string, file string, line string, err T) {
+pub fn li_panic[T](func string, file string, line string, err T) {
 	li_hash := $env('COTOWALI_HASH')
-	msg := 'cotowali panic: $err
-	location: $file:$line
-	function: $func
+	msg := 'cotowali panic: ${err}
+	location: ${file}:${line}
+	function: ${func}
 	v_hash: ${@VHASH}
-	cotowali_hash: $li_hash
+	cotowali_hash: ${li_hash}
 
 This is compiler bug. Please report it on GitHub issue.
 https://github.com/cotowali/cotowali/issues/new?labels=bug&template=bug_report.md'

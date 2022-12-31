@@ -9,12 +9,12 @@ import cotowali.util.checksum
 import cotowali.util { Either }
 
 [params]
-pub struct Expects<T> {
+pub struct Expects[T] {
 	expects []T
 }
 
 [params]
-pub struct ExpectedActual<T, J> {
+pub struct ExpectedActual[T, J] {
 	expected T [required]
 	actual   J [required]
 }
@@ -43,46 +43,46 @@ pub fn (k SymbolKind) str() string {
 
 [inline]
 pub fn already_defined(kind SymbolKind, name string) string {
-	return '$kind `$name` is already defined'
+	return '${kind} `${name}` is already defined'
 }
 
 [inline]
 pub fn undefined(kind SymbolKind, name string) string {
-	return '$kind `$name` is not defined'
+	return '${kind} `${name}` is not defined'
 }
 
-pub fn invalid_key(key string, v Expects<string>) string {
-	return 'invalid key `$key`' + (match v.expects.len {
+pub fn invalid_key(key string, v Expects[string]) string {
+	return 'invalid key `${key}`' + (match v.expects.len {
 		0 {
 			''
 		}
 		1 {
-			', expecting `$v.expects.first()`'
+			', expecting `${v.expects.first()}`'
 		}
 		2 {
-			', expecting `$v.expects.first()` or `$v.expects.last()`'
+			', expecting `${v.expects.first()}` or `${v.expects.last()}`'
 		}
 		else {
-			quoted_strs := v.expects.map('`$it`')
-			', expecting ${quoted_strs[..quoted_strs.len - 1].join(', ')}, or $quoted_strs.last()'
+			quoted_strs := v.expects.map('`${it}`')
+			', expecting ${quoted_strs[..quoted_strs.len - 1].join(', ')}, or ${quoted_strs.last()}'
 		}
 	})
 }
 
 [inline]
 pub fn duplicated_key(key string) string {
-	return 'duplicated key `$key`'
+	return 'duplicated key `${key}`'
 }
 
-pub fn args_count_mismatch(v ExpectedActual<Either<string, int>, int>) string {
+pub fn args_count_mismatch(v ExpectedActual[Either[string, int], int]) string {
 	expected := match v.expected {
 		string { v.expected }
 		int { v.expected.str() }
 	}
-	return 'expected $expected arguments, but got $v.actual'
+	return 'expected ${expected} arguments, but got ${v.actual}'
 }
 
 [inline]
-pub fn checksum_mismatch(algo checksum.Algorithm, v ExpectedActual<string, string>) string {
-	return '$algo checksum mismatch: $v.expected (expected) != $v.actual (actual)'
+pub fn checksum_mismatch(algo checksum.Algorithm, v ExpectedActual[string, string]) string {
+	return '${algo} checksum mismatch: ${v.expected} (expected) != ${v.actual} (actual)'
 }

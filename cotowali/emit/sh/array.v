@@ -10,7 +10,7 @@ import cotowali.util { li_panic }
 
 fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 	ident := e.ident_for(expr)
-	e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, v ExprWithValue<ast.ArrayLiteral, string>) {
+	e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, v ExprWithValue[ast.ArrayLiteral, string]) {
 		ident := v.value
 		e.assign(ident, ast.Expr(v.expr), ast.Expr(v.expr).type_symbol())
 	}, expr_with_value(expr, ident))
@@ -21,7 +21,7 @@ fn (mut e Emitter) array_literal(expr ast.ArrayLiteral, opt ExprOpt) {
 fn (mut e Emitter) array_to_str(value ExprOrString) {
 	match value {
 		string {
-			e.write('"\$(array_to_str $value)"')
+			e.write('"\$(array_to_str ${value})"')
 		}
 		ast.Expr {
 			e.write('"\$(array_to_str ')
@@ -45,7 +45,7 @@ fn (mut e Emitter) array(name string, opt ExprOpt) {
 }
 
 fn (mut e Emitter) array_elements(name string) {
-	e.write('\$(array_elements $name)')
+	e.write('\$(array_elements ${name})')
 }
 
 fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
@@ -63,11 +63,11 @@ fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
 		}
 		.plus {
 			ident := e.new_tmp_ident()
-			e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, v ExprWithValue<ast.InfixExpr, string>) {
+			e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, v ExprWithValue[ast.InfixExpr, string]) {
 				expr, ident := v.expr, v.value
-				e.write('array_copy $ident ')
+				e.write('array_copy ${ident} ')
 				e.expr(expr.left, writeln: true)
-				e.write('array_push_array $ident ')
+				e.write('array_push_array ${ident} ')
 				e.expr(expr.right, writeln: true)
 			}, expr_with_value(expr, ident))
 			e.array(ident, opt)

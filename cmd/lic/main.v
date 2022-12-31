@@ -58,7 +58,7 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 
 	warns := cmd.flags.get_strings(warn_flag.name) or { li_panic(@FN, @FILE, @LINE, '') }
 	for warn_str in warns {
-		ctx.config.feature.set_by_str('warn_$warn_str') or {
+		ctx.config.feature.set_by_str('warn_${warn_str}') or {
 			eprintln(err)
 			exit(1)
 		}

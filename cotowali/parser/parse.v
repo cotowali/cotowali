@@ -87,14 +87,14 @@ pub fn parse_file_in_cotowali_path(file string, ctx &Context) ?&ast.File {
 
 pub fn parse_remote_file(url URL, ctx &Context) ?&ast.File {
 	mut scheme := source_scheme_from_str(url.scheme) or {
-		return error('invalid scheme: $url.scheme')
+		return error('invalid scheme: ${url.scheme}')
 	}
 
 	mut http_url := convert_to_http_url(scheme, url)
 
 	http_url_str := http_url.str()
 	path := if scheme in [.http, .https] {
-		http_url_str.trim_string_left('$url.scheme:').trim_string_left('//')
+		http_url_str.trim_string_left('${url.scheme}:').trim_string_left('//')
 	} else {
 		http_url.path
 	}
@@ -103,9 +103,11 @@ pub fn parse_remote_file(url URL, ctx &Context) ?&ast.File {
 		return none
 	}
 
-	res := http.get(http_url_str) or { return error('failed to get $http_url_str ($err.msg())') }
+	res := http.get(http_url_str) or {
+		return error('failed to get ${http_url_str} (${err.msg()})')
+	}
 	if res.status() != .ok {
-		return error('faild to get $http_url_str ($res.status_code $res.status())')
+		return error('faild to get ${http_url_str} (${res.status_code} ${res.status()})')
 	}
 	source_code := res.text
 
@@ -130,7 +132,7 @@ pub fn normalize_url(scheme SourceScheme, url URL) URL {
 		new_url.opaque = ''
 		new_url.path = url.opaque
 		if url.path != '' {
-			new_url.path += '/$url.path'
+			new_url.path += '/${url.path}'
 		}
 	}
 	return new_url

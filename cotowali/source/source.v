@@ -71,10 +71,10 @@ pub fn (s &Source) checksum(algo checksum.Algorithm) string {
 pub fn (s &Source) url() ?URL {
 	match s.scheme {
 		.http {
-			return urllib.parse('http://$s.path') or { li_panic(@FN, @FILE, @LINE, err.msg()) }
+			return urllib.parse('http://${s.path}') or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 		}
 		.https {
-			return urllib.parse('https://$s.path') or { li_panic(@FN, @FILE, @LINE, err.msg()) }
+			return urllib.parse('https://${s.path}') or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 		}
 		.github {
 			return URL{

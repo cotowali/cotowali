@@ -799,7 +799,7 @@ fn (mut r Resolver) var_(mut v Var, opt ResolveExprOpt) {
 
 	$if !prod {
 		if !isnil(v.sym) && v.sym.name != v.ident.text {
-			li_panic(@FN, @FILE, @LINE, 'mismatched name: sym.name = $v.sym.name, ident.text = $v.ident.text')
+			li_panic(@FN, @FILE, @LINE, 'mismatched name: sym.name = ${v.sym.name}, ident.text = ${v.ident.text}')
 		}
 	}
 

@@ -56,7 +56,7 @@ pub fn (mut t Tracer) write_fields(fields map[string]string) {
 }
 
 pub fn (mut t Tracer) write_field(name string, v string) {
-	t.writeln('$name: $v')
+	t.writeln('${name}: ${v}')
 }
 
 pub fn (mut t Tracer) write_object(name string, fields map[string]string) {
@@ -66,7 +66,7 @@ pub fn (mut t Tracer) write_object(name string, fields map[string]string) {
 }
 
 pub fn (mut t Tracer) begin_object(name string) {
-	t.writeln('$name {')
+	t.writeln('${name} {')
 	t.indent++
 }
 

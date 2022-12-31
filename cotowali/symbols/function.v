@@ -83,7 +83,7 @@ fn (f &FunctionTypeInfo) signature(s &Scope) string {
 			array := ts.array_info() or { li_panic(@FN, @FILE, @LINE, '') }
 			sb.write_string('...${s.must_lookup_type(array.elem).name}')
 		} else {
-			sb.write_string('$ts.name')
+			sb.write_string('${ts.name}')
 			if param.has_default {
 				sb.write_string(' ? ')
 			}

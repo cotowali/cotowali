@@ -15,7 +15,7 @@ const (
 type ID = u64
 
 fn auto_id() ID {
-	return util.rand_more_than<u64>(symbols.reserved_id_max)
+	return util.rand_more_than[u64](symbols.reserved_id_max)
 }
 
 type Symbol = TypeSymbol | Var

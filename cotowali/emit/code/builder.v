@@ -164,7 +164,7 @@ pub fn (mut b Builder) writeln(s string) ?int {
 
 pub fn (mut b Builder) writeln_comment(s string) ?int {
 	mut text := if b.buf.len > 0 && b.buf.last() !in [` `, `\n`] { ' ' } else { '' }
-	text += s.split_into_lines().map('$b.language.comment_start $it').join('\n')
+	text += s.split_into_lines().map('${b.language.comment_start} ${it}').join('\n')
 	n := b.write_string(text)?
 	b.buf << `\n`
 	return n + 1

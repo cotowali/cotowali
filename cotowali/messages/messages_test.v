@@ -8,7 +8,7 @@ module messages
 fn test_invalid_key() {
 	base_msg := 'invalid key `k`'
 	assert invalid_key('k') == base_msg
-	assert invalid_key('k', expects: ['a']) == '$base_msg, expecting `a`'
-	assert invalid_key('k', expects: ['a', 'b']) == '$base_msg, expecting `a` or `b`'
-	assert invalid_key('k', expects: ['a', 'b', 'c']) == '$base_msg, expecting `a`, `b`, or `c`'
+	assert invalid_key('k', expects: ['a']) == '${base_msg}, expecting `a`'
+	assert invalid_key('k', expects: ['a', 'b']) == '${base_msg}, expecting `a` or `b`'
+	assert invalid_key('k', expects: ['a', 'b', 'c']) == '${base_msg}, expecting `a`, `b`, or `c`'
 }

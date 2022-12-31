@@ -101,9 +101,9 @@ fn can_promote_number(want Type, got Type) bool {
 fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
 	$if trace_checker ? {
 		args := [
-			'$v.want_label: $v.want.name',
-			'$v.got_label: $v.got.name',
-			'synmetric: $v.synmetric',
+			'${v.want_label}: ${v.want.name}',
+			'${v.got_label}: ${v.got.name}',
+			'synmetric: ${v.synmetric}',
 		]
 		c.trace_begin(@FN, ...args)
 		defer {
@@ -132,12 +132,12 @@ fn (mut c Checker) check_types(v TypeCheckingConfig) ? {
 		}
 	}
 
-	m_want, m_got := '`$v.want.name` ($v.want_label)', '`$v.got.name` ($v.got_label)'
+	m_want, m_got := '`${v.want.name}` (${v.want_label})', '`${v.got.name}` (${v.got_label})'
 	m1, m2 := match v.message_format {
 		.want_got { m_want, m_got }
 		.got_want { m_got, m_want }
 	}
-	return c.error('mismatched types: $m1 and $m2', v.pos)
+	return c.error('mismatched types: ${m1} and ${m2}', v.pos)
 }
 
 fn (mut c Checker) expect_bool_expr(expr Expr, context_name string) ? {
@@ -149,7 +149,7 @@ fn (mut c Checker) expect_bool_expr(expr Expr, context_name string) ? {
 	}
 
 	if expr.typ() != builtin_type(.bool) {
-		return c.error('non-bool type used as $context_name', expr.pos())
+		return c.error('non-bool type used as ${context_name}', expr.pos())
 	}
 }
 
@@ -165,5 +165,5 @@ fn (mut c Checker) expect_function_call(expr Expr) ?ast.CallExpr {
 		return expr
 	}
 	ts := expr.type_symbol()
-	return c.error('expected function call, but found $ts.name', expr.pos())
+	return c.error('expected function call, but found ${ts.name}', expr.pos())
 }

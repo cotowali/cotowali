@@ -9,7 +9,7 @@ import lsp
 import jsonrpc
 
 fn (mut q Kuqi) log_message(message string, typ lsp.MessageType) {
-	q.send(jsonrpc.NotificationMessage<lsp.LogMessageParams>{
+	q.send(jsonrpc.NotificationMessage[lsp.LogMessageParams]{
 		method: lsp.method_log_message
 		params: lsp.LogMessageParams{
 			@type: typ
@@ -19,7 +19,7 @@ fn (mut q Kuqi) log_message(message string, typ lsp.MessageType) {
 }
 
 fn (mut q Kuqi) show_message(message string, typ lsp.MessageType) {
-	q.send(jsonrpc.NotificationMessage<lsp.ShowMessageParams>{
+	q.send(jsonrpc.NotificationMessage[lsp.ShowMessageParams]{
 		method: lsp.method_show_message
 		params: lsp.ShowMessageParams{
 			@type: typ
@@ -29,7 +29,7 @@ fn (mut q Kuqi) show_message(message string, typ lsp.MessageType) {
 }
 
 fn (mut q Kuqi) show_message_request(message string, actions []lsp.MessageActionItem, typ lsp.MessageType) {
-	q.send(jsonrpc.NotificationMessage<lsp.ShowMessageRequestParams>{
+	q.send(jsonrpc.NotificationMessage[lsp.ShowMessageRequestParams]{
 		method: lsp.method_show_message_request
 		params: lsp.ShowMessageRequestParams{
 			@type: typ

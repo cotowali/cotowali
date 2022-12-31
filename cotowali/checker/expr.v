@@ -92,7 +92,7 @@ fn (mut c Checker) decompose_expr(expr ast.DecomposeExpr) {
 	ts := expr.expr.type_symbol()
 	if _ := ts.tuple_info() {
 	} else {
-		c.error('cannot decompose non-tuple type `$ts.name`', expr.pos)
+		c.error('cannot decompose non-tuple type `${ts.name}`', expr.pos)
 	}
 }
 
@@ -124,7 +124,7 @@ fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 		if is_literal {
 			n := tuple_info.elements.len
 			if !(0 <= i && i < n) {
-				c.error('index $i out of bounds for `$left_ts.name` ($n elements tuple)',
+				c.error('index ${i} out of bounds for `${left_ts.name}` (${n} elements tuple)',
 					index_pos)
 			}
 		} else {
@@ -142,7 +142,7 @@ fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 		builtin_type(.placeholder)
 	}
 	if want_typ == builtin_type(.placeholder) {
-		c.error('`$left_ts.name` does not support indexing', expr.pos)
+		c.error('`${left_ts.name}` does not support indexing', expr.pos)
 		return
 	}
 
@@ -154,7 +154,7 @@ fn (mut c Checker) index_expr(expr ast.IndexExpr) {
 }
 
 fn (mut c Checker) infix_expr_invalid_operation(op string, left TypeSymbol, right TypeSymbol, pos Pos) IError {
-	return c.error('invalid operation: `$left.name` $op `$right.name`', pos)
+	return c.error('invalid operation: `${left.name}` ${op} `${right.name}`', pos)
 }
 
 fn (mut c Checker) infix_expr(expr ast.InfixExpr) {

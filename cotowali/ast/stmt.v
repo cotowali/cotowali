@@ -161,7 +161,7 @@ fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
 					[]Type{}
 				}
 				if stmt.left.exprs.len != expr_types.len {
-					r.error('expected $expr_types.len variables, but found $stmt.left.exprs.len variables',
+					r.error('expected ${expr_types.len} variables, but found ${stmt.left.exprs.len} variables',
 						Expr(stmt.left).pos())
 				}
 				for i, mut left in stmt.left.exprs {
@@ -470,9 +470,9 @@ pub fn (stmt &RequireStmt) str() string {
 	if stmt.has_checksum(.sha256) {
 		prop_strs << 'sha256: ...'
 	}
-	s := 'require "$stmt.file.source.path"' +
+	s := 'require "${stmt.file.source.path}"' +
 		(if prop_strs.len > 0 { ' { ${prop_strs.join(', ')} }' } else { '' })
-	return 'RequireStmt{$s}'
+	return 'RequireStmt{${s}}'
 }
 
 [inline]

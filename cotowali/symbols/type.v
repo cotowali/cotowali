@@ -106,14 +106,14 @@ pub fn (t TypeSymbol) is_iterable() bool {
 }
 
 pub fn (v TypeSymbol) str() string {
-	return 'TypeSymbol{ typ: $v.typ, name: $v.name, kind: $v.kind().str() }'
+	return 'TypeSymbol{ typ: ${v.typ}, name: ${v.name}, kind: ${v.kind().str()} }'
 }
 
 // -- register / lookup --
 
 fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
 	if ts.typ != 0 && ts.typ in s.type_symbols {
-		li_panic(@FN, @FILE, @LINE, '$ts.typ is exists')
+		li_panic(@FN, @FILE, @LINE, '${ts.typ} is exists')
 	}
 	if ts.name.len > 0 && ts.name in s.name_to_type {
 		return error(already_defined(.typ, ts.name))
@@ -161,7 +161,7 @@ fn (s &Scope) name_to_type(name string) ?Type {
 	} else if p := s.parent() {
 		return p.name_to_type(name)
 	} else {
-		return error('unknown type `$name`')
+		return error('unknown type `${name}`')
 	}
 }
 
@@ -210,7 +210,7 @@ pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) ?&Var {
 		li_panic(@FN, @FILE, @LINE, 'method name is empty')
 	}
 	if name in ts.methods {
-		return error(already_defined(.method, '$v.name'))
+		return error(already_defined(.method, '${v.name}'))
 	}
 	ts.methods[name] = v
 

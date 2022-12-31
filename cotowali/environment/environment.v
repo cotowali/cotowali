@@ -22,7 +22,7 @@ fn getenv(key EnvKey) ?string {
 	}
 	if s[0] == `_` {
 		for prefix in environment.env_prefixes {
-			if value := os.getenv_opt('$prefix$s') {
+			if value := os.getenv_opt('${prefix}${s}') {
 				return value
 			}
 		}

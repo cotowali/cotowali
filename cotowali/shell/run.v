@@ -53,7 +53,7 @@ pub fn (mut shell Shell) run() {
 
 	for shell.is_alive() {
 		prompt := if sb.len == 0 { '>>>' } else { '...' }
-		if input := shell.input('$prompt ') {
+		if input := shell.input('${prompt} ') {
 			mut s := input.trim_space()
 
 			match s {

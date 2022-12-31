@@ -1,17 +1,17 @@
 module util
 
-pub struct Tuple2<T, U> {
+pub struct Tuple2[T, U] {
 pub mut:
 	v1 T
 	v2 U
 }
 
-pub fn tuple2<T, U>(v1 T, v2 U) Tuple2<T, U> {
-	return Tuple2<T, U>{v1, v2}
+pub fn tuple2[T, U](v1 T, v2 U) Tuple2[T, U] {
+	return Tuple2[T, U]{v1, v2}
 }
 
-pub fn (t Tuple2<T, U>) str() string {
-	return '($t.v1.str(), $t.v2.str())'
+pub fn (t Tuple2[T, U]) str() string {
+	return '(${t.v1.str()}, ${t.v2.str()})'
 }
 
 /*

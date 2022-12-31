@@ -20,7 +20,7 @@ fn code(code StrOrStrArray) &Source {
 }
 
 fn test(fn_name string, line string, source &Source, tokens []Token) {
-	println('@FN: $fn_name, LINE: $line')
+	println('@FN: ${fn_name}, LINE: ${line}')
 
 	ctx := new_default_context()
 	lexer := new_lexer(source, ctx)
@@ -37,7 +37,7 @@ fn test(fn_name string, line string, source &Source, tokens []Token) {
 }
 
 fn ktest(fn_name string, line string, code string, kinds []TokenKind) {
-	println('@FN: $fn_name, LINE: $line')
+	println('@FN: ${fn_name}, LINE: ${line}')
 
 	ctx := new_default_context()
 	lexer := new_lexer(new_source('', code), ctx)
@@ -81,7 +81,7 @@ fn (mut lex Lexer) e_read() (Token, ErrOrOk) {
 }
 
 fn ektest(fn_name string, line string, code string, values []EkTestValue) {
-	println('@FN: $fn_name, LINE: $line')
+	println('@FN: ${fn_name}, LINE: ${line}')
 
 	ctx := new_default_context()
 	mut lexer := new_lexer(new_source('', code), ctx)
@@ -240,12 +240,12 @@ fn test_at_ident() {
 }
 
 fn test_string() {
-	test(@FN, @LINE, code("$dq'a\nb\nc'$dq"), [
+	test(@FN, @LINE, code("${dq}'a\nb\nc'${dq}"), [
 		t(.double_quote, '"'),
 		t(.string_literal_content_text, "'a\nb\nc'"),
 		t(.double_quote, '"'),
 	])
-	test(@FN, @LINE, code('$sq"a\nb\nc"$sq'), [
+	test(@FN, @LINE, code('${sq}"a\nb\nc"${sq}'), [
 		t(.single_quote, "'"),
 		t(.string_literal_content_text, '"a\nb\nc"'),
 		t(.single_quote, "'"),
@@ -285,13 +285,13 @@ fn test_string() {
 
 	test(@FN, @LINE, code(r"r'\\\n\''"), [
 		t(.single_quote_with_r_prefix, "r'"),
-		t(.string_literal_content_text, '$bs$bs${bs}n$bs'),
+		t(.string_literal_content_text, '${bs}${bs}${bs}n${bs}'),
 		t(.single_quote, "'"),
 		t(.single_quote, "'"),
 	])
 	test(@FN, @LINE, code(r'r"\\\n\""'), [
 		t(.double_quote_with_r_prefix, 'r"'),
-		t(.string_literal_content_text, '$bs$bs${bs}n$bs'),
+		t(.string_literal_content_text, '${bs}${bs}${bs}n${bs}'),
 		t(.double_quote, '"'),
 		t(.double_quote, '"'),
 	])

@@ -81,11 +81,11 @@ fn test_builder_indent() ? {
 	out1 := b.str()
 
 	assert out1 == [
-		'$s0_0' + '$s0_1' + '\n',
-		indent + '$s1_0' + '$s1_1' + '\n',
-		indent + indent + '$s2_0' + '$s2_1' + '\n',
-		indent + '$s3_0' + '$s3_1' + '\n',
-		'$s4_0' + '$s4_1' + '\n',
+		'${s0_0}' + '${s0_1}' + '\n',
+		indent + '${s1_0}' + '${s1_1}' + '\n',
+		indent + indent + '${s2_0}' + '${s2_1}' + '\n',
+		indent + '${s3_0}' + '${s3_1}' + '\n',
+		'${s4_0}' + '${s4_1}' + '\n',
 	].join('')
 
 	// -- indent only after newline
@@ -158,7 +158,7 @@ fn test_builder_seek() ? {
 		assert false
 	}
 
-	assert b.str() == '$s1$s2$s3$s4'
+	assert b.str() == '${s1}${s2}${s3}${s4}'
 }
 
 fn test_lock_cursor() ? {

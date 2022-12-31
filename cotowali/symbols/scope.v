@@ -45,13 +45,13 @@ pub fn (s &Scope) str() string {
 }
 
 pub fn (s &Scope) debug_str() string {
-	children_str := s.children().map(it.debug_str()).join('\n').split_into_lines().map('        $it').join('\n')
-	vars_str := s.vars.keys().map("        '$it': ${s.vars[it]}").join('\n')
+	children_str := s.children().map(it.debug_str()).join('\n').split_into_lines().map('        ${it}').join('\n')
+	vars_str := s.vars.keys().map("        '${it}': ${s.vars[it]}").join('\n')
 	types_str := s.type_symbols.keys().map('        ${s.type_symbols[it]}').join(',\n')
 	return [
 		'Scope{',
-		'    id: $s.id',
-		'    name: $s.name',
+		'    id: ${s.id}',
+		'    name: ${s.name}',
 		'    children: [',
 		children_str,
 		'    ]',
@@ -134,14 +134,14 @@ pub fn (s &Scope) get_child(key NameOrID) ?&Scope {
 }
 
 pub fn (s &Scope) must_get_child(key NameOrID) &Scope {
-	return s.get_child(key) or { li_panic(@FN, @FILE, @LINE, 'child scope `$key` not found') }
+	return s.get_child(key) or { li_panic(@FN, @FILE, @LINE, 'child scope `${key}` not found') }
 }
 
 pub fn (mut s Scope) create_child(name string) ?&Scope {
 	child := new_scope(name, s)
 	if name.len > 0 {
 		if name in s.name_to_child_id {
-			return error('$name is exists')
+			return error('${name} is exists')
 		}
 		s.name_to_child_id[name] = child.id
 	}
@@ -164,5 +164,5 @@ pub fn (s &Scope) ident_for(v Var) string {
 	if s.id == symbols.global_id {
 		return v.name
 	}
-	return 's${s.id}_$v.name'
+	return 's${s.id}_${v.name}'
 }

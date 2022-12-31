@@ -26,7 +26,7 @@ pub mut:
 	params  string [raw]
 }
 
-pub struct Response<T> {
+pub struct Response[T] {
 pub:
 	jsonrpc string = jsonrpc.version
 	id      int
@@ -34,14 +34,14 @@ pub:
 	result T
 }
 
-pub struct NotificationMessage<T> {
+pub struct NotificationMessage[T] {
 	jsonrpc string = jsonrpc.version
 	method  string
 	params  T
 }
 
 // TODO: must be removed when omitempty JSON is supported
-pub struct ResponseWithError<T> {
+pub struct ResponseWithError[T] {
 	jsonrpc string = jsonrpc.version
 	id      int
 	error   ResponseError

@@ -19,7 +19,7 @@ pub fn (mut e Emitter) emit(f &File) {
 }
 
 fn (mut e Emitter) file(f &File) {
-	e.writeln('# file: $f.source.path')
+	e.writeln('# file: ${f.source.path}')
 	e.writeln('try')
 	e.writeln('{')
 
@@ -28,7 +28,7 @@ fn (mut e Emitter) file(f &File) {
 	e.writeln('')
 
 	e.writeln('}')
-	e.writeln('catch [$pwsh.base_exception_class]')
+	e.writeln('catch [${pwsh.base_exception_class}]')
 	e.writeln('{')
 	e.indent()
 	{
@@ -44,7 +44,7 @@ const base_exception_class = 'CotowaliExecption'
 
 fn (mut e Emitter) builtin() {
 	e.writeln('
-class $pwsh.base_exception_class: Exception
+class ${pwsh.base_exception_class}: Exception
 {
 	[int] \$Line
 
