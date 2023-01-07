@@ -84,7 +84,7 @@ fn (mut e Emitter) new_tmp_ident() string {
 }
 
 [inline]
-fn (mut e Emitter) seek(pos int) ? {
+fn (mut e Emitter) seek(pos int) ! {
 	mut code := e.code()
 	return code.seek(pos)
 }

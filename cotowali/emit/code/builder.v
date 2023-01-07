@@ -18,7 +18,7 @@ pub enum BuilderFlags {
 }
 
 pub fn (mut flags BuilderFlags) reset() {
-	flags = BuilderFlags(0)
+	flags = BuilderFlags{}
 }
 
 [params]
@@ -95,7 +95,7 @@ pub fn (mut b Builder) unlock_cursor() {
 
 // --
 
-pub fn (mut b Builder) write_indent() ?int {
+pub fn (mut b Builder) write_indent() !int {
 	s := b.ctx.config.indent.repeat(b.indent_n)
 	b.buf.write_string(s)
 	return s.len
@@ -111,7 +111,7 @@ pub fn (mut b Builder) unindent() {
 
 // --
 
-pub fn (mut b Builder) seek(pos int) ? {
+pub fn (mut b Builder) seek(pos int) ! {
 	if pos == code.tail {
 		b.buf.write_string(b.tail_str)
 		b.tail_str = ''
@@ -133,14 +133,14 @@ pub fn (mut b Builder) seek(pos int) ? {
 
 // --
 
-pub fn (mut b Builder) write(data []byte) ?int {
+pub fn (mut b Builder) write(data []byte) !int {
 	if data.len == 0 {
 		return 0
 	}
 
 	mut n := 0
 	if b.newline() {
-		n += b.write_indent()?
+		n += b.write_indent()!
 	}
 	if b.flags.has(.lock_cursor) {
 		pos := b.pos()
@@ -148,24 +148,24 @@ pub fn (mut b Builder) write(data []byte) ?int {
 			b.seek(pos) or { li_panic(@FN, @FILE, @LINE, err) }
 		}
 	}
-	n += b.buf.write(data)?
+	n += b.buf.write(data)!
 	return n
 }
 
-pub fn (mut b Builder) write_string(s string) ?int {
+pub fn (mut b Builder) write_string(s string) !int {
 	return b.write(s.bytes())
 }
 
-pub fn (mut b Builder) writeln(s string) ?int {
-	n := b.write_string(s)?
+pub fn (mut b Builder) writeln(s string) !int {
+	n := b.write_string(s)!
 	b.buf << `\n`
 	return n + 1
 }
 
-pub fn (mut b Builder) writeln_comment(s string) ?int {
+pub fn (mut b Builder) writeln_comment(s string) !int {
 	mut text := if b.buf.len > 0 && b.buf.last() !in [` `, `\n`] { ' ' } else { '' }
 	text += s.split_into_lines().map('${b.language.comment_start} ${it}').join('\n')
-	n := b.write_string(text)?
+	n := b.write_string(text)!
 	b.buf << `\n`
 	return n + 1
 }
