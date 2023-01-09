@@ -80,9 +80,7 @@ pub enum Feature {
 }
 
 pub fn default_feature() Feature {
-	mut f := Feature(0)
-	f.set(.shebang)
-	return f
+	return Feature.shebang
 }
 
 pub fn (mut f Feature) set_by_str(s string) ? {
