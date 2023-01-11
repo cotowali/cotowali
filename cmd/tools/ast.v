@@ -19,7 +19,7 @@ const (
 	}
 )
 
-fn execute_ast(cmd Command) ? {
+fn execute_ast(cmd Command) ! {
 	if cmd.args.len != 1 {
 		cmd.execute_help()
 		return

@@ -15,7 +15,7 @@ const (
 	tokens_command = Command{
 		name: 'tokens'
 		description: 'print tokens'
-		execute: fn (cmd Command) ? {
+		execute: fn (cmd Command) ! {
 			if cmd.args.len == 0 {
 				cmd.execute_help()
 				return

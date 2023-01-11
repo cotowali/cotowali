@@ -11,7 +11,7 @@ pub const (
 	command = Command{
 		name: 'tools'
 		description: 'tools'
-		execute: fn (cmd Command) ? {
+		execute: fn (cmd Command) ! {
 			cmd.execute_help()
 			return
 		}
