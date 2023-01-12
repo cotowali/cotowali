@@ -13,7 +13,7 @@ pub struct Var {
 mut:
 	scope &Scope = unsafe { 0 }
 pub:
-	name           string [required]
+	name           string
 	id             u64
 	pos            Pos = none_pos()
 	is_placeholder bool
