@@ -13,7 +13,7 @@ const (
 	scope_command = Command{
 		name: 'scope'
 		description: 'print scope'
-		execute: fn (cmd Command) ? {
+		execute: fn (cmd Command) ! {
 			if cmd.args.len != 1 {
 				cmd.execute_help()
 				return

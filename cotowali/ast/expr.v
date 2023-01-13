@@ -718,7 +718,7 @@ fn (mut r Resolver) prefix_expr(mut expr PrefixExpr, opt ResolveExprOpt) {
 // TODO: merge Var to Ident
 pub struct Ident {
 pub mut:
-	scope &Scope
+	scope &Scope = unsafe { 0 }
 pub:
 	pos  Pos
 	text string
@@ -799,7 +799,7 @@ fn (mut r Resolver) var_(mut v Var, opt ResolveExprOpt) {
 
 	$if !prod {
 		if !isnil(v.sym) && v.sym.name != v.ident.text {
-			li_panic(@FN, @FILE, @LINE, 'mismatched name: sym.name = $v.sym.name, ident.text = $v.ident.text')
+			li_panic(@FN, @FILE, @LINE, 'mismatched name: sym.name = ${v.sym.name}, ident.text = ${v.ident.text}')
 		}
 	}
 

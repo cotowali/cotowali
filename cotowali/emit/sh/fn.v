@@ -23,7 +23,7 @@ fn (mut e Emitter) call_command_expr(expr CallCommandExpr, opt ExprOpt) {
 		}
 	}
 
-	e.write('$expr.command')
+	e.write('${expr.command}')
 	for arg in expr.args {
 		e.write(' ')
 		if arg is ast.StringLiteral {
@@ -70,8 +70,8 @@ fn (mut e Emitter) call_expr(expr CallExpr, opt ExprOpt) {
 		e.write(' ')
 		e.expr(receiver)
 	}
-	mut args := expr.args
-	for i, arg in args {
+
+	for i, arg in expr.args {
 		e.write(' ')
 
 		if arg is ast.StringLiteral {
@@ -88,7 +88,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 	if !node.has_body {
 		e.writeln('')
 		params_str := node.params.map(it.name()).join(', ')
-		e.writeln('# info: fn ${e.ident_for(node)}($params_str)')
+		e.writeln('# info: fn ${e.ident_for(node)}(${params_str})')
 		e.writeln('')
 		return
 	}
@@ -117,7 +117,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 		for i, param in node.params {
 			value := if i == node.params.len - 1 && node.function_info().variadic {
 				name := e.new_tmp_ident()
-				e.writeln('array_assign "$name" "\$@"')
+				e.writeln('array_assign "${name}" "\$@"')
 				name
 			} else {
 				'\${1}'
@@ -155,17 +155,17 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			if _ := pipe_in_param_ts.sequence_info() {
 				li_panic(@FN, @FILE, @LINE, 'pipe in param cannot be sequence')
 			}
-			e.writeln('read $tmp_to_read')
-			e.assign(pipe_in_param_ident, '\$$tmp_to_read', pipe_in_param_ts)
+			e.writeln('read ${tmp_to_read}')
+			e.assign(pipe_in_param_ident, '\$${tmp_to_read}', pipe_in_param_ts)
 		}
 		e.block(node.body)
 	}, node)
 }
 
 fn (mut e Emitter) nameof(expr ast.Nameof, opt ExprOpt) {
-	e.write_echo_if_command_then_write("'$expr.value()'", opt)
+	e.write_echo_if_command_then_write("'${expr.value()}'", opt)
 }
 
 fn (mut e Emitter) typeof_(expr ast.Typeof, opt ExprOpt) {
-	e.write_echo_if_command_then_write("'$expr.value()'", opt)
+	e.write_echo_if_command_then_write("'${expr.value()}'", opt)
 }

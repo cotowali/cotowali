@@ -7,7 +7,7 @@ module util
 
 import rand
 
-pub fn rand_in_range<T>(min T, max T) T {
+pub fn rand_in_range[T](min T, max T) T {
 	$if T is u32 {
 		return rand.u32_in_range(min, max) or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 	} $else $if T is u64 {
@@ -20,7 +20,7 @@ pub fn rand_in_range<T>(min T, max T) T {
 	panic('invalid type')
 }
 
-pub fn rand<T>() T {
+pub fn rand[T]() T {
 	$if T is u32 {
 		return rand.u32()
 	} $else $if T is u64 {
@@ -33,7 +33,7 @@ pub fn rand<T>() T {
 	panic('invalid type')
 }
 
-pub fn rand_n<T>(n T) T {
+pub fn rand_n[T](n T) T {
 	$if T is u32 {
 		return rand.u32n(n) or { li_panic(@FN, @FILE, @LINE, err.msg()) }
 	} $else $if T is u64 {
@@ -46,6 +46,6 @@ pub fn rand_n<T>(n T) T {
 	panic('invalid type')
 }
 
-pub fn rand_more_than<T>(n T) T {
-	return rand_in_range<T>(n + 1, const_max<T>())
+pub fn rand_more_than[T](n T) T {
+	return rand_in_range[T](n + 1, const_max[T]())
 }

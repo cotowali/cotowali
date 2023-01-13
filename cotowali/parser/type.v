@@ -64,7 +64,7 @@ fn (mut p Parser) parse_reference_type() ?&TypeSymbol {
 
 [inline]
 fn tuple_element_error_msg(name string) string {
-	return 'cannot use $name as tuple element'
+	return 'cannot use ${name} as tuple element'
 }
 
 fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {

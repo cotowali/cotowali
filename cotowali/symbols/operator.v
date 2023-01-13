@@ -11,20 +11,20 @@ import cotowali.util { li_panic }
 
 fn check_no_variadic(subject string, fn_info FunctionTypeInfo) ? {
 	if fn_info.variadic {
-		return error('$subject cannot be variadic')
+		return error('${subject} cannot be variadic')
 	}
 }
 
 fn check_no_pipe_in(subject string, fn_info FunctionTypeInfo) ? {
 	if fn_info.pipe_in != builtin_type(.void) {
-		return error('$subject cannot have pipe in')
+		return error('${subject} cannot have pipe in')
 	}
 }
 
 fn check_number_of_parameters(subject string, expected int, actual int) ? {
 	if actual != expected {
-		expected_params := if expected == 1 { '1 parameter' } else { '$expected parameters' }
-		return error('$subject must have $expected_params')
+		expected_params := if expected == 1 { '1 parameter' } else { '${expected} parameters' }
+		return error('${subject} must have ${expected_params}')
 	}
 }
 
@@ -37,10 +37,10 @@ fn verify_op_signature(expected TokenKindClass, op Token, fn_info FunctionTypeIn
 	} + ' operator'
 
 	if !op.kind.@is(expected) {
-		return error('`$op.text` is not $expected_s')
+		return error('`${op.text}` is not ${expected_s}')
 	}
 
-	subject := '$expected_s function'
+	subject := '${expected_s} function'
 	check_number_of_parameters(subject, if expected == .infix_op { 2 } else { 1 }, fn_info.params.len)?
 	check_no_variadic(subject, fn_info)?
 	check_no_pipe_in(subject, fn_info)?
@@ -58,7 +58,7 @@ pub fn (mut s Scope) register_infix_op_function(op Token, f RegisterFnArgs) ?&Va
 	v := &Var{
 		...f.Var
 		id: if f.Var.id == 0 { auto_id() } else { f.Var.id }
-		name: '$op.kind.str_for_ident()' + lhs_ts.name + '_' + rhs_ts.name
+		name: '${op.kind.str_for_ident()}' + lhs_ts.name + '_' + rhs_ts.name
 		typ: fn_typ
 		scope: s
 	}
@@ -125,7 +125,7 @@ pub fn (mut s Scope) register_prefix_op_function(op Token, f RegisterFnArgs) ?&V
 	v := &Var{
 		...f.Var
 		id: if f.Var.id == 0 { auto_id() } else { f.Var.id }
-		name: '$op.kind.str_for_ident()' + operand_ts.name
+		name: '${op.kind.str_for_ident()}' + operand_ts.name
 		typ: fn_typ
 		scope: s
 	}
@@ -184,7 +184,7 @@ pub fn (mut s Scope) register_cast_function(f RegisterFnArgs, params CastFunctio
 	from, to := s.must_lookup_type(fn_info.params[0].typ), s.must_lookup_type(fn_info.ret)
 
 	if to.typ == builtin_type(.void) {
-		return error('$subject must have return values')
+		return error('${subject} must have return values')
 	}
 
 	fn_typ := s.lookup_or_register_function_type(fn_info).typ
@@ -198,7 +198,7 @@ pub fn (mut s Scope) register_cast_function(f RegisterFnArgs, params CastFunctio
 	}
 
 	if to.typ in s.cast_functions[from.typ] {
-		return error(already_defined(.operator, '$from.name as $to.name'))
+		return error(already_defined(.operator, '${from.name} as ${to.name}'))
 	}
 	s.cast_functions[from.typ][to.typ] = v
 

@@ -16,7 +16,7 @@ pub:
 fn (info MapTypeInfo) typename(s &Scope) string {
 	key := s.must_lookup_type(info.key).name
 	value := s.must_lookup_type(info.value).name
-	return 'map[$key]$value'
+	return 'map[${key}]${value}'
 }
 
 pub fn (ts &TypeSymbol) map_info() ?MapTypeInfo {

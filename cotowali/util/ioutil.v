@@ -9,7 +9,7 @@ import io
 
 type WritableData = []u8 | string
 
-pub fn write(mut w io.Writer, data WritableData) ?int {
+pub fn write(mut w io.Writer, data WritableData) !int {
 	return w.write(match data {
 		string { data.bytes() }
 		[]u8 { data }

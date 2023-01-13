@@ -43,9 +43,9 @@ fn (mut e Interpreter) assert_stmt(stmt ast.AssertStmt) {
 		return
 	}
 
-	eprint('LINE $stmt.pos.line: Assertion Failed')
+	eprint('LINE ${stmt.pos.line}: Assertion Failed')
 	if msg_expr := stmt.message_expr() {
-		eprint(': $msg_expr')
+		eprint(': ${msg_expr}')
 	}
 	eprintln('')
 

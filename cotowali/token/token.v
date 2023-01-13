@@ -293,9 +293,9 @@ pub fn (t Token) bool() bool {
 }
 
 pub fn (t Token) str() string {
-	return "Token{ .$t.kind, '$t.text_for_str()', $t.pos }"
+	return "Token{ .${t.kind}, '${t.text_for_str()}', ${t.pos} }"
 }
 
 pub fn (t Token) short_str() string {
-	return "{ .$t.kind, '$t.text_for_str()' }"
+	return "{ .${t.kind}, '${t.text_for_str()}' }"
 }

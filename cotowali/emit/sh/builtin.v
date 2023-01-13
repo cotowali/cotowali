@@ -21,11 +21,11 @@ const builtin = [
 ',
 	'
 cotowali_true_value() {
-	echo $true_value
+	echo ${true_value}
 }
 
 cotowali_false_value() {
-	echo $false_value
+	echo ${false_value}
 }
 ',
 	'

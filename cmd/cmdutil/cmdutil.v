@@ -86,19 +86,19 @@ pub const (
 	flags = Flags(flags_map.keys().map(flags_map[it]))
 )
 
-pub fn parse_args(args []string) ?(&Source, []string) {
+pub fn parse_args(args []string) !(&Source, []string) {
 	if args.len == 0 {
 		return &Source{
 			path: 'stdin'
 			code: os.get_raw_lines_joined()
 		}, []string{}
 	}
-	s := source.read_file(args[0])?
+	s := source.read_file(args[0])!
 	return s, args[1..]
 }
 
-pub fn new_source_from_args(args []string) ?&Source {
-	s, rest := parse_args(args)?
+pub fn new_source_from_args(args []string) !&Source {
+	s, rest := parse_args(args)!
 	if rest.len > 0 {
 		return error('too many source files')
 	}

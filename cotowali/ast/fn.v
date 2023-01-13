@@ -23,13 +23,13 @@ import cotowali.util { li_panic }
 [heap]
 pub struct FnDecl {
 pub:
-	parent_scope &Scope
+	parent_scope &Scope = unsafe { 0 }
 	has_body     bool
 	is_method    bool
 pub mut:
 	attrs         []Attr
 	pipe_in_param Var
-	sym           &symbols.Var
+	sym           &symbols.Var = unsafe { 0 }
 	params        []FnParam
 	body          Block
 }
@@ -304,7 +304,7 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr, mut func Expr) {
 			r.call_expr_func_var(mut e, mut &func.ident)
 		}
 		else {
-			r.error('cannot call `$e.func.type_symbol().name`', e.pos)
+			r.error('cannot call `${e.func.type_symbol().name}`', e.pos)
 		}
 	}
 }
@@ -313,7 +313,7 @@ fn (e CallExpr) lookup_sym(name string, scope &Scope) ?&symbols.Var {
 	if receiver := e.receiver() {
 		receiver_ts := receiver.type_symbol()
 		return receiver_ts.lookup_method(name) or {
-			return error(undefined(.function, '${receiver_ts.name}.$name'))
+			return error(undefined(.function, '${receiver_ts.name}.${name}'))
 		}
 	} else {
 		return scope.lookup_var(name) or { return error(undefined(.function, name)) }
@@ -332,7 +332,7 @@ fn (mut r Resolver) call_expr_func_var(mut e CallExpr, mut func Var) {
 
 	ts := sym.type_symbol()
 	if !sym.is_function() {
-		r.error('`$sym.name` is not function (`$ts.name`)', e.pos)
+		r.error('`${sym.name}` is not function (`${ts.name}`)', e.pos)
 		return
 	}
 
@@ -442,7 +442,7 @@ pub fn (expr &Typeof) children() []Node {
 
 pub fn (expr &Typeof) value() string {
 	if expr.args.len != 1 {
-		li_panic(@FN, @FILE, @LINE, 'Typeof.value: expr.args.len = $expr.args.len')
+		li_panic(@FN, @FILE, @LINE, 'Typeof.value: expr.args.len = ${expr.args.len}')
 	}
 	return expr.args[0].type_symbol().name
 }

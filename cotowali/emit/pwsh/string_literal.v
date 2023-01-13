@@ -27,7 +27,7 @@ fn (mut e Emitter) single_quote_string_literal(expr StringLiteral) {
 					e.write("''")
 				}
 				.string_literal_content_text {
-					e.write('$v.text')
+					e.write('${v.text}')
 				}
 				.string_literal_content_glob {
 					li_panic(@FN, @FILE, @LINE, 'glob is unimplemented')
@@ -67,7 +67,7 @@ fn (mut e Emitter) double_quote_string_literal(expr StringLiteral) {
 				}
 				.string_literal_content_hex {
 					hex := '0' + v.text[1..] // tirm \xff -> 0xff
-					e.write('\$([char]$hex)')
+					e.write('\$([char]${hex})')
 				}
 				.string_literal_content_back_quote {
 					e.write('``')
@@ -98,7 +98,7 @@ fn (mut e Emitter) raw_string_literal(expr StringLiteral) {
 			.double_quote { content.text.replace("'", "''") }
 			else { li_panic(@FN, @FILE, @LINE, pwsh.invalid_string_literal) }
 		}
-		e.write("'$text'")
+		e.write("'${text}'")
 	} else {
 		li_panic(@FN, @FILE, @LINE, pwsh.invalid_string_literal)
 	}

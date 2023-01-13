@@ -27,7 +27,7 @@ fn (mut c Checker) attr(attr ast.Attr) {
 	}
 
 	if attr.kind() == .unknown {
-		c.warn('unknown attribute `$attr.name`', attr.pos)
+		c.warn('unknown attribute `${attr.name}`', attr.pos)
 	}
 }
 
@@ -143,7 +143,7 @@ fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 			index_left_ts := index_expr.left.type_symbol()
 
 			if index_left_ts.resolved().kind() !in [.map, .array] {
-				c.error('`$index_left_ts.name` does not support index assignment', index_expr.pos)
+				c.error('`${index_left_ts.name}` does not support index assignment', index_expr.pos)
 			}
 		}
 		else {
@@ -191,7 +191,7 @@ fn (mut c Checker) block(mut block ast.Block) {
 
 fn (mut c Checker) expect_inside_loop(stmt_name string, pos Pos) ? {
 	if !c.inside_loop {
-		return c.error('`$stmt_name` is not in a loop', pos)
+		return c.error('`${stmt_name}` is not in a loop', pos)
 	}
 }
 
@@ -214,7 +214,7 @@ fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {
 	c.expr(stmt.expr)
 	ts := stmt.expr.type_symbol()
 	if !ts.is_iterable() {
-		c.error('`$ts.name` is not iterable', stmt.expr.pos())
+		c.error('`${ts.name}` is not iterable', stmt.expr.pos())
 	}
 
 	inside_loop_save := c.inside_loop

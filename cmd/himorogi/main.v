@@ -16,7 +16,7 @@ const (
 	flags = cmdutil.flags.excepts(.backend)
 )
 
-fn execute(cmd Command) ? {
+fn execute(cmd Command) ! {
 	mut ctx := cmdutil.new_ctx_from_cmd(cmd, backend: .himorogi)
 	ctx.config.no_builtin = true
 	s, args := cmdutil.parse_args(cmd.args) or {

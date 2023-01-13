@@ -103,7 +103,7 @@ fn (mut c Checker) fn_param_by_index(decl ast.FnDecl, i int) {
 		if i >= n && !fn_info.variadic {
 			// fn f(a: int = 0, b: int)
 			//                  ^^^^^^
-			c.error('expected default expression for `$param.name()`', param.pos)
+			c.error('expected default expression for `${param.name()}`', param.pos)
 		}
 	}
 }
@@ -145,12 +145,12 @@ fn (mut c Checker) call_expr(expr ast.CallExpr) {
 
 	if function_info.variadic {
 		if args.len < min_params_count {
-			c.error(args_count_mismatch(expected: '$min_params_count or more', actual: args.len),
+			c.error(args_count_mismatch(expected: '${min_params_count} or more', actual: args.len),
 				pos)
 			return
 		}
 	} else if args.len < min_params_count && params.len != min_params_count {
-		c.error(args_count_mismatch(expected: 'least $min_params_count', actual: args.len),
+		c.error(args_count_mismatch(expected: 'least ${min_params_count}', actual: args.len),
 			pos)
 		return
 	} else if args.len < min_params_count || args.len > params.len {

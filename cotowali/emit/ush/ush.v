@@ -28,26 +28,26 @@ pub struct Codes {
 pub fn (mut e Emitter) emit(codes Codes) {
 	// see https://github.com/cotowali/cotowali/issues/56#issuecomment-986142569
 
-	sh_heredoc_tag := '__END_SH_HEREDOC_${util.rand<u64>()}'
+	sh_heredoc_tag := '__END_SH_HEREDOC_${util.rand[u64]()}'
 	code := '
 # polyglot (sh pwsh powershell.exe)
 
 echo " \\`" > /dev/null # " @\'
 
 # --- sh ---
-$codes.sh
+${codes.sh}
 # ----------
 
-: <<\'$sh_heredoc_tag\'
+: <<\'${sh_heredoc_tag}\'
 \'@ > \$null
 
 # -- pwsh --
-$codes.pwsh
+${codes.pwsh}
 # ----------
 
 function ${sh_heredoc_tag}() {}
 
-$sh_heredoc_tag
+${sh_heredoc_tag}
 
 '
 	must_write(mut &e.out, code)

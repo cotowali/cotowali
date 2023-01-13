@@ -27,9 +27,9 @@ pub fn compile_to(w io.Writer, s Source, ctx &Context) ? {
 fn compile_to_temp_file(s Source, ctx &Context) ?string {
 	c := new_compiler(s, ctx)
 
-	base := '${os.file_name(s.path)}_$ulid()'
+	base := '${os.file_name(s.path)}_${ulid()}'
 	ext := ctx.config.backend.script_ext()
-	temp_path := os.join_path(os.temp_dir(), '$base$ext')
+	temp_path := os.join_path(os.temp_dir(), '${base}${ext}')
 
 	mut f := os.create(temp_path) or { li_panic(@FN, @FILE, @LINE, err) }
 	c.compile_to(f)?
@@ -53,7 +53,7 @@ pub fn run(s Source, args []string, ctx &Context) ?int {
 		exit(1)
 	}
 
-	mut p := os.new_process('$executable')
+	mut p := os.new_process('${executable}')
 	p.set_args([temp_file])
 	p.args << args
 	p.wait()

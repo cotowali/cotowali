@@ -29,7 +29,7 @@ pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
 			return e
 		}
 		.ush, .himorogi {
-			li_panic(@FN, @FILE, @LINE, 'emitter.new_emitter cannot use for $ctx.config.backend')
+			li_panic(@FN, @FILE, @LINE, 'emitter.new_emitter cannot use for ${ctx.config.backend}')
 		}
 	}
 }

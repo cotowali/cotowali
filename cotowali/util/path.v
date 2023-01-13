@@ -9,5 +9,5 @@ import os
 
 pub fn is_relative_path(path string) bool {
 	return (path == '' || path == '.')
-		|| (path.starts_with('.$os.path_separator') || path.starts_with('..$os.path_separator'))
+		|| (path.starts_with('.${os.path_separator}') || path.starts_with('..${os.path_separator}'))
 }

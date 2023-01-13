@@ -8,7 +8,7 @@ import cli { Command }
 import v.vmod
 import cotowali.kuqi
 
-fn execute(cmd Command) ? {
+fn execute(cmd Command) ! {
 	mut qi := kuqi.new(&Stdio{})
 	qi.serve()
 	return

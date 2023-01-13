@@ -63,13 +63,13 @@ fn (mut p Parser) trace_end() {
 
 pub fn (p &Parser) token(i int) Token {
 	if i >= p.buf.len {
-		li_panic(@FN, @FILE, @LINE, 'cannot take token($i) (p.buf.len = $p.buf.len)')
+		li_panic(@FN, @FILE, @LINE, 'cannot take token(${i}) (p.buf.len = ${p.buf.len})')
 	}
 	if i < 0 {
 		if i == -1 {
 			return p.prev_tok
 		}
-		li_panic(@FN, @FILE, @LINE, 'cannot take negative token($i)')
+		li_panic(@FN, @FILE, @LINE, 'cannot take negative token(${i})')
 	}
 	return p.buf[(p.token_idx + i) % p.buf.len]
 }

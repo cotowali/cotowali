@@ -154,7 +154,7 @@ fn (lic Lic) compile() ? {
 	if lic.autofree {
 		flags += ' -autofree'
 	}
-	res := os.execute('v $flags $lic.source -o $lic.bin')
+	res := os.execute('v ${flags} ${lic.source} -o ${lic.bin}')
 	if res.exit_code != 0 {
 		return error_with_code(res.output, res.exit_code)
 	}
@@ -164,20 +164,20 @@ fn (lic Lic) compile() ? {
 fn (lic Lic) execute(c LicCommand, file string) os.Result {
 	if lic.bin.contains('himorogi') {
 		if c == .run {
-			return os.execute('$lic.bin $file')
+			return os.execute('${lic.bin} ${file}')
 		} else {
-			panic('invalid command `$c` for himorogi')
+			panic('invalid command `${c}` for himorogi')
 		}
 	}
 
-	cmd := '$lic.bin -b $lic.backend'
+	cmd := '${lic.bin} -b ${lic.backend}'
 	return match c {
-		.shellcheck { os.execute('$cmd -test $file | shellcheck -') }
-		.compile { os.execute('$cmd -test $file') }
-		.compile_to_file { os.execute('$cmd -test $file > ${file.trim_string_right(suffix(.li))}${suffix(.sh)}') }
-		.noemit { os.execute('$cmd -no-emit $file') }
-		.run { os.execute('$cmd run $file') }
-		.test { os.execute('$cmd test $file') }
+		.shellcheck { os.execute('${cmd} -test ${file} | shellcheck -') }
+		.compile { os.execute('${cmd} -test ${file}') }
+		.compile_to_file { os.execute('${cmd} -test ${file} > ${file.trim_string_right(suffix(.li))}${suffix(.sh)}') }
+		.noemit { os.execute('${cmd} -no-emit ${file}') }
+		.run { os.execute('${cmd} run ${file}') }
+		.test { os.execute('${cmd} test ${file}') }
 	}
 }
 
@@ -317,8 +317,8 @@ fn (result TestResult) summary_message(file string) string {
 		.failed { term.fail_message('[FAIL]') }
 	}
 	elapsed_ms := f64(result.elapsed.microseconds()) / 1000.0
-	msg := '$status ${elapsed_ms:6.2f} ms $file'
-	return if result.status == .fixed { '$msg (FIXED)' } else { msg }
+	msg := '${status} ${elapsed_ms:6.2f} ms ${file}'
+	return if result.status == .fixed { '${msg} (FIXED)' } else { msg }
 }
 
 fn (r TestResult) failed_message(file string) string {
@@ -329,7 +329,7 @@ fn (r TestResult) failed_message(file string) string {
 
 	mut lines := [
 		r.summary_message(file),
-		'${indent(1)}exit_code: $r.exit_code',
+		'${indent(1)}exit_code: ${r.exit_code}',
 		'${indent(1)}output:',
 		format_output(r.output),
 		'${indent(1)}expected:',
@@ -376,7 +376,7 @@ fn new_test_suite(paths []string, opt TestOption) TestSuite {
 	lic.compile() or {
 		eprintln([
 			'${term.fail_message('ERROR')} Faild to compile lic',
-			'    exit_code: $err.code()',
+			'    exit_code: ${err.code()}',
 			'    output:',
 			indent_each_lines(2, err.msg()),
 		].join('\n'))
@@ -409,7 +409,7 @@ fn (t TestSuite) run() bool {
 	if t.opt.parallel {
 		mut threads := []thread TestResultStatus{}
 		for tt in t.cases {
-			threads << go fn (t TestCase) TestResultStatus {
+			threads << spawn fn (t TestCase) TestResultStatus {
 				res := t.run()
 				println(res.message())
 				return res.status
@@ -439,20 +439,20 @@ fn (t TestSuite) run() bool {
 		}
 	}
 
-	println('Total: $t.cases.len, Runtime: ${sw.elapsed().milliseconds()}ms')
+	println('Total: ${t.cases.len}, Runtime: ${sw.elapsed().milliseconds()}ms')
 	println(if t.opt.compile_only {
-		term.ok_message('$compiled_n Compiled')
+		term.ok_message('${compiled_n} Compiled')
 	} else {
-		term.ok_message('$ok_n Passed')
+		term.ok_message('${ok_n} Passed')
 	})
 	if fixed_n > 0 {
-		println(term.ok_message('$fixed_n Fixed'))
+		println(term.ok_message('${fixed_n} Fixed'))
 	}
 	if todo_n > 0 {
-		println(term.warn_message('$todo_n Skipped'))
+		println(term.warn_message('${todo_n} Skipped'))
 	}
 	if failed_n > 0 {
-		println(term.fail_message('$failed_n Failed'))
+		println(term.fail_message('${failed_n} Failed'))
 	}
 
 	return failed_n == 0

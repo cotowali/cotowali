@@ -15,7 +15,7 @@ fn (mut e Emitter) assert_stmt(stmt AssertStmt) {
 	e.writeln('{')
 	e.indent()
 	{
-		e.write('throw New-Object $pwsh.assertion_error_class -ArgumentList ($stmt.pos.line')
+		e.write('throw New-Object ${pwsh.assertion_error_class} -ArgumentList (${stmt.pos.line}')
 		if msg_expr := stmt.message_expr() {
 			e.write(', ')
 			e.expr(msg_expr, paren: true)
@@ -30,7 +30,7 @@ const assertion_error_class = 'CotowaliAssertionFailedException'
 
 fn (mut e Emitter) define_assertion_error_class() {
 	e.writeln('
-class $pwsh.assertion_error_class : $base_exception_class
+class ${pwsh.assertion_error_class} : ${base_exception_class}
 {
 	${pwsh.assertion_error_class}([int]\$line)
 		: base(\$line, "Assertion Failed") {}

@@ -16,32 +16,32 @@ const (
 
 fn (mut e Emitter) sh_test_cond_infix(left ExprOrString, op string, right ExprOrString) {
 	e.expr_or_string(left)
-	e.write(' $op ')
+	e.write(' ${op} ')
 	e.expr_or_string(right)
 }
 
 fn (mut e Emitter) sh_test_cond_is_true(expr ExprOrString) {
-	e.sh_test_cond_infix(expr, ' = ', '$sh.true_value')
+	e.sh_test_cond_infix(expr, ' = ', '${sh.true_value}')
 }
 
-fn (mut e Emitter) sh_test_command<T>(f fn (mut Emitter, T), v T) {
+fn (mut e Emitter) sh_test_command[T](f fn (mut Emitter, T), v T) {
 	e.write('[ ')
 	f(mut e, v)
 	e.write(' ]')
 }
 
 fn (mut e Emitter) sh_result_to_bool() {
-	e.write(' && echo $sh.true_value || echo $sh.false_value')
+	e.write(' && echo ${sh.true_value} || echo ${sh.false_value}')
 }
 
-fn (mut e Emitter) sh_test_command_as_bool<T>(f fn (mut Emitter, T), v T) {
+fn (mut e Emitter) sh_test_command_as_bool[T](f fn (mut Emitter, T), v T) {
 	e.write('"\$( ')
 	e.sh_test_command(f, v)
 	e.sh_result_to_bool()
 	e.write(' )"')
 }
 
-fn (mut e Emitter) sh_test_command_for_expr<T>(f fn (mut Emitter, T), v T, opt ExprOpt) {
+fn (mut e Emitter) sh_test_command_for_expr[T](f fn (mut Emitter, T), v T, opt ExprOpt) {
 	if opt.mode == .condition {
 		e.sh_test_command(f, v)
 	} else {
@@ -49,7 +49,7 @@ fn (mut e Emitter) sh_test_command_for_expr<T>(f fn (mut Emitter, T), v T, opt E
 	}
 }
 
-fn (mut e Emitter) sh_command_substitution<T>(f fn (mut Emitter, T), v T, opt ExprOpt) {
+fn (mut e Emitter) sh_command_substitution[T](f fn (mut Emitter, T), v T, opt ExprOpt) {
 	e.sh_command_substitution_open(opt)
 	f(mut e, v)
 	e.sh_command_substitution_close(opt)
@@ -69,7 +69,7 @@ fn (mut e Emitter) sh_command_substitution_close(opt ExprOpt) {
 	}
 }
 
-fn (mut e Emitter) sh_define_function<T>(name string, f fn (mut Emitter, T), v T) {
+fn (mut e Emitter) sh_define_function[T](name string, f fn (mut Emitter, T), v T) {
 	e.writeln('${name}() {')
 	e.indent()
 	f(mut e, v)
@@ -93,10 +93,10 @@ fn (mut e Emitter) sh_awk_infix_expr(expr ast.InfixExpr) {
 	typ := ast.Expr(expr).resolved_typ()
 	mut format := if typ == builtin_type(.float) { sh.printf_format_float } else { '%d' }
 	if expr.op.kind.@is(.comparsion_op) {
-		awk_expr = '($awk_expr ? 1 : 0)'
+		awk_expr = '(${awk_expr} ? 1 : 0)'
 		format = '%g'
 	}
-	awk := "awk '{ printf \"$format\", $awk_expr }'"
+	awk := "awk '{ printf \"${format}\", ${awk_expr} }'"
 
 	e.write(r'"$(echo ')
 	{
@@ -104,5 +104,5 @@ fn (mut e Emitter) sh_awk_infix_expr(expr ast.InfixExpr) {
 		e.write(' ')
 		e.expr(expr.right)
 	}
-	e.write(' | $awk )"')
+	e.write(' | ${awk} )"')
 }

@@ -23,7 +23,7 @@ fn (mut e Emitter) single_quote_string_literal_value(expr StringLiteral) {
 					e.write(r"\'")
 				}
 				.string_literal_content_text {
-					e.write("'$v.text'")
+					e.write("'${v.text}'")
 				}
 				.string_literal_content_glob {
 					e.write(v.text) // @'a*b' -> 'a'*'b'
@@ -50,12 +50,12 @@ fn (mut e Emitter) double_quote_string_literal_value(expr StringLiteral) {
 						e.write('"')
 					}
 					.string_literal_content_glob {
-						e.write('"$v.text"') // close quote, write glob, open quote. "a*b" -> "a"*"b"
+						e.write('"${v.text}"') // close quote, write glob, open quote. "a*b" -> "a"*"b"
 					}
 					.string_literal_content_hex {
 						hex := '0' + v.text[1..] // tirm \xff -> 0xff
 						octal := to_octal(hex.int())
-						e.write("\$(printf '\\$octal')") // printf '\0ddd' is octal (0xXX is not posix compliant)
+						e.write("\$(printf '\\${octal}')") // printf '\0ddd' is octal (0xXX is not posix compliant)
 					}
 					.string_literal_content_back_quote {
 						e.write(r'\`')
@@ -77,7 +77,7 @@ fn (mut e Emitter) double_quote_string_literal_value(expr StringLiteral) {
 fn (mut e Emitter) single_quote_raw_string_literal_value(expr StringLiteral) {
 	content := expr.contents[0]
 	if content is Token {
-		e.write("'$content.text'")
+		e.write("'${content.text}'")
 	} else {
 		li_panic(@FN, @FILE, @LINE, sh.invalid_string_literal)
 	}
@@ -87,7 +87,7 @@ fn (mut e Emitter) double_quote_raw_string_literal_value(expr StringLiteral) {
 	content := expr.contents[0]
 	if content is Token {
 		text := content.text.replace("'", r"'\''") // r"a'b" -> 'a'\''b'
-		e.write("'$text'")
+		e.write("'${text}'")
 	} else {
 		li_panic(@FN, @FILE, @LINE, sh.invalid_string_literal)
 	}
@@ -120,18 +120,18 @@ fn (mut e Emitter) string_literal(expr StringLiteral, opt ExprOpt) {
 	}
 
 	tmp_var := e.new_tmp_ident()
-	e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, arg ExprWithValue<StringLiteral, string>) {
+	e.insert_at(e.stmt_head_pos(), fn (mut e Emitter, arg ExprWithValue[StringLiteral, string]) {
 		expr := arg.expr
 		tmp_var := arg.value
 		if expr.is_glob() {
 			array_ident := e.new_tmp_ident()
-			e.write('array_assign $array_ident ')
+			e.write('array_assign ${array_ident} ')
 			defer {
 				e.writeln('')
-				e.writeln('$tmp_var=$array_ident')
+				e.writeln('${tmp_var}=${array_ident}')
 			}
 		} else {
-			e.write('$tmp_var=')
+			e.write('${tmp_var}=')
 			defer {
 				e.writeln('')
 			}
@@ -143,7 +143,7 @@ fn (mut e Emitter) string_literal(expr StringLiteral, opt ExprOpt) {
 	if opt.quote {
 		e.write('"')
 	}
-	e.write('\$$tmp_var')
+	e.write('\$${tmp_var}')
 	if opt.quote {
 		e.write('"')
 	}

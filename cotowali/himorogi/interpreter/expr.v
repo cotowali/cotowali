@@ -180,7 +180,7 @@ fn (mut e Interpreter) prefix_expr(expr ast.PrefixExpr) Value {
 		.not { Value(!value.bool()) }
 		.plus { value }
 		.minus { value.mul(i64(-1)) }
-		else { li_panic(@FN, @FILE, @LINE, 'invalid op $op.text') }
+		else { li_panic(@FN, @FILE, @LINE, 'invalid op ${op.text}') }
 	}
 }
 

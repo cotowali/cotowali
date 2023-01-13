@@ -13,7 +13,7 @@ pub struct Var {
 mut:
 	scope &Scope = unsafe { 0 }
 pub:
-	name           string [required]
+	name           string
 	id             u64
 	pos            Pos = none_pos()
 	is_placeholder bool
@@ -37,7 +37,7 @@ pub fn (v Var) is_method() bool {
 }
 
 pub fn (v Var) str() string {
-	return 'Var{ id: $v.id, name: $v.name, scope: $v.scope_str(), typ: $v.typ }'
+	return 'Var{ id: ${v.id}, name: ${v.name}, scope: ${v.scope_str()}, typ: ${v.typ} }'
 }
 
 pub fn (v Var) scope() ?&Scope {

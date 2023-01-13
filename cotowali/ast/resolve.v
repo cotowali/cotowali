@@ -49,7 +49,7 @@ fn (mut r Resolver) trace_end() {
 
 fn (mut r Resolver) error(msg string, pos Pos) IError {
 	$if trace_resolver ? {
-		r.trace_begin(@FN, msg, '$pos')
+		r.trace_begin(@FN, msg, '${pos}')
 		defer {
 			r.trace_end()
 		}

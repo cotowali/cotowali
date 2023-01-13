@@ -79,13 +79,13 @@ fn (mut e Emitter) assert_stmt(stmt ast.AssertStmt) {
 
 	e.indent()
 	{
-		mut msg := "'LINE $stmt.pos.line: Assertion Failed'"
+		mut msg := "'LINE ${stmt.pos.line}: Assertion Failed'"
 		if msg_expr := stmt.message_expr() {
 			tmp := e.new_tmp_ident()
 			e.assign(tmp, msg_expr, msg_expr.type_symbol())
-			msg += '": \$$tmp"'
+			msg += '": \$${tmp}"'
 		}
-		e.writeln('echo $msg >&2')
+		e.writeln('echo ${msg} >&2')
 		is_test := if f := e.cur_fn() { f.is_test() } else { false }
 		e.writeln(if is_test { 'return 1' } else { 'exit 1' })
 	}
@@ -124,7 +124,7 @@ fn (mut e Emitter) continue_(stmt ast.Continue) {
 
 fn (mut e Emitter) doc_comment(comment ast.DocComment) {
 	for line in comment.lines() {
-		e.writeln('#$line')
+		e.writeln('#${line}')
 	}
 }
 
@@ -147,12 +147,12 @@ fn (mut e Emitter) if_stmt(stmt ast.IfStmt) {
 
 fn (mut e Emitter) for_in_stmt(stmt ast.ForInStmt) {
 	tmp := e.new_tmp_ident()
-	e.write('for $tmp in ')
+	e.write('for ${tmp} in ')
 	e.expr(stmt.expr, expand_array: true, writeln: true, quote: false)
 	e.writeln('do')
 	e.indent()
 	{
-		e.assign(e.ident_for(stmt.var_), '\$(eval echo \$$tmp)', TypeSymbol{})
+		e.assign(e.ident_for(stmt.var_), '\$(eval echo \$${tmp})', TypeSymbol{})
 		e.block(stmt.body)
 	}
 	e.unindent()
@@ -168,7 +168,7 @@ fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
 			Token {
 				$if !prod {
 					if part.kind != .inline_shell_content_text {
-						li_panic(@FN, @FILE, @LINE, 'want inline_shell_content_text. got $part.kind')
+						li_panic(@FN, @FILE, @LINE, 'want inline_shell_content_text. got ${part.kind}')
 					}
 				}
 				e.write(part.text)

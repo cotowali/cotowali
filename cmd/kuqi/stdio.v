@@ -13,7 +13,7 @@ struct Stdio {
 }
 
 pub fn (_ Stdio) send(output string) {
-	print('$content_length$output.len\r\n\r\n$output')
+	print('${content_length}${output.len}\r\n\r\n${output}')
 }
 
 [manualfree]

@@ -13,7 +13,7 @@ import cotowali.checker
 import os
 
 fn (mut q Kuqi) did_open(id int, params lsp.DidOpenTextDocumentParams) {
-	q.log_message('did open: { id: $id, uri: $params.text_document.uri }', .log)
+	q.log_message('did open: { id: ${id}, uri: ${params.text_document.uri} }', .log)
 	q.show_diagnostics(params.text_document.uri)
 	document := params.text_document
 	path := document.uri.path()
@@ -23,7 +23,7 @@ fn (mut q Kuqi) did_open(id int, params lsp.DidOpenTextDocumentParams) {
 }
 
 fn (mut q Kuqi) did_change(id int, params lsp.DidChangeTextDocumentParams) {
-	q.log_message('did change: { id: $id, uri: $params.text_document.uri }', .log)
+	q.log_message('did change: { id: ${id}, uri: ${params.text_document.uri} }', .log)
 
 	path := params.text_document.uri.path()
 	text := params.content_changes[0].text // content_changes have just one item that have entire of source text
@@ -31,14 +31,14 @@ fn (mut q Kuqi) did_change(id int, params lsp.DidChangeTextDocumentParams) {
 }
 
 fn (mut q Kuqi) did_close(id int, params lsp.DidCloseTextDocumentParams) {
-	q.log_message('did close: { id: $id, uri: $params.text_document.uri }', .log)
+	q.log_message('did close: { id: ${id}, uri: ${params.text_document.uri} }', .log)
 
 	path := params.text_document.uri.path()
 	q.ctx.sources.delete(path)
 }
 
 fn (mut q Kuqi) did_save(id int, params lsp.DidSaveTextDocumentParams) {
-	q.log_message('did save: { id: $id, uri: $params.text_document.uri }', .log)
+	q.log_message('did save: { id: ${id}, uri: ${params.text_document.uri} }', .log)
 }
 
 fn (mut q Kuqi) process_source(s &Source) {

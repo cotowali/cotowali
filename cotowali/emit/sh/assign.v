@@ -12,18 +12,18 @@ import cotowali.util { li_panic }
 fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 	// v bug: `match value` occurs c error at `e.ident_for`
 	if value is string {
-		e.writeln('array_copy "$name" "$value"')
+		e.writeln('array_copy "${name}" "${value}"')
 	} else {
 		expr := value as ast.Expr
 		match expr {
 			ast.ArrayLiteral {
 				if expr.is_init_syntax {
-					e.write('array_init "$name" ')
+					e.write('array_init "${name}" ')
 					e.expr(expr.len)
 					e.write(' ')
 					e.expr(expr.init)
 				} else {
-					e.write('array_assign "$name"')
+					e.write('array_assign "${name}"')
 					for elem in expr.elements {
 						e.write(' ')
 						e.expr(elem)
@@ -32,7 +32,7 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 				e.writeln('')
 			}
 			ast.InfixExpr {
-				e.write('array_copy "$name" ')
+				e.write('array_copy "${name}" ')
 				e.expr(value as ast.Expr, writeln: true)
 			}
 			ast.Var {
@@ -40,7 +40,7 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 				e.array_assign(name, ident)
 			}
 			ast.DefaultValue {
-				e.writeln('array_init "$name" 0')
+				e.writeln('array_init "${name}" 0')
 			}
 			ast.StringLiteral {
 				$if !prod {
@@ -48,7 +48,7 @@ fn (mut e Emitter) array_assign(name string, value ExprOrString) {
 						li_panic(@FN, @FILE, @LINE, 'not a array value')
 					}
 				}
-				e.write('array_copy "$name" ')
+				e.write('array_copy "${name}" ')
 				e.string_literal(expr)
 				e.writeln('')
 			}
@@ -95,10 +95,10 @@ fn (mut e Emitter) assign(name string, value ExprOrString, ts TypeSymbol) {
 		else {
 			match value {
 				string {
-					e.writeln('$name="$value"')
+					e.writeln('${name}="${value}"')
 				}
 				ast.Expr {
-					e.write('$name=')
+					e.write('${name}=')
 					e.expr(value)
 					e.writeln('')
 				}
@@ -122,8 +122,8 @@ fn (mut e Emitter) destructuring_assign(names []string, expr ast.Expr) {
 fn (mut e Emitter) index_assign(left ast.Expr, index ast.Expr, right ast.Expr) {
 	name := e.ident_for(left)
 	e.write(match left.type_symbol().resolved().kind() {
-		.array { 'array_set $name ' }
-		.map { 'map_set $name ' }
+		.array { 'array_set ${name} ' }
+		.map { 'map_set ${name} ' }
 		else { li_panic(@FN, @FILE, @LINE, 'invalid index left') }
 	})
 	e.expr(index)

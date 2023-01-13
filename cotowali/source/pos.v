@@ -91,5 +91,5 @@ pub fn (p Pos) str() string {
 	if p.is_none() {
 		return 'none'
 	}
-	return 'Pos{ i: $p.i-${p.i + p.len}, line: $p.line-$p.last_line, col: $p.col-$p.last_col }'
+	return 'Pos{ i: ${p.i}-${p.i + p.len}, line: ${p.line}-${p.last_line}, col: ${p.col}-${p.last_col} }'
 }

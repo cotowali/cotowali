@@ -15,7 +15,7 @@ const (
 	tokens_command = Command{
 		name: 'tokens'
 		description: 'print tokens'
-		execute: fn (cmd Command) ? {
+		execute: fn (cmd Command) ! {
 			if cmd.args.len == 0 {
 				cmd.execute_help()
 				return
@@ -36,7 +36,7 @@ fn print_files_tokens(paths []string) {
 			continue
 		}
 		for token in new_lexer(s, new_default_context()) {
-			sb.writeln('    $token.short_str()')
+			sb.writeln('    ${token.short_str()}')
 		}
 	}
 	sb.writeln(']')

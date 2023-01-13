@@ -29,7 +29,7 @@ fn new_ctx_from_cmd(cmd Command) &Context {
 	return ctx
 }
 
-fn execute(cmd Command) ? {
+fn execute(cmd Command) ! {
 	sh := cmd.flags.get_string(sh_flag.name) or { li_panic(@FN, @FILE, @LINE, '') }
 	mut lish := new_shell(sh, new_ctx_from_cmd(cmd)) or {
 		eprintln(err.msg())

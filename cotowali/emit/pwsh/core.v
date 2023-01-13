@@ -50,15 +50,15 @@ fn (mut e Emitter) new_tmp_ident() string {
 	defer {
 		e.tmp_count++
 	}
-	return '_cotowali_tmp_$e.tmp_count'
+	return '_cotowali_tmp_${e.tmp_count}'
 }
 
 [inline]
-fn (mut e Emitter) seek(pos int) ? {
+fn (mut e Emitter) seek(pos int) ! {
 	return e.code.seek(pos)
 }
 
-fn (mut e Emitter) insert_at<T>(pos int, f fn (mut Emitter, T), v T) {
+fn (mut e Emitter) insert_at[T](pos int, f fn (mut Emitter, T), v T) {
 	pos_save := e.code.pos()
 	e.seek(pos) or { panic(err) }
 	f(mut e, v)

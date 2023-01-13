@@ -118,7 +118,7 @@ fn (mut lex Lexer) trace_end() {
 
 fn (mut lex Lexer) error(token Token, msg string) IError {
 	$if trace_lexer ? {
-		lex.trace_begin(@FN, '$token', msg)
+		lex.trace_begin(@FN, '${token}', msg)
 		defer {
 			lex.trace_end()
 		}
@@ -131,7 +131,7 @@ fn (mut lex Lexer) error(token Token, msg string) IError {
 
 fn (mut lex Lexer) warn(token Token, msg string) IError {
 	$if trace_lexer ? {
-		lex.trace_begin(@FN, '$token', msg)
+		lex.trace_begin(@FN, '${token}', msg)
 		defer {
 			lex.trace_end()
 		}

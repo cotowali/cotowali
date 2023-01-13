@@ -75,7 +75,7 @@ fn (mut e Emitter) continue_(stmt ast.Continue) {
 
 fn (mut e Emitter) doc_comment(comment ast.DocComment) {
 	for line in comment.lines() {
-		e.writeln('#$line')
+		e.writeln('#${line}')
 	}
 }
 
@@ -134,7 +134,7 @@ fn (mut e Emitter) inline_shell(stmt ast.InlineShell) {
 		match part {
 			Token {
 				if part.kind != .inline_shell_content_text {
-					li_panic(@FN, @FILE, @LINE, 'want inline_shell_content_text. got $part.kind')
+					li_panic(@FN, @FILE, @LINE, 'want inline_shell_content_text. got ${part.kind}')
 				}
 
 				mut text := part.text

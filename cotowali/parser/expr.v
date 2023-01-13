@@ -64,16 +64,16 @@ fn (e ExprKind) op_kinds() []TokenKind {
 }
 
 fn (k ExprKind) outer() ExprKind {
-	return if k == .toplevel { k } else { ExprKind(int(k) - 1) }
+	return if k == .toplevel { k } else { unsafe { ExprKind(int(k) - 1) } }
 }
 
 fn (k ExprKind) inner() ExprKind {
-	return if k == .value { k } else { ExprKind(int(k) + 1) }
+	return if k == .value { k } else { unsafe { ExprKind(int(k) + 1) } }
 }
 
 fn (mut p Parser) parse_infix_expr(kind ExprKind) ?ast.Expr {
 	$if trace_parser ? {
-		p.trace_begin(@FN, '$kind')
+		p.trace_begin(@FN, '${kind}')
 		defer {
 			p.trace_end()
 		}
@@ -125,7 +125,7 @@ fn (mut p Parser) parse_prefix_expr() ?ast.Expr {
 
 fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 	$if trace_parser ? {
-		p.trace_begin(@FN, '$kind')
+		p.trace_begin(@FN, '${kind}')
 		defer {
 			p.trace_end()
 		}

@@ -80,16 +80,16 @@ fn (mut e Emitter) new_tmp_ident() string {
 	defer {
 		e.tmp_count++
 	}
-	return '_cotowali_tmp_$e.tmp_count'
+	return '_cotowali_tmp_${e.tmp_count}'
 }
 
 [inline]
-fn (mut e Emitter) seek(pos int) ? {
+fn (mut e Emitter) seek(pos int) ! {
 	mut code := e.code()
 	return code.seek(pos)
 }
 
-fn (mut e Emitter) insert_at<T>(pos int, f fn (mut Emitter, T), v T) {
+fn (mut e Emitter) insert_at[T](pos int, f fn (mut Emitter, T), v T) {
 	pos_save := e.code().pos()
 	e.seek(pos) or { li_panic(@FN, @FILE, @LINE, err) }
 	f(mut e, v)
@@ -108,7 +108,7 @@ fn (mut e Emitter) unlock_cursor() {
 	code.unlock_cursor()
 }
 
-fn (mut e Emitter) with_lock_cursor<T>(f fn (mut Emitter, T), v T) {
+fn (mut e Emitter) with_lock_cursor[T](f fn (mut Emitter, T), v T) {
 	distance_from_tail := e.code().len() - e.code().pos()
 	defer {
 		e.seek(e.code().len() - distance_from_tail) or { li_panic(@FN, @FILE, @LINE, err) }

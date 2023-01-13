@@ -92,7 +92,7 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 	}
 
 	if ctx.config.backend !in [.sh, .pwsh] {
-		return error('$ctx.config.backend backend is not yet implemented.')
+		return error('${ctx.config.backend} backend is not yet implemented.')
 	}
 
 	f := parse_and_check(c.source, ctx)?
