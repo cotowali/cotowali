@@ -64,7 +64,8 @@ pub fn parse_file(path string, ctx &Context) ?&ast.File {
 	if path in ctx.sources {
 		return none
 	}
-	return parse(source.read_file(path)?, ctx)
+	s := source.read_file(path) or { li_panic(@FN, @FILE, @LINE, err) }
+	return parse(s, ctx)
 }
 
 pub fn parse_file_relative(base_source &Source, path string, ctx &Context) ?&ast.File {

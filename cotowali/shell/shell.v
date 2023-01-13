@@ -92,6 +92,6 @@ pub fn (mut shell Shell) stderr_read() string {
 	return out.trim_right(done_marker)
 }
 
-fn (mut shell Shell) input(prompt string) ?string {
+fn (mut shell Shell) input(prompt string) !string {
 	return shell.readline.read_line(prompt)
 }
