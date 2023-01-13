@@ -82,6 +82,12 @@ error: require_http_status.err.li 27,1: faild to get http://httpstat.us/503 (503
 error: require_http_status.err.li 28,1: faild to get https://httpstat.us/503 (503 Service Unavailable)
    28 | require 'https://httpstat.us/503'
       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 29,1: faild to get http://httpstat.us/504 (504 Gateway Timeout)
+   29 | require 'http://httpstat.us/504'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+error: require_http_status.err.li 30,1: faild to get https://httpstat.us/504 (504 Gateway Timeout)
+   30 | require 'https://httpstat.us/504'
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 error: require_http_status.err.li 31,1: faild to get http://httpstat.us/522 (522 Unassigned)
    31 | require 'http://httpstat.us/522'
       | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
