@@ -7,7 +7,7 @@ module parser
 
 import cotowali.errors
 import cotowali.source { Pos }
-import cotowali.token { Token }
+import cotowali.token { Token, TokenKind }
 import term
 
 enum RestoreStrategy {

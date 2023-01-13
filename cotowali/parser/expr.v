@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module parser
 
-import cotowali.token
+import cotowali.token { TokenKind }
 import cotowali.ast
 import cotowali.symbols { builtin_type }
 import cotowali.messages { duplicated_key, invalid_key }
