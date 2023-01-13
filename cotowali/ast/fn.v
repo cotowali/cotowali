@@ -23,13 +23,13 @@ import cotowali.util { li_panic }
 [heap]
 pub struct FnDecl {
 pub:
-	parent_scope &Scope
+	parent_scope &Scope = unsafe { 0 }
 	has_body     bool
 	is_method    bool
 pub mut:
 	attrs         []Attr
 	pipe_in_param Var
-	sym           &symbols.Var
+	sym           &symbols.Var = unsafe { 0 }
 	params        []FnParam
 	body          Block
 }

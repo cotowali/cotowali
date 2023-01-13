@@ -718,7 +718,7 @@ fn (mut r Resolver) prefix_expr(mut expr PrefixExpr, opt ResolveExprOpt) {
 // TODO: merge Var to Ident
 pub struct Ident {
 pub mut:
-	scope &Scope
+	scope &Scope = unsafe { 0 }
 pub:
 	pos  Pos
 	text string

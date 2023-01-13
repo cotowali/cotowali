@@ -239,7 +239,7 @@ fn (mut r Resolver) assert_stmt(mut stmt AssertStmt) {
 
 pub struct Block {
 pub mut:
-	scope &Scope
+	scope &Scope = unsafe { 0 }
 	stmts []Stmt
 }
 

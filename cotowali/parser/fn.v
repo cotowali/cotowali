@@ -22,8 +22,8 @@ mut:
 	name     string
 	name_pos Pos
 	pos      Pos
-	default  ast.Expr = ast.Empty{}
-	ts       &TypeSymbol
+	default  ast.Expr    = ast.Empty{}
+	ts       &TypeSymbol = unsafe { 0 }
 }
 
 fn (p &FnParamParsingInfo) has_default() bool {
