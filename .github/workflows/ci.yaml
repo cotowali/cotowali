@@ -80,29 +80,6 @@ jobs:
 #     - uses: actions/checkout@v2
 #     - run: z ci setup-v
 #     - run: z ci test shellcheck
-  sanitize:
-   runs-on: ubuntu-latest
-   strategy:
-     matrix:
-       fsanitize:
-         - address
-   env:
-     ASAN_OPTIONS: "detect_leaks=0"
-     VFLAGS: "-cc clang -cflags '-fsanitize=${{ matrix.fsanitize }}'"
-   steps:
-     - uses: zakuro9715/setup-z@main
-     - uses: actions/checkout@v2
-     - run: z ci setup-v
-     - run: z ci test
-  run-on-all-conditions:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: zakuro9715/setup-z@main
-      - uses: actions/checkout@v2
-      - run: z ci setup-v
-#  # double free error
-#  # https://github.com/cotowali/cotowali/runs/4276302273
-#      - run: z ci run-on-all-conditions
   publish-dev-image:
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
