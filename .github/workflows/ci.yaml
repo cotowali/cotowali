@@ -80,6 +80,20 @@ jobs:
 #     - uses: actions/checkout@v2
 #     - run: z ci setup-v
 #     - run: z ci test shellcheck
+  build-konryu:
+    runs-on: ubuntu-latest
+    env:
+      VFLAGS: "-cc clang"
+    steps:
+      - uses: zakuro9715/setup-z@main
+      - uses: actions/checkout@v2
+      - run: z ci setup-v
+      - run: z lic build
+      - uses: actions/checkout@v2
+        with:
+          repository: cotowali/konryu
+          path: konryu
+      - run: ./bin/lic konryu/konryu.li
   publish-dev-image:
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
