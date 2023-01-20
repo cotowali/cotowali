@@ -26,13 +26,14 @@ fn (s &Scope) parent() ?&Scope {
 }
 
 fn (mut s Scope) open_child(name string) &Scope {
-	if name in s.children {
-		s.children[name] = &Scope{
+	return s.children[name] or {
+		child := &Scope{
 			name: name
 			parent: s
 		}
+		s.children[name] = child
+		child
 	}
-	return s.children[name]
 }
 
 fn (s &Scope) lookup_var(name string) Value {
