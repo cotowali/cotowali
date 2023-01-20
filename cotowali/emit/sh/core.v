@@ -56,7 +56,7 @@ fn (e &Emitter) cur_fn() ?FnDecl {
 
 [inline]
 fn (mut e Emitter) code() &code.Builder {
-	return e.codes[e.cur_kind]
+	return e.codes[e.cur_kind] or { li_panic(@FN, @FILE, @LINE, '') }
 }
 
 [inline]

@@ -6,7 +6,7 @@
 module sh
 
 import cotowali.ast
-import cotowali.util { must_write }
+import cotowali.util { li_panic, must_write }
 
 pub fn (mut e Emitter) emit(f &ast.File) {
 	if e.ctx.config.feature.has(.shebang) {
@@ -16,7 +16,7 @@ pub fn (mut e Emitter) emit(f &ast.File) {
 	e.builtin()
 	e.file(f)
 	for k in ordered_code_kinds {
-		must_write(mut &e.out, e.codes[k].bytes())
+		must_write(mut &e.out, (e.codes[k] or { li_panic(@FN, @FILE, @LINE, '') }).bytes())
 	}
 }
 
