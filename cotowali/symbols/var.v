@@ -112,13 +112,10 @@ pub fn (s &Scope) lookup_var(name string) ?&Var {
 	if name == '_' {
 		return none
 	}
-	if name in s.vars {
-		return s.vars[name]
+	return s.vars[name] or {
+		p := s.parent()?
+		p.lookup_var(name)?
 	}
-	if p := s.parent() {
-		return p.lookup_var(name)
-	}
-	return none
 }
 
 pub fn (s &Scope) must_lookup_var(name string) &Var {
@@ -126,18 +123,17 @@ pub fn (s &Scope) must_lookup_var(name string) &Var {
 }
 
 pub fn (s &Scope) lookup_var_with_pos(name string, pos Pos) ?&Var {
-	if name in s.vars {
-		v := s.vars[name]
-		s1 := v.pos.source() or { new_source('', '') }
-		s2 := pos.source() or { new_source('', '') }
-		if v.pos.i <= pos.i || s1 != s2 || v.pos.is_none() || pos.is_none() {
-			return v
-		}
-	}
-	if p := s.parent() {
+	v := s.vars[name] or {
+		p := s.parent()?
 		return p.lookup_var_with_pos(name, pos)
 	}
-	return none
+	s1 := v.pos.source() or { new_source('', '') }
+	s2 := pos.source() or { new_source('', '') }
+	return if v.pos.i <= pos.i || s1 != s2 || v.pos.is_none() || pos.is_none() {
+		v
+	} else {
+		none
+	}
 }
 
 pub fn (s &Scope) must_lookup_var_with_pos(name string, pos Pos) &Var {

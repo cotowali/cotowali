@@ -46,8 +46,8 @@ pub fn (s &Scope) str() string {
 
 pub fn (s &Scope) debug_str() string {
 	children_str := s.children().map(it.debug_str()).join('\n').split_into_lines().map('        ${it}').join('\n')
-	vars_str := s.vars.keys().map("        '${it}': ${s.vars[it]}").join('\n')
-	types_str := s.type_symbols.keys().map('        ${s.type_symbols[it]}').join(',\n')
+	vars_str := s.vars.keys().map("        '${it}': ${unsafe { s.vars[it] }}").join('\n')
+	types_str := s.type_symbols.keys().map('        ${unsafe { s.type_symbols[it] }}').join(',\n')
 	return [
 		'Scope{',
 		'    id: ${s.id}',
@@ -99,8 +99,7 @@ pub fn (s &Scope) parent() ?&Scope {
 }
 
 pub fn (s &Scope) children() []&Scope {
-	ids := s.children.keys()
-	return ids.map(s.children[it])
+	return s.children.values()
 }
 
 pub fn (s &Scope) innermost(pos Pos) &Scope {
