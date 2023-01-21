@@ -93,10 +93,6 @@ fn (mut e Interpreter) infix_expr(expr ast.InfixExpr) Value {
 		li_panic(@FN, @FILE, @LINE, 'not a infix op')
 	}
 
-	if call_expr := expr.overloaded_function_call_expr() {
-		return e.call_expr(call_expr)
-	}
-
 	lhs, rhs := promote(e.expr(expr.left), e.expr(expr.right))
 	return match op.kind {
 		.eq { Value(lhs.eq(rhs)) }
@@ -168,10 +164,6 @@ fn (mut e Interpreter) prefix_expr(expr ast.PrefixExpr) Value {
 	op := expr.op
 	if !op.kind.@is(.prefix_op) {
 		li_panic(@FN, @FILE, @LINE, 'not a prefix op')
-	}
-
-	if call_expr := expr.overloaded_function_call_expr() {
-		return e.call_expr(call_expr)
 	}
 
 	value := e.expr(expr.expr)
