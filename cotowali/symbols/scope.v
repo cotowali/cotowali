@@ -7,7 +7,6 @@ module symbols
 
 import cotowali.util { li_panic, nil_to_none }
 import cotowali.source { Pos }
-import cotowali.token { TokenKind }
 
 [heap]
 pub struct Scope {
@@ -18,16 +17,14 @@ pub mut:
 	owner &Var = unsafe { 0 }
 	pos   Pos
 mut:
-	parent              &Scope = unsafe { 0 }
-	children            map[u64]&Scope // map[ID]&Scope
-	name_to_child_id    map[string]ID
-	vars                map[string]&Var
-	type_symbols        map[u64]&TypeSymbol     // map[Type]&TypeSymbol
-	methods             map[u64]map[string]&Var // map[receiverType]map[name]&Var
-	name_to_type        map[string]Type
-	infix_op_functions  map[TokenKind]map[u64]map[u64]&Var // map[op TokenKind]map[lhs Type]map[rhs Type]&Var
-	prefix_op_functions map[TokenKind]map[u64]&Var // map[op TokenKind]map[operand Type]
-	cast_functions      map[u64]map[u64]&Var       // map[from Type]map[to Type]
+	parent           &Scope = unsafe { 0 }
+	children         map[u64]&Scope // map[ID]&Scope
+	name_to_child_id map[string]ID
+	vars             map[string]&Var
+	type_symbols     map[u64]&TypeSymbol     // map[Type]&TypeSymbol
+	methods          map[u64]map[string]&Var // map[receiverType]map[name]&Var
+	name_to_type     map[string]Type
+	cast_functions   map[u64]map[u64]&Var // map[from Type]map[to Type]
 }
 
 pub fn (s &Scope) owner() ?&Var {

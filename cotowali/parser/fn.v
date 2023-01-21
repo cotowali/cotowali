@@ -48,8 +48,6 @@ fn (mut p Parser) register_function_param(param FnParamParsingInfo) ?ast.Var {
 enum FnSignatureKind {
 	default
 	method
-	infix_op
-	prefix_op
 	cast_op
 }
 
@@ -87,24 +85,6 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 				name: info.name.text
 				pos: info.name.pos
 				params: params[1..]
-				variadic: info.variadic
-				pipe_in: info.pipe_in_param.ts.typ
-				ret: ret_typ
-			)?
-		}
-		.infix_op {
-			scope.register_infix_op_function(info.name, // name is op token
-				pos: info.name.pos
-				params: params
-				variadic: info.variadic
-				pipe_in: info.pipe_in_param.ts.typ
-				ret: ret_typ
-			)?
-		}
-		.prefix_op {
-			scope.register_prefix_op_function(info.name, // name is op token
-				pos: info.name.pos
-				params: params
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
 				ret: ret_typ
@@ -264,13 +244,6 @@ fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
 	if name := p.consume_if_kind_eq(.key_as) {
 		info.name = name
 		info.kind = .cast_op
-	} else if name := p.consume_if_kind_is(.op) {
-		info.name = name
-		if has_receiver {
-			info.kind = .infix_op
-		} else {
-			info.kind = .prefix_op
-		}
 	} else {
 		info.name = p.consume_with_check(.ident)?
 		if has_receiver {

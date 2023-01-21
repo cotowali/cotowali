@@ -1,6 +1,8 @@
 Taika Program
 =============
 
+- Drop operator overloads
+
 v0.1
 ====
 

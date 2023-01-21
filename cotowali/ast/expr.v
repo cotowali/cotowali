@@ -140,10 +140,6 @@ pub fn (expr Expr) pos() Pos {
 }
 
 pub fn (e InfixExpr) typ() Type {
-	if f := e.overloaded_function() {
-		return (f.type_symbol().function_info() or { li_panic(@FN, @FILE, @LINE, 'not a function') }).ret
-	}
-
 	if e.op.kind.@is(.comparsion_op) || e.op.kind.@is(.logical_infix_op) {
 		return builtin_type(.bool)
 	} else if e.left.typ() == builtin_type(.float) || e.right.typ() == builtin_type(.float) {
@@ -212,10 +208,6 @@ pub fn (e ParenExpr) typ() Type {
 }
 
 pub fn (e PrefixExpr) typ() Type {
-	if f := e.overloaded_function() {
-		return (f.type_symbol().function_info() or { li_panic(@FN, @FILE, @LINE, 'not a function') }).ret
-	}
-
 	match e.op.kind {
 		.amp {
 			return if ref := e.scope.lookup_reference_type(target: e.expr.typ()) {
@@ -411,31 +403,6 @@ pub mut:
 	scope &Scope
 	left  Expr
 	right Expr
-}
-
-pub fn (expr &InfixExpr) overloaded_function() ?&symbols.Var {
-	left_ts := expr.left.type_symbol()
-	right_ts := expr.right.type_symbol()
-	fn_var := expr.scope.lookup_infix_op_function(expr.op, left_ts.typ, right_ts.typ)?
-	if !fn_var.is_function() {
-		li_panic(@FN, @FILE, @LINE, 'not a function')
-	}
-	return fn_var
-}
-
-pub fn (expr &InfixExpr) overloaded_function_call_expr() ?CallExpr {
-	sym := expr.overloaded_function()?
-	return CallExpr{
-		scope: expr.scope
-		func: Var{
-			sym: sym
-			ident: Ident{
-				scope: expr.scope
-				text: sym.name
-			}
-		}
-		args: [expr.left, expr.right]
-	}
 }
 
 [inline]
@@ -654,30 +621,6 @@ pub fn (expr &PrefixExpr) int() int {
 		else { 0 }
 	}
 	return if expr.op.kind == .minus { -n } else { n }
-}
-
-pub fn (expr &PrefixExpr) overloaded_function() ?&symbols.Var {
-	operand_typ := expr.expr.typ()
-	fn_var := expr.scope.lookup_prefix_op_function(expr.op, operand_typ)?
-	if !fn_var.is_function() {
-		li_panic(@FN, @FILE, @LINE, 'not a function')
-	}
-	return fn_var
-}
-
-pub fn (expr &PrefixExpr) overloaded_function_call_expr() ?CallExpr {
-	sym := expr.overloaded_function()?
-	return CallExpr{
-		scope: expr.scope
-		func: Var{
-			sym: sym
-			ident: Ident{
-				scope: expr.scope
-				text: sym.name
-			}
-		}
-		args: [expr.expr]
-	}
 }
 
 pub fn (expr &PrefixExpr) convert_to_infix_expr() ?InfixExpr {

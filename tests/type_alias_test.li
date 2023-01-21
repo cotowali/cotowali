@@ -27,69 +27,6 @@ fn test_infix_for_alias_type() {
 test_infix_for_alias_type()
 
 
-fn test_inherits_infix_op() {
-  type Num = int
-  type NumNum = Num
-  type Num1 = Num
-  type Num1_ = Num
-  type Num2 = Num
-  type Num_2 = Num
-  type Num3 = Num
-
-  var (nn, n1, n2, n3): (NumNum, Num1, Num2, Num3)
-
-  fn (lhs: Num) + (rhs: Num): Num {
-    return lhs + rhs
-  }
-  assert(typeof(nn + nn) == 'Num')
-
-  fn (lhs: Num1) + (rhs: Num): Num1_ {
-    return lhs + rhs
-  }
-  assert(typeof(n1 + n1) == 'Num1_')
-
-  fn (lhs: Num) + (rhs: Num2): Num_2 {
-    return lhs + rhs
-  }
-  assert(typeof(n2 + n2) == 'Num_2')
-
-  fn (lhs: Num3) + (rhs: Num3): Num3 {
-    return lhs + rhs
-  }
-  assert(typeof(n3 + n3) == 'Num3')
-
-  assert(typeof(n3 + n1) == 'Num')
-}
-test_inherits_infix_op()
-
-fn test_inherits_prefix_op() {
-  type Num = int
-  type Num1 = Num
-  type Num2 = Num1
-  type Num3 = Num2
-  type Num4 = Num3
-
-  var(n, n1, n2, n3, n4): (Num, Num1, Num2, Num3, Num4)
-
-  fn +(n: Num): Num {
-    return n
-  }
-  assert(typeof(+n) == 'Num')
-  assert(typeof(+n1) == 'Num')
-
-  fn +(n: Num2): Num2 {
-    return n
-  }
-  assert(typeof(+n2) == 'Num2')
-  assert(typeof(+n3) == 'Num2')
-
-  fn +(n: Num4): Num4 {
-    return n
-  }
-  assert(typeof(+n4) == 'Num4')
-}
-test_inherits_prefix_op()
-
 fn test_inherits_methods() {
   type Num = float
   fn (n: Num) inc(): Num {
