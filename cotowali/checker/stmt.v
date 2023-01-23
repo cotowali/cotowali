@@ -19,13 +19,6 @@ fn (mut c Checker) attrs(attrs []ast.Attr) {
 }
 
 fn (mut c Checker) attr(attr ast.Attr) {
-	$if trace_checker ? {
-		c.trace_begin(@FN, attr.name)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	if attr.kind() == .unknown {
 		c.warn('unknown attribute `${attr.name}`', attr.pos)
 	}
@@ -61,13 +54,6 @@ fn (mut c Checker) stmts(mut stmts []ast.Stmt) {
 }
 
 fn (mut c Checker) stmt(mut stmt ast.Stmt) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	match mut stmt {
 		ast.AssignStmt { c.assign_stmt(mut stmt) }
 		ast.AssertStmt { c.assert_stmt(stmt) }
@@ -105,13 +91,6 @@ fn is_assignment_to_outside_of_fn(current_fn &ast.FnDecl, left ast.Expr) bool {
 }
 
 fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.expr(stmt.right)
 
 	// if left type is placeholder, left is undefined variable.
@@ -153,13 +132,6 @@ fn (mut c Checker) assign_stmt(mut stmt ast.AssignStmt) {
 }
 
 fn (mut c Checker) assert_stmt(stmt ast.AssertStmt) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.exprs(stmt.args)
 
 	args_count := stmt.args.len
@@ -179,13 +151,6 @@ fn (mut c Checker) assert_stmt(stmt ast.AssertStmt) {
 }
 
 fn (mut c Checker) block(mut block ast.Block) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.stmts(mut block.stmts)
 }
 
@@ -204,13 +169,6 @@ fn (mut c Checker) continue_(stmt ast.Continue) {
 }
 
 fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.expr(stmt.expr)
 	ts := stmt.expr.type_symbol()
 	if !ts.is_iterable() {
@@ -227,13 +185,6 @@ fn (mut c Checker) for_in_stmt(mut stmt ast.ForInStmt) {
 }
 
 fn (mut c Checker) if_stmt(mut stmt ast.IfStmt) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	for i, mut branch in stmt.branches {
 		if i == stmt.branches.len - 1 && stmt.has_else {
 			c.block(mut branch.body)
@@ -246,24 +197,10 @@ fn (mut c Checker) if_stmt(mut stmt ast.IfStmt) {
 }
 
 fn (mut c Checker) module_decl(mut mod ast.ModuleDecl) {
-	$if trace_checker ? {
-		c.trace_begin(@FN, mod.block.scope.name)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.block(mut mod.block)
 }
 
 fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.expr(stmt.expr)
 	c.check_types(
 		want: c.current_fn.ret_type_symbol()
@@ -273,24 +210,10 @@ fn (mut c Checker) return_stmt(stmt ast.ReturnStmt) {
 }
 
 fn (mut c Checker) require_stmt(mut stmt ast.RequireStmt) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.check_file(mut stmt.file)
 }
 
 fn (mut c Checker) while_stmt(mut stmt ast.WhileStmt) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.expr(stmt.cond)
 	c.expect_bool_expr(stmt.cond, 'while condition') or {}
 
@@ -304,13 +227,6 @@ fn (mut c Checker) while_stmt(mut stmt ast.WhileStmt) {
 }
 
 fn (mut c Checker) yield_stmt(stmt ast.YieldStmt) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.expr(stmt.expr)
 
 	mut want_typ := builtin_type(.placeholder)

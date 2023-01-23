@@ -27,13 +27,6 @@ pub fn (expr &ArrayLiteral) children() []Node {
 }
 
 fn (mut r Resolver) array_literal(mut expr ArrayLiteral, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	if expr.is_init_syntax {
 		r.expr(mut expr.init, opt)
 		r.expr(mut expr.len, opt)
@@ -71,13 +64,6 @@ pub fn (expr &MapLiteral) children() []Node {
 }
 
 fn (mut r Resolver) map_literal(mut expr MapLiteral, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	for mut entry in expr.entries {
 		r.expr(mut entry.key, opt)
 		r.expr(mut entry.value, opt)
@@ -113,39 +99,15 @@ pub fn (e IntLiteral) int() int {
 }
 
 fn (mut r Resolver) bool_literal(expr BoolLiteral, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
 }
 
 fn (mut r Resolver) int_literal(expr IntLiteral, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
 }
 
 fn (mut r Resolver) float_literal(expr FloatLiteral, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
 }
 
 fn (mut r Resolver) null_literal(expr NullLiteral, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
 }
 
 pub type StringLiteralContent = Expr | Token
@@ -201,13 +163,6 @@ fn (s &StringLiteral) children() []Node {
 }
 
 fn (mut r Resolver) string_literal(mut expr StringLiteral, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	for mut content in expr.contents {
 		if mut content is Expr {
 			r.expr(mut content, opt)

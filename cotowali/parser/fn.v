@@ -15,7 +15,7 @@ import cotowali.symbols {
 	builtin_type,
 	new_placeholder_var,
 }
-import cotowali.util { li_panic, nil_to_none, struct_name }
+import cotowali.util { li_panic, nil_to_none }
 
 struct FnParamParsingInfo {
 mut:
@@ -268,13 +268,6 @@ fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
 }
 
 fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	mut has_error := false
 	info := p.parse_signature_info()?
 	mut outer_scope := p.scope
@@ -383,13 +376,6 @@ fn (mut p Parser) parse_call_args() ?[]ast.Expr {
 }
 
 fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN, '${struct_name(left)}{...}')
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.consume_with_assert(.l_paren)
 
 	mut args := p.parse_call_args()?
@@ -403,13 +389,6 @@ fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
 }
 
 fn (mut p Parser) parse_nameof_or_typeof() ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin()
-		defer {
-			p.trace_end()
-		}
-	}
-
 	key := p.consume_with_assert(.key_nameof, .key_typeof)
 	p.consume_with_assert(.l_paren)
 	args := p.parse_call_args()?

@@ -112,13 +112,6 @@ pub fn (mut s AssignStmt) set_is_const(left Expr) {
 }
 
 fn (mut r Resolver) assign_stmt(mut stmt AssignStmt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	if !stmt.is_decl {
 		r.expr(mut stmt.left, is_left_of_assignment: true)
 	}
@@ -227,13 +220,6 @@ pub fn (s &AssertStmt) children() []Node {
 }
 
 fn (mut r Resolver) assert_stmt(mut stmt AssertStmt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.exprs(mut stmt.args)
 }
 
@@ -249,13 +235,6 @@ pub fn (s &Block) children() []Node {
 }
 
 fn (mut r Resolver) block(mut stmt Block) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.stmts(mut stmt.stmts)
 }
 
@@ -283,12 +262,6 @@ pub fn (doc DocComment) lines() []string {
 }
 
 fn (mut r Resolver) doc_comment(stmt DocComment) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
 }
 
 pub struct ForInStmt {
@@ -305,13 +278,6 @@ pub fn (s &ForInStmt) children() []Node {
 }
 
 fn (mut r Resolver) for_in_stmt(mut stmt ForInStmt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.expr(mut stmt.expr)
 
 	var_typ := if array_info := stmt.expr.type_symbol().array_info() {
@@ -351,13 +317,6 @@ pub fn (s &IfStmt) children() []Node {
 }
 
 fn (mut r Resolver) if_stmt(mut stmt IfStmt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	for mut b in stmt.branches {
 		r.expr(mut b.cond)
 		r.block(mut b.body)
@@ -383,13 +342,6 @@ pub fn (sh &InlineShell) use_for_pwsh() bool {
 }
 
 fn (mut r Resolver) inline_shell(mut stmt InlineShell) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	for mut part in stmt.parts {
 		if mut part is Var {
 			r.var_(mut part)
@@ -408,13 +360,6 @@ pub fn (mod &ModuleDecl) children() []Node {
 }
 
 fn (mut r Resolver) module_decl(mut mod ModuleDecl) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.block(mut mod.block)
 }
 
@@ -481,13 +426,6 @@ pub fn (s &RequireStmt) children() []Node {
 }
 
 fn (mut r Resolver) require_stmt(mut stmt RequireStmt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.file(mut stmt.file)
 }
 
@@ -503,13 +441,6 @@ pub fn (s &WhileStmt) children() []Node {
 }
 
 fn (mut r Resolver) while_stmt(mut stmt WhileStmt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.expr(mut stmt.cond)
 	r.block(mut stmt.body)
 }

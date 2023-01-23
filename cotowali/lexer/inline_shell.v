@@ -8,13 +8,6 @@ module lexer
 import cotowali.token { Token }
 
 fn (mut lex Lexer) read_inline_shell_content() ?Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	// TODO: Implement shell parser to report syntax error.
 	// Current parser only detect nested brace.
 

@@ -47,10 +47,6 @@ tasks:
               - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
               - SEGFAULT_SIGNALS=all
             run: v -cg -g run {{lic_path}} $@
-          trace.lexer: v -cg -d trace_lexer run {{lic_path}} -no-emit $@
-          trace.parser: v -cg -d trace_parser run {{lic_path}} -no-emit $@
-          trace.resolver: v -cg -d trace_resolver run {{lic_path}} -no-emit $@
-          trace.checker: v -cg -d trace_checker run {{lic_path}} -no-emit $@
       install: cp {{bin}}/lic {{install_dir}}/lic
       symlink: ln -fs {{bin}}/lic {{install_dir}}/lic
   himorogi:

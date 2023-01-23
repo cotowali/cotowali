@@ -14,13 +14,6 @@ import cotowali.util { is_relative_path, li_panic }
 import net.urllib
 
 fn (mut p Parser) parse_attr() ?ast.Attr {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	start := (p.consume_with_check(.hash)?).pos
 	p.consume_with_check(.l_bracket)?
 	tok := p.consume()
@@ -32,13 +25,6 @@ fn (mut p Parser) parse_attr() ?ast.Attr {
 }
 
 fn (mut p Parser) parse_attrs() []ast.Attr {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	mut attrs := []ast.Attr{}
 	for p.kind(0) == .hash {
 		if attr := p.parse_attr() {
@@ -52,13 +38,6 @@ fn (mut p Parser) parse_attrs() []ast.Attr {
 }
 
 fn (mut p Parser) parse_stmt() ast.Stmt {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.process_compiler_directives()
 	if p.kind(0) == .eof {
 		return ast.Empty{}
@@ -85,13 +64,6 @@ fn (mut p Parser) parse_stmt() ast.Stmt {
 }
 
 fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	match p.kind(0) {
 		.key_fn {
 			return ast.Stmt(p.parse_fn_decl()?)
@@ -162,13 +134,6 @@ fn (mut p Parser) try_parse_stmt() ?ast.Stmt {
 }
 
 fn (mut p Parser) parse_block(name string, locals []string) ?ast.Block {
-	$if trace_parser ? {
-		p.trace_begin(@FN, name, '${locals}')
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.open_scope(name)
 	for local in locals {
 		p.scope.register_var(name: local) or { li_panic(@FN, @FILE, @LINE, err) }
@@ -201,13 +166,6 @@ fn (mut p Parser) parse_block_without_new_scope() ?ast.Block {
 }
 
 fn (mut p Parser) parse_decl_assign_stmt() ?ast.AssignStmt {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	key := p.consume_with_assert(.key_var, .key_const)
 	is_const := key.kind == .key_const
 
@@ -251,13 +209,6 @@ fn (mut p Parser) parse_assert_stmt() ?ast.AssertStmt {
 }
 
 fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	op := p.consume_with_assert(...[
 		.assign,
 		.plus_assign,
@@ -308,13 +259,6 @@ fn (mut p Parser) parse_assign_stmt_with_left(left ast.Expr) ?ast.AssignStmt {
 }
 
 fn (mut p Parser) parse_if_branch(name string) ?ast.IfBranch {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	cond := p.parse_expr(.toplevel)?
 	block := p.parse_block(name, [])?
 	return ast.IfBranch{
@@ -324,13 +268,6 @@ fn (mut p Parser) parse_if_branch(name string) ?ast.IfBranch {
 }
 
 fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.consume_with_assert(.key_if)
 
 	cond := p.parse_expr(.toplevel)?
@@ -368,13 +305,6 @@ fn (mut p Parser) parse_if_stmt() ?ast.IfStmt {
 }
 
 fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.consume_with_assert(.key_for)
 	ident := p.consume_with_check(.ident)?
 	p.consume_with_check(.key_in)?
@@ -395,13 +325,6 @@ fn (mut p Parser) parse_for_in_stmt() ?ast.ForInStmt {
 }
 
 fn (mut p Parser) parse_return_stmt() ?ast.ReturnStmt {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.consume_with_assert(.key_return)
 	p.skip_eol()
 
@@ -573,13 +496,6 @@ fn (mut p Parser) require_stmt_verify_checksum(stmt ast.RequireStmt) ? {
 }
 
 fn (mut p Parser) parse_while_stmt() ?ast.WhileStmt {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.consume_with_assert(.key_while)
 	cond := p.parse_expr(.toplevel)?
 	body := p.parse_block('while_${p.count}', [])?
@@ -592,13 +508,6 @@ fn (mut p Parser) parse_while_stmt() ?ast.WhileStmt {
 }
 
 fn (mut p Parser) parse_yield_stmt() ?ast.YieldStmt {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	key := p.consume_with_assert(.key_yield)
 	expr := p.parse_expr(.toplevel)?
 	return ast.YieldStmt{

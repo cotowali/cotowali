@@ -8,13 +8,6 @@ module parser
 import cotowali.ast
 
 fn (mut p Parser) parse_module() ?ast.ModuleDecl {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.consume_with_assert(.key_module)
 
 	mut ident := p.consume_with_check(.ident)?

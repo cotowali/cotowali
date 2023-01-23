@@ -9,7 +9,6 @@ import cotowali.lexer { Lexer, new_lexer }
 import cotowali.token { Token, TokenCond, TokenKind, TokenKindClass }
 import cotowali.context { Context }
 import cotowali.symbols { Scope }
-import cotowali.debug { Tracer }
 import cotowali.errors { LexerErr, LexerWarn }
 import cotowali.source { Pos, Source }
 import cotowali.util { li_panic }
@@ -29,36 +28,11 @@ mut:
 	if_directive_depth int
 
 	restore_strategy RestoreStrategy
-
-	tracer Tracer [if trace_parser ?]
 }
 
 [inline]
 fn (mut p Parser) source() &Source {
 	return p.lexer.source
-}
-
-fn (mut p Parser) debug() {
-	mut tokens := []Token{len: p.buf.len}
-	for i, _ in tokens {
-		tokens[i] = p.token(i)
-	}
-	p.tracer.write_object('Parser', {
-		'brace_depth':      p.brace_depth.str()
-		'prev_tok':         p.prev_tok.str()
-		'tokens':           tokens.str()
-		'restore_strategy': p.restore_strategy.str()
-	})
-}
-
-[inline; if trace_parser ?]
-fn (mut p Parser) trace_begin(f string, args ...string) {
-	p.tracer.begin_fn(f, ...args)
-}
-
-[inline; if trace_parser ?]
-fn (mut p Parser) trace_end() {
-	p.tracer.end_fn()
 }
 
 pub fn (p &Parser) token(i int) Token {
@@ -104,13 +78,6 @@ fn (mut p Parser) read_token() Token {
 
 pub fn (mut p Parser) consume() Token {
 	t := p.token(0)
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.tracer.write_field('token', t.short_str())
-			p.trace_end()
-		}
-	}
 	match t.kind {
 		.l_brace { p.brace_depth++ }
 		.r_brace { p.brace_depth-- }
@@ -187,7 +154,7 @@ fn (mut p Parser) consume_with_check(kinds ...TokenKind) ?Token {
 }
 
 fn (mut p Parser) consume_with_assert(kinds ...TokenKind) Token {
-	$if debug {
+	$if !prod {
 		assert p.kind(0) in kinds
 	}
 	return p.consume()

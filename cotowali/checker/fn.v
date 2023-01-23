@@ -10,13 +10,6 @@ import cotowali.symbols { ArrayTypeInfo, builtin_type }
 import cotowali.messages { args_count_mismatch }
 
 fn (mut c Checker) nameof(expr ast.Nameof) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	if expr.args.len != 1 {
 		c.error(args_count_mismatch(expected: 1, actual: expr.args.len), expr.pos())
 		return
@@ -29,13 +22,6 @@ fn (mut c Checker) nameof(expr ast.Nameof) {
 }
 
 fn (mut c Checker) typeof_(expr ast.Typeof) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	if expr.args.len != 1 {
 		c.error(args_count_mismatch(expected: 1, actual: expr.args.len), expr.pos())
 		return
@@ -45,13 +31,6 @@ fn (mut c Checker) typeof_(expr ast.Typeof) {
 }
 
 fn (mut c Checker) fn_decl(mut stmt ast.FnDecl) {
-	$if trace_checker ? {
-		c.trace_begin(@FN, stmt.sym.name, stmt.signature())
-		defer {
-			c.trace_end()
-		}
-	}
-
 	old_fn := c.current_fn
 	c.current_fn = &stmt
 	defer {
@@ -109,26 +88,12 @@ fn (mut c Checker) fn_param_by_index(decl ast.FnDecl, i int) {
 }
 
 fn (mut c Checker) call_command_expr(expr ast.CallCommandExpr) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.exprs(expr.args)
 }
 
 fn (mut c Checker) call_expr(expr ast.CallExpr) {
 	if Expr(expr).typ() == builtin_type(.placeholder) {
 		return
-	}
-
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
 	}
 
 	pos := Expr(expr).pos()

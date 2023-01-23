@@ -27,13 +27,6 @@ fn is_glob_char(c Char) bool {
 }
 
 fn (mut lex Lexer) read_single_quote_string_literal_content(params StringLiteralParams) Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	if params.is_glob && is_glob_char(lex.char(0)) {
 		lex.consume_for(fn (c Char) bool {
 			return is_glob_char(c)
@@ -70,13 +63,6 @@ fn (mut lex Lexer) read_single_quote_string_literal_content(params StringLiteral
 }
 
 fn (mut lex Lexer) read_double_quote_string_literal_content(params StringLiteralParams) Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	if params.is_glob && is_glob_char(lex.char(0)) {
 		lex.consume_for(fn (c Char) bool {
 			return is_glob_char(c)
@@ -143,13 +129,6 @@ fn (mut lex Lexer) read_double_quote_string_literal_content(params StringLiteral
 }
 
 fn (mut lex Lexer) read_raw_string_literal_content(quote byte) Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	for !(lex.byte() == quote || lex.is_eof()) {
 		lex.consume()
 	}

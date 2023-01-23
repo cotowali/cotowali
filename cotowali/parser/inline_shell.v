@@ -9,13 +9,6 @@ import cotowali.util { li_panic }
 import cotowali.ast
 
 fn (mut p Parser) parse_inline_shell() ?ast.InlineShell {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	key_tok := p.consume()
 	p.consume_with_check(.l_brace)?
 	mut parts := []ast.InlineShellPart{}

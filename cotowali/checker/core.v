@@ -9,31 +9,18 @@ import cotowali.ast
 import cotowali.errors
 import cotowali.source { Pos }
 import cotowali.context { Context }
-import cotowali.debug { Tracer }
 
 pub struct Checker {
 mut:
 	current_fn  &ast.FnDecl = unsafe { 0 }
 	inside_loop bool
 	ctx         &Context
-
-	tracer Tracer [if trace_checker ?]
 }
 
 pub fn new_checker(ctx &Context) Checker {
 	return Checker{
 		ctx: ctx
 	}
-}
-
-[inline; if trace_checker ?]
-fn (mut p Checker) trace_begin(f string, args ...string) {
-	p.tracer.begin_fn(f, ...args)
-}
-
-[inline; if trace_checker ?]
-fn (mut p Checker) trace_end() {
-	p.tracer.end_fn()
 }
 
 fn (mut c Checker) error(msg string, pos Pos) IError {
@@ -51,13 +38,6 @@ fn (mut c Checker) error(msg string, pos Pos) IError {
 }
 
 fn (mut c Checker) warn(msg string, pos Pos) IError {
-	$if trace_checker ? {
-		c.trace_begin(@FN, msg, '${pos}')
-		defer {
-			c.trace_end()
-		}
-	}
-
 	return c.ctx.errors.push_warn(
 		msg: msg
 		pos: pos

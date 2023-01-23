@@ -9,16 +9,9 @@ import cotowali.token { TokenKind }
 import cotowali.ast
 import cotowali.symbols { builtin_type }
 import cotowali.messages { duplicated_key, invalid_key }
-import cotowali.util { li_panic, struct_name }
+import cotowali.util { li_panic }
 
 fn (mut p Parser) parse_expr_stmt(expr ast.Expr) ?ast.Stmt {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	// eol or close blace
 	if !(p.brace_depth > 0 && p.kind(0) == .r_brace) && p.kind(0) != .eof {
 		p.consume_with_check(.eol, .semicolon)?
@@ -72,13 +65,6 @@ fn (k ExprKind) inner() ExprKind {
 }
 
 fn (mut p Parser) parse_infix_expr(kind ExprKind) ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN, '${kind}')
-		defer {
-			p.trace_end()
-		}
-	}
-
 	operand := kind.inner()
 	op_kinds := kind.op_kinds()
 
@@ -106,13 +92,6 @@ fn (mut p Parser) parse_infix_expr(kind ExprKind) ?ast.Expr {
 }
 
 fn (mut p Parser) parse_prefix_expr() ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	if op := p.consume_if_kind_is(.prefix_op) {
 		return ast.PrefixExpr{
 			scope: p.scope
@@ -124,13 +103,6 @@ fn (mut p Parser) parse_prefix_expr() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN, '${kind}')
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.skip_eol()
 
 	match kind {
@@ -144,13 +116,6 @@ fn (mut p Parser) parse_expr(kind ExprKind) ?ast.Expr {
 }
 
 fn (mut p Parser) parse_as_expr() ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	expr := p.parse_expr(ExprKind.as_cast.inner())?
 	if _ := p.consume_if_kind_eq(.key_as) {
 		ts := p.parse_type()?
@@ -165,13 +130,6 @@ fn (mut p Parser) parse_as_expr() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_pipeline() ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	inner := ExprKind.pipeline.inner()
 	expr := p.parse_expr(inner)?
 	if p.kind(0) !in [.pipe, .pipe_append] {
@@ -196,13 +154,6 @@ fn (mut p Parser) parse_pipeline() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_ident() ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	mut modules := []ast.Ident{}
 	is_global := if _ := p.consume_if_kind_eq(.coloncolon) { true } else { false }
 
@@ -238,13 +189,6 @@ fn (mut p Parser) parse_ident() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_array_literal() ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	first_tok := p.consume_with_check(.l_bracket)?
 	mut last_tok := first_tok
 	if _ := p.consume_if_kind_eq(.r_bracket) {
@@ -333,13 +277,6 @@ fn (mut p Parser) parse_array_literal() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_map_literal() ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	mut pos := p.token(0).pos
 	mut key_typ := builtin_type(.placeholder)
 	mut value_typ := builtin_type(.placeholder)
@@ -440,13 +377,6 @@ fn (mut p Parser) parse_paren_expr() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_index_expr_with_left(left ast.Expr) ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN, '${struct_name(left)}{...}')
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.consume_with_assert(.l_bracket)
 	p.skip_eol()
 	index := p.parse_expr(.toplevel)?
@@ -460,13 +390,6 @@ fn (mut p Parser) parse_index_expr_with_left(left ast.Expr) ?ast.Expr {
 }
 
 fn (mut p Parser) parse_selector_expr_with_left(left ast.Expr) ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN, '${struct_name(left)}{...}')
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.consume_with_assert(.dot)
 	p.skip_eol()
 	ident := p.parse_ident()?
@@ -481,13 +404,6 @@ fn (mut p Parser) parse_selector_expr_with_left(left ast.Expr) ?ast.Expr {
 }
 
 fn (mut p Parser) parse_value_left() ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	if p.is_compiler_variable_literal() {
 		return p.parse_compiler_variable_literal()
 	}
@@ -554,13 +470,6 @@ fn (mut p Parser) parse_value_left() ?ast.Expr {
 }
 
 fn (mut p Parser) parse_value() ?ast.Expr {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	t := p.token(0)
 	mut expr := if t.kind == .ident && t.text.len > 0 && t.text[0] == `@` {
 		ident := p.consume()

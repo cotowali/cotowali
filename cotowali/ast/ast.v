@@ -23,12 +23,5 @@ pub fn (f &File) checksum(algo checksum.Algorithm) string {
 }
 
 fn (mut r Resolver) file(mut f File) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.stmts(mut f.stmts)
 }
