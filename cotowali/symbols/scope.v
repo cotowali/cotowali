@@ -18,13 +18,13 @@ pub mut:
 	pos   Pos
 mut:
 	parent           &Scope = unsafe { 0 }
-	children         map[u64]&Scope // map[ID]&Scope
+	children         map[ID]&Scope
 	name_to_child_id map[string]ID
 	vars             map[string]&Var
-	type_symbols     map[u64]&TypeSymbol     // map[Type]&TypeSymbol
-	methods          map[u64]map[string]&Var // map[receiverType]map[name]&Var
+	type_symbols     map[Type]&TypeSymbol
+	methods          map[Type]map[string]&Var // map[receiver]map[name]
 	name_to_type     map[string]Type
-	cast_functions   map[u64]map[u64]&Var // map[from Type]map[to Type]
+	cast_functions   map[Type]map[u64]&Var // map[from]map[to]
 }
 
 pub fn (s &Scope) owner() ?&Var {
