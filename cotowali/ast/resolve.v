@@ -7,13 +7,10 @@ module ast
 
 import cotowali.source { Pos }
 import cotowali.context { Context }
-import cotowali.debug { Tracer }
 
 pub struct Resolver {
 mut:
 	ctx &Context
-
-	tracer Tracer [if trace_resolver ?]
 }
 
 pub fn new_resolver(ctx &Context) Resolver {
@@ -37,24 +34,7 @@ pub fn (mut r Resolver) resolve(mut node Node) {
 	}
 }
 
-[inline; if trace_resolver ?]
-fn (mut r Resolver) trace_begin(f string, args ...string) {
-	r.tracer.begin_fn(f, ...args)
-}
-
-[inline; if trace_resolver ?]
-fn (mut r Resolver) trace_end() {
-	r.tracer.end_fn()
-}
-
 fn (mut r Resolver) error(msg string, pos Pos) IError {
-	$if trace_resolver ? {
-		r.trace_begin(@FN, msg, '${pos}')
-		defer {
-			r.trace_end()
-		}
-	}
-
 	return r.ctx.errors.push_err(
 		msg: msg
 		pos: pos

@@ -38,24 +38,10 @@ fn (mut lex Lexer) try_read_doc_comment() ?Token {
 // --
 
 fn (mut lex Lexer) skip_line_comment() {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	lex.skip_not_for(is_eol)
 }
 
 fn (mut lex Lexer) read_line_doc_comment() ?Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	lex.skip_with_assert(is_slash)
 	lex.skip_with_assert(is_slash)
 	lex.skip_with_assert(is_slash)
@@ -67,13 +53,6 @@ fn (mut lex Lexer) read_line_doc_comment() ?Token {
 // --
 
 fn (mut lex Lexer) skip_block_comment() {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	lex.skip_with_assert(is_slash)
 	lex.skip_with_assert(fn (c Char) bool {
 		return c[0] == `*`

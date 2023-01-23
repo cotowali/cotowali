@@ -16,13 +16,6 @@ fn (mut c Checker) exprs(exprs []Expr) {
 }
 
 fn (mut c Checker) expr(expr Expr) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	match expr {
 		ast.ArrayLiteral { c.array_literal(expr) }
 		ast.AsExpr { c.as_expr(expr) }
@@ -70,24 +63,10 @@ fn (mut c Checker) array_literal(expr ast.ArrayLiteral) {
 }
 
 fn (mut c Checker) as_expr(expr ast.AsExpr) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.expr(expr.expr)
 }
 
 fn (mut c Checker) decompose_expr(expr ast.DecomposeExpr) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.expr(expr.expr)
 	ts := expr.expr.type_symbol()
 	if _ := ts.tuple_info() {
@@ -97,13 +76,6 @@ fn (mut c Checker) decompose_expr(expr ast.DecomposeExpr) {
 }
 
 fn (mut c Checker) index_expr(expr ast.IndexExpr) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	if builtin_type(.placeholder) in [expr.left.typ(), expr.index.typ()] {
 		// skip check if unresolved. error is repoted another place
 		return
@@ -158,13 +130,6 @@ fn (mut c Checker) infix_expr_invalid_operation(op string, left TypeSymbol, righ
 }
 
 fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.expr(expr.left)
 	c.expr(expr.right)
 
@@ -209,24 +174,10 @@ fn (mut c Checker) infix_expr(expr ast.InfixExpr) {
 }
 
 fn (mut c Checker) map_literal(expr ast.MapLiteral) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	// TODO
 }
 
 fn (mut c Checker) module_item(expr ast.ModuleItem) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	if !expr.is_resolved() {
 		return
 	}
@@ -235,24 +186,10 @@ fn (mut c Checker) module_item(expr ast.ModuleItem) {
 }
 
 fn (mut c Checker) paren_expr(expr ast.ParenExpr) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.exprs(expr.exprs)
 }
 
 fn (mut c Checker) pipeline(expr ast.Pipeline) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.exprs(expr.exprs)
 
 	for i, e in expr.exprs {
@@ -298,36 +235,15 @@ fn (mut c Checker) pipeline(expr ast.Pipeline) {
 }
 
 fn (mut c Checker) prefix_expr(expr ast.PrefixExpr) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.expr(expr.expr)
 }
 
 fn (mut c Checker) selector_expr(expr ast.SelectorExpr) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.expr(expr.left)
 	c.expr(expr.ident)
 }
 
 fn (mut c Checker) string_literal(s ast.StringLiteral) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	for content in s.contents {
 		if content is Expr {
 			c.expr(content)
@@ -336,10 +252,4 @@ fn (mut c Checker) string_literal(s ast.StringLiteral) {
 }
 
 fn (mut c Checker) var_(v ast.Var) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
 }

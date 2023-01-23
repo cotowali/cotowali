@@ -138,13 +138,6 @@ pub fn (p FnParam) children() []Node {
 }
 
 fn (mut r Resolver) fn_decl(mut decl FnDecl) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	if decl.attrs.any(it.kind() == .mangle) {
 		decl.sym.mangle = true
 	}
@@ -155,12 +148,6 @@ fn (mut r Resolver) fn_decl(mut decl FnDecl) {
 }
 
 fn (mut r Resolver) fn_param(mut param FnParam) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
 	r.var_(mut param.var_, is_left_of_assignment: true)
 	if mut default := param.default() {
 		r.expr(mut default)
@@ -180,12 +167,6 @@ pub fn (s &ReturnStmt) children() []Node {
 }
 
 fn (mut r Resolver) return_stmt(mut stmt ReturnStmt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
 	r.expr(mut stmt.expr)
 }
 
@@ -197,13 +178,6 @@ pub mut:
 }
 
 fn (mut r Resolver) yield_stmt(mut stmt YieldStmt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.expr(mut stmt.expr)
 }
 
@@ -229,12 +203,6 @@ pub fn (expr &CallCommandExpr) children() []Node {
 }
 
 fn (mut r Resolver) call_command_expr(mut expr CallCommandExpr, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
 	r.exprs(mut expr.args, opt)
 }
 
@@ -277,13 +245,6 @@ pub fn (expr &CallExpr) children() []Node {
 }
 
 fn (mut r Resolver) call_expr(mut expr CallExpr, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.call_expr_func(mut expr, mut &expr.func)
 	r.exprs(mut expr.args, opt)
 }

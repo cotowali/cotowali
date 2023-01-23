@@ -10,7 +10,6 @@ import cotowali.token { Token, TokenKind }
 import cotowali.context { Context }
 import cotowali.util { Unit, li_panic, min }
 import cotowali.errors { LexerErr, LexerWarn }
-import cotowali.debug { Tracer }
 
 enum LexicalContextKind {
 	normal
@@ -61,8 +60,6 @@ mut:
 	closed            bool // for iter
 	in_string_literal bool
 	lex_ctx           LexicalContextStore
-
-	tracer Tracer [if trace_lexer ?]
 }
 
 pub fn new_lexer(source &Source, ctx &Context) &Lexer {
@@ -103,26 +100,7 @@ fn (mut lex Lexer) start_pos() {
 
 // --
 
-[if trace_lexer ?]
-fn (mut lex Lexer) trace_begin(f string, args ...string) {
-	lex.tracer.begin_fn(f, ...args)
-	lex.tracer.write_field('char', lex.char(0).replace_each(['\n', r'\n', '\r', r'\r']))
-}
-
-[if trace_lexer ?]
-fn (mut lex Lexer) trace_end() {
-	lex.tracer.end_fn()
-}
-
-// --
-
 fn (mut lex Lexer) error(token Token, msg string) IError {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN, '${token}', msg)
-		defer {
-			lex.trace_end()
-		}
-	}
 	return &LexerErr{
 		token: token
 		msg: msg
@@ -130,12 +108,6 @@ fn (mut lex Lexer) error(token Token, msg string) IError {
 }
 
 fn (mut lex Lexer) warn(token Token, msg string) IError {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN, '${token}', msg)
-		defer {
-			lex.trace_end()
-		}
-	}
 	return &LexerWarn{
 		token: token
 		msg: msg

@@ -52,13 +52,6 @@ pub fn (mut lex Lexer) read() ?Token {
 }
 
 pub fn (mut lex Lexer) do_read() ?Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	for {
 		lex.prepare_to_read()
 		if lex.is_eof() {
@@ -167,13 +160,6 @@ fn (lex Lexer) is_eol() bool {
 }
 
 fn (mut lex Lexer) read_eol() Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	if lex.byte() == `\r` && lex.char(1).byte() == `\n` {
 		lex.consume()
 	}
@@ -183,13 +169,6 @@ fn (mut lex Lexer) read_eol() Token {
 }
 
 fn (mut lex Lexer) read_unknown() Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	for !(lex.is_eof() || lex.char(0).@is(.whitespace) || lex.char(0) == '\n') {
 		lex.consume()
 	}
@@ -226,13 +205,6 @@ fn (mut lex Lexer) consume_for_ident() {
 }
 
 fn (mut lex Lexer) read_ident_or_keyword() Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	lex.consume_for_ident()
 	text := lex.text()
 	pos := lex.pos_for_new_token()
@@ -245,13 +217,6 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 }
 
 fn (mut lex Lexer) read_number() ?Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	mut is_float := false
 	mut err_msg := ''
 	for lex.byte() == `.` || lex.char(0).@is(.digit) {
@@ -275,13 +240,6 @@ fn (mut lex Lexer) read_number() ?Token {
 }
 
 fn (mut lex Lexer) read_at_ident() Token {
-	$if trace_lexer ? {
-		lex.trace_begin(@FN)
-		defer {
-			lex.trace_end()
-		}
-	}
-
 	return lex.new_token_with_consume_not_for(fn (c Char) bool {
 		return is_whitespace(c) || c[0] in [`(`, `)`]
 	}, .ident)

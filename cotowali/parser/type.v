@@ -9,13 +9,6 @@ import cotowali.symbols { TupleElement, TypeSymbol }
 import cotowali.ast
 
 fn (mut p Parser) parse_array_type() ?&TypeSymbol {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.consume_with_assert(.l_bracket)
 	p.consume_with_check(.r_bracket)?
 	elem := p.parse_type()?
@@ -23,24 +16,11 @@ fn (mut p Parser) parse_array_type() ?&TypeSymbol {
 }
 
 fn (mut p Parser) parse_ident_type() ?&TypeSymbol {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	tok := p.consume_with_check(.ident)?
 	return p.scope.lookup_type(tok.text) or { return p.error(err.msg(), tok.pos) }
 }
 
 fn (mut p Parser) parse_map_type() ?&TypeSymbol {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
 	p.consume_with_assert(.key_map)
 	p.consume_with_check(.l_bracket)?
 	key := p.parse_type()?
@@ -50,13 +30,6 @@ fn (mut p Parser) parse_map_type() ?&TypeSymbol {
 }
 
 fn (mut p Parser) parse_reference_type() ?&TypeSymbol {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.consume_with_assert(.amp)
 	target := p.parse_type()?
 	return p.scope.lookup_or_register_reference_type(target: target.typ)
@@ -68,13 +41,6 @@ fn tuple_element_error_msg(name string) string {
 }
 
 fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.consume_with_assert(.l_paren)
 	if _ := p.consume_if_kind_eq(.r_paren) {
 		return p.scope.lookup_or_register_tuple_type(elements: [])
@@ -120,26 +86,12 @@ fn (mut p Parser) parse_tuple_type() ?&TypeSymbol {
 }
 
 fn (mut p Parser) parse_sequence_type() ?&TypeSymbol {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.consume_with_assert(.dotdotdot)
 	elem := p.parse_type()?
 	return p.scope.lookup_or_register_sequence_type(elem: elem.typ)
 }
 
 fn (mut p Parser) parse_type() ?&TypeSymbol {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	start_pos := p.pos(0)
 
 	mut ts := match p.kind(0) {
@@ -155,13 +107,6 @@ fn (mut p Parser) parse_type() ?&TypeSymbol {
 }
 
 fn (mut p Parser) parse_type_decl() ?ast.Stmt {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	mut pos := p.pos(0)
 
 	p.consume_with_assert(.key_type)

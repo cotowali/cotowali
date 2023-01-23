@@ -17,13 +17,6 @@ import cotowali.messages { undefined }
 import cotowali.util { li_panic }
 
 fn (mut p Parser) process_compiler_directives() {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	for {
 		p.skip_eol()
 		if !(p.is_compiler_directive(0)) {
@@ -38,13 +31,6 @@ fn (mut p Parser) is_compiler_directive(i int) bool {
 }
 
 fn (mut p Parser) process_compiler_directive() {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	p.skip_eol()
 
 	if !p.is_compiler_directive(0) {
@@ -81,13 +67,6 @@ fn (mut p Parser) process_compiler_directive() {
 }
 
 fn (mut p Parser) process_compiler_directive_error_or_warning(hash Token, kind CompilerDirectiveKind) {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	mut msg_start_pos := p.pos(0)
 	p.skip_until_eol()
 	last_pos := p.pos(-1)
@@ -123,13 +102,6 @@ fn (mut p Parser) read_define_directive_value() string {
 }
 
 fn (mut p Parser) process_compiler_directive_define_undef(hash Token, kind CompilerDirectiveKind) {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	if p.kind(0) in [.eol, .eof] {
 		p.unexpected_token_error(p.token(0))
 		return
@@ -235,13 +207,6 @@ fn (mut p Parser) if_directive_cond_value() bool {
 }
 
 fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDirectiveKind) {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	start_pos := hash.pos
 
 	match kind {
@@ -297,13 +262,6 @@ fn (mut p Parser) process_compiler_directive_if_else(hash Token, kind CompilerDi
 }
 
 fn (mut p Parser) skip_if_else_directive_branch(kind CompilerDirectiveKind) {
-	$if trace_parser ? {
-		p.trace_begin(@FN)
-		defer {
-			p.trace_end()
-		}
-	}
-
 	mut depth := 1
 	for depth > 0 {
 		p.skip_eol()

@@ -18,12 +18,5 @@ pub fn (mut c Checker) check(mut f ast.File) {
 }
 
 fn (mut c Checker) check_file(mut f ast.File) {
-	$if trace_checker ? {
-		c.trace_begin(@FN)
-		defer {
-			c.trace_end()
-		}
-	}
-
 	c.stmts(mut f.stmts)
 }

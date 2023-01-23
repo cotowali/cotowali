@@ -337,13 +337,6 @@ pub fn (expr &AsExpr) children() []Node {
 }
 
 fn (mut r Resolver) as_expr(mut expr AsExpr, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.expr(mut expr.expr, opt)
 }
 
@@ -360,13 +353,6 @@ pub fn (expr &DecomposeExpr) children() []Node {
 }
 
 fn (mut r Resolver) decompose_expr(mut expr DecomposeExpr, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.expr(mut expr.expr, opt)
 }
 
@@ -378,12 +364,6 @@ pub:
 }
 
 fn (mut r Resolver) default_value(expr DefaultValue, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
 }
 
 pub struct Empty {
@@ -411,13 +391,6 @@ pub fn (expr &InfixExpr) children() []Node {
 }
 
 fn (mut r Resolver) infix_expr(mut expr InfixExpr, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.expr(mut expr.left, opt)
 	r.expr(mut expr.right, opt)
 }
@@ -436,13 +409,6 @@ pub fn (expr &IndexExpr) children() []Node {
 }
 
 fn (mut r Resolver) index_expr(mut expr IndexExpr, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.expr(mut expr.left, opt)
 	r.expr(mut expr.index, opt)
 }
@@ -482,13 +448,6 @@ pub fn (expr &ModuleItem) children() []Node {
 }
 
 fn (mut r Resolver) module_item(mut expr ModuleItem, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	mut scope := expr.scope
 
 	if expr.is_global {
@@ -543,13 +502,6 @@ pub fn (expr &ParenExpr) children() []Node {
 }
 
 fn (mut r Resolver) paren_expr(mut expr ParenExpr, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.exprs(mut expr.exprs, opt)
 }
 
@@ -583,13 +535,6 @@ pub fn (expr &Pipeline) children() []Node {
 }
 
 fn (mut r Resolver) pipeline(mut expr Pipeline, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.exprs(mut expr.exprs, opt)
 }
 
@@ -645,13 +590,6 @@ pub fn (expr &PrefixExpr) convert_to_infix_expr() ?InfixExpr {
 }
 
 fn (mut r Resolver) prefix_expr(mut expr PrefixExpr, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.expr(mut expr.expr, opt)
 	if expr.op.kind == .amp && expr.expr.typ() != builtin_type(.placeholder) {
 		expr.scope.lookup_or_register_reference_type(target: expr.expr.typ())
@@ -690,13 +628,6 @@ pub fn (expr &SelectorExpr) children() []Node {
 }
 
 fn (mut r Resolver) selector_expr(mut expr SelectorExpr, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	r.expr(mut expr.left)
 }
 
@@ -733,13 +664,6 @@ pub fn (v Var) children() []Node {
 }
 
 fn (mut r Resolver) var_(mut v Var, opt ResolveExprOpt) {
-	$if trace_resolver ? {
-		r.trace_begin(@FN)
-		defer {
-			r.trace_end()
-		}
-	}
-
 	$if !prod {
 		if !isnil(v.sym) && v.sym.name != v.ident.text {
 			li_panic(@FN, @FILE, @LINE, 'mismatched name: sym.name = ${v.sym.name}, ident.text = ${v.ident.text}')
