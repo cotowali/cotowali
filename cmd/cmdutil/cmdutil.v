@@ -7,7 +7,7 @@ module cmdutil
 
 import os
 import cli { Command, Flag }
-import cotowali.config { Backend, Config, backend_from_str, default_feature }
+import cotowali.config as config_module { Backend, Config, backend_from_str, default_feature }
 import cotowali.context { Context, new_context }
 import cotowali.source { Source }
 import cotowali.util { li_panic }

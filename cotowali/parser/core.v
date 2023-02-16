@@ -11,7 +11,7 @@ import cotowali.context { Context }
 import cotowali.symbols { Scope }
 import cotowali.debug { Tracer }
 import cotowali.errors { LexerErr, LexerWarn }
-import cotowali.source { Pos, Source }
+import cotowali.source as source_module { Pos, Source }
 import cotowali.util { li_panic }
 
 pub struct Parser {

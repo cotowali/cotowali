@@ -7,7 +7,7 @@ module sh
 
 import io
 import cotowali.context { Context }
-import cotowali.emit.code
+import cotowali.emit.code as code_module
 import cotowali.ast { FnDecl }
 import cotowali.util { li_panic }
 
@@ -29,20 +29,20 @@ mut:
 	inside_fn     bool
 	tmp_count     int
 	out           io.Writer
-	codes         map[CodeKind]&code.Builder
+	codes         map[CodeKind]&code_module.Builder
 	cur_kind      CodeKind = .main
 	stmt_head_pos map[CodeKind][]int
 }
 
 [inline]
 pub fn new_emitter(out io.Writer, ctx &Context) Emitter {
-	language_config := code.LanguageConfig{}
+	language_config := code_module.LanguageConfig{}
 	return Emitter{
 		ctx: ctx
 		out: out
 		codes: {
-			CodeKind.builtin: code.new_builder(100, ctx, language_config)
-			CodeKind.main:    code.new_builder(100, ctx, language_config)
+			CodeKind.builtin: code_module.new_builder(100, ctx, language_config)
+			CodeKind.main:    code_module.new_builder(100, ctx, language_config)
 		}
 	}
 }
@@ -55,7 +55,7 @@ fn (e &Emitter) cur_fn() ?FnDecl {
 }
 
 [inline]
-fn (mut e Emitter) code() &code.Builder {
+fn (mut e Emitter) code() &code_module.Builder {
 	return e.codes[e.cur_kind] or { li_panic(@FN, @FILE, @LINE, '') }
 }
 
