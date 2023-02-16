@@ -9,8 +9,8 @@ import strings
 import os
 import cotowali { compile }
 import cotowali.context { new_context }
-import cotowali.lexer { new_lexer }
-import cotowali.source { Source }
+import cotowali.lexer as lexer_module { new_lexer }
+import cotowali.source as source_moule { Source }
 import cotowali.errors { PrettyFormatter }
 
 fn (shell &Shell) welcome() {

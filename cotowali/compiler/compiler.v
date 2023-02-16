@@ -7,9 +7,9 @@ module compiler
 
 import io
 import strings
-import cotowali.config { Config }
+import cotowali.config as config_module { Config }
 import cotowali.context { Context, new_context }
-import cotowali.source { Source, new_source }
+import cotowali.source as source_module { Source, new_source }
 import cotowali.parser
 import cotowali.checker
 import cotowali.ast

@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module context
 
-import cotowali.config { Config }
+import cotowali.config as config_module { Config }
 import cotowali.symbols { Scope, new_global_scope }
 import cotowali.source { Source }
 import cotowali.errors { ErrorManager }

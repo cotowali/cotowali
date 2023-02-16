@@ -5,8 +5,8 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module lexer
 
-import cotowali.source { Char, CharClass, CharCond, Pos, Source, pos }
-import cotowali.token { Token, TokenKind }
+import cotowali.source as source_module { Char, CharClass, CharCond, Pos, Source, pos }
+import cotowali.token as token_module { Token, TokenKind }
 import cotowali.context { Context }
 import cotowali.util { Unit, li_panic, min }
 import cotowali.errors { LexerErr, LexerWarn }
