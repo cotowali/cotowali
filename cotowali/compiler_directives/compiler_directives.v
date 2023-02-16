@@ -5,7 +5,7 @@
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 module compiler_directives
 
-import cotowali.config { Config }
+import cotowali.config as config_module { Config }
 
 pub enum CompilerDirectiveKind {
 	error
