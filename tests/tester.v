@@ -38,7 +38,7 @@ const (
 		'expr/bool_test.li',
 	]
 	use_test_runner_list = ['test_runner_test.li', 'std/assert.li']
-	slow_list            = os.glob('tests/require_remote/*')?
+	slow_list            = os.glob('tests/require_remote/*')!
 )
 
 // --
@@ -390,6 +390,7 @@ fn new_test_suite(paths []string, opt TestOption) TestSuite {
 		if opt.shellcheck && test.is_normal_test() {
 			cases << TestCase{
 				...test
+				lic: test.lic
 				is_shellcheck_test: true
 			}
 		}
