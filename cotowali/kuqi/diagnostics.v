@@ -7,7 +7,7 @@ module kuqi
 
 import lsp
 import jsonrpc
-import cotowali.errors { Warn }
+import cotowali.errors as errors_module { Warn }
 
 [manualfree]
 fn (mut q Kuqi) show_diagnostics(uri lsp.DocumentUri) {
