@@ -390,6 +390,7 @@ fn new_test_suite(paths []string, opt TestOption) TestSuite {
 		if opt.shellcheck && test.is_normal_test() {
 			cases << TestCase{
 				...test
+				lic: test.lic
 				is_shellcheck_test: true
 			}
 		}
