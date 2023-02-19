@@ -18,7 +18,7 @@ pub enum BuilderFlags {
 }
 
 pub fn (mut flags BuilderFlags) reset() {
-	flags = BuilderFlags{}
+	flags = unsafe { BuilderFlags(0) }
 }
 
 [params]
