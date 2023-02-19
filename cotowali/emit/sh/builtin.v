@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2023 zakuro <z@kuro.red>. All rights reserved.
+// Copyright (c) 2021-2023 zakuro <z@kuro.red>
 //
 // This Source Code Form is subject to the terms of the Mozilla Public
 // License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,7 +13,7 @@ const builtin = [
 	'
 # -- start builtin --
 #
-# Copyright (c) 2021-2023 zakuro <z@kuro.red>. All rights reserved.
+# Copyright (c) 2021-2023 zakuro <z@kuro.red>
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
