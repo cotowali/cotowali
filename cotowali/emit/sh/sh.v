@@ -24,9 +24,9 @@ fn (mut e Emitter) sh_test_cond_is_true(expr ExprOrString) {
 	e.sh_test_cond_infix(expr, ' = ', '${sh.true_value}')
 }
 
-fn (mut e Emitter) sh_test_command[T](f fn (mut Emitter, T), v T) {
+fn (mut e Emitter) sh_test_command(f fn ()) {
 	e.write('[ ')
-	f(mut e, v)
+	f()
 	e.write(' ]')
 }
 
@@ -34,24 +34,24 @@ fn (mut e Emitter) sh_result_to_bool() {
 	e.write(' && echo ${sh.true_value} || echo ${sh.false_value}')
 }
 
-fn (mut e Emitter) sh_test_command_as_bool[T](f fn (mut Emitter, T), v T) {
+fn (mut e Emitter) sh_test_command_as_bool(f fn ()) {
 	e.write('"\$( ')
-	e.sh_test_command(f, v)
+	e.sh_test_command(f)
 	e.sh_result_to_bool()
 	e.write(' )"')
 }
 
-fn (mut e Emitter) sh_test_command_for_expr[T](f fn (mut Emitter, T), v T, opt ExprOpt) {
+fn (mut e Emitter) sh_test_command_for_expr(f fn (), opt ExprOpt) {
 	if opt.mode == .condition {
-		e.sh_test_command(f, v)
+		e.sh_test_command(f)
 	} else {
-		e.sh_test_command_as_bool(f, v)
+		e.sh_test_command_as_bool(f)
 	}
 }
 
-fn (mut e Emitter) sh_command_substitution[T](f fn (mut Emitter, T), v T, opt ExprOpt) {
+fn (mut e Emitter) sh_command_substitution(f fn (), opt ExprOpt) {
 	e.sh_command_substitution_open(opt)
-	f(mut e, v)
+	f()
 	e.sh_command_substitution_close(opt)
 }
 
@@ -69,10 +69,10 @@ fn (mut e Emitter) sh_command_substitution_close(opt ExprOpt) {
 	}
 }
 
-fn (mut e Emitter) sh_define_function[T](name string, f fn (mut Emitter, T), v T) {
+fn (mut e Emitter) sh_define_function(name string, f fn ()) {
 	e.writeln('${name}() {')
 	e.indent()
-	f(mut e, v)
+	f()
 	e.unindent()
 	e.writeln('}')
 }

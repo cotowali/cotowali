@@ -113,7 +113,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 		}
 	}
 
-	e.sh_define_function(fn_ident, fn (mut e Emitter, node FnDecl) {
+	e.sh_define_function(fn_ident, fn [mut e, node] () {
 		for i, param in node.params {
 			value := if i == node.params.len - 1 && node.function_info().variadic {
 				name := e.new_tmp_ident()
@@ -159,7 +159,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			e.assign(pipe_in_param_ident, '\$${tmp_to_read}', pipe_in_param_ts)
 		}
 		e.block(node.body)
-	}, node)
+	})
 }
 
 fn (mut e Emitter) nameof(expr ast.Nameof, opt ExprOpt) {

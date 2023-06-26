@@ -75,10 +75,10 @@ fn (mut e Emitter) map_assign(name string, value ExprOrString) {
 }
 
 fn (mut e Emitter) fn_assign(name string, value ExprOrString) {
-	e.sh_define_function(name, fn (mut e Emitter, value ExprOrString) {
+	e.sh_define_function(name, fn [mut e, value] () {
 		target := if value is string { value } else { e.ident_for(value as ast.Expr) }
 		e.writeln(target + r' "$@"') // passthrough arguments
-	}, value)
+	})
 }
 
 fn (mut e Emitter) assign(name string, value ExprOrString, ts TypeSymbol) {

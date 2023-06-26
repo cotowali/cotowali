@@ -55,11 +55,11 @@ fn (mut e Emitter) infix_expr_for_array(expr ast.InfixExpr, opt ExprOpt) {
 
 	match expr.op.kind {
 		.eq, .ne {
-			e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
+			e.sh_test_command_for_expr(fn [mut e, expr] () {
 				e.array_to_str(expr.left)
 				e.write(if expr.op.kind == .eq { ' = ' } else { ' != ' })
 				e.array_to_str(expr.right)
-			}, expr, opt)
+			}, opt)
 		}
 		.plus {
 			ident := e.new_tmp_ident()
