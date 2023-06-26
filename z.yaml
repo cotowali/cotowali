@@ -27,7 +27,7 @@ tasks:
         env:
           - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
           - SEGFAULT_SIGNALS=all
-        run: v -cg -g run {{lic_path}} $@
+        run: v -cg -g -v run {{lic_path}} $@
 
   run: z lic run $@
   debug: z lic debug $@
