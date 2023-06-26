@@ -126,14 +126,14 @@ pub fn (f FnDecl) get_run_test_call_expr() CallExpr {
 	}
 }
 
-pub fn (f FnDecl) children() []Node {
+pub fn (f &FnDecl) children() []Node {
 	mut children := []Node{cap: f.params.len + 1}
 	children << f.params.map(Node(it))
 	children << Stmt(f.body)
 	return children
 }
 
-pub fn (p FnParam) children() []Node {
+pub fn (p &FnParam) children() []Node {
 	return [Node(Expr(p.var_)), p.default]
 }
 

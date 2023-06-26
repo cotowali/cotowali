@@ -41,7 +41,7 @@ pub type Expr = ArrayLiteral
 	| Typeof
 	| Var
 
-pub fn (expr Expr) children() []Node {
+pub fn (expr &Expr) children() []Node {
 	return match expr {
 		DefaultValue, Empty, BoolLiteral, FloatLiteral, IntLiteral, NullLiteral, Var {
 			[]Node{}
@@ -659,7 +659,7 @@ pub fn (v Var) name() string {
 }
 
 [inline]
-pub fn (v Var) children() []Node {
+pub fn (v &Var) children() []Node {
 	return [Node(v.ident)]
 }
 
