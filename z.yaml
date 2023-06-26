@@ -20,6 +20,15 @@ tasks:
       z run $@
     fi
 
+  v:
+    tasks:
+      debug: z v run debug $@
+      run.debug:
+        env:
+          - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
+          - SEGFAULT_SIGNALS=all
+        run: v -cg -g run {{lic_path}} $@
+
   run: z lic run $@
   debug: z lic debug $@
   no-emit: z lic no-emit $@
@@ -42,11 +51,7 @@ tasks:
         tasks:
           stdin: v run {{lic_path}}
           no-emit: v run {{lic_path}} -no-emit $@
-          debug:
-            env:
-              - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
-              - SEGFAULT_SIGNALS=all
-            run: v -cg -g run {{lic_path}} $@
+          debug: z v debug {{lic_path}} $@
       install: cp {{bin}}/lic {{install_dir}}/lic
       symlink: ln -fs {{bin}}/lic {{install_dir}}/lic
   himorogi:
@@ -56,11 +61,7 @@ tasks:
       build.win: mkdir -p {{bin}} && v {{himorogi_path}} -o {{bin}}/himorogi.exe -os windows
       debug: z himorogi run debug "$@"
       run: v run {{himorogi_path}} "$@"
-      run.debug:
-        env:
-          - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
-          - SEGFAULT_SIGNALS=all
-        run: v -cg -g run {{himorogi_path}} "$@"
+      run.debug: z v debug {{himorogi_path}} $@
       install: cp {{bin}}/himorogi {{install_dir}}/himorogi
       symlink: ln -fs {{bin}}/himorogi {{install_dir}}/himorogi
   lish:
