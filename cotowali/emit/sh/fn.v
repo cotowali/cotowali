@@ -113,9 +113,10 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 		}
 	}
 
-	e.sh_define_function(fn_ident, fn [mut e, node] () {
-		for i, param in node.params {
-			value := if i == node.params.len - 1 && node.function_info().variadic {
+	node_ref := &node // workaround: node.body will be eempty in closure
+	e.sh_define_function(fn_ident, fn [mut e, node_ref] () {
+		for i, param in node_ref.params {
+			value := if i == node_ref.params.len - 1 && node_ref.function_info().variadic {
 				name := e.new_tmp_ident()
 				e.writeln('array_assign "${name}" "\$@"')
 				name
@@ -134,7 +135,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 				e.indent()
 				{
 					e.assign(e.ident_for(param.var_), value, param.type_symbol())
-					if i < node.params.len - 1 {
+					if i < node_ref.params.len - 1 {
 						e.writeln('shift')
 					}
 				}
@@ -142,13 +143,13 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 				e.writeln('fi')
 			} else {
 				e.assign(e.ident_for(param.var_), value, param.type_symbol())
-				if i < node.params.len - 1 {
+				if i < node_ref.params.len - 1 {
 					e.writeln('shift')
 				}
 			}
 		}
 
-		if pipe_in_param := node.pipe_in_param() {
+		if pipe_in_param := node_ref.pipe_in_param() {
 			pipe_in_param_ts := ast.Expr(pipe_in_param).type_symbol()
 			tmp_to_read := e.new_tmp_ident()
 			pipe_in_param_ident := e.ident_for(pipe_in_param)
@@ -158,7 +159,7 @@ fn (mut e Emitter) fn_decl(node FnDecl) {
 			e.writeln('read ${tmp_to_read}')
 			e.assign(pipe_in_param_ident, '\$${tmp_to_read}', pipe_in_param_ts)
 		}
-		e.block(node.body)
+		e.block(node_ref.body)
 	})
 }
 
