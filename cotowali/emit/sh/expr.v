@@ -191,8 +191,10 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 
 	e.write_echo_if_command(opt)
 
-	e.sh_command_substitution(fn (mut e Emitter, v ExprWithOpt[ast.IndexExpr]) {
-		left_ts := v.expr.left.type_symbol().resolved()
+	expr_with_opt_v := expr_with_opt(expr, opt)
+	e.sh_command_substitution(fn [mut e, expr_with_opt_v] () {
+		expr, opt := expr_with_opt_v.expr, expr_with_opt_v.opt
+		left_ts := expr.left.type_symbol().resolved()
 
 		if tuple_info := left_ts.tuple_info() {
 			tmp := e.new_tmp_ident()
@@ -200,9 +202,9 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 			for i in 0 .. tuple_info.elements.len {
 				tmps << '${tmp}__${i}'
 			}
-			e.destructuring_assign(tmps, v.expr.left)
+			e.destructuring_assign(tmps, expr.left)
 			e.write('echo \$${tmp}__')
-			e.expr(v.expr.index, writeln: true)
+			e.expr(expr.index, writeln: true)
 			return
 		}
 
@@ -212,10 +214,10 @@ fn (mut e Emitter) index_expr(expr ast.IndexExpr, opt ExprOpt) {
 			else { li_panic(@FN, @FILE, @LINE, 'invalid index left') }
 		})
 
-		e.expr(v.expr.left)
+		e.expr(expr.left)
 		e.write(' ')
-		e.expr(v.expr.index, v.opt)
-	}, expr_with_opt(expr, opt), opt)
+		e.expr(expr.index, opt)
+	}, opt)
 }
 
 fn (mut e Emitter) index_expr_for_string(expr ast.IndexExpr, opt ExprOpt) {
@@ -270,10 +272,10 @@ fn (mut e Emitter) infix_expr_for_bool(expr ast.InfixExpr, opt ExprOpt) {
 	}
 
 	if expr.op.kind in [.eq, .ne] {
-		e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
+		e.sh_test_command_for_expr(fn [mut e, expr] () {
 			op := if expr.op.kind == .eq { ' = ' } else { ' != ' }
 			e.sh_test_cond_infix(expr.left, op, expr.right)
-		}, expr, opt)
+		}, opt)
 		return
 	}
 
@@ -319,10 +321,10 @@ fn (mut e Emitter) infix_expr_for_float(expr ast.InfixExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	if expr.op.kind.@is(.comparsion_op) {
-		e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
+		e.sh_test_command_for_expr(fn [mut e, expr] () {
 			e.sh_awk_infix_expr(expr)
 			e.write(' -eq 1')
-		}, expr, opt)
+		}, opt)
 	} else {
 		e.sh_awk_infix_expr(expr)
 	}
@@ -338,7 +340,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 	e.write_echo_if_command(opt)
 
 	if expr.op.kind.@is(.comparsion_op) {
-		e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
+		e.sh_test_command_for_expr(fn [mut e, expr] () {
 			op := match expr.op.kind {
 				.eq { '-eq' }
 				.ne { '-ne' }
@@ -349,7 +351,7 @@ fn (mut e Emitter) infix_expr_for_int(expr ast.InfixExpr, opt ExprOpt) {
 				else { li_panic(@FN, @FILE, @LINE, 'invalid op') }
 			}
 			e.sh_test_cond_infix(expr.left, op, expr.right)
-		}, expr, opt)
+		}, opt)
 		return
 	}
 
@@ -383,10 +385,10 @@ fn (mut e Emitter) infix_expr_for_string(expr ast.InfixExpr, opt ExprOpt) {
 
 	match expr.op.kind {
 		.eq, .ne {
-			e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
+			e.sh_test_command_for_expr(fn [mut e, expr] () {
 				op := if expr.op.kind == .eq { ' = ' } else { ' != ' }
 				e.sh_test_cond_infix(expr.left, op, expr.right)
-			}, expr, opt)
+			}, opt)
 		}
 		.plus {
 			e.expr(expr.left)
@@ -409,10 +411,10 @@ fn (mut e Emitter) infix_expr_for_tuple(expr ast.InfixExpr, opt ExprOpt) {
 
 	match expr.op.kind {
 		.eq, .ne {
-			e.sh_test_command_for_expr(fn (mut e Emitter, expr ast.InfixExpr) {
+			e.sh_test_command_for_expr(fn [mut e, expr] () {
 				op := if expr.op.kind == .eq { ' = ' } else { ' != ' }
 				e.sh_test_cond_infix(expr.left, op, expr.right)
-			}, expr, opt)
+			}, opt)
 		}
 		.plus {
 			e.expr(expr.left)
@@ -504,7 +506,8 @@ fn (mut e Emitter) prefix_expr(expr ast.PrefixExpr, opt ExprOpt) {
 }
 
 fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
-	f := fn (mut e Emitter, pipeline ast.Pipeline) {
+	pipeline := expr
+	f := fn [mut e, pipeline] () {
 		for i, expr in pipeline.exprs {
 			if i > 0 && i == pipeline.exprs.len - 1 && pipeline.has_redirect() {
 				e.write(if pipeline.is_append { ' >> ' } else { ' > ' })
@@ -519,9 +522,9 @@ fn (mut e Emitter) pipeline(expr ast.Pipeline, opt ExprOpt) {
 		}
 	}
 	if opt.mode == .command {
-		f(mut e, expr)
+		f()
 	} else {
-		e.sh_command_substitution(f, expr, opt)
+		e.sh_command_substitution(f, opt)
 	}
 }
 
