@@ -14,17 +14,17 @@ import cotowali.compiler { new_compiler }
 import cotowali.util { li_panic }
 import cotowali.himorogi
 
-pub fn compile(s Source, ctx &Context) ?string {
+pub fn compile(s Source, ctx &Context) !string {
 	c := new_compiler(s, ctx)
 	return c.compile()
 }
 
-pub fn compile_to(w io.Writer, s Source, ctx &Context) ? {
+pub fn compile_to(w io.Writer, s Source, ctx &Context) ! {
 	c := new_compiler(s, ctx)
 	return c.compile_to(w)
 }
 
-fn compile_to_temp_file(s Source, ctx &Context) ?string {
+fn compile_to_temp_file(s Source, ctx &Context) !string {
 	c := new_compiler(s, ctx)
 
 	base := '${os.file_name(s.path)}_${ulid()}'
@@ -32,19 +32,19 @@ fn compile_to_temp_file(s Source, ctx &Context) ?string {
 	temp_path := os.join_path(os.temp_dir(), '${base}${ext}')
 
 	mut f := os.create(temp_path) or { li_panic(@FN, @FILE, @LINE, err) }
-	c.compile_to(f)?
+	c.compile_to(f)!
 	defer {
 		f.close()
 	}
 	return temp_path
 }
 
-pub fn run(s Source, args []string, ctx &Context) ?int {
+pub fn run(s Source, args []string, ctx &Context) !int {
 	if ctx.config.backend == .himorogi {
 		return himorogi.run(s, args, ctx)
 	}
 
-	temp_file := compile_to_temp_file(s, ctx)?
+	temp_file := compile_to_temp_file(s, ctx)!
 	defer {
 		os.rm(temp_file) or { li_panic(@FN, @FILE, @LINE, err) }
 	}

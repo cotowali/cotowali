@@ -133,7 +133,7 @@ pub fn (s &Scope) must_get_child(key NameOrID) &Scope {
 	return s.get_child(key) or { li_panic(@FN, @FILE, @LINE, 'child scope `${key}` not found') }
 }
 
-pub fn (mut s Scope) create_child(name string) ?&Scope {
+pub fn (mut s Scope) create_child(name string) !&Scope {
 	child := new_scope(name, s)
 	if name.len > 0 {
 		if name in s.name_to_child_id {

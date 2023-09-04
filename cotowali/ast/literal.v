@@ -142,7 +142,7 @@ pub fn (s &StringLiteral) is_const() bool {
 	return s.contents.all(it.is_const())
 }
 
-pub fn (s &StringLiteral) const_text() ?string {
+pub fn (s &StringLiteral) const_text() !string {
 	if !s.is_const() {
 		return error('string literal is not a const')
 	}

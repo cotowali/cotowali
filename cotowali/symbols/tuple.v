@@ -30,7 +30,7 @@ pub fn (mut s Scope) lookup_or_register_tuple_type(info TupleTypeInfo) &TypeSymb
 	return s.lookup_or_register_type(name: info.typename(s), info: info)
 }
 
-pub fn (s Scope) lookup_tuple_type(info TupleTypeInfo) ?&TypeSymbol {
+pub fn (s Scope) lookup_tuple_type(info TupleTypeInfo) !&TypeSymbol {
 	return s.lookup_type(info.typename(s))
 }
 

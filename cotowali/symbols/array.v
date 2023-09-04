@@ -32,7 +32,7 @@ pub fn (mut s Scope) lookup_or_register_array_type(info ArrayTypeInfo) &TypeSymb
 	}
 }
 
-pub fn (s Scope) lookup_array_type(info ArrayTypeInfo) ?&TypeSymbol {
+pub fn (s Scope) lookup_array_type(info ArrayTypeInfo) !&TypeSymbol {
 	return s.lookup_type(info.typename(s))
 }
 

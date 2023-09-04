@@ -8,9 +8,9 @@ module parser
 import cotowali.util { li_panic }
 import cotowali.ast
 
-fn (mut p Parser) parse_inline_shell() ?ast.InlineShell {
+fn (mut p Parser) parse_inline_shell() !ast.InlineShell {
 	key_tok := p.consume()
-	p.consume_with_check(.l_brace)?
+	p.consume_with_check(.l_brace)!
 	mut parts := []ast.InlineShellPart{}
 
 	for p.kind(0) !in [.eof, .r_brace] {

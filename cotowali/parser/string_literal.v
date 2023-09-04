@@ -9,9 +9,9 @@ import cotowali.ast
 import cotowali.token { TokenKind }
 import cotowali.util { li_panic }
 
-fn (mut p Parser) parse_string_literal() ?ast.StringLiteral {
+fn (mut p Parser) parse_string_literal() !ast.StringLiteral {
 	tok := p.check(.single_quote, .double_quote, .single_quote_with_r_prefix, .double_quote_with_r_prefix,
-		.single_quote_with_at_prefix, .double_quote_with_at_prefix)?
+		.single_quote_with_at_prefix, .double_quote_with_at_prefix)!
 	match tok.kind {
 		.single_quote { return p.parse_single_quote_string_literal() }
 		.double_quote { return p.parse_double_quote_string_literal() }
@@ -24,7 +24,7 @@ fn (mut p Parser) parse_string_literal() ?ast.StringLiteral {
 	li_panic(@FN, @FILE, @LINE, 'expected quote')
 }
 
-fn (mut p Parser) parse_raw_string_literal(quote TokenKind) ?ast.StringLiteral {
+fn (mut p Parser) parse_raw_string_literal(quote TokenKind) !ast.StringLiteral {
 	open := p.consume_with_assert(.single_quote_with_r_prefix, .double_quote_with_r_prefix)
 
 	if close := p.consume_if_kind_eq(quote) {
@@ -35,8 +35,8 @@ fn (mut p Parser) parse_raw_string_literal(quote TokenKind) ?ast.StringLiteral {
 		}
 	}
 
-	content := p.consume_with_check(.string_literal_content_text)?
-	close := p.consume_with_check(quote)?
+	content := p.consume_with_check(.string_literal_content_text)!
+	close := p.consume_with_check(quote)!
 	return ast.StringLiteral{
 		scope: p.scope
 		open: open
@@ -45,7 +45,7 @@ fn (mut p Parser) parse_raw_string_literal(quote TokenKind) ?ast.StringLiteral {
 	}
 }
 
-fn (mut p Parser) parse_single_quote_string_literal() ?ast.StringLiteral {
+fn (mut p Parser) parse_single_quote_string_literal() !ast.StringLiteral {
 	open := p.consume_with_assert(.single_quote, .single_quote_with_at_prefix)
 
 	if close := p.consume_if_kind_eq(.single_quote) {
@@ -69,7 +69,7 @@ fn (mut p Parser) parse_single_quote_string_literal() ?ast.StringLiteral {
 			}
 		}
 	}
-	close := p.consume_with_check(.single_quote)?
+	close := p.consume_with_check(.single_quote)!
 	return ast.StringLiteral{
 		scope: p.scope
 		open: open
@@ -78,7 +78,7 @@ fn (mut p Parser) parse_single_quote_string_literal() ?ast.StringLiteral {
 	}
 }
 
-fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
+fn (mut p Parser) parse_double_quote_string_literal() !ast.StringLiteral {
 	open := p.consume_with_assert(.double_quote, .double_quote_with_at_prefix)
 
 	if close := p.consume_if_kind_eq(.double_quote) {
@@ -106,8 +106,8 @@ fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
 			continue
 		}
 		if _ := p.consume_if_kind_eq(.string_literal_content_expr_open) {
-			contents << p.parse_expr(.toplevel)?
-			p.consume_with_check(.string_literal_content_expr_close)?
+			contents << p.parse_expr(.toplevel)!
+			p.consume_with_check(.string_literal_content_expr_close)!
 			continue
 		}
 		match p.kind(0) {
@@ -118,7 +118,7 @@ fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
 				contents << p.consume()
 			}
 			.string_literal_content_var {
-				contents << p.parse_ident()?
+				contents << p.parse_ident()!
 			}
 			else {
 				break
@@ -126,7 +126,7 @@ fn (mut p Parser) parse_double_quote_string_literal() ?ast.StringLiteral {
 		}
 	}
 
-	close := p.consume_with_check(.double_quote)?
+	close := p.consume_with_check(.double_quote)!
 
 	return ast.StringLiteral{
 		scope: p.scope

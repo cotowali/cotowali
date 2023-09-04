@@ -17,11 +17,11 @@ pub fn (ts TypeSymbol) alias_info() ?AliasTypeInfo {
 	return if ts.info is AliasTypeInfo { ts.info } else { none }
 }
 
-pub fn (mut s Scope) register_alias_type(info AliasTypeInfo) ?&TypeSymbol {
+pub fn (mut s Scope) register_alias_type(info AliasTypeInfo) !&TypeSymbol {
 	return s.register_type(name: info.name, info: info)
 }
 
-pub fn (s Scope) lookup_alias_type(info AliasTypeInfo) ?&TypeSymbol {
+pub fn (s Scope) lookup_alias_type(info AliasTypeInfo) !&TypeSymbol {
 	return s.lookup_type(info.name)
 }
 

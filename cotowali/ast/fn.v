@@ -270,7 +270,7 @@ fn (mut r Resolver) call_expr_func(mut e CallExpr, mut func Expr) {
 	}
 }
 
-fn (e CallExpr) lookup_sym(name string, scope &Scope) ?&symbols.Var {
+fn (e CallExpr) lookup_sym(name string, scope &Scope) !&symbols.Var {
 	if receiver := e.receiver() {
 		receiver_ts := receiver.type_symbol()
 		return receiver_ts.lookup_method(name) or {

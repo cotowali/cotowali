@@ -9,6 +9,15 @@ import cotowali.source { Pos, Source }
 import cotowali.token { Token }
 import cotowali.util { li_panic }
 
+// To use none as error. This allows pseudo !?T
+pub fn none_err() IError {
+	return none
+}
+
+pub fn is_none_err(err IError) bool {
+	return err is none
+}
+
 pub type ErrOrWarn = Err | Warn
 
 pub fn (e ErrOrWarn) label() string {

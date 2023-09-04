@@ -8,19 +8,19 @@ module symbols
 import cotowali.messages { already_defined }
 import cotowali.util { li_panic }
 
-fn check_no_variadic(subject string, fn_info FunctionTypeInfo) ? {
+fn check_no_variadic(subject string, fn_info FunctionTypeInfo) ! {
 	if fn_info.variadic {
 		return error('${subject} cannot be variadic')
 	}
 }
 
-fn check_no_pipe_in(subject string, fn_info FunctionTypeInfo) ? {
+fn check_no_pipe_in(subject string, fn_info FunctionTypeInfo) ! {
 	if fn_info.pipe_in != builtin_type(.void) {
 		return error('${subject} cannot have pipe in')
 	}
 }
 
-fn check_number_of_parameters(subject string, expected int, actual int) ? {
+fn check_number_of_parameters(subject string, expected int, actual int) ! {
 	if actual != expected {
 		expected_params := if expected == 1 { '1 parameter' } else { '${expected} parameters' }
 		return error('${subject} must have ${expected_params}')
@@ -33,13 +33,13 @@ pub struct CastFunctionParams {
 	to   Type = builtin_type(.placeholder)
 }
 
-pub fn (mut s Scope) register_cast_function(f RegisterFnArgs, params CastFunctionParams) ?&Var {
+pub fn (mut s Scope) register_cast_function(f RegisterFnArgs, params CastFunctionParams) !&Var {
 	fn_info := f.FunctionTypeInfo
 
 	subject := 'cast function'
-	check_number_of_parameters(subject, 0, fn_info.params.len - 1)?
-	check_no_variadic(subject, fn_info)?
-	check_no_pipe_in(subject, fn_info)?
+	check_number_of_parameters(subject, 0, fn_info.params.len - 1)!
+	check_no_variadic(subject, fn_info)!
+	check_no_pipe_in(subject, fn_info)!
 
 	$if !prod {
 		if params.from != builtin_type(.placeholder) && params.from != fn_info.params[0].typ {

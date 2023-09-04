@@ -31,13 +31,13 @@ pub fn new_compiler(source Source, ctx &Context) Compiler {
 	}
 }
 
-pub fn (c &Compiler) compile() ?string {
+pub fn (c &Compiler) compile() !string {
 	mut sb := strings.new_builder(100)
-	c.compile_to(sb)?
+	c.compile_to(sb)!
 	return sb.str()
 }
 
-pub fn parse_and_check(s &Source, ctx &Context) ?&ast.File {
+pub fn parse_and_check(s &Source, ctx &Context) !&ast.File {
 	mut f := parser.parse(s, ctx)
 
 	if ctx.errors.has_syntax_error() {
@@ -56,7 +56,7 @@ pub fn parse_and_check(s &Source, ctx &Context) ?&ast.File {
 	return f
 }
 
-fn (c &Compiler) ush_compile_to(w io.Writer) ? {
+fn (c &Compiler) ush_compile_to(w io.Writer) ! {
 	mut ctx := c.ctx
 	config := ctx.config
 
@@ -83,11 +83,11 @@ fn (c &Compiler) ush_compile_to(w io.Writer) ? {
 	e.emit(sh: sh_code, pwsh: pwsh_code)
 }
 
-pub fn (c &Compiler) compile_to(w io.Writer) ? {
+pub fn (c &Compiler) compile_to(w io.Writer) ! {
 	ctx := c.ctx
 
 	if ctx.config.backend == .ush {
-		c.ush_compile_to(w)?
+		c.ush_compile_to(w)!
 		return
 	}
 
@@ -95,7 +95,7 @@ pub fn (c &Compiler) compile_to(w io.Writer) ? {
 		return error('${ctx.config.backend} backend is not yet implemented.')
 	}
 
-	f := parse_and_check(c.source, ctx)?
+	f := parse_and_check(c.source, ctx)!
 
 	if ctx.config.no_emit {
 		return

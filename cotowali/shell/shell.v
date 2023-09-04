@@ -17,7 +17,7 @@ mut:
 	readline        Readline
 }
 
-fn new_sh_process(command string) ?&os.Process {
+fn new_sh_process(command string) !&os.Process {
 	mut p := os.new_process(os.find_abs_path_of_executable(command) or {
 		return error('command not found: ${command}')
 	})
@@ -26,10 +26,10 @@ fn new_sh_process(command string) ?&os.Process {
 	return p
 }
 
-pub fn new_shell(sh string, ctx &Context) ?Shell {
+pub fn new_shell(sh string, ctx &Context) !Shell {
 	return Shell{
 		ctx: ctx
-		backend_process: new_sh_process(sh)?
+		backend_process: new_sh_process(sh)!
 	}
 }
 

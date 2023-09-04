@@ -15,6 +15,7 @@ import cotowali.symbols {
 	builtin_type,
 	new_placeholder_var,
 }
+import cotowali.errors { none_err }
 import cotowali.util { li_panic, nil_to_none }
 
 struct FnParamParsingInfo {
@@ -30,7 +31,7 @@ fn (p &FnParamParsingInfo) has_default() bool {
 	return p.default !is ast.Empty
 }
 
-fn (mut p Parser) register_function_param(param FnParamParsingInfo) ?ast.Var {
+fn (mut p Parser) register_function_param(param FnParamParsingInfo) !ast.Var {
 	param_sym := p.scope.register_var(name: param.name, pos: param.name_pos, typ: param.ts.typ) or {
 		new_placeholder_var(param.name, param.name_pos)
 		return p.error(err.msg(), param.name_pos)
@@ -61,7 +62,7 @@ mut:
 	ret_ts        &TypeSymbol = unsafe { 0 }
 }
 
-fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
+fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) !&Var {
 	ret_typ := if isnil(info.ret_ts) { builtin_type(.void) } else { info.ret_ts.typ }
 	params := info.params.map(symbols.FunctionParam{
 		name: it.name
@@ -77,7 +78,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
 				ret: ret_typ
-			)?
+			)!
 		}
 		.method {
 			mut receiver := info.params[0].ts
@@ -88,7 +89,7 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
 				ret: ret_typ
-			)?
+			)!
 		}
 		.cast_op {
 			scope.register_cast_function(
@@ -97,22 +98,22 @@ fn (info FnSignatureParsingInfo) register_sym(mut scope Scope) ?&Var {
 				variadic: info.variadic
 				pipe_in: info.pipe_in_param.ts.typ
 				ret: ret_typ
-			)?
+			)!
 		}
 	}
 }
 
-fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
-	p.consume_with_check(.l_paren)?
+fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ! {
+	p.consume_with_check(.l_paren)!
 	if _ := p.consume_if_kind_eq(.r_paren) {
 		return
 	}
 
 	for {
-		name_tok := p.consume_with_check(.ident)?
+		name_tok := p.consume_with_check(.ident)!
 		name_pos := name_tok.pos
-		p.consume_with_check(.colon)?
-		ts := p.parse_type()?
+		p.consume_with_check(.colon)!
+		ts := p.parse_type()!
 		pos := name_pos.merge(p.pos(-1))
 
 		mut param := FnParamParsingInfo{
@@ -123,14 +124,14 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 		}
 
 		if _ := p.consume_if_kind_eq(.assign) {
-			param.default = p.parse_expr(.toplevel)?
+			param.default = p.parse_expr(.toplevel)!
 		} else {
 		}
 
 		info.params << param
 
 		if sequence_info := ts.sequence_info() {
-			p.consume_with_check(.r_paren)?
+			p.consume_with_check(.r_paren)!
 			// varargs is normal (non variadic) array
 			info.params[info.params.len - 1].ts = p.scope.lookup_or_register_array_type(
 				elem: sequence_info.elem
@@ -138,7 +139,7 @@ fn (mut p Parser) parse_fn_params(mut info FnSignatureParsingInfo) ? {
 			info.variadic = true
 			break
 		}
-		tail_tok := p.consume_with_check(.comma, .r_paren)?
+		tail_tok := p.consume_with_check(.comma, .r_paren)!
 		match tail_tok.kind {
 			.comma {}
 			.r_paren { break }
@@ -157,18 +158,18 @@ fn (mut p Parser) next_is_receiver_syntax() bool {
 	return p.kind(0) == .l_paren && p.kind(1) == .ident && p.kind(2) in [.colon, .ident]
 }
 
-fn (mut p Parser) parse_receiver() ?FnParamParsingInfo {
+fn (mut p Parser) parse_receiver() !FnParamParsingInfo {
 	p.consume_with_assert(.l_paren)
 	{
 		name_tok := p.consume_with_assert(.ident)
 		name := name_tok.text
 		name_pos := name_tok.pos
 
-		p.consume_with_check(.colon)?
-		ts := (p.parse_type()?)
+		p.consume_with_check(.colon)!
+		ts := (p.parse_type()!)
 		pos := name_pos.merge(p.pos(-1))
 
-		p.consume_with_check(.r_paren)?
+		p.consume_with_check(.r_paren)!
 		return FnParamParsingInfo{
 			name: name
 			name_pos: name_pos
@@ -178,7 +179,7 @@ fn (mut p Parser) parse_receiver() ?FnParamParsingInfo {
 	}
 }
 
-fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
+fn (mut p Parser) parse_signature_info() !FnSignatureParsingInfo {
 	p.consume_with_assert(.key_fn)
 	mut info := FnSignatureParsingInfo{
 		ret_ts: 0
@@ -192,7 +193,7 @@ fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
 	// fn ( x : Type ) (int, int) |> f()
 	mut has_receiver := false
 	if p.next_is_receiver_syntax() {
-		rec := p.parse_receiver()?
+		rec := p.parse_receiver()!
 		//     vvvvvvvvvvv parsed receiver
 		// fn ( x : Type ) |> f()
 		//                 ^^ kind == .pipe
@@ -205,7 +206,7 @@ fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
 	}
 
 	if p.next_is_receiver_syntax() {
-		pipe_in := p.parse_receiver()?
+		pipe_in := p.parse_receiver()!
 		//                vvvvvvvvvv
 		// fn (rec: Type) (in: Type) |> f()
 		if _ := p.consume_with_check(.pipe) {
@@ -237,21 +238,21 @@ fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
 		//    vvv kind(0) != .ident
 		// fn ... ( int, int ) |> f()
 		//        ^ kind(1) == .l_paren
-		info.pipe_in_param.ts = (p.parse_type()?)
-		p.consume_with_check(.pipe)?
+		info.pipe_in_param.ts = (p.parse_type()!)
+		p.consume_with_check(.pipe)!
 	}
 
 	if name := p.consume_if_kind_eq(.key_as) {
 		info.name = name
 		info.kind = .cast_op
 	} else {
-		info.name = p.consume_with_check(.ident)?
+		info.name = p.consume_with_check(.ident)!
 		if has_receiver {
 			info.kind = .method
 		}
 	}
 
-	p.parse_fn_params(mut info)?
+	p.parse_fn_params(mut info)!
 	if p.kind(0) in [.l_brace, .eol] {
 		// implicit void
 		return info
@@ -261,15 +262,15 @@ fn (mut p Parser) parse_signature_info() ?FnSignatureParsingInfo {
 	// fn f() |> int
 	// fn f(): int
 	//       ^
-	p.consume_with_check(.colon, .pipe)?
-	info.ret_ts = p.parse_type()?
+	p.consume_with_check(.colon, .pipe)!
+	info.ret_ts = p.parse_type()!
 
 	return info
 }
 
-fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
-	mut has_error := false
-	info := p.parse_signature_info()?
+fn (mut p Parser) parse_fn_decl() !ast.FnDecl {
+	mut failed := false
+	info := p.parse_signature_info()!
 	mut outer_scope := p.scope
 
 	mut sym_name := if info.name.kind == .ident {
@@ -288,7 +289,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		op_ident + type_names
 	}
 	sym := info.register_sym(mut outer_scope) or {
-		has_error = true
+		failed = true
 		p.error(err.msg(), info.name.pos)
 		// use different name for duplicated function to create another scope
 		sym_name += util.rand[u64]().str()
@@ -315,7 +316,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 				pos: param.pos
 			}
 		} else {
-			has_error = true
+			failed = true
 			continue
 		}
 	}
@@ -332,7 +333,7 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		if registered := p.register_function_param(info.pipe_in_param) {
 			node.pipe_in_param = registered
 		} else {
-			has_error = true
+			failed = true
 		}
 	}
 
@@ -340,16 +341,18 @@ fn (mut p Parser) parse_fn_decl() ?ast.FnDecl {
 		if body := p.parse_block_without_new_scope() {
 			node.body = body
 		} else {
-			has_error = true
+			failed = true
 		}
 	}
-	if has_error {
-		return none
+
+	if failed {
+		return none_err()
 	}
+
 	return node
 }
 
-fn (mut p Parser) parse_call_args() ?[]ast.Expr {
+fn (mut p Parser) parse_call_args() ![]ast.Expr {
 	p.skip_eol()
 	if p.kind(0) == .r_paren {
 		return []
@@ -357,14 +360,14 @@ fn (mut p Parser) parse_call_args() ?[]ast.Expr {
 
 	mut args := []ast.Expr{cap: 2}
 	for {
-		args << p.parse_expr(.toplevel)?
+		args << p.parse_expr(.toplevel)!
 		p.skip_eol()
 
 		if p.kind(0) == .r_paren {
 			break
 		}
 
-		p.consume_with_check(.comma)?
+		p.consume_with_check(.comma)!
 		p.skip_eol()
 
 		if p.kind(0) == .r_paren {
@@ -375,11 +378,11 @@ fn (mut p Parser) parse_call_args() ?[]ast.Expr {
 	return args
 }
 
-fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
+fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) !ast.Expr {
 	p.consume_with_assert(.l_paren)
 
-	mut args := p.parse_call_args()?
-	r_paren := p.consume_with_check(.r_paren)?
+	mut args := p.parse_call_args()!
+	r_paren := p.consume_with_check(.r_paren)!
 	return ast.CallExpr{
 		scope: p.scope
 		pos: left.pos().merge(r_paren.pos)
@@ -388,11 +391,11 @@ fn (mut p Parser) parse_call_expr_with_left(left ast.Expr) ?ast.Expr {
 	}
 }
 
-fn (mut p Parser) parse_nameof_or_typeof() ?ast.Expr {
+fn (mut p Parser) parse_nameof_or_typeof() !ast.Expr {
 	key := p.consume_with_assert(.key_nameof, .key_typeof)
 	p.consume_with_assert(.l_paren)
-	args := p.parse_call_args()?
-	r_paren := p.consume_with_check(.r_paren)?
+	args := p.parse_call_args()!
+	r_paren := p.consume_with_check(.r_paren)!
 
 	match key.kind {
 		.key_nameof {

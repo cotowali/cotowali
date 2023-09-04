@@ -111,7 +111,7 @@ pub fn (mut s Scope) lookup_or_register_function_type(info FunctionTypeInfo) &Ty
 	return s.lookup_or_register_type(name: typename, info: info)
 }
 
-pub fn (s Scope) lookup_function_type(info FunctionTypeInfo) ?&TypeSymbol {
+pub fn (s Scope) lookup_function_type(info FunctionTypeInfo) !&TypeSymbol {
 	typename := info.signature(s)
 	return s.lookup_type(typename)
 }
@@ -121,7 +121,7 @@ pub fn (s &Scope) lookup_function(name string) ?&Var {
 	return if v.is_function() { v } else { none }
 }
 
-pub fn (mut s Scope) register_function(f RegisterFnArgs) ?&Var {
+pub fn (mut s Scope) register_function(f RegisterFnArgs) !&Var {
 	typ := s.lookup_or_register_function_type(f.FunctionTypeInfo).typ
 	return s.register_var(Var{ ...f.Var, typ: typ })
 }

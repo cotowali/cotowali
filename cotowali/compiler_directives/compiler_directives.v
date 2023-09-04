@@ -29,7 +29,7 @@ pub fn (k CompilerDirectiveKind) str() string {
 	}
 }
 
-pub fn compiler_directive_kind_from_name(name string) ?CompilerDirectiveKind {
+pub fn compiler_directive_kind_from_name(name string) !CompilerDirectiveKind {
 	match name {
 		'error' { return .error }
 		'warning' { return .warning }
