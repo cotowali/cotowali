@@ -295,7 +295,7 @@ fn (p &Parser) is_compiler_variable_literal() bool {
 	return p.kind(0) == .hash && p.kind(2) == .hash
 }
 
-fn (mut p Parser) parse_compiler_variable_literal() ?ast.Expr {
+fn (mut p Parser) parse_compiler_variable_literal() !ast.Expr {
 	open_hash := p.consume_with_assert(.hash)
 	name_tok := p.consume()
 	close_hash := p.consume_with_assert(.hash)
@@ -338,7 +338,7 @@ fn (mut p Parser) parse_compiler_variable_literal() ?ast.Expr {
 		}
 	}
 	if !p.ctx.compiler_symbols.has(name) {
-		p.error(undefined(.compiler_variable, name), open.pos.merge(close.pos))
+		return p.error(undefined(.compiler_variable, name), open.pos.merge(close.pos))
 	}
 	return ast.StringLiteral{
 		scope: p.scope

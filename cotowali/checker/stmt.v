@@ -154,7 +154,7 @@ fn (mut c Checker) block(mut block ast.Block) {
 	c.stmts(mut block.stmts)
 }
 
-fn (mut c Checker) expect_inside_loop(stmt_name string, pos Pos) ? {
+fn (mut c Checker) expect_inside_loop(stmt_name string, pos Pos) ! {
 	if !c.inside_loop {
 		return c.error('`${stmt_name}` is not in a loop', pos)
 	}

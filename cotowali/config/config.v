@@ -34,7 +34,7 @@ pub fn (b Backend) shebang() string {
 	}
 }
 
-pub fn (backend Backend) find_executable_path() ?string {
+pub fn (backend Backend) find_executable_path() !string {
 	if backend == .ush {
 		return Backend.sh.find_executable_path() or {
 			if pwsh := Backend.pwsh.find_executable_path() {
@@ -83,7 +83,7 @@ pub fn default_feature() Feature {
 	return Feature.shebang
 }
 
-pub fn (mut f Feature) set_by_str(s string) ? {
+pub fn (mut f Feature) set_by_str(s string) ! {
 	match s {
 		'warn_all' { f.set(.warn_all) }
 		else { return error('unknown feature `${s}`') }
@@ -101,7 +101,7 @@ pub mut:
 	indent     string = '  '
 }
 
-pub fn backend_from_str(s string) ?Backend {
+pub fn backend_from_str(s string) !Backend {
 	match s {
 		'sh' { return .sh }
 		'dash' { return .dash }

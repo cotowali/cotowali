@@ -149,7 +149,7 @@ enum LicCommand {
 	test
 }
 
-fn (lic Lic) compile() ? {
+fn (lic Lic) compile() ! {
 	mut flags := if lic.prod { '-prod' } else { '-g' }
 	if lic.autofree {
 		flags += ' -autofree'

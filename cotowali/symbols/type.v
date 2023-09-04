@@ -7,6 +7,7 @@ module symbols
 
 import cotowali.source { Pos }
 import cotowali.messages { already_defined }
+import cotowali.errors { none_err }
 import cotowali.util { li_panic, nil_to_none }
 
 pub type Type = u64
@@ -111,7 +112,7 @@ pub fn (v TypeSymbol) str() string {
 
 // -- register / lookup --
 
-fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
+fn (s &Scope) check_before_register_type(ts TypeSymbol) ! {
 	if ts.typ != 0 && ts.typ in s.type_symbols {
 		li_panic(@FN, @FILE, @LINE, '${ts.typ} is exists')
 	}
@@ -120,8 +121,8 @@ fn (s &Scope) check_before_register_type(ts TypeSymbol) ? {
 	}
 }
 
-pub fn (mut s Scope) register_type(ts TypeSymbol) ?&TypeSymbol {
-	s.check_before_register_type(ts)?
+pub fn (mut s Scope) register_type(ts TypeSymbol) !&TypeSymbol {
+	s.check_before_register_type(ts)!
 	typ := if ts.typ == 0 { Type(auto_id()) } else { ts.typ }
 	new_ts := &TypeSymbol{
 		...ts
@@ -155,7 +156,7 @@ fn (mut s Scope) must_register_builtin_type(ts TypeSymbol) &TypeSymbol {
 
 type TypeOrName = Type | string
 
-fn (s &Scope) name_to_type(name string) ?Type {
+fn (s &Scope) name_to_type(name string) !Type {
 	if name in s.name_to_type {
 		return s.name_to_type[name]
 	} else if p := s.parent() {
@@ -165,17 +166,17 @@ fn (s &Scope) name_to_type(name string) ?Type {
 	}
 }
 
-pub fn (s &Scope) lookup_type(key TypeOrName) ?&TypeSymbol {
+pub fn (s &Scope) lookup_type(key TypeOrName) !&TypeSymbol {
 	// dont use `int_typ := if ...` to avoid compiler bug
 	mut typ := u64(0)
 	match key {
-		string { typ = s.name_to_type(key)? }
+		string { typ = s.name_to_type(key)! }
 		Type { typ = key }
 	}
 
 	root := s.root()
 
-	return root.type_symbols[typ] or { return none }
+	return root.type_symbols[typ] or { return none_err() }
 }
 
 pub fn (s &Scope) must_lookup_type(key TypeOrName) &TypeSymbol {
@@ -191,7 +192,7 @@ pub fn (mut s Scope) lookup_or_register_type(ts TypeSymbol) &TypeSymbol {
 
 // -- methods --
 
-pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) ?&Var {
+pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) !&Var {
 	fn_typ := ts.scope.lookup_or_register_function_type(FunctionTypeInfo{
 		...f.FunctionTypeInfo
 		receiver: ts.typ
@@ -217,7 +218,7 @@ pub fn (mut ts TypeSymbol) register_method(f RegisterFnArgs) ?&Var {
 	return v
 }
 
-pub fn (ts &TypeSymbol) lookup_method(name string) ?&Var {
+pub fn (ts &TypeSymbol) lookup_method(name string) !&Var {
 	return ts.methods[name] or {
 		if base := ts.base() {
 			if found := base.lookup_method(name) {
@@ -227,6 +228,6 @@ pub fn (ts &TypeSymbol) lookup_method(name string) ?&Var {
 		if alias_info := ts.alias_info() {
 			return ts.scope.must_lookup_type(alias_info.target).lookup_method(name)
 		}
-		return none
+		return error('unknown method `${name}`')
 	}
 }

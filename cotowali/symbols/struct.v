@@ -19,6 +19,6 @@ pub fn (ts &TypeSymbol) struct_info() ?StructTypeInfo {
 	return if ts.info is StructTypeInfo { ts.info } else { none }
 }
 
-pub fn (mut s Scope) register_struct_type(name string, info StructTypeInfo) ?&TypeSymbol {
+pub fn (mut s Scope) register_struct_type(name string, info StructTypeInfo) !&TypeSymbol {
 	return s.register_type(name: name, info: info)
 }

@@ -17,7 +17,7 @@ pub fn (_ Stdio) send(output string) {
 }
 
 [manualfree]
-pub fn (_ Stdio) receive() ?string {
+pub fn (_ Stdio) receive() !string {
 	first_line := get_raw_input()
 	if first_line.len < 1 || !first_line.starts_with(content_length) {
 		return error('content length is missing')

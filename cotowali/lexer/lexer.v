@@ -38,7 +38,7 @@ fn (mut lex Lexer) prepare_to_read() {
 	lex.start_pos()
 }
 
-pub fn (mut lex Lexer) read() ?Token {
+pub fn (mut lex Lexer) read() !Token {
 	tok := lex.do_read() or {
 		match err {
 			LexerErr { lex.prev_tok = err.token }
@@ -51,7 +51,7 @@ pub fn (mut lex Lexer) read() ?Token {
 	return tok
 }
 
-pub fn (mut lex Lexer) do_read() ?Token {
+pub fn (mut lex Lexer) do_read() !Token {
 	for {
 		lex.prepare_to_read()
 		if lex.is_eof() {
@@ -216,7 +216,7 @@ fn (mut lex Lexer) read_ident_or_keyword() Token {
 	}
 }
 
-fn (mut lex Lexer) read_number() ?Token {
+fn (mut lex Lexer) read_number() !Token {
 	mut is_float := false
 	mut err_msg := ''
 	for lex.byte() == `.` || lex.char(0).@is(.digit) {

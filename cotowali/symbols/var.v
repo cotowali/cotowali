@@ -72,7 +72,7 @@ pub fn (v Var) receiver_type_symbol() &TypeSymbol {
 
 // -- lookup / register --
 
-fn (mut s Scope) check_before_register_var(v Var) ? {
+fn (mut s Scope) check_before_register_var(v Var) ! {
 	key := v.name
 	found_v := s.vars[key] or { return }
 
@@ -84,8 +84,8 @@ fn (mut s Scope) check_before_register_var(v Var) ? {
 	return error(msg)
 }
 
-pub fn (mut s Scope) register_var(v Var) ?&Var {
-	s.check_before_register_var(v)?
+pub fn (mut s Scope) register_var(v Var) !&Var {
+	s.check_before_register_var(v)!
 	new_v := &Var{
 		...v
 		id: if v.id == 0 { auto_id() } else { v.id }

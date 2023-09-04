@@ -11,6 +11,7 @@ import cotowali.source { Source, SourceScheme, get_cotowali_source_path, source_
 import cotowali.symbols { Scope }
 import cotowali.ast
 import cotowali.compiler_directives { missing_endif_directive }
+import cotowali.errors { none_err }
 import cotowali.util { li_panic }
 import cotowali.util.http
 import net.urllib { URL }
@@ -68,7 +69,7 @@ pub fn parse_file(path string, ctx &Context) ?&ast.File {
 	return parse(s, ctx)
 }
 
-pub fn parse_file_relative(base_source &Source, path string, ctx &Context) ?&ast.File {
+pub fn parse_file_relative(base_source &Source, path string, ctx &Context) !&ast.File {
 	source_path := get_cotowali_source_path(path)
 	if source_url := base_source.url() {
 		url := source_url.resolve_reference(&URL{ user: 0, path: source_path }) or {
@@ -78,15 +79,15 @@ pub fn parse_file_relative(base_source &Source, path string, ctx &Context) ?&ast
 	}
 
 	resolved_path := os.real_path(os.join_path(os.dir(base_source.path), source_path))
-	return parse_file(resolved_path, ctx)
+	return parse_file(resolved_path, ctx) or { none_err() }
 }
 
-pub fn parse_file_in_cotowali_path(file string, ctx &Context) ?&ast.File {
+pub fn parse_file_in_cotowali_path(file string, ctx &Context) !&ast.File {
 	path := find_file_path_in_cotowali_path(get_cotowali_source_path(file)) or { return err }
-	return parse_file(path, ctx)
+	return parse_file(path, ctx) or { none_err() }
 }
 
-pub fn parse_remote_file(url URL, ctx &Context) ?&ast.File {
+pub fn parse_remote_file(url URL, ctx &Context) !&ast.File {
 	mut scheme := source_scheme_from_str(url.scheme) or {
 		return error('invalid scheme: ${url.scheme}')
 	}
@@ -101,7 +102,7 @@ pub fn parse_remote_file(url URL, ctx &Context) ?&ast.File {
 	}
 
 	if path in ctx.sources {
-		return none
+		return none_err()
 	}
 
 	res := http.get(http_url_str) or {

@@ -28,7 +28,7 @@ pub fn (mut s Scope) lookup_or_register_map_type(info MapTypeInfo) &TypeSymbol {
 	return s.lookup_or_register_type(name: info.typename(s), info: info)
 }
 
-pub fn (s Scope) lookup_map_type(info MapTypeInfo) ?&TypeSymbol {
+pub fn (s Scope) lookup_map_type(info MapTypeInfo) !&TypeSymbol {
 	return s.lookup_type(info.typename(s))
 }
 

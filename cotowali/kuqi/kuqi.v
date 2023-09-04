@@ -15,7 +15,7 @@ import cotowali.context { Context }
 
 interface SendReceiver {
 	send(string)
-	receive() ?string
+	receive() !string
 }
 
 pub struct Kuqi {
@@ -55,7 +55,7 @@ fn (mut q Kuqi) decode[T](data string) ?T {
 	return decoded
 }
 
-fn (qi &Kuqi) receive() ?string {
+fn (qi &Kuqi) receive() !string {
 	return qi.io.receive()
 }
 
