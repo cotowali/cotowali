@@ -1,6 +1,3 @@
-# We need financial support to continue development.  Please [become a sponsor](https://opencollective.com/cotowali).
-
-
 <div align="center">
   <img width="200" src="https://raw.githubusercontent.com/cotowali/design/main/assets/cotowali.svg?sanitize=true">
   <h1>Cotowali</h1>
